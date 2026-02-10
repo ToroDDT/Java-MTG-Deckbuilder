@@ -2,7 +2,7 @@ package com.example.mtg_deckbuilder.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class QueryParser implements InequalityMatcher {
+public class QueryParser implements InequalityParser{
 
     public Inequality parseInequality(String input) {
         if (input == null || input.isBlank()) return null;
@@ -12,7 +12,7 @@ public class QueryParser implements InequalityMatcher {
 
         if (matcher.find()) {
             String op = matcher.group(1) != null ? matcher.group(1) : "=";
-            Double val = Double.parseDouble(matcher.group(2));
+            Integer val = Integer.parseInt(matcher.group(2));
             return new Inequality(op, val);
         }
         return null;
