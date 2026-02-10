@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>MTG-Dashboard</title>
+    <link rel="stylesheet" th:href="@{/mtg-dashboard.css}">
+    <script>
+        const input = document.getElementById('commanderInput');
+        const form = document.getElementById('cardForm');
+
+        input.addEventListener('input', function() {
+            const options = document.getElementById('commanderOptions').options;
+            for (let i = 0; i < options.length; i++) {
+                // If the input matches an option exactly, submit the form
+                if (options[i].value === input.value) {
+                    form.submit();
+                    break;
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="main">
+    <div class="midfield-section">
+        <div class="userProfile">
+            <div class="logo"></div>
+            <div class="username">DavidDDT</div>
+        </div>
+        <h1 class="commander-name" th:text="${commander}">Commander Name</h1>
+
+    </div>
+
+    <div class="edit-section">
+        <div class="deck-actions">
+            <div>Bulk Edit</div>
+            <div>Buy Deck</div>
+        </div>
+
+        <div class="autocomplete-container">
+            <div class="search-container">
+                <form id="cardForm" th:action="@{/addCardToCommmaderDeck}" method="POST">
+                    <input type="text"
+                           id="commanderInput"
+                           list="commanderOptions"
+                           placeholder="Search for a card..."
+                           autocomplete="on"
+                           name="cardName"
+                    >
+                    <datalist id="commanderOptions">
+                        <option th:each="name : ${cards}" th:value="${name}"></option>
+                    </datalist>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="deck-view">
+
+        <div class="card-focus">
+            <img src="https://cards.scryfall.io/normal/front/8/f/8fcf68cf-0dac-4b29-90d5-c18c685182e6.jpg?1717012767" alt="necrobloom">
+        </div>
+
+        <div class="cards-view">
+            <div class="cards"
+                 th:each="card :${cardsOwned}"
+                 th:text="${card.getName()}"
+            >
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
+
+<script>
+    const input = document.getElementById('commanderInput');
+    const form = document.getElementById('cardForm');
+
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter'){
+
+        }
+
+    });
+</script>
