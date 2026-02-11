@@ -1,12 +1,11 @@
 package com.example.mtg_deckbuilder.service;
 
 import com.example.mtg_deckbuilder.model.CardType;
-import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.repository.CardRepository;
 import com.example.mtg_deckbuilder.utils.ColorIdentityParser;
 import com.example.mtg_deckbuilder.utils.Inequality;
+import com.example.mtg_deckbuilder.utils.Parser;
 import com.example.mtg_deckbuilder.utils.InequalityParser;
-import com.example.mtg_deckbuilder.utils.QueryParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ import java.util.Map;
 public class CardService {
 
     private final CardRepository cardRepository;
-   private final InequalityParser queryParser = new QueryParser();
+    private final Parser<Inequality> queryParser = new InequalityParser();
 
     @Autowired
     public CardService(CardRepository cardRepository) {
@@ -34,30 +33,16 @@ public class CardService {
         }
     }
     public void findByCmc(StringBuilder sql, Map<String, Object> params, String cmcInput) {
-        Inequality expression = queryParser.parseInequality(cmcInput);
+        Inequality expression = queryParser.parse(cmcInput);
         if (expression == null) return;
-
-        // Whitelist the operator to be 100% safe
-        String safeOp = switch (expression.operator()) {
-            case ">", "<", ">=", "<=", "=" -> expression.operator();
-            default -> "=";
-        };
-
-        String query = " AND cmc " + safeOp + " :cmc";
+        String query = " AND cmc " + expression.operator() + " :cmc";
         params.put("cmc", expression.value());
         sql.append(query);
     }
     public void findByEdhrecRank(StringBuilder sql, Map<String, Object> params,String edhrecRank) {
-        Inequality expression = queryParser.parseInequality(edhrecRank);
+        Inequality expression = queryParser.parse(edhrecRank);
         if (expression == null) return;
-
-        // Whitelist the operator to be 100% safe
-        String safeOp = switch (expression.operator()) {
-            case ">", "<", ">=", "<=", "=" -> expression.operator();
-            default -> "=";
-        };
-
-        String query = " AND edhrec_rank " + safeOp + " :edhrec_rank";
+        String query = " AND edhrec_rank " + expression.operator() + " :edhrec_rank";
         sql.append(query);
         params.put("edhrec_rank", expression.value());
     }
@@ -74,7 +59,6 @@ public class CardService {
             }
         }
     }
-
     public void executeComplexQuery(String cmcInput, String manaInput, String typeLineInput, String edhrecInput) {
         StringBuilder sql = new StringBuilder("SELECT * FROM card WHERE 1=1");
         Map<String, Object> params = new HashMap<>();
