@@ -1,5 +1,8 @@
 package com.example.mtg_deckbuilder.model;
 
+import lombok.Getter;
+
+@Getter
 public enum CardType {
     SORCERY("Sorcery"),
     INSTANT("Instant"),
@@ -17,9 +20,7 @@ public enum CardType {
     CardType(String type) {
         this.type = type;
     }
-    public String getType() {
-        return type;
-    }
+
     public static CardType fromString(String text) {
         for (CardType cardType: CardType.values()) {
             if (cardType.getType().equalsIgnoreCase(text)) {
