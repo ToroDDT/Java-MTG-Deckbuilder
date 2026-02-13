@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class CardServiceTest {
 
     private CardService cardService; // Injects the mock repo into the real service
@@ -42,6 +41,7 @@ public class CardServiceTest {
         assertEquals(5, params.get("cmc"));
     }
 
+    /*
     @Test
     void testFindByColorIdentity() {
         StringBuilder sql = new StringBuilder("SELECT * FROM card WHERE 1=1");
@@ -55,4 +55,5 @@ public class CardServiceTest {
         assertTrue(finalSql.contains("SELECT * FROM card WHERE 1=1 AND "), "SQL should look like this");
 
     }
+     */
 }

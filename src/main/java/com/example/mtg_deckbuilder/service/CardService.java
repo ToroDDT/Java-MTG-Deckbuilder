@@ -46,6 +46,7 @@ public class CardService {
         sql.append(query);
         params.put("edhrec_rank", expression.value());
     }
+    /*
     public void findByManaCost(StringBuilder sql,  Map<String, Object> params, String manaInput) {
         ColorIdentityParser colorIdentityParser = new ColorIdentityParser();
         List<String> symbols = colorIdentityParser.parseManaSymbols(manaInput);
@@ -59,6 +60,7 @@ public class CardService {
             }
         }
     }
+    */
     public void executeComplexQuery(String cmcInput, String manaInput, String typeLineInput, String edhrecInput) {
         StringBuilder sql = new StringBuilder("SELECT * FROM card WHERE 1=1");
         Map<String, Object> params = new HashMap<>();
