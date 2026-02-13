@@ -2,86 +2,113 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
 <head>
     <meta charset="ISO-8859-1">
-    <title>MTG-Dashboard</title>
+    <title>Dashboard - MTG Deckbuilder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/mtg-dashboard.css}">
-    <script>
-        const input = document.getElementById('commanderInput');
-        const form = document.getElementById('cardForm');
-
-        input.addEventListener('input', function() {
-            const options = document.getElementById('commanderOptions').options;
-            for (let i = 0; i < options.length; i++) {
-                // If the input matches an option exactly, submit the form
-                if (options[i].value === input.value) {
-                    form.submit();
-                    break;
-                }
-            }
-        });
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<div class="main">
-    <div class="midfield-section">
+    <header>
+        <div class="header-container">
+            <div class="logo"><a th:href="@{/}"><i class="fas fa-layer-group"></i> MTG DECKBUILDER</a></div>
+            <nav>
+                <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-links">
+                    <a href="#"><i class="fas fa-search"></i> Browse</a>
+                    <a href="#"><i class="fas fa-book"></i> Decks</a>
+                    <a href="#"><i class="fas fa-clone"></i> Cards</a>
+                </div>
+                <div class="nav-user">
+                    <a th:href="@{/dashboard}" class="btn-dashboard">Dashboard</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+<main class="main">
+    <section class="midfield-section">
         <div class="userProfile">
-            <div class="logo"></div>
+            <div class="logo-circle">D</div>
             <div class="username">DavidDDT</div>
         </div>
         <h1 class="commander-name" th:text="${commander}">Commander Name</h1>
+    </section>
 
-    </div>
-
-    <div class="edit-section">
+    <section class="edit-section">
         <div class="deck-actions">
-            <div>Bulk Edit</div>
-            <div>Buy Deck</div>
+            <button class="btn-action">Bulk Edit</button>
+            <button class="btn-action">Buy Deck</button>
         </div>
 
-        <div class="autocomplete-container">
-            <div class="search-container">
-                <form id="cardForm" th:action="@{/addCardToCommmaderDeck}" method="POST">
+        <div class="search-container">
+            <form id="cardForm" th:action="@{/addCardToCommmaderDeck}" method="POST">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-plus"></i>
                     <input type="text"
                            id="commanderInput"
                            list="commanderOptions"
-                           placeholder="Search for a card..."
+                           placeholder="Add a card to your deck..."
                            autocomplete="on"
                            name="cardName"
                     >
-                    <datalist id="commanderOptions">
-                        <option th:each="name : ${cards}" th:value="${name}"></option>
-                    </datalist>
-                </form>
-            </div>
+                </div>
+                <datalist id="commanderOptions">
+                    <option th:each="name : ${cards}" th:value="${name}"></option>
+                </datalist>
+            </form>
         </div>
-    </div>
+    </section>
 
     <div class="deck-view">
-
-        <div class="card-focus">
-            <img src="https://cards.scryfall.io/normal/front/8/f/8fcf68cf-0dac-4b29-90d5-c18c685182e6.jpg?1717012767" alt="necrobloom">
-        </div>
+        <aside class="card-focus">
+            <img src="https://cards.scryfall.io/normal/front/8/f/8fcf68cf-0dac-4b29-90d5-c18c685182e6.jpg?1717012767" alt="Commander Image">
+        </aside>
 
         <div class="cards-view">
-            <div class="cards"
-                 th:each="card :${cardsOwned}"
-                 th:text="${card.getName()}"
-            >
+            <div class="card-list-item"
+                 th:each="card :${cardsOwned}">
+                <span class="card-name" th:text="${card.getName()}">Card Name</span>
+                <span class="card-type" th:text="${card.getType_line()}">Type</span>
             </div>
         </div>
     </div>
+</main>
 
-</div>
-</body>
-</html>
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">MTG DECKBUILDER</div>
+            <div class="footer-links">
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+                <a href="#">Discord</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+        <p class="copyright">&copy; 2026 MTG Deckbuilder. Portions of MTG Deckbuilder are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, and Oracle text, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. MTG Deckbuilder is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.</p>
+    </div>
+</footer>
 
 <script>
+    document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+        document.querySelector('nav').classList.toggle('active');
+    });
+
     const input = document.getElementById('commanderInput');
     const form = document.getElementById('cardForm');
 
-    input.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter'){
-
+    input.addEventListener('input', function() {
+        const options = document.getElementById('commanderOptions').options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === input.value) {
+                form.submit();
+                break;
+            }
         }
-
     });
 </script>
+</body>
+</html>

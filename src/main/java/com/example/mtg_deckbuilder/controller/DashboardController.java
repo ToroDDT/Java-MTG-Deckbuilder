@@ -3,6 +3,7 @@ package com.example.mtg_deckbuilder.controller;
 import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.repository.CardRepository;
 import com.example.mtg_deckbuilder.utils.Autocomplete;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +16,12 @@ import java.util.List;
 public class DashboardController {
 
     private final CardRepository cardRepository;
-    private final Autocomplete autocomplete = new Autocomplete();
+    private final Autocomplete autocomplete;
 
-    public DashboardController(CardRepository cardRepository) {
+    @Autowired
+    public DashboardController(CardRepository cardRepository, Autocomplete autocomplete) {
         this.cardRepository = cardRepository;
+        this.autocomplete = autocomplete;
     }
 
     @GetMapping("/")
@@ -27,7 +30,8 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard() {
+    public String dashboard(Model model) throws IOException {
+        model.addAttribute("cards", autocomplete.readFile());
         return "mtg-dashboard";
     }
 

@@ -5,46 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results - MTG Deckbuilder</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .results-container {
             max-width: 1200px;
             margin: 2rem auto;
-            padding: 0 2rem;
+            padding: 0 20px;
         }
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
             margin-top: 2rem;
         }
         .card-item {
-            background-color: var(--surface-color);
-            padding: 1rem;
+            background-color: var(--bg-card);
+            padding: 20px;
             border-radius: 8px;
             text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+        .card-item:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-color);
         }
         .card-item h4 {
-            margin: 0.5rem 0;
+            margin: 10px 0;
+            color: var(--text-primary);
         }
         .card-item p {
-            font-size: 0.9rem;
-            color: #aaa;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 4px 0;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo"><a th:href="@{/}" style="color: inherit; text-decoration: none;">MTG DECKBUILDER</a></div>
-        <nav>
-            <a th:href="@{/dashboard}">Dashboard</a>
-        </nav>
+        <div class="header-container">
+            <div class="logo"><a th:href="@{/}"><i class="fas fa-layer-group"></i> MTG DECKBUILDER</a></div>
+            <nav>
+                <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-links">
+                    <a href="#"><i class="fas fa-search"></i> Browse</a>
+                    <a href="#"><i class="fas fa-book"></i> Decks</a>
+                    <a href="#"><i class="fas fa-clone"></i> Cards</a>
+                </div>
+                <div class="nav-user">
+                    <a th:href="@{/dashboard}" class="btn-dashboard">Dashboard</a>
+                </div>
+            </nav>
+        </div>
     </header>
 
     <main class="results-container">
         <h2>Search Results for "<span th:text="${query}">query</span>"</h2>
         
-        <div th:if="${results.isEmpty()}" style="margin-top: 2rem;">
+        <div th:if="${results.isEmpty()}" style="margin-top: 2rem; text-align: center; padding: 40px; background: var(--bg-card); border-radius: 8px;">
             <p>No cards found matching your search.</p>
+            <a th:href="@{/}" class="btn-primary" style="display: inline-block; margin-top: 20px;">Go Back</a>
         </div>
 
         <div class="card-grid">
@@ -57,7 +79,14 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 MTG Deckbuilder. Not affiliated with Wizards of the Coast.</p>
+        <div class="container">
+            <p class="copyright">&copy; 2026 MTG Deckbuilder. Portions of MTG Deckbuilder are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, and Oracle text, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. MTG Deckbuilder is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.</p>
+        </div>
     </footer>
+    <script>
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('nav').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
