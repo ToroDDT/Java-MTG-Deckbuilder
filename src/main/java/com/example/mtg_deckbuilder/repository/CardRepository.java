@@ -1,6 +1,8 @@
 package com.example.mtg_deckbuilder.repository;
 
 import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.utils.Inequality;
+import com.example.mtg_deckbuilder.utils.Parser;
 import com.example.mtg_deckbuilder.utils.InequalityParser;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -11,7 +13,7 @@ import java.util.*;
 @Repository
 public class CardRepository {
     private final JdbcClient jdbcClient;
-    private final InequalityParser queryParser = new InequalityParser();
+    private final Parser<Inequality> queryParser = new InequalityParser();
 
     public CardRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
