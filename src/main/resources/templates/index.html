@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Deckbuilder - Build Your Ultimate Deck</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo"><a th:href="@{/}">MTG DECKBUILDER</a></div>
+        <nav>
+            <a href="#">Decks</a>
+            <a href="#">Cards</a>
+            <a href="#">Social</a>
+            <a th:href="@{/dashboard}">Dashboard</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>The ultimate deckbuilding platform</h1>
+            <p>Design, playtest, and share your Magic: The Gathering decks with the community.</p>
+            <form class="search-bar" th:action="@{/search}" method="GET">
+                <input type="text" name="query" placeholder="Search for cards, decks, or users...">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <i class="fas fa-magic"></i>
+                <h3>Intuitive Builder</h3>
+                <p>Easy-to-use interface for adding cards and managing your decklists.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Advanced Stats</h3>
+                <p>Detailed mana curves, color distributions, and price analysis.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h3>Community Driven</h3>
+                <p>Share your creations and find inspiration from other brewers.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 MTG Deckbuilder. Not affiliated with Wizards of the Coast.</p>
+    </footer>
+</body>
+</html>

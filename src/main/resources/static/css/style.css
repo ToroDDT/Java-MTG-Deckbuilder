@@ -1,0 +1,124 @@
+:root {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --primary-color: #bb86fc;
+    --secondary-color: #03dac6;
+    --surface-color: #1e1e1e;
+    --on-surface: #ffffff;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: var(--surface-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.logo a {
+    text-decoration: none;
+    color: inherit;
+}
+
+nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: var(--primary-color);
+}
+
+.hero {
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1601987177651-8edfe6c20009?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.search-bar {
+    display: flex;
+    width: 100%;
+    max-width: 600px;
+}
+
+.search-bar input {
+    flex-grow: 1;
+    padding: 0.8rem 1.2rem;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    background-color: var(--surface-color);
+    color: white;
+}
+
+.search-bar button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    font-weight: bold;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background-color: var(--surface-color);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.feature-card i {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--surface-color);
+    margin-top: 4rem;
+}
