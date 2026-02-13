@@ -9,46 +9,81 @@
 </head>
 <body>
     <header>
-        <div class="logo"><a th:href="@{/}">MTG DECKBUILDER</a></div>
-        <nav>
-            <a href="#">Decks</a>
-            <a href="#">Cards</a>
-            <a href="#">Social</a>
-            <a th:href="@{/dashboard}">Dashboard</a>
-        </nav>
+        <div class="header-container">
+            <div class="logo"><a th:href="@{/}"><i class="fas fa-layer-group"></i> MTG DECKBUILDER</a></div>
+            <nav>
+                <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-links">
+                    <a href="#"><i class="fas fa-search"></i> Browse</a>
+                    <a href="#"><i class="fas fa-book"></i> Decks</a>
+                    <a href="#"><i class="fas fa-clone"></i> Cards</a>
+                </div>
+                <div class="nav-user">
+                    <a th:href="@{/dashboard}" class="btn-dashboard">Dashboard</a>
+                </div>
+            </nav>
+        </div>
     </header>
 
     <main>
         <section class="hero">
-            <h1>The ultimate deckbuilding platform</h1>
-            <p>Design, playtest, and share your Magic: The Gathering decks with the community.</p>
-            <form class="search-bar" th:action="@{/search}" method="GET">
-                <input type="text" name="query" placeholder="Search for cards, decks, or users...">
-                <button type="submit">Search</button>
-            </form>
+            <div class="hero-content">
+                <h1>Build better decks.</h1>
+                <p>The most advanced deckbuilding platform for Magic: The Gathering.</p>
+                <form class="search-bar" th:action="@{/search}" method="GET">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="query" placeholder="Search for cards, decks, or users...">
+                    </div>
+                    <button type="submit">Search</button>
+                </form>
+                <div class="hero-cta">
+                    <a href="#" class="btn-primary">Get Started</a>
+                    <a href="#" class="btn-secondary">Learn More</a>
+                </div>
+            </div>
         </section>
 
-        <section class="features">
+
+        <section class="features container">
             <div class="feature-card">
-                <i class="fas fa-magic"></i>
-                <h3>Intuitive Builder</h3>
-                <p>Easy-to-use interface for adding cards and managing your decklists.</p>
+                <i class="fas fa-bolt"></i>
+                <h3>Lightning Fast</h3>
+                <p>Search through hundreds of thousands of cards instantly with our optimized engine.</p>
             </div>
             <div class="feature-card">
-                <i class="fas fa-chart-bar"></i>
-                <h3>Advanced Stats</h3>
-                <p>Detailed mana curves, color distributions, and price analysis.</p>
+                <i class="fas fa-chart-pie"></i>
+                <h3>Deep Analysis</h3>
+                <p>Visual mana curves, color distributions, and price trends for every deck you build.</p>
             </div>
             <div class="feature-card">
-                <i class="fas fa-users"></i>
-                <h3>Community Driven</h3>
-                <p>Share your creations and find inspiration from other brewers.</p>
+                <i class="fas fa-share-alt"></i>
+                <h3>Easy Sharing</h3>
+                <p>Export to Arena, MTGO, or share a beautiful public link with the world.</p>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 MTG Deckbuilder. Not affiliated with Wizards of the Coast.</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">MTG DECKBUILDER</div>
+                <div class="footer-links">
+                    <a href="#">Terms</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Discord</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+            <p class="copyright">&copy; 2026 MTG Deckbuilder. Portions of MTG Deckbuilder are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, and Oracle text, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. MTG Deckbuilder is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.</p>
+        </div>
     </footer>
+    <script>
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('nav').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
