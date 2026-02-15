@@ -8,5 +8,6 @@ public record Account(
         String Last_name,
         String email,
         String username,
+        String password,
         String account_created
 ) {}
