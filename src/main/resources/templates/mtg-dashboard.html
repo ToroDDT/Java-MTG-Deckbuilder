@@ -68,11 +68,24 @@
         </aside>
 
         <div class="cards-view">
-            <div class="card-list-item"
-                 th:each="card :${cardsOwned}">
-                <span class="card-name" th:text="${card.getName()}">Card Name</span>
-                <span class="card-type" th:text="${card.getType_line()}">Type</span>
+            <div class="card-list-item">
+                <div class="type-section-list">
+                    <div class="type-section-names">Sorceries</div>
+                    <span class="card-name">Necrobloom</span>
+                    <span class="card-name">Austere command</span>
+                    <span class="card-name">Riot</span>
+                    <span class="card-name">Farewell</span>
+                </div>
+                <div class="type-section-list">
+                    <div class="type-section-names">Instants</div>
+                    <span class="card-name">Necrobloom</span>
+                    <span class="card-name">Austere command</span>
+                    <span class="card-name">Riot</span>
+                    <span class="card-name">Farewell</span>
+                </div>
             </div>
+            <div>
+           </div>
         </div>
     </div>
 </main>
