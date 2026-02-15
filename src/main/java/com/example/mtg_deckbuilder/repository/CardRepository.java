@@ -20,21 +20,21 @@ public class CardRepository {
     }
 
     public Optional<Card> findById(UUID id) {
-        return jdbcClient.sql("select * from card where id = :id")
+        return jdbcClient.sql("select * from cards where id = :id")
                 .param("id", id) // Safely binds the UUID
                 .query(Card.class) // Auto-maps to your Card record
                 .optional(); // Returns Optional<Card> automatically
     }
 
     public Optional<Card> findByName(String name) {
-        return jdbcClient.sql("select * from card where name = :name")
+        return jdbcClient.sql("select * from cards where name = :name")
                 .param("name", name) // Safely binds the UUID
                 .query(Card.class) // Auto-maps to your Card record
                 .optional(); // Returns Optional<Card> automatically
     }
 
     public List<Card> findByCardsBySubstring(String name) {
-        String sql = "SELECT * FROM card WHERE name ILIKE CONCAT('%', :name, '%')";
+        String sql = "SELECT * FROM cards WHERE name ILIKE CONCAT('%', :name, '%')";
         return jdbcClient.sql(sql)
                 .param("name", name)
                 .query(Card.class)
