@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @GetMapping("/login")
-    public String getLoginPage() {
-        // Spring will now look for src/main/resources/templates/login.html
+    public String showLoginPage() {
         return "login";
+    }
+
+    @GetMapping("/create-account")
+    public String showCreateAccount() {
+        return "create-account";
     }
 }
