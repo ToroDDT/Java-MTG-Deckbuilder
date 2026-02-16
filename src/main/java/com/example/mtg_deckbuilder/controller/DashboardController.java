@@ -38,6 +38,7 @@ public class DashboardController {
         return "mtg-dashboard";
     }
 
+
     @GetMapping("/search")
     public String search(@RequestParam("query") String query, Model model) {
         List<Card> results = cardRepository.findByCardsBySubstring(query);
@@ -51,5 +52,4 @@ public class DashboardController {
         model.addAttribute("cards", autocomplete.readFile());
         return "mtg-dashboard";
     }
-
 }
