@@ -61,6 +61,10 @@
                         required
                     />
                 </div>
+                <!--/*@thymesVar id="error" type=""*/-->
+                <div th:if="${error}" class="error-message">
+                    <p th:text="${error}"></p>
+                </div>
 
                 <div class="form-submit">
                     <input type="submit" value="Create Account" class="btn-submit"/>
