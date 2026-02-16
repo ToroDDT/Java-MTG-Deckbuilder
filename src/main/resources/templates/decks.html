@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Deck Browser - MTG Deckbuilder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/decks.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo"><a th:href="@{/}"><i class="fas fa-layer-group"></i> MTG DECKBUILDER</a></div>
+            <nav>
+                <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-links">
+                    <a href="#"><i class="fas fa-search"></i> Browse</a>
+                    <a href="#"><i class="fas fa-book"></i> Decks</a>
+                    <a href="#"><i class="fas fa-clone"></i> Cards</a>
+                </div>
+                <div class="nav-user">
+                    <a th:href="@{/dashboard}" class="btn-dashboard">Dashboard</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="deck-container">
+            <div class="deck-header">
+                <h1>Your Decks</h1>
+                <p>Browse and search your Magic: The Gathering decks</p>
+            </div>
+
+            <form th:action="@{/decks}" method="get" th:object="${filterForm}">
+                <div class="filter-section">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" th:field="*{searchQuery}" placeholder="Search decks by name..." class="search-input">
+                    </div>
+
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label class="filter-label">Filter by Colors</label>
+                            <div class="flex-wrap-gap">
+                                <input type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
+                                <label for="colorW" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'W')} ? 'active color-W' : ''">W</label>
+
+                                <input type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
+                                <label for="colorU" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'U')} ? 'active color-U' : ''">U</label>
+
+                                <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
+                                <label for="colorB" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'B')} ? 'active color-B' : ''">B</label>
+
+                                <input type="checkbox" th:field="*{selectedColors}" value="R" id="colorR" style="display:none;">
+                                <label for="colorR" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'R')} ? 'active color-R' : ''">R</label>
+
+                                <input type="checkbox" th:field="*{selectedColors}" value="G" id="colorG" style="display:none;">
+                                <label for="colorG" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'G')} ? 'active color-G' : ''">G</label>
+                            </div>
+                        </div>
+
+                        <div class="sort-group">
+                            <label class="filter-label">Sort</label>
+                            <div class="sort-row">
+                                <select th:field="*{sortBy}" class="sort-select">
+                                    <option value="name">Name</option>
+                                    <option value="lastUpdated">Last Updated</option>
+                                </select>
+                                <select th:field="*{sortOrder}" class="sort-select sort-order">
+                                    <option value="asc">Asc</option>
+                                    <option value="desc">Desc</option>
+                                </select>
+                                <button type="submit" class="btn-primary">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="results-bar">
+                <p>Showing <span th:text="${decks.size()}">0</span> decks</p>
+                <div class="deck-actions">
+                    <button class="btn-action">New Deck</button>
+                    <button class="btn-action btn-secondary">New Folder</button>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(decks)}" class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <p>No decks found matching your filters.</p>
+            </div>
+
+            <div class="deck-grid">
+                <div th:each="deck : ${decks}" class="deck-item">
+                    <div class="deck-item-inner">
+                        <div class="deck-info">
+                            <div class="deck-title-row">
+                                <a th:href="${deck.url}" th:text="${deck.name}" class="deck-link">Deck Name</a>
+                                <span th:if="${deck.bracket != null}" class="badge bracket-badge"
+                                      th:text="'Bracket ' + ${deck.bracket}"></span>
+                            </div>
+
+                            <div class="deck-meta">
+                                <div class="mana-colors">
+                                    <span th:each="color : ${deck.colors}"
+                                          th:class="'mana-symbol color-' + ${color}"
+                                          th:text="${color}"></span>
+                                </div>
+                                <span class="meta-sep">•</span>
+                                <span th:text="${deck.format}">Commander</span>
+                                <span class="meta-sep">•</span>
+                                <span th:text="${#temporals.format(deck.lastUpdated, 'dd MMM yyyy')}">Date</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-external-link-alt external-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">MTG DECKBUILDER</div>
+                <div class="footer-links">
+                    <a href="#">Terms</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Discord</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+            <p class="copyright">&copy; 2026 MTG Deckbuilder. Portions of MTG Deckbuilder are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, and Oracle text, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. MTG Deckbuilder is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('nav').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
