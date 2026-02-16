@@ -1,9 +1,13 @@
 package com.example.mtg_deckbuilder.utils;
-import java.util.ArrayList;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
+@Getter
+@Setter
 public class FilterForm {
     private String searchQuery;
     private List<String> selectedColors = new ArrayList<>();
@@ -21,46 +25,4 @@ public class FilterForm {
         this.sortOrder = sortOrder;
     }
 
-    // Getters and Setters
-    public String getSearchQuery() {
-        return searchQuery;
-    }
-
-    public void setSearchQuery(String searchQuery) {
-        this.searchQuery = searchQuery;
-    }
-
-    public List<String> getSelectedColors() {
-        return selectedColors;
-    }
-
-    public void setSelectedColors(List<String> selectedColors) {
-        this.selectedColors = selectedColors;
-    }
-
-    public String getSortBy() {
-        return sortBy;
-    }
-
-    public void setSortBy(String sortBy) {
-        this.sortBy = sortBy;
-    }
-
-    public String getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(String sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    @Override
-    public String toString() {
-        return "FilterForm{" +
-                "searchQuery='" + searchQuery + '\'' +
-                ", selectedColors=" + selectedColors +
-                ", sortBy='" + sortBy + '\'' +
-                ", sortOrder='" + sortOrder + '\'' +
-                '}';
-    }
 }
