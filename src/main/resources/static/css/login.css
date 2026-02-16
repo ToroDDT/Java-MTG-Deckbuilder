@@ -165,6 +165,11 @@ body {
     color: var(--accent-color);
 }
 
+.error-message {
+    color: red;
+    font-size: 4px;
+}
+
 /* Responsive: tighten spacing on small screens */
 @media (max-width: 480px) {
     .login-box{
