@@ -8,17 +8,17 @@ import java.util.List;
 
 @Getter
 @Setter
-public class FilterForm {
+public class DeckSearchCriteria {
     private String searchQuery;
     private List<String> selectedColors = new ArrayList<>();
     private String sortBy = "lastUpdated";
     private String sortOrder = "desc";
 
     // Constructors
-    public FilterForm() {
+    public DeckSearchCriteria() {
     }
 
-    public FilterForm(String searchQuery, List<String> selectedColors, String sortBy, String sortOrder) {
+    public DeckSearchCriteria(String searchQuery, List<String> selectedColors, String sortBy, String sortOrder) {
         this.searchQuery = searchQuery;
         this.selectedColors = selectedColors != null ? selectedColors : new ArrayList<>();
         this.sortBy = sortBy;

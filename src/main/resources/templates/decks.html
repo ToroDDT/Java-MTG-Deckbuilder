@@ -35,7 +35,7 @@
                 <p>Browse and search your Magic: The Gathering decks</p>
             </div>
 
-            <form th:action="@{/decks}" method="get" th:object="${filterForm}">
+            <form th:action="@{/decks}" method="get" th:object="${deckSearchCriteria}">
                 <div class="filter-section">
                     <div class="search-input-wrapper">
                         <i class="fas fa-search"></i>
@@ -47,19 +47,19 @@
                             <label class="filter-label">Filter by Colors</label>
                             <div class="flex-wrap-gap">
                                 <input type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
-                                <label for="colorW" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'W')} ? 'active color-W' : ''">W</label>
+                                <label for="colorW" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'W')} ? 'active color-W' : ''">W</label>
 
                                 <input type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
-                                <label for="colorU" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'U')} ? 'active color-U' : ''">U</label>
+                                <label for="colorU" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'U')} ? 'active color-U' : ''">U</label>
 
                                 <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
-                                <label for="colorB" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'B')} ? 'active color-B' : ''">B</label>
+                                <label for="colorB" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'B')} ? 'active color-B' : ''">B</label>
 
                                 <input type="checkbox" th:field="*{selectedColors}" value="R" id="colorR" style="display:none;">
-                                <label for="colorR" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'R')} ? 'active color-R' : ''">R</label>
+                                <label for="colorR" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'R')} ? 'active color-R' : ''">R</label>
 
                                 <input type="checkbox" th:field="*{selectedColors}" value="G" id="colorG" style="display:none;">
-                                <label for="colorG" class="btn-filter" th:classappend="${#lists.contains(filterForm.selectedColors, 'G')} ? 'active color-G' : ''">G</label>
+                                <label for="colorG" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'G')} ? 'active color-G' : ''">G</label>
                             </div>
                         </div>
 
