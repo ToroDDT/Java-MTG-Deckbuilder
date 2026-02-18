@@ -490,21 +490,20 @@ html, body {
 /* =========================
    Ideal Counts (sliders)
    ========================= */
-.sliders-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px 18px;
-}
-
 .slider-row {
     display: grid;
-    grid-template-columns: 120px 1fr 44px;
+    grid-template-columns: 120px minmax(0, 1fr) 44px;
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border-color);
     border-radius: 8px;
+}
+
+/* Allow grid children to shrink properly (prevents overflow/clipping issues) */
+.slider-row > * {
+    min-width: 0;
 }
 
 .slider-label {
@@ -519,12 +518,16 @@ html, body {
 .slider {
     -webkit-appearance: none;
     appearance: none;
+    width: 100%;
+    max-width: 100%;
+    display: block;
     height: 4px;
     background: var(--bg-dark);
     border-radius: 4px;
     outline: none;
     cursor: pointer;
 }
+
 
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
