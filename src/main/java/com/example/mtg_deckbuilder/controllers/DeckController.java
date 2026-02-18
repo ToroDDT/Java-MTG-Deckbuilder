@@ -1,4 +1,4 @@
-package com.example.mtg_deckbuilder.controller;
+package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
