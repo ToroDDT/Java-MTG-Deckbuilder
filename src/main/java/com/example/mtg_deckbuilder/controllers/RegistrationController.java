@@ -1,4 +1,4 @@
-package com.example.mtg_deckbuilder.controller;
+package com.example.mtg_deckbuilder.controllers;
 import com.example.mtg_deckbuilder.dto.UserRegistrationDto;
 import com.example.mtg_deckbuilder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
