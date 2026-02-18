@@ -4,6 +4,7 @@ import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.repository.CardRepository;
 import com.example.mtg_deckbuilder.service.CardService;
 import com.example.mtg_deckbuilder.utils.Autocomplete;
+import com.example.mtg_deckbuilder.utils.InequalityParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

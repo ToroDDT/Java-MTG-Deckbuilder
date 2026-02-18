@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 public class ColorIdentityParser implements Parser<ColorIdentity> {
 
+    @Override
     public ColorIdentity parse(@NotNull String input) throws InvalidColorIdentityException {
         ColorIdentity mtgColorIdentity = null;
         if (input.isBlank()) {
