@@ -186,6 +186,7 @@ nav {
 
 .btn-primary, .btn-secondary {
     padding: 12px 24px;
+    border: gray;
     border-radius: 4px;
     text-decoration: none;
     font-weight: 600;
