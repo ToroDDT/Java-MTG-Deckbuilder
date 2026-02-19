@@ -41,6 +41,19 @@ public class CardRepository {
                 .list(); // Returns a List of <Cards> else returns []
     }
 
+    public List<Card> findLegalCommanderCards() {
+        String sql = """
+        SELECT DISTINCT ON (name) * FROM cards 
+        WHERE type ILIKE '%Legendary%' 
+          AND type ILIKE '%Creature%'
+        ORDER BY name ASC, id ASC
+        """;
+
+        return jdbcClient.sql(sql)
+                .query(Card.class)
+                .list();
+    }
+
     public List<Card> executeComplexQuery(String sql, Map<String, Object> params) {
         return jdbcClient.sql(sql)
                 .params(params)

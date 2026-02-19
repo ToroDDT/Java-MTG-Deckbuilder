@@ -1,6 +1,9 @@
 package com.example.mtg_deckbuilder.service;
 
+import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.CardType;
+import com.example.mtg_deckbuilder.model.ScryfallCard;
+import com.example.mtg_deckbuilder.model.ScryfallSearchResponse;
 import com.example.mtg_deckbuilder.repository.CardRepository;
 import com.example.mtg_deckbuilder.utils.ColorIdentityParser;
 import com.example.mtg_deckbuilder.utils.Inequality;
@@ -8,6 +11,7 @@ import com.example.mtg_deckbuilder.utils.Parser;
 import com.example.mtg_deckbuilder.utils.InequalityParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +28,9 @@ public class CardService {
         this.cardRepository = cardRepository;
     }
 
+    public List<Card> findAllLegalCommanders() {
+        return cardRepository.findLegalCommanderCards();
+    }
     public void findByTypeLine(StringBuilder sql, Map<String, Object> params, String typeLine) {
         CardType type = CardType.fromString(typeLine);
         // If the input was valid, use the Enum's internal string
