@@ -86,7 +86,7 @@ public record Card(
     String toughness,
     String type,
     String types,
-    String uuid,
+    String id,
     String variations,
     String watermark
 ) {}
