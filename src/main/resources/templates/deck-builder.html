@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deck Builder – New Deck Modal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/deck-builder.css}" href="deck-modal.css">
+
+    <!-- Use the same theme as mtg-dashboard -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- Modal/component styling -->
+    <link rel="stylesheet" th:href="@{/css/deck-builder.css}">
+
     <script th:src="@{/js/deck-builder.js}"></script>
 </head>
 <body>
@@ -35,7 +39,7 @@
         <!-- Header -->
         <div class="modal-header">
             <div class="modal-header-glyph">⟡</div>
-            <h2 id="modalTitle">Forge a New Deck</h2>
+            <h2 id="modalTitle">Create a New Deck</h2>
             <button class="modal-close" onclick="closeDeckModal()" aria-label="Close modal">✕</button>
         </div>
 
@@ -61,20 +65,27 @@
                         <input type="text" id="deckName" name="name" th:field="*{name}"
                                placeholder="e.g., Inti Discard Tempo"
                                class="field-input" autocapitalize="none" spellcheck="false">
+
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label" for="commander">
+                        <label class="field-label" for="commanderList">
                             Commander <span class="field-required">*</span>
                         </label>
                         <div class="commander-input-wrap">
-                            <input type="text" id="commander" name="commander" th:field="*{commander}"
-                                   required placeholder="Type a commander name…"
-                                   class="field-input" role="combobox"
-                                   aria-autocomplete="list" aria-controls="commanderCandidates"
-                                   autocapitalize="none" spellcheck="false"
-                                   oninput="fetchCommanderCandidates(this.value)">
-                            <div class="commander-spinner" id="commanderSpinner" aria-hidden="true"></div>
+                            <div class="field-group">
+                                <input type="text"
+                                       id="commanderList"
+                                       class="field-input"
+                                       list="commanderOptions"
+                                       placeholder="Add a card to your deck..."
+                                       autocomplete="on"
+                                       name="name"
+                                >
+                            </div>
+                            <datalist id="commanderOptions">
+                                <option th:each="card : ${listOfCommanders}" th:value="${card.name()}"></option>
+                            </datalist>
                         </div>
                         <div id="commanderCandidates" class="autocomplete-list" role="listbox" aria-label="Commander suggestions"></div>
                         <p class="field-hint-block">Start typing to see matches, then select one.</p>
