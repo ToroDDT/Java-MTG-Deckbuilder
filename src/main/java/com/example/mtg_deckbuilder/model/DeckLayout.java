@@ -2,13 +2,12 @@ package com.example.mtg_deckbuilder.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Getter
 @Setter
-public class NewDeckForm {
+public class DeckLayout {
 
      // ── Basics ──────────────────────────────────────────────────────────
      private String name;                          // optional deck name
