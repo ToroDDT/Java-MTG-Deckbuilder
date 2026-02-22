@@ -8,5 +8,5 @@ public record Deck(Long id,
                    List<String> colors,
                    String format,
                    Integer bracket,
-                   LocalDate lastUpdated,
+                   LocalDate lastUpdate,
                    String url) {}

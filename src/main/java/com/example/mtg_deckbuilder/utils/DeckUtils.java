@@ -36,8 +36,8 @@ public class DeckUtils {
 
         if ("name".equals(sortBy)) {
             sorted.sort((a, b) -> a.name().compareToIgnoreCase(b.name()));
-        } else if ("lastUpdated".equals(sortBy)) {
-            sorted.sort((a, b) -> a.lastUpdated().compareTo(b.lastUpdated()));
+        } else if ("lastUpdate".equals(sortBy)) {
+            sorted.sort((a, b) -> a.lastUpdate().compareTo(b.lastUpdate()));
         }
 
         if ("desc".equals(sortOrder)) {

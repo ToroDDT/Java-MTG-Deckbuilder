@@ -13,7 +13,6 @@ import java.util.*;
 @Repository
 public class CardRepository {
     private final JdbcClient jdbcClient;
-    private final Parser<Inequality> queryParser = new InequalityParser();
 
     public CardRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
@@ -27,12 +26,19 @@ public class CardRepository {
     }
 
     public Optional<Card> findByName(String name) {
-        return jdbcClient.sql("select * from cards where name = :name")
+        return jdbcClient.sql("select distinct on (name) * from cards where name = :name")
                 .param("name", name) // Safely binds the UUID
                 .query(Card.class) // Auto-maps to your Card record
                 .optional(); // Returns Optional<Card> automatically
     }
 
+    public Optional<Card> findByColorIdentity(String name) {
+        // Note the escaped double quotes around "colorIdentity"
+        return jdbcClient.sql("SELECT DISTINCT ON (\"colorIdentity\") * FROM cards WHERE name = :name")
+                .param("name", name)
+                .query(Card.class)
+                .optional();
+    }
     public List<Card> findByCardsBySubstring(String name) {
         String sql = "SELECT * FROM cards WHERE name ILIKE CONCAT('%', :name, '%')";
         return jdbcClient.sql(sql)

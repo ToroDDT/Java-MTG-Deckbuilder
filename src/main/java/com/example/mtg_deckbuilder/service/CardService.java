@@ -1,9 +1,6 @@
 package com.example.mtg_deckbuilder.service;
 
-import com.example.mtg_deckbuilder.model.Card;
-import com.example.mtg_deckbuilder.model.CardType;
-import com.example.mtg_deckbuilder.model.ScryfallCard;
-import com.example.mtg_deckbuilder.model.ScryfallSearchResponse;
+import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.CardRepository;
 import com.example.mtg_deckbuilder.utils.ColorIdentityParser;
 import com.example.mtg_deckbuilder.utils.Inequality;
@@ -38,6 +35,14 @@ public class CardService {
             sql.append(" AND type_line = :type");
             params.put("type", type.getType());
         }
+    }
+    public NewDeck findColorIdentityForDeck(NewDeck deck) {
+        var deckColorIdentity = cardRepository.findByColorIdentity(deck.getName());
+        deckColorIdentity.ifPresent(card-> {
+            String[] listOfColors = card.colorIdentity().split(", ");
+            deck.setColorIdentity(List.of(listOfColors));
+        });
+        return deck;
     }
     public void findByCmc(StringBuilder sql, Map<String, Object> params, String cmcInput) {
         Inequality expression = queryParser.parse(cmcInput);

@@ -1,7 +1,7 @@
 package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.Card;
-import com.example.mtg_deckbuilder.model.NewDeckForm;
+import com.example.mtg_deckbuilder.model.DeckLayout;
 import com.example.mtg_deckbuilder.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +26,7 @@ public class DeckBuilderController {
             System.out.println(card.name());
         }
         model.addAttribute("listOfCommanders", listOfCommanders);
-        model.addAttribute("newDeckForm", new NewDeckForm());
+        model.addAttribute("newDeckForm", new DeckLayout());
         model.addAttribute("availableTags", List.of());
         return "deck-builder";
     }

@@ -11,7 +11,7 @@ import java.util.List;
 public class DeckSearchCriteria {
     private String searchQuery;
     private List<String> selectedColors = new ArrayList<>();
-    private String sortBy = "lastUpdated";
+    private String sortBy = "lastUpdate";
     private String sortOrder = "desc";
 
     // Constructors

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
@@ -50,6 +51,11 @@ public class DashboardController {
     @GetMapping("/mtg-dashboard")
     public String getPlayerProfile(Model model) throws IOException {
         model.addAttribute("cards", autocomplete.readFile());
+        return "mtg-dashboard";
+    }
+
+    @PostMapping("/add-card")
+    public String addCardToDeck(Model model) {
         return "mtg-dashboard";
     }
 }
