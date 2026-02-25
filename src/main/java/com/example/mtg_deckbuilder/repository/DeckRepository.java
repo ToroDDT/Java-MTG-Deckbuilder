@@ -35,8 +35,8 @@ public class DeckRepository {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
         String sql = """
-        INSERT INTO decks (title, format, commander, visibility, folder, description, "colorIdentity", lastupdate, bracket) 
-        VALUES (:name, :format, :commander, :visibility, :folder, :description, :lastupdate, :"colorIdentity", :bracket)
+        INSERT INTO decks (name,  format, commander, visibility, folder, description, colors_identity, last_updated, bracket) 
+        VALUES ( :name, :format, :commander, :visibility, :folder, :description, :colorIdentity, :lastUpdate, :bracket)
     """;
 
         jdbcClient.sql(sql)
@@ -44,7 +44,7 @@ public class DeckRepository {
                 .update(keyHolder, "id"); // Tell JDBC to retrieve the generated "id" column
 
         newDeck.setId(keyHolder.getKeyAs(UUID.class));
-
+        System.out.println("New deck created with id: " + newDeck.getId());
         return newDeck;
     }
 }

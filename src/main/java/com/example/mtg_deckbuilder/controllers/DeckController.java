@@ -3,6 +3,7 @@ package com.example.mtg_deckbuilder.controllers;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.service.CardService;
+import com.example.mtg_deckbuilder.service.DeckService;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import jakarta.validation.Valid;
@@ -21,13 +22,18 @@ import java.util.List;
 public class DeckController {
 
     private final CardService cardService;
+    private final DeckService deckService;
 
-    public DeckController(CardService cardService) {
+    public DeckController(CardService cardService, DeckService deckService) {
         this.cardService = cardService;
+        this.deckService = deckService;
     }
 
     @GetMapping("/decks")
     public String getDecks(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model) {
+
+
+
         List<Deck> decks = new ArrayList<>();
 
         Deck deck1 = new Deck(1L, "Galadriel Light of Valinor", Arrays.asList("W", "U", "G"), "Commander", 2, LocalDate.of(2024, 7, 15), "/decks/1");
@@ -47,8 +53,8 @@ public class DeckController {
 
     @PostMapping("/add-deck")
     public String addCardToDeck(@Valid @ModelAttribute("newDeck") NewDeck newDeck, Model model) {
-        System.out.println(newDeck.getName());
-        System.out.println(newDeck.getCommander());
+        System.out.println("its workdsing ");
+        deckService.addDeck(newDeck);
         return "redirect:/decks";
     }
 }

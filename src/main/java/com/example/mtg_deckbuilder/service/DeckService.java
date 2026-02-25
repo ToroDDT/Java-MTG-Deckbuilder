@@ -6,22 +6,22 @@ import com.example.mtg_deckbuilder.repository.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class DeckService {
 
-    private final DeckRepository deckRepository;
-    private final CardRepository cardRepository;
-    private final CardService cardService;
+  private final DeckRepository deckRepository;
+  private final CardRepository cardRepository;
+  private final CardService cardService;
 
-    @Autowired
-    public DeckService(DeckRepository deckRepository, CardRepository cardRepository, CardService cardService) {
-        this.deckRepository = deckRepository;
-        this.cardRepository = cardRepository;
-        this.cardService = cardService;
-    }
+  @Autowired
+  public DeckService(DeckRepository deckRepository, CardRepository cardRepository, CardService cardService) {
+    this.deckRepository = deckRepository;
+    this.cardRepository = cardRepository;
+    this.cardService = cardService;
+  }
 
-    public NewDeck addDeck(NewDeck newDeck) {
-        return deckRepository.createNewDeckEntry(cardService.findColorIdentityForDeck(newDeck));
-    }
+  public NewDeck addDeck(NewDeck newDeck) {
+    return deckRepository.createNewDeckEntry(newDeck);
+  }
+
 }

@@ -14,7 +14,6 @@ public class NewDeck {
     private UUID id;
     @NotBlank
     private String name;
-    @NotBlank
     private String format; // must have format specified
     private String commander = "None";
     private String visibility = "public"; // must be public or private
