@@ -214,21 +214,21 @@
                     <div class="deck-item-inner">
                         <div class="deck-info">
                             <div class="deck-title-row">
-                                <a th:href="${deck.url}" th:text="${deck.name}" class="deck-link">Deck Name</a>
-                                <span th:if="${deck.bracket != null}" class="badge bracket-badge"
-                                      th:text="'Bracket ' + ${deck.bracket}"></span>
+                                <a th:href="${deck.getKey().name()}" th:text="${deck.getKey().name()}" class="deck-link">Deck Name</a>
+                                <span th:if="${deck.getKey().bracket!= null}" class="badge bracket-badge"
+                                      th:text="'Bracket ' + ${deck.getKey().bracket()}"></span>
                             </div>
 
                             <div class="deck-meta">
                                 <div class="mana-colors">
-                                    <span th:each="color : ${deck.colors}"
+                                    <span th:each="color : ${deck.getValue()}"
                                           th:class="'mana-symbol color-' + ${color}"
                                           th:text="${color}"></span>
                                 </div>
                                 <span class="meta-sep">•</span>
-                                <span th:text="${deck.format}">Commander</span>
+                                <span th:text="${deck.getKey().format()}">Commander</span>
                                 <span class="meta-sep">•</span>
-                                <span th:text="${#temporals.format(deck.lastUpdate, 'dd MMM yyyy')}">Date</span>
+                                <span th:text="${#temporals.format(deck.getKey().last_updated(),'dd MMM yyyy')}">Date</span>
                             </div>
                         </div>
                         <i class="fas fa-external-link-alt external-icon"></i>

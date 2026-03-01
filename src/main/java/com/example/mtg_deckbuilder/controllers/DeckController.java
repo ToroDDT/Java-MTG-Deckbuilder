@@ -1,22 +1,25 @@
 package com.example.mtg_deckbuilder.controllers;
 
+import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.CardService;
 import com.example.mtg_deckbuilder.service.DeckService;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class DeckController {
@@ -30,20 +33,11 @@ public class DeckController {
     }
 
     @GetMapping("/decks")
-    public String getDecks(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model) {
+    public String getDecks(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model, @AuthenticationPrincipal CustomUserDetails user) {
 
+        Map<Deck, List<String>> decks = deckService.getAllDecksForUser(user.getId(), deckSearchCriteria);
 
-
-        List<Deck> decks = new ArrayList<>();
-
-        Deck deck1 = new Deck(1L, "Galadriel Light of Valinor", Arrays.asList("W", "U", "G"), "Commander", 2, LocalDate.of(2024, 7, 15), "/decks/1");
-        decks.add(deck1);
-
-        List<Deck> filteredDecks = DeckUtils.filterDecks(decks, deckSearchCriteria);
-
-        filteredDecks = DeckUtils.sortDecks(filteredDecks, deckSearchCriteria.getSortBy(), deckSearchCriteria.getSortOrder());
-
-        model.addAttribute("decks", filteredDecks);
+        model.addAttribute("decks", decks);
         model.addAttribute("deckSearchCriteria", deckSearchCriteria);
         model.addAttribute("listOfCommanders", cardService.findAllLegalCommanders() );
         model.addAttribute("newDeck", newDeck);
@@ -52,8 +46,14 @@ public class DeckController {
     }
 
     @PostMapping("/add-deck")
-    public String addCardToDeck(@Valid @ModelAttribute("newDeck") NewDeck newDeck, Model model) {
-        System.out.println("its workdsing ");
+    public String addCardToDeck(@Valid @ModelAttribute("newDeck") NewDeck newDeck, Model model, @AuthenticationPrincipal CustomUserDetails user) {
+        Optional<Card> card = cardService.findColorIdentity(newDeck.getCommander());
+        card.ifPresent(value -> {
+            newDeck.setColorIdentity(value.colorIdentity());
+        });
+        newDeck.setLastUpdate( LocalDate.now());
+        newDeck.setUrl("/mtg-dashboard" + "/" + newDeck.getId());
+        newDeck.setUserId(user.getId());
         deckService.addDeck(newDeck);
         return "redirect:/decks";
     }

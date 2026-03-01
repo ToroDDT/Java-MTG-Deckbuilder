@@ -1,10 +1,14 @@
 package com.example.mtg_deckbuilder.repository;
 
+import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,17 +38,38 @@ public class DeckRepository {
     public NewDeck createNewDeckEntry(NewDeck newDeck) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
-        String sql = """
-        INSERT INTO decks (name,  format, commander, visibility, folder, description, colors_identity, last_updated, bracket) 
-        VALUES ( :name, :format, :commander, :visibility, :folder, :description, :colorIdentity, :lastUpdate, :bracket)
-    """;
+       String sql = """
+        INSERT INTO decks (
+            user_id, name, format, commander, visibility,\s
+            folder, description, colors_identity, last_updated, bracket, url
+        )\s
+        VALUES (
+            :userId, :name, :format, :commander, :visibility,\s
+            :folder, :description, :colorIdentity, :lastUpdate, :bracket, :url
+        )
+   \s""";
 
-        jdbcClient.sql(sql)
-                .paramSource(newDeck)
+    jdbcClient.sql(sql)
+              .paramSource(new BeanPropertySqlParameterSource(newDeck)) // Passing the object here
                 .update(keyHolder, "id"); // Tell JDBC to retrieve the generated "id" column
 
         newDeck.setId(keyHolder.getKeyAs(UUID.class));
         System.out.println("New deck created with id: " + newDeck.getId());
         return newDeck;
     }
+
+
+    public List<Deck> getAllDecksForUser(UUID userId) {
+        String sql = """
+        SELECT * FROM decks
+        WHERE user_id = :userId
+        """;
+
+        return jdbcClient.sql(sql)
+                .param("userId", userId)
+                .query(Deck.class)
+                .list();
+    }
+
+
 }

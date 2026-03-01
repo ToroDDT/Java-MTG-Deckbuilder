@@ -348,7 +348,7 @@ html, body {
 }
 .preview-placeholder small { font-size: .8rem; font-style: normal; }
 
-/* Autocomplete */
+/* CardNameRepository */
 .autocomplete-list {
     background: var(--bg-card);
     border: 1px solid var(--border-color);

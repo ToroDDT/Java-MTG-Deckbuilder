@@ -1,9 +1,9 @@
 package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.repository.CardNameRepository;
 import com.example.mtg_deckbuilder.repository.CardRepository;
 import com.example.mtg_deckbuilder.service.CardService;
-import com.example.mtg_deckbuilder.utils.Autocomplete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,13 +18,13 @@ import java.util.List;
 public class DashboardController {
 
     private final CardRepository cardRepository;
-    private final Autocomplete autocomplete;
+    private final CardNameRepository cardNameRepository;
     private final CardService cardService;
 
     @Autowired
-    public DashboardController(CardRepository cardRepository, Autocomplete autocomplete, CardService cardService) {
+    public DashboardController(CardRepository cardRepository, CardNameRepository cardNameRepository, CardService cardService) {
         this.cardRepository = cardRepository;
-        this.autocomplete = autocomplete;
+        this.cardNameRepository = cardNameRepository;
         this.cardService = cardService;
     }
 
@@ -35,7 +35,7 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) throws IOException {
-        model.addAttribute("cards", autocomplete.readFile());
+        model.addAttribute("cards", cardNameRepository.readFile());
         return "mtg-dashboard";
     }
 
@@ -50,7 +50,7 @@ public class DashboardController {
 
     @GetMapping("/mtg-dashboard")
     public String getPlayerProfile(Model model) throws IOException {
-        model.addAttribute("cards", autocomplete.readFile());
+        model.addAttribute("cards", cardNameRepository.readFile());
         return "mtg-dashboard";
     }
 

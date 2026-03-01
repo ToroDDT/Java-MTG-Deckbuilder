@@ -6,6 +6,5 @@ public record User(
         UUID id,
         String email,
         String username,
-        String password,
-        String created_at
+        String password
 ) {}

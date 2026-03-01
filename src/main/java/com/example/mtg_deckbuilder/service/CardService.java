@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CardService {
@@ -23,9 +24,10 @@ public class CardService {
     return cardRepository.findLegalCommanderCards();
   }
 
-  public void addCardToDeck(String cardName) {
-
+  public Optional<Card> findColorIdentity(String name) {
+    return cardRepository.findByColorIdentity(name);
   }
+
 
   public List<Card> executeComplexQuery(CardSearchParameters cardSearchParameters, Map<String, ?> params) {
     SqlBuilder sql = new SqlBuilder.Builder("SELECT * FROM card WHERE 1=1")
