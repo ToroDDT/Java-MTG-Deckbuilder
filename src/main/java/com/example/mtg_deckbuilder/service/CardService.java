@@ -1,7 +1,7 @@
 package com.example.mtg_deckbuilder.service;
 
 import com.example.mtg_deckbuilder.model.*;
-import com.example.mtg_deckbuilder.repository.CardRepository;
+import com.example.mtg_deckbuilder.repository.MtgJsonRepository;
 import com.example.mtg_deckbuilder.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,19 +13,19 @@ import java.util.Optional;
 @Service
 public class CardService {
 
-  private final CardRepository cardRepository;
+  private final MtgJsonRepository mtgJsonRepository;
 
   @Autowired
-  public CardService(CardRepository cardRepository) {
-    this.cardRepository = cardRepository;
+  public CardService(MtgJsonRepository mtgJsonRepository) {
+    this.mtgJsonRepository = mtgJsonRepository;
   }
 
   public List<Card> findAllLegalCommanders() {
-    return cardRepository.findLegalCommanderCards();
+    return mtgJsonRepository.findLegalCommanderCards();
   }
 
   public Optional<Card> findColorIdentity(String name) {
-    return cardRepository.findByColorIdentity(name);
+    return mtgJsonRepository.findByColorIdentity(name);
   }
 
 
@@ -34,7 +34,7 @@ public class CardService {
         .whereName(true, "farewell")
         .build();
 
-    return cardRepository.executeComplexQuery(sql.getSql(), params);
+    return mtgJsonRepository.executeComplexQuery(sql.getSql(), params);
 
   }
 }

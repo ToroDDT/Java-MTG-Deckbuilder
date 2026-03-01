@@ -1,9 +1,7 @@
 package com.example.mtg_deckbuilder.service;
 
-import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
-import com.example.mtg_deckbuilder.repository.CardRepository;
 import com.example.mtg_deckbuilder.repository.DeckRepository;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import com.example.mtg_deckbuilder.utils.DeckUtils;

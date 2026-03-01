@@ -2,7 +2,7 @@ package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.repository.CardNameRepository;
-import com.example.mtg_deckbuilder.repository.CardRepository;
+import com.example.mtg_deckbuilder.repository.MtgJsonRepository;
 import com.example.mtg_deckbuilder.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,13 +17,13 @@ import java.util.List;
 @Controller
 public class DashboardController {
 
-    private final CardRepository cardRepository;
+    private final MtgJsonRepository mtgJsonRepository;
     private final CardNameRepository cardNameRepository;
     private final CardService cardService;
 
     @Autowired
-    public DashboardController(CardRepository cardRepository, CardNameRepository cardNameRepository, CardService cardService) {
-        this.cardRepository = cardRepository;
+    public DashboardController(MtgJsonRepository mtgJsonRepository, CardNameRepository cardNameRepository, CardService cardService) {
+        this.mtgJsonRepository = mtgJsonRepository;
         this.cardNameRepository = cardNameRepository;
         this.cardService = cardService;
     }
@@ -42,7 +42,7 @@ public class DashboardController {
 
     @GetMapping("/search")
     public String search(@RequestParam("query") String query, Model model) {
-        List<Card> results = cardRepository.findByCardsBySubstring(query);
+        List<Card> results = mtgJsonRepository.findByCardsBySubstring(query);
         model.addAttribute("results", results);
         model.addAttribute("query", query);
         return "search-results";
