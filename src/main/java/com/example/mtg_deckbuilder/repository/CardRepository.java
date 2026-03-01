@@ -1,66 +1,11 @@
 package com.example.mtg_deckbuilder.repository;
 
 import com.example.mtg_deckbuilder.model.Card;
-import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
-@Repository
-public class CardRepository {
-  private final JdbcClient jdbcClient;
-
-  public CardRepository(JdbcClient jdbcClient) {
-    this.jdbcClient = jdbcClient;
-  }
-
-  public Optional<Card> findById(UUID id) {
-    return jdbcClient.sql("select * from cards where id = :id")
-        .param("id", id) // Safely binds the UUID
-        .query(Card.class) // Auto-maps to your Card record
-        .optional(); // Returns Optional<Card> automatically
-  }
-
-  public Optional<Card> findByName(String name) {
-    return jdbcClient.sql("select distinct on (name) * from cards where name = :name")
-        .param("name", name) // Safely binds the UUID
-        .query(Card.class) // Auto-maps to your Card record
-        .optional(); // Returns Optional<Card> automatically
-  }
-
-  public Optional<Card> findByColorIdentity(String name) {
-    // Note the escaped double quotes around "colorIdentity"
-    return jdbcClient.sql("SELECT DISTINCT ON (\"colorIdentity\") * FROM cards WHERE name = :name")
-        .param("name", name)
-        .query(Card.class)
-        .optional();
-  }
-
-  public List<Card> findByCardsBySubstring(String name) {
-    String sql = "SELECT * FROM cards WHERE name ILIKE CONCAT('%', :name, '%')";
-    return jdbcClient.sql(sql)
-        .param("name", name)
-        .query(Card.class)
-        .list(); // Returns a List of <Cards> else returns []
-  }
-
-  public List<Card> findLegalCommanderCards() {
-    String sql = """
-        SELECT DISTINCT ON (name) * FROM cards
-        WHERE type ILIKE '%Legendary%'
-          AND type ILIKE '%Creature%'
-        ORDER BY name ASC, id ASC
-        """;
-
-    return jdbcClient.sql(sql)
-        .query(Card.class)
-        .list();
-  }
-
-  public List<Card> executeComplexQuery(String sql, Map<String, ?> params) {
-    return jdbcClient.sql(sql)
-        .params(params)
-        .query(Card.class)
-        .list();
-  }
+public interface CardRepository {
+    Optional<Card> findByName(String name);
+    Optional<Card> findById(UUID id);
 }
