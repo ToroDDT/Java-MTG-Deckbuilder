@@ -1,8 +1,7 @@
-package com.example.mtg_deckbuilder.utils;
+package com.example.mtg_deckbuilder.repository;
 
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 @Component
-public class Autocomplete {
+public class CardNameRepository {
 
     public ArrayList<String> readFile() throws IOException {
         ArrayList<String> cards = new ArrayList<>();
