@@ -5,8 +5,7 @@ import org.springframework.stereotype.Component;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 @Component
 public class CardNameRepository {
@@ -30,5 +29,14 @@ public class CardNameRepository {
             }
         }
         return cards;
+    }
+    public Map<String, String> convertStringArrayToMap(List<String> data) {
+        Map<String, String> map = new HashMap<>();
+
+        for (String value : data) {
+            map.put(value, value);
+        }
+
+        return map;
     }
 }

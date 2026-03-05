@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.repository.CardLibrary;
 import com.example.mtg_deckbuilder.repository.CardNameRepository;
 import com.example.mtg_deckbuilder.repository.MtgJsonRepository;
 import com.example.mtg_deckbuilder.service.CardService;
@@ -18,13 +19,13 @@ import java.util.List;
 public class DashboardController {
 
     private final MtgJsonRepository mtgJsonRepository;
-    private final CardNameRepository cardNameRepository;
+    private final CardLibrary cardLibrary;
     private final CardService cardService;
 
     @Autowired
-    public DashboardController(MtgJsonRepository mtgJsonRepository, CardNameRepository cardNameRepository, CardService cardService) {
+    public DashboardController(CardLibrary cardLibrary, MtgJsonRepository mtgJsonRepository, CardService cardService) {
         this.mtgJsonRepository = mtgJsonRepository;
-        this.cardNameRepository = cardNameRepository;
+        this.cardLibrary = cardLibrary;
         this.cardService = cardService;
     }
 
@@ -35,10 +36,9 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) throws IOException {
-        model.addAttribute("cards", cardNameRepository.readFile());
+        model.addAttribute("cards", cardLibrary.getCardLibrary());
         return "mtg-dashboard";
     }
-
 
     @GetMapping("/search")
     public String search(@RequestParam("query") String query, Model model) {
@@ -50,7 +50,7 @@ public class DashboardController {
 
     @GetMapping("/mtg-dashboard")
     public String getPlayerProfile(Model model) throws IOException {
-        model.addAttribute("cards", cardNameRepository.readFile());
+        model.addAttribute("cards", cardLibrary.getCardLibrary());
         return "mtg-dashboard";
     }
 
