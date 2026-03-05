@@ -7,26 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/decks.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script th:src="@{/js/decks.js}"></script>
 </head>
 <body>
-    <header>
-        <div class="header-container">
-            <div class="logo"><a th:href="@{/}"><i class="fas fa-layer-group"></i> MTG DECKBUILDER</a></div>
-            <nav>
-                <button class="mobile-menu-toggle" aria-label="Toggle Menu">
-                </button>
-                <div class="nav-links">
-                    <a href="#"><i class="fas fa-search"></i> Browse</a>
-                    <a href="#"><i class="fas fa-book"></i> Decks</a>
-                    <a href="#"><i class="fas fa-clone"></i> Cards</a>
-                </div>
-                <div class="nav-user">
-                    <a th:href="@{/dashboard}" class="btn-dashboard">Dashboard</a>
-                </div>
-            </nav>
-        </div>
-    </header>
-
+<div th:replace="fragments/nav-bar.html :: header"></div>
     <main class="main">
         <div class="deck-container">
             <div class="deck-header">
@@ -237,75 +221,6 @@
             </div>
         </div>
     </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">MTG DECKBUILDER</div>
-                <div class="footer-links">
-                    <a href="#">Terms</a>
-                    <a href="#">Privacy</a>
-                    <a href="#">Discord</a>
-                    <a href="#">Twitter</a>
-                </div>
-            </div>
-            <p class="copyright">&copy; 2026 MTG Deckbuilder. Portions of MTG Deckbuilder are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, and Oracle text, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. MTG Deckbuilder is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.</p>
-        </div>
-    </footer>
-
-    <script>
-        // Existing mobile nav toggle
-        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
-            document.querySelector('nav').classList.toggle('active');
-        });
-
-        // New Deck modal logic
-        const modal = document.getElementById('newDeckModal');
-        const openBtn = document.getElementById('openNewDeckModalBtn');
-        const closeBtn = document.getElementById('closeNewDeckModalBtn');
-        const cancelBtn = document.getElementById('cancelNewDeckBtn');
-
-        function openNewDeckModal() {
-            modal.classList.add('is-open');
-            modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
-            const nameInput = document.getElementById('deckName');
-            if (nameInput) nameInput.focus();
-        }
-
-        function closeNewDeckModal() {
-            modal.classList.remove('is-open');
-            modal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-        }
-
-        openBtn.addEventListener('click', openNewDeckModal);
-        closeBtn.addEventListener('click', closeNewDeckModal);
-        cancelBtn.addEventListener('click', closeNewDeckModal);
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeNewDeckModal();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.classList.contains('is-open')) closeNewDeckModal();
-        });
-
-        // Existing Deck List mode toggles
-        const modeSelect = document.getElementById('existingDeckListMode');
-        const panelPaste = document.getElementById('existingListPaste');
-        const panelFile = document.getElementById('existingListFile');
-        const panelUrl = document.getElementById('existingListUrl');
-
-        function syncExistingListPanels() {
-            const mode = modeSelect.value;
-            panelPaste.hidden = mode !== 'PASTE';
-            panelFile.hidden = mode !== 'FILE';
-            panelUrl.hidden = mode !== 'URL';
-        }
-
-        modeSelect.addEventListener('change', syncExistingListPanels);
-        syncExistingListPanels();
-    </script>
+    <div th:replace="fragments/footer.html :: footer"></div>
 </body>
 </html>

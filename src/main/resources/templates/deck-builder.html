@@ -15,9 +15,6 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════
-     TRIGGER BUTTON (wherever you need it on your page)
-     ═══════════════════════════════════════════════ -->
 <div class="page-demo">
     <div class="demo-bg"></div>
     <div class="demo-content">
@@ -45,7 +42,7 @@
 
         <!-- Scrollable Form Body -->
         <form th:action="@{/build/new}" th:object="${newDeckForm}" method="post"
-              action="/build/new" class="modal-body" id="deckForm" cardNameRepository="off" novalidate>
+              action="/build/new" class="modal-body" id="deckForm" autocomplete="off" novalidate>
 
             <!-- CSRF (Spring Security) -->
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -78,7 +75,7 @@
                                        class="field-input"
                                        list="commanderOptions"
                                        placeholder="Add a card to your deck..."
-                                       cardNameRepository="on"
+                                       autocomplete="on"
                                        name="name"
                                 >
                             </div>
@@ -159,7 +156,6 @@
                     </div>
                 </div>
 
-                <!-- Bracket -->
                 <div class="field-group" style="max-width:240px; margin-top:1rem;">
                     <label class="field-label" for="bracket">Power Bracket</label>
                     <select id="bracket" name="bracket" th:field="*{bracket}" class="field-select">
