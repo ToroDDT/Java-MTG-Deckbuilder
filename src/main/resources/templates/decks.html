@@ -7,7 +7,6 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/decks.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script th:src="@{/js/decks.js}"></script>
 </head>
 <body>
 <div th:replace="fragments/nav-bar.html :: header"></div>
@@ -30,19 +29,19 @@
                             <label class="filter-label">Filter by Colors</label>
                             <div class="flex-wrap-gap">
                                 <input type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
-                                <label for="colorW" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'W')} ? 'active color-W' : ''">W</label>
+                                <label onclick="toggleColor(this)" for="colorW" id="whiteToggle" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'W')} ? 'active color-W' : ''">W</label>
 
-                                <input type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
-                                <label for="colorU" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'U')} ? 'active color-U' : ''">U</label>
+                                <input  type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
+                                <label onclick="toggleColor(this)" for="colorU" id="blueToggle" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'U')} ? 'active color-U' : ''">U</label>
 
                                 <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
-                                <label for="colorB" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'B')} ? 'active color-B' : ''">B</label>
+                                <label onclick="toggleColor(this)" for="colorB" id="blackToggle" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'B')} ? 'active color-B' : ''">B</label>
 
                                 <input type="checkbox" th:field="*{selectedColors}" value="R" id="colorR" style="display:none;">
-                                <label for="colorR" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'R')} ? 'active color-R' : ''">R</label>
+                                <label onclick="toggleColor(this)" for="colorR" id="redToggle"  class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'R')} ? 'active color-R' : ''">R</label>
 
                                 <input type="checkbox" th:field="*{selectedColors}" value="G" id="colorG" style="display:none;">
-                                <label for="colorG" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'G')} ? 'active color-G' : ''">G</label>
+                                <label onclick="toggleColor(this)" for="colorG" id="greenToggle" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'G')} ? 'active color-G' : ''">G</label>
                             </div>
                         </div>
 
@@ -222,5 +221,8 @@
         </div>
     </main>
     <div th:replace="fragments/footer.html :: footer"></div>
+
+<script th:src="@{/js/decks.js}"></script>
+
 </body>
 </html>
