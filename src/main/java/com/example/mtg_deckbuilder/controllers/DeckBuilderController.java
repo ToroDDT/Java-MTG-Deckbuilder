@@ -21,10 +21,9 @@ public class DeckBuilderController {
     }
     @GetMapping("/deck-builder")
     public String deckBuilderPage(Model model) {
+
         List<Card> listOfCommanders = cardService.findAllLegalCommanders();
-        for (Card card : listOfCommanders) {
-            System.out.println(card.name());
-        }
+
         model.addAttribute("listOfCommanders", listOfCommanders);
         model.addAttribute("newDeckForm", new DeckLayout());
         model.addAttribute("availableTags", List.of());

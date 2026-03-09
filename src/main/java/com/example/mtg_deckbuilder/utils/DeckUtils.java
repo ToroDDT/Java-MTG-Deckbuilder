@@ -4,48 +4,48 @@ import com.example.mtg_deckbuilder.model.Deck;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DeckUtils {
-     static public List<Deck> filterDecks(List<Deck> decks, DeckSearchCriteria filterForm) {
+    public static List<Deck> filterDecks(List<Deck> decks, DeckSearchCriteria criteria) {
+        String searchQuery = criteria.getSearchQuery();
+        List<String> selectedColors = criteria.getSelectedColors();
+
         return decks.stream()
-                .filter(deck -> {
-                    // Filter by search query
-                    if (filterForm.getSearchQuery() != null && !filterForm.getSearchQuery().isEmpty()) {
-                        if (!deck.name().toLowerCase().contains(filterForm.getSearchQuery().toLowerCase())) {
-                            return false;
-                        }
-                    }
+                .filter(deck -> matchesSearchQuery(deck, searchQuery))
+                .filter(deck -> matchesSelectedColors(deck, selectedColors))
+                .toList();
+    }
 
-                    // Filter by colors
-                    if (filterForm.getSelectedColors() != null && !filterForm.getSelectedColors().isEmpty()) {
-                        for (String color : filterForm.getSelectedColors()) {
-                            if (!deck.colors_identity().contains(color)) {
-                                return false;
-                            }
-                        }
-                    }
+    private static boolean matchesSearchQuery(Deck deck, String searchQuery) {
+        if (searchQuery == null || searchQuery.isEmpty()) {
+            return true;
+        }
+        return deck.name().toLowerCase().contains(searchQuery.toLowerCase());
+    }
 
-                    return true;
-                })
-                .collect(Collectors.toList());
+    private static boolean matchesSelectedColors(Deck deck, List<String> selectedColors) {
+        if (selectedColors == null || selectedColors.isEmpty()) {
+            return true;
+        }
+        return selectedColors.stream()
+                .allMatch(color -> deck.colors_identity().contains(color));
     }
 
     static public List<Deck> sortDecks(List<Deck> decks, String sortBy, String sortOrder) {
-        List<Deck> sorted = new ArrayList<>(decks);
-
-        if ("name".equals(sortBy)) {
-            sorted.sort((a, b) -> a.name().compareToIgnoreCase(b.name()));
-        } else if ("lastUpdate".equals(sortBy)) {
-            sorted.sort((a, b) -> a.last_updated().compareTo(b.last_updated()));
-        }
-
-        if ("desc".equals(sortOrder)) {
-            java.util.Collections.reverse(sorted);
-        }
-        return sorted;
+        return switch (sortBy) {
+            case "commander" -> decks.stream()
+                    .sorted(Comparator.comparing(Deck::commander))
+                    .toList();
+            case "color identity" -> decks.stream()
+                    .sorted(Comparator.comparing(Deck::colors_identity))
+                    .toList();
+            default -> decks;
+        };
     }
+
     static public List<String> getColorIdentityOfDeck(Deck deck) {
         return Arrays.stream(deck.colors_identity().split(","))
                 .map(String::trim)
