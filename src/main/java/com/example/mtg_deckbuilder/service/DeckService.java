@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 public class DeckService {
@@ -24,19 +25,17 @@ public class DeckService {
     return deckRepository.createNewDeckEntry(newDeck);
   }
 
-  public Map<Deck,List<String>> getAllDecksForUser(UUID userId, DeckSearchCriteria deckSearchCriteria) {
+  public Map<Deck, List<String>> getAllDecksForUser(UUID userId, DeckSearchCriteria deckSearchCriteria) {
+    Map<Deck, List<String>> finalDecks = new LinkedHashMap<>();
 
-    Map<Deck, List<String>> finalDecks = new HashMap<>();
     var decks = deckRepository.getAllDecksForUser(userId);
     var filteredDecks = DeckUtils.filterDecks(decks, deckSearchCriteria);
     var sortedDecks = DeckUtils.sortDecks(filteredDecks, deckSearchCriteria.getSortBy(), deckSearchCriteria.getSortOrder());
+
     var colorIdentityForEachDeck = DeckUtils.getColorIdentityOfDecks(sortedDecks);
 
-    for (int i = 0; i < sortedDecks.toArray().length; i++) {
-      finalDecks.put(sortedDecks.get(i),colorIdentityForEachDeck.get(i));
-    }
-
+    IntStream.range(0, sortedDecks.size())
+            .forEach(i -> finalDecks.put(sortedDecks.get(i), colorIdentityForEachDeck.get(i)));
     return finalDecks;
   }
-
 }

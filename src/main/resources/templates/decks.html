@@ -49,8 +49,9 @@
                             <label class="filter-label">Sort</label>
                             <div class="sort-row">
                                 <select th:field="*{sortBy}" class="sort-select">
-                                    <option value="name">Name</option>
+                                    <option value="commander">Commander</option>
                                     <option value="lastUpdated">Last Updated</option>
+                                    <option value="color identity">Color Identity</option>
                                 </select>
                                 <select th:field="*{sortOrder}" class="sort-select sort-order">
                                     <option value="asc">Asc</option>
@@ -227,6 +228,6 @@
     <div th:replace="fragments/footer.html :: footer"></div>
 
 <script th:src="@{/js/decks.js}"></script>
-
+<script src='https://unpkg.com/htmx.org/dist/htmx.min.js'></script>
 </body>
 </html>

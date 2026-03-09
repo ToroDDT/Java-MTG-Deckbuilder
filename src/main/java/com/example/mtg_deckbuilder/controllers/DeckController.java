@@ -34,14 +34,12 @@ public class DeckController {
 
     @GetMapping("/collection")
     public String getDecks(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model, @AuthenticationPrincipal CustomUserDetails user) {
-
-        Map<Deck, List<String>> decks = deckService.getAllDecksForUser(user.getId(), deckSearchCriteria);
-
-        model.addAttribute("decks", decks);
-        model.addAttribute("deckSearchCriteria", deckSearchCriteria);
-        model.addAttribute("listOfCommanders", cardService.findAllLegalCommanders() );
-        model.addAttribute("newDeck", newDeck);
-
+        model.addAllAttributes(Map.of(
+                "decks", deckService.getAllDecksForUser(user.getId(), deckSearchCriteria),
+                "deckSearchCriteria", deckSearchCriteria,
+                "listOfCommanders", cardService.findAllLegalCommanders(),
+                "newDeck", newDeck
+        ));
         return "decks";
     }
 
