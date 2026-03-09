@@ -96,7 +96,6 @@
     border-radius: 6px;
     border: 1px solid var(--border-color);
     background: var(--bg-dark);
-    color: var(--text-secondary);
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 600;
@@ -105,15 +104,35 @@
     text-align: center;
 }
 
+.btn-filter-white-selected {
+    background: #f8f6d3;
+    color: #444;
+    border-color: #d1cfab;
+}
+.btn-filter-black-selected {
+    background: #333;
+    color: #fff;
+    border-color: #000;
+}
+.btn-filter-red-selected {
+    background: #ff4444;
+    color: #fff;
+    border-color: #cc0000;
+}
+.btn-filter-blue-selected {
+    background: #00aaff;
+    color: #fff;
+    border-color: #0088cc;
+}
+.btn-filter-green-selected {
+    background: #228822;
+    color: #fff;
+    border-color: #116611;
+}
+
 .btn-filter:hover {
     border-color: var(--text-secondary);
     color: var(--text-primary);
-}
-
-.btn-filter.active {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-    color: white;
 }
 
 .sort-row {

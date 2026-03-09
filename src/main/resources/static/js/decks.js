@@ -48,5 +48,69 @@
     panelUrl.hidden = mode !== 'URL';
 }
 
+    function toggleColor(element){
+        element.classList.toggle("btn-filter-selected");
+    }
+
+    function toggleWhite(element){
+        console.log(element.classList);
+       if (element.classList.contains("color-W")){
+            element.classList.remove("color-W");
+            element.classList.add("btn-filter");
+           console.log(element.classList);
+        }
+        else{
+            element.classList.toggle("btn-filter-white-selected");
+        }
+    }
+
+    function toggleRed(element){
+        console.log(element.classList);
+        if (element.classList.contains("color-R")){
+            element.classList.remove("color-R");
+            element.classList.add("btn-filter");
+            console.log(element.classList);
+        }
+        else{
+            element.classList.toggle("btn-filter-red-selected");
+        }
+    }
+
+    function toggleBlue(element){
+        console.log(element.classList);
+        if (element.classList.contains("color-U")){
+            element.classList.remove("color-U");
+            element.classList.add("btn-filter");
+            console.log(element.classList);
+        }
+        else{
+            element.classList.toggle("btn-filter-blue-selected");
+        }
+    }
+
+    function toggleBlack(element){
+        console.log(element.classList);
+        if (element.classList.contains("color-B")){
+            element.classList.remove("color-B");
+            element.classList.add("btn-filter");
+            console.log(element.classList);
+        }
+        else{
+            element.classList.toggle("btn-filter-black-selected");
+        }
+    }
+
+    function toggleGreen(element){
+        console.log(element.classList);
+        if (element.classList.contains("color-G")){
+            element.classList.remove("color-G");
+            element.classList.add("btn-filter");
+            console.log(element.classList);
+        }
+        else{
+            element.classList.toggle("btn-filter-green-selected");
+        }
+    }
+
     modeSelect.addEventListener('change', syncExistingListPanels);
     syncExistingListPanels();
