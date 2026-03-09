@@ -17,7 +17,7 @@
                 <p>Browse and search your Magic: The Gathering decks</p>
             </div>
 
-            <form th:action="@{/decks}" method="get" th:object="${deckSearchCriteria}">
+            <form th:action="@{/collection}" method="get" th:object="${deckSearchCriteria}">
                 <div class="filter-section">
                     <div class="search-input-wrapper">
                         <i class="fas fa-search"></i>
@@ -206,15 +206,19 @@
                                 <div class="mana-colors">
                                     <span th:each="color : ${deck.getValue()}"
                                           th:class="'mana-symbol color-' + ${color}"
-                                          th:text="${color}"></span>
+                                          th:text="${color}">
+                                    </span>
                                 </div>
                                 <span class="meta-sep">•</span>
                                 <span th:text="${deck.getKey().format()}">Commander</span>
+                                <span th:if="${deck.getKey().format() == 'Commander'}" th:text="${deck.getKey().commander()}">Commander</span>
                                 <span class="meta-sep">•</span>
                                 <span th:text="${#temporals.format(deck.getKey().last_updated(),'dd MMM yyyy')}">Date</span>
                             </div>
                         </div>
-                        <i class="fas fa-external-link-alt external-icon"></i>
+                        <a class="fas fa-external-link-alt external-icon"
+                                th:href="@{/collection/deck/{id}(id=${deck.getKey().id()})}">
+                        </a>
                     </div>
                 </div>
             </div>

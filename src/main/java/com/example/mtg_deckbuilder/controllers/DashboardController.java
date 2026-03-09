@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class DashboardController {
@@ -34,9 +36,10 @@ public class DashboardController {
         return "index";
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) throws IOException {
+    @GetMapping("/collection/deck/{id}")
+    public String dashboard(@PathVariable UUID id, Model model) throws IOException {
         model.addAttribute("cards", cardLibrary.getCardLibrary());
+        System.out.println(id);
         return "mtg-dashboard";
     }
 

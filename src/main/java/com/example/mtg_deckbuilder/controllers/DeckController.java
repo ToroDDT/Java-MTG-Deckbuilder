@@ -32,7 +32,7 @@ public class DeckController {
         this.deckService = deckService;
     }
 
-    @GetMapping("/decks")
+    @GetMapping("/collection")
     public String getDecks(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model, @AuthenticationPrincipal CustomUserDetails user) {
 
         Map<Deck, List<String>> decks = deckService.getAllDecksForUser(user.getId(), deckSearchCriteria);
