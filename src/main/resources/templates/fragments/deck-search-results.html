@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html  lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="search-results" hx-swap-oob="true" th:fragment="decks" class="deck-grid">
+  <div th:each="deck : ${decks}" class="deck-item">
+    <div class="deck-item-inner">
+      <div class="deck-info">
+        <div class="deck-title-row">
+          <a th:href="${deck.getKey().name()}" th:text="${deck.getKey().name()}" class="deck-link">Deck Name</a>
+          <span th:if="${deck.getKey().bracket!= null}" class="badge bracket-badge"
+                th:text="'Bracket ' + ${deck.getKey().bracket()}"></span>
+        </div>
+
+        <div class="deck-meta">
+          <div class="mana-colors">
+                                    <span th:each="color : ${deck.getValue()}"
+                                          th:class="'mana-symbol color-' + ${color}"
+                                          th:text="${color}">
+                                    </span>
+          </div>
+          <span class="meta-sep">•</span>
+          <span th:text="${deck.getKey().format()}">Commander</span>
+          <span th:if="${deck.getKey().format() == 'Commander'}" th:text="${deck.getKey().commander()}">Commander</span>
+          <span class="meta-sep">•</span>
+          <span th:text="${#temporals.format(deck.getKey().last_updated(),'dd MMM yyyy')}">Date</span>
+        </div>
+      </div>
+      <a class="fas fa-external-link-alt external-icon"
+         th:href="@{/collection/deck/{id}(id=${deck.getKey().id()})}">
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

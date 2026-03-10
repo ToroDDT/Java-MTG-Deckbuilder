@@ -17,7 +17,7 @@
                 <p>Browse and search your Magic: The Gathering decks</p>
             </div>
 
-            <form th:action="@{/collection}" method="get" th:object="${deckSearchCriteria}">
+            <form th:action="@{/search}" th:hx-get="@{/search}"  hx-target="#search-results" method="get" th:object="${deckSearchCriteria}" hx-trigger="input delay:200ms, change">
                 <div class="filter-section">
                     <div class="search-input-wrapper">
                         <i class="fas fa-search"></i>
@@ -28,10 +28,10 @@
                         <div class="filter-group">
                             <label class="filter-label">Filter by Colors</label>
                             <div class="flex-wrap-gap">
-                                <input type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
+                                <input hx-trigger="change"   type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
                                 <label onclick="toggleWhite(this)" for="colorW" id="whiteToggle" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'W')} ? 'color-W' : ''">W</label>
 
-                                <input  type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
+                                <input hx-trigger="change" type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
                                 <label onclick="toggleBlue(this)" for="colorU" id="blueToggle" class="btn-filter" th:classappend="${#lists.contains(deckSearchCriteria.selectedColors, 'U')} ? 'color-U' : ''">U</label>
 
                                 <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
@@ -79,7 +79,7 @@
                         <h2 id="newDeckModalTitle">Create New Deck</h2>
                         <button class="modal-close" type="button" id="closeNewDeckModalBtn" aria-label="Close modal">✕</button>
                     </div>
-                    <form th:action="@{/add-deck}" th:method="post" th:object="${newDeck}" class="modal-body" id="newDeckForm">
+                    <form th:action="@{/add-deck}"  th:method="post" th:object="${newDeck}" class="modal-body" id="newDeckForm">
                         <div class="modal-section">
                             <label class="field-label" for="deckName">Name</label>
                             <input th:field="*{name}" class="field-input" type="text" id="deckName" name="name" placeholder="e.g., My Awesome Deck" maxlength="120">
@@ -192,37 +192,7 @@
                 <i class="fas fa-folder-open"></i>
                 <p>No decks found matching your filters.</p>
             </div>
-
-            <div class="deck-grid">
-                <div th:each="deck : ${decks}" class="deck-item">
-                    <div class="deck-item-inner">
-                        <div class="deck-info">
-                            <div class="deck-title-row">
-                                <a th:href="${deck.getKey().name()}" th:text="${deck.getKey().name()}" class="deck-link">Deck Name</a>
-                                <span th:if="${deck.getKey().bracket!= null}" class="badge bracket-badge"
-                                      th:text="'Bracket ' + ${deck.getKey().bracket()}"></span>
-                            </div>
-
-                            <div class="deck-meta">
-                                <div class="mana-colors">
-                                    <span th:each="color : ${deck.getValue()}"
-                                          th:class="'mana-symbol color-' + ${color}"
-                                          th:text="${color}">
-                                    </span>
-                                </div>
-                                <span class="meta-sep">•</span>
-                                <span th:text="${deck.getKey().format()}">Commander</span>
-                                <span th:if="${deck.getKey().format() == 'Commander'}" th:text="${deck.getKey().commander()}">Commander</span>
-                                <span class="meta-sep">•</span>
-                                <span th:text="${#temporals.format(deck.getKey().last_updated(),'dd MMM yyyy')}">Date</span>
-                            </div>
-                        </div>
-                        <a class="fas fa-external-link-alt external-icon"
-                                th:href="@{/collection/deck/{id}(id=${deck.getKey().id()})}">
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <div th:replace="fragments/deck-search-results.html :: decks"></div>
         </div>
     </main>
     <div th:replace="fragments/footer.html :: footer"></div>

@@ -10,7 +10,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -21,7 +20,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")               // Points to your custom GET controller
                 .loginProcessingUrl("/login")      // The POST URL Spring Security handles automatically
-                .defaultSuccessUrl("/decks", true)
+                .defaultSuccessUrl("/collection", true)
                 .permitAll()
             )
             .logout(logout -> logout

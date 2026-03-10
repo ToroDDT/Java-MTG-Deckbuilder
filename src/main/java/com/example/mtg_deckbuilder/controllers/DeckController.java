@@ -43,6 +43,15 @@ public class DeckController {
         return "decks";
     }
 
+    @GetMapping(path = "/search", headers = "hx-request=true")
+    String nameHtmx(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model, @AuthenticationPrincipal CustomUserDetails user) {
+        System.out.println("THis is working");
+        model.addAllAttributes(Map.of(
+                "decks", deckService.getAllDecksForUser(user.getId(), deckSearchCriteria)
+        ));
+        return "fragments/deck-search-results :: #search-results";
+    }
+
     @PostMapping("/add-deck")
     public String addCardToDeck(@Valid @ModelAttribute("newDeck") NewDeck newDeck, Model model, @AuthenticationPrincipal CustomUserDetails user) {
         Optional<Card> card = cardService.findColorIdentity(newDeck.getCommander());

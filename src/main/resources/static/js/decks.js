@@ -48,10 +48,6 @@
     panelUrl.hidden = mode !== 'URL';
 }
 
-    function toggleColor(element){
-        element.classList.toggle("btn-filter-selected");
-    }
-
     function toggleWhite(element){
         console.log(element.classList);
        if (element.classList.contains("color-W")){
