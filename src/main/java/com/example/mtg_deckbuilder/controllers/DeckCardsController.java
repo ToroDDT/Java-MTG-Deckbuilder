@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-public class DashboardController {
+public class DeckCardsController {
 
     private final ScryfallRepository scryfallRepository;
     private final CardLibrary cardLibrary;
     private final CardService cardService;
 
     @Autowired
-    public DashboardController(CardLibrary cardLibrary, ScryfallRepository scryfallRepository, CardService cardService) {
+    public DeckCardsController(CardLibrary cardLibrary, ScryfallRepository scryfallRepository, CardService cardService) {
         this.scryfallRepository = scryfallRepository;
         this.cardLibrary = cardLibrary;
         this.cardService = cardService;
