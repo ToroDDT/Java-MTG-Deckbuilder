@@ -1,17 +1,20 @@
 package com.example.mtg_deckbuilder.repository;
 
 import com.example.mtg_deckbuilder.model.Card;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 @Repository
-public class MtgJsonRepository implements CardRepository {
+public class ScryfallRepository implements CardRepository {
 
   private final JdbcClient jdbcClient;
+  private final JdbcTemplate jdbcTemplate;
 
-  public MtgJsonRepository(JdbcClient jdbcClient) {
+  public ScryfallRepository(JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
+    this.jdbcTemplate = jdbcTemplate;
     this.jdbcClient = jdbcClient;
   }
 
@@ -50,13 +53,10 @@ public class MtgJsonRepository implements CardRepository {
   public List<Card> findLegalCommanderCards() {
     String sql = """
         SELECT DISTINCT ON (name) * FROM cards
-        WHERE type ILIKE '%Legendary%'
-          AND type ILIKE '%Creature%'
+        WHERE type_line ILIKE '%Legendary%'
+          AND type_line ILIKE '%Creature%'
         """;
-
-    return jdbcClient.sql(sql)
-        .query(Card.class)
-        .list();
+    return jdbcTemplate.query(sql, new CardRowMapper());
   }
 
   public List<Card> executeComplexQuery(String sql, Map<String, ?> params) {

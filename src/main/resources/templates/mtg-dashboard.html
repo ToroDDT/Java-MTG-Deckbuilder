@@ -29,14 +29,6 @@
     </header>
 
 <main class="main">
-    <section class="midfield-section">
-        <div class="userProfile">
-            <div class="logo-circle">D</div>
-            <div class="username">DavidDDT</div>
-        </div>
-        <h1 class="commander-name" th:text="${commander}">Commander Name</h1>
-    </section>
-
     <section class="edit-section">
         <div class="deck-actions">
             <button class="btn-action">Bulk Edit</button>
@@ -66,68 +58,7 @@
         <aside class="card-focus">
             <img src="https://cards.scryfall.io/normal/front/8/f/8fcf68cf-0dac-4b29-90d5-c18c685182e6.jpg?1717012767" alt="Commander Image">
         </aside>
-        <div class="cards-view">
-            <div class="card-list-item">
-                <section class="type-section">
-                    <div class="type-section-title">Sorceries</div>
-                    <ul class="card-list">
-                        <li class="card-list-item-name">Necrobloom</li>
-                        <li class="card-list-item-name">Austere command</li>
-                        <li class="card-list-item-name">Riot</li>
-                        <li class="card-list-item-name">Farewell</li>
-                    </ul>
-                </section>
-
-                <section class="type-section">
-                    <div class="type-section-title">Instants</div>
-                    <ul class="card-list">
-                        <li class="card-list-item-name">Necrobloom</li>
-                        <li class="card-list-item-name">Austere command</li>
-                        <li class="card-list-item-name">Riot</li>
-                        <li class="card-list-item-name">Farewell</li>
-                    </ul>
-                </section>
-
-                <section class="type-section">
-                    <div class="type-section-title">Instants</div>
-                    <ul class="card-list">
-                        <li class="card-list-item-name">Necrobloom</li>
-                        <li class="card-list-item-name">Austere command</li>
-                        <li class="card-list-item-name">Riot</li>
-                        <li class="card-list-item-name">Farewell</li>
-                    </ul>
-                </section>
-
-                <section class="type-section">
-                    <div class="type-section-title">Instants</div>
-                    <ul class="card-list">
-                        <li class="card-list-item-name">Necrobloom</li>
-                        <li class="card-list-item-name">Austere command</li>
-                        <li class="card-list-item-name">Riot</li>
-                        <li class="card-list-item-name">Farewell</li>
-                    </ul>
-                </section>
-
-                <section class="type-section">
-                    <div class="type-section-title">Instants</div>
-                    <ul class="card-list">
-                        <li class="card-list-item-name">Necrobloom</li>
-                        <li class="card-list-item-name">Austere command</li>
-                        <li class="card-list-item-name">Riot</li>
-                        <li class="card-list-item-name">Farewell</li>
-                    </ul>
-                </section>
-
-                <section class="type-section">
-                    <div class="type-section-title">Instants</div>
-                    <ul class="card-list">
-                        <li class="card-list-item-name">Necrobloom</li>
-                        <li class="card-list-item-name">Austere command</li>
-                        <li class="card-list-item-name">Riot</li>
-                        <li class="card-list-item-name">Farewell</li>
-                    </ul>
-                </section>
-            </div>
+        <div th:replace="fragments/types-layout :: type">
         </div>
    </div>
 

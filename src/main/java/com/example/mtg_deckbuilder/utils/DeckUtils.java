@@ -30,8 +30,7 @@ public class DeckUtils {
         if (selectedColors == null || selectedColors.isEmpty()) {
             return true;
         }
-        return selectedColors.stream()
-                .allMatch(color -> deck.colors_identity().contains(color));
+        return selectedColors.stream() .allMatch(color -> deck.colors_identity().contains(color));
     }
 
     static public List<Deck> sortDecks(List<Deck> decks, String sortBy, String sortOrder) {

@@ -1,7 +1,7 @@
 package com.example.mtg_deckbuilder.service;
 
 import com.example.mtg_deckbuilder.model.*;
-import com.example.mtg_deckbuilder.repository.MtgJsonRepository;
+import com.example.mtg_deckbuilder.repository.ScryfallRepository;
 import com.example.mtg_deckbuilder.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,19 +13,24 @@ import java.util.Optional;
 @Service
 public class CardService {
 
-  private final MtgJsonRepository mtgJsonRepository;
+  private final ScryfallRepository scryfallRepository;
 
   @Autowired
-  public CardService(MtgJsonRepository mtgJsonRepository) {
-    this.mtgJsonRepository = mtgJsonRepository;
+  public CardService(ScryfallRepository scryfallRepository) {
+    this.scryfallRepository = scryfallRepository;
   }
 
   public List<Card> findAllLegalCommanders() {
-    return mtgJsonRepository.findLegalCommanderCards();
+
+    var cards = scryfallRepository.findLegalCommanderCards();
+    for ( Card card : cards){
+      System.out.println(card.getName());
+    }
+    return cards;
   }
 
   public Optional<Card> findColorIdentity(String name) {
-    return mtgJsonRepository.findByColorIdentity(name);
+    return scryfallRepository.findByColorIdentity(name);
   }
 
 
@@ -34,7 +39,7 @@ public class CardService {
         .whereName(true, "farewell")
         .build();
 
-    return mtgJsonRepository.executeComplexQuery(sql.getSql(), params);
+    return scryfallRepository.executeComplexQuery(sql.getSql(), params);
 
   }
 }

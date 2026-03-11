@@ -55,9 +55,7 @@ public class DeckController {
     @PostMapping("/add-deck")
     public String addCardToDeck(@Valid @ModelAttribute("newDeck") NewDeck newDeck, Model model, @AuthenticationPrincipal CustomUserDetails user) {
         Optional<Card> card = cardService.findColorIdentity(newDeck.getCommander());
-        card.ifPresent(value -> {
-            newDeck.setColorIdentity(value.colorIdentity());
-        });
+
         newDeck.setLastUpdate( LocalDate.now());
         newDeck.setUrl("/mtg-dashboard" + "/" + newDeck.getId());
         newDeck.setUserId(user.getId());

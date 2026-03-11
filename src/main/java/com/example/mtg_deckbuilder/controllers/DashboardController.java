@@ -2,8 +2,7 @@ package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.repository.CardLibrary;
-import com.example.mtg_deckbuilder.repository.CardNameRepository;
-import com.example.mtg_deckbuilder.repository.MtgJsonRepository;
+import com.example.mtg_deckbuilder.repository.ScryfallRepository;
 import com.example.mtg_deckbuilder.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,13 +19,13 @@ import java.util.UUID;
 @Controller
 public class DashboardController {
 
-    private final MtgJsonRepository mtgJsonRepository;
+    private final ScryfallRepository scryfallRepository;
     private final CardLibrary cardLibrary;
     private final CardService cardService;
 
     @Autowired
-    public DashboardController(CardLibrary cardLibrary, MtgJsonRepository mtgJsonRepository, CardService cardService) {
-        this.mtgJsonRepository = mtgJsonRepository;
+    public DashboardController(CardLibrary cardLibrary, ScryfallRepository scryfallRepository, CardService cardService) {
+        this.scryfallRepository = scryfallRepository;
         this.cardLibrary = cardLibrary;
         this.cardService = cardService;
     }
@@ -37,15 +36,20 @@ public class DashboardController {
     }
 
     @GetMapping("/collection/deck/{id}")
-    public String dashboard(@PathVariable UUID id, Model model) throws IOException {
+    public String deck(@PathVariable UUID id, Model model) throws IOException {
         model.addAttribute("cards", cardLibrary.getCardLibrary());
         System.out.println(id);
         return "mtg-dashboard";
     }
 
+    @PostMapping("/collection/deck/{id}")
+    public String addCardToDeck(@PathVariable UUID id, Model model) throws IOException {
+        return "mtg-dashboard";
+    }
+
     @GetMapping("/search")
     public String search(@RequestParam("query") String query, Model model) {
-        List<Card> results = mtgJsonRepository.findByCardsBySubstring(query);
+        List<Card> results = scryfallRepository.findByCardsBySubstring(query);
         model.addAttribute("results", results);
         model.addAttribute("query", query);
         return "search-results";
