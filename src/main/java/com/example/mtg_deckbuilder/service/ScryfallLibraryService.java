@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class CardService {
+public class ScryfallLibraryService {
 
   private final ScryfallRepository scryfallRepository;
 
   @Autowired
-  public CardService(ScryfallRepository scryfallRepository) {
+  public ScryfallLibraryService(ScryfallRepository scryfallRepository) {
     this.scryfallRepository = scryfallRepository;
   }
 

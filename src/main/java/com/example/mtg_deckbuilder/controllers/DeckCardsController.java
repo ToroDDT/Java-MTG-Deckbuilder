@@ -1,10 +1,16 @@
 package com.example.mtg_deckbuilder.controllers;
 
+import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
+import com.example.mtg_deckbuilder.exceptions.DeckDoesNotExistException;
 import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.repository.CardLibrary;
 import com.example.mtg_deckbuilder.repository.ScryfallRepository;
-import com.example.mtg_deckbuilder.service.CardService;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.DeckService;
+import com.example.mtg_deckbuilder.service.ScryfallLibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -21,13 +28,15 @@ public class DeckCardsController {
 
     private final ScryfallRepository scryfallRepository;
     private final CardLibrary cardLibrary;
-    private final CardService cardService;
+    private final ScryfallLibraryService scryfallLibraryService;
+    private final DeckService deckService;
 
     @Autowired
-    public DeckCardsController(CardLibrary cardLibrary, ScryfallRepository scryfallRepository, CardService cardService) {
+    public DeckCardsController(DeckService deckService, CardLibrary cardLibrary, ScryfallRepository scryfallRepository, ScryfallLibraryService scryfallLibraryService) {
         this.scryfallRepository = scryfallRepository;
         this.cardLibrary = cardLibrary;
-        this.cardService = cardService;
+        this.scryfallLibraryService = scryfallLibraryService;
+        this.deckService = deckService;
     }
 
     @GetMapping("/")
@@ -38,12 +47,18 @@ public class DeckCardsController {
     @GetMapping("/collection/deck/{id}")
     public String deck(@PathVariable UUID id, Model model) throws IOException {
         model.addAttribute("cards", cardLibrary.getCardLibrary());
-        System.out.println(id);
+        model.addAttribute("deckId", id);
         return "mtg-dashboard";
     }
 
-    @PostMapping("/collection/deck/{id}")
-    public String addCardToDeck(@PathVariable UUID id, Model model) throws IOException {
+    @PostMapping("/collection/add-card")
+    public String addCardToDeck(@RequestParam String cardName, @RequestParam UUID deckId,
+                                Model model, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
+        System.out.println(cardName);
+        System.out.println(deckId);
+        var card = scryfallRepository.findByName(cardName);
+        var cardId = card.map(Card::getId).orElseThrow(() -> new CardDoesNotExistException(cardName));
+        deckService.addCardToDeck(deckId, user.getId(), cardId, false, null );
         return "mtg-dashboard";
     }
 

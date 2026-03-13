@@ -2,7 +2,7 @@ package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.DeckLayout;
-import com.example.mtg_deckbuilder.service.CardService;
+import com.example.mtg_deckbuilder.service.ScryfallLibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,16 +13,16 @@ import java.util.List;
 @Controller
 public class DeckBuilderController {
 
-    private final CardService cardService;
+    private final ScryfallLibraryService scryfallLibraryService;
 
     @Autowired
-    public DeckBuilderController(CardService cardService) {
-        this.cardService = cardService;
+    public DeckBuilderController(ScryfallLibraryService scryfallLibraryService) {
+        this.scryfallLibraryService = scryfallLibraryService;
     }
     @GetMapping("/deck-builder")
     public String deckBuilderPage(Model model) {
 
-        List<Card> listOfCommanders = cardService.findAllLegalCommanders();
+        List<Card> listOfCommanders = scryfallLibraryService.findAllLegalCommanders();
 
         model.addAttribute("listOfCommanders", listOfCommanders);
         model.addAttribute("newDeckForm", new DeckLayout());

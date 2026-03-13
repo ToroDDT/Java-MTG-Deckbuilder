@@ -28,10 +28,11 @@ public class ScryfallRepository implements CardRepository {
 
   @Override
   public Optional<Card> findByName(String name) {
-    return jdbcClient.sql("select distinct on (name) * from cards where name = :name")
-        .param("name", name) // Safely binds the UUID
-        .query(Card.class) // Auto-maps to your Card record
-        .optional(); // Returns Optional<Card> automatically
+    return jdbcTemplate.query(
+            "select * from cards where name = ?",
+            new CardRowMapper(),
+            name
+    ).stream().findFirst();
   }
 
   public Optional<Card> findByColorIdentity(String name) {

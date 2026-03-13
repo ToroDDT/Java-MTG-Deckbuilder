@@ -13,6 +13,7 @@ public class CardRowMapper implements RowMapper<Card> {
     public Card mapRow(ResultSet rs, int rowNum) throws SQLException {
         Card card = new Card();
         card.setName(rs.getString("name"));
+        card.setId(rs.getObject("id", java.util.UUID.class));
         if (rs.getArray("multiverse_ids") != null) {
             Array multiverseIdsAsArray = rs.getArray("multiverse_ids");
             Integer[] multiverseIds = (Integer[]) multiverseIdsAsArray.getArray();

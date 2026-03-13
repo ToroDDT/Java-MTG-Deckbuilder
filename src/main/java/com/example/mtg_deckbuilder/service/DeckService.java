@@ -1,5 +1,7 @@
 package com.example.mtg_deckbuilder.service;
 
+import com.example.mtg_deckbuilder.exceptions.DeckDoesNotExistException;
+import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.DeckRepository;
@@ -23,6 +25,22 @@ public class DeckService {
 
   public NewDeck addDeck(NewDeck newDeck) {
     return deckRepository.createNewDeckEntry(newDeck);
+  }
+
+  public List<Deck> getAllDecksForUser (UUID userId) {
+    return deckRepository.getAllDecksForUser(userId);
+  }
+
+  public void addCardToDeck(UUID deckId, UUID userId, UUID cardId, boolean isSideboard, UUID personalLibraryCardId) {
+    var decks = this.getAllDecksForUser(userId);
+    System.out.println("this is from the html   " + deckId);
+
+    for (Deck deck : decks) {
+      System.out.println(deck.id());
+      if (deck.id().equals(deckId)) {
+        deckRepository.addCardToDeck(deckId, cardId, isSideboard, personalLibraryCardId);
+      }
+    }
   }
 
   public Map<Deck, List<String>> getAllDecksForUser(UUID userId, DeckSearchCriteria deckSearchCriteria) {

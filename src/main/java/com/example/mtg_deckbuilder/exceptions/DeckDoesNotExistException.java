@@ -1,0 +1,13 @@
+package com.example.mtg_deckbuilder.exceptions;
+
+import java.util.UUID;
+
+public class DeckDoesNotExistException extends RuntimeException {
+    public DeckDoesNotExistException() {
+        super("Deck does not exist.");
+    }
+
+    public DeckDoesNotExistException(UUID deckId) {
+        super("Deck with id \"" + deckId + "\" does not exist.");
+    }
+}

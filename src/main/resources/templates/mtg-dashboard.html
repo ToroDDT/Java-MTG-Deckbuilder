@@ -36,16 +36,17 @@
         </div>
 
         <div class="search-container">
-            <form id="cardForm" th:action="@{/addCardToCommmaderDeck}" method="POST">
+            <form id="cardForm" th:action="@{/collection/add-card}" method="POST">
                 <div class="search-input-wrapper">
                     <i class="fas fa-plus"></i>
                     <input type="text"
                            id="commanderInput"
                            list="commanderOptions"
                            placeholder="Add a card to your deck..."
-                           cardNameRepository="on"
+                           autocomplete="on"
                            name="cardName"
                     >
+                    <input type="hidden" id="deckId" name="deckId" th:value="${deckId}">
                 </div>
                 <datalist id="commanderOptions">
                     <option th:each="name : ${cards}" th:value="${name}"></option>
