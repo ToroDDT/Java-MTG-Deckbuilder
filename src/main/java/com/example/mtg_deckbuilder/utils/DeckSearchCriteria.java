@@ -13,6 +13,7 @@ public class DeckSearchCriteria {
     private List<String> selectedColors = new ArrayList<>();
     private String sortBy = "lastUpdate";
     private String sortOrder = "desc";
+    private String folder;
 
     // Constructors
     public DeckSearchCriteria() {
