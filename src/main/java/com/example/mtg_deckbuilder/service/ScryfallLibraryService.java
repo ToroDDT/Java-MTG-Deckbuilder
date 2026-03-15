@@ -22,11 +22,7 @@ public class ScryfallLibraryService {
 
   public List<Card> findAllLegalCommanders() {
 
-    var cards = scryfallRepository.findLegalCommanderCards();
-    for ( Card card : cards){
-      System.out.println(card.getName());
-    }
-    return cards;
+      return scryfallRepository.findLegalCommanderCards();
   }
 
   public Optional<Card> findColorIdentity(String name) {
