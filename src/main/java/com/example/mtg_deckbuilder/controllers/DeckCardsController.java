@@ -1,9 +1,7 @@
 package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
-import com.example.mtg_deckbuilder.exceptions.DeckDoesNotExistException;
 import com.example.mtg_deckbuilder.model.Card;
-import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.repository.CardLibrary;
 import com.example.mtg_deckbuilder.repository.ScryfallRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -54,8 +51,6 @@ public class DeckCardsController {
     @PostMapping("/collection/add-card")
     public String addCardToDeck(@RequestParam String cardName, @RequestParam UUID deckId,
                                 Model model, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
-        System.out.println(cardName);
-        System.out.println(deckId);
         var card = scryfallRepository.findByName(cardName);
         var cardId = card.map(Card::getId).orElseThrow(() -> new CardDoesNotExistException(cardName));
         deckService.addCardToDeck(deckId, user.getId(), cardId, false, null );
