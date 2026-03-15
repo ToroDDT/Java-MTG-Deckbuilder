@@ -18,6 +18,7 @@ import java.util.Objects;
 
 public class Card {
     private UUID id;
+    private String image;
     private String oracleId;
     private Integer[] multiverseIds;
     private Integer mtgoId;
@@ -751,5 +752,13 @@ public class Card {
 
     public void setPreview(String preview) {
         this.preview = preview;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
