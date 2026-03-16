@@ -5,9 +5,12 @@ target/
 !**/src/test/**/target/
 
 ###
-**/src/main/resources/application.properties
 **/src/main/resources/application-dev.properties
 **/src/main/resources/application-prod.properties
+
+# Node modules and build dependencies
+node_modules/
+node/
 
 
 ### STS ###
