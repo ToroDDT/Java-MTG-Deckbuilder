@@ -160,29 +160,35 @@
             </configuration>
         </plugin>
 
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>3.5.0</version>
-            <executions>
-                <execution>
-                    <id>minify-js</id>
-                    <phase>prepare-package</phase>
-                    <goals><goal>exec</goal></goals>
-                    <configuration>
-                        <executable>npx</executable>
-                        <arguments>
-                            <argument>terser</argument>
-                            <argument>src/main/resources/static/js/decks.js</argument>
-                            <argument>-o</argument>
-                            <argument>target/classes/static/js/decks.js</argument>
-                            <argument>--compress</argument>
-                            <argument>--mangle</argument>
-                        </arguments>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+       <plugin>
+    <groupId>com.github.eirslett</groupId>
+    <artifactId>frontend-maven-plugin</artifactId>
+    <version>1.15.0</version>
+    <executions>
+        <execution>
+            <id>install node and npm</id>
+            <goals><goal>install-node-and-npm</goal></goals>
+            <configuration>
+                <nodeVersion>v22.0.0</nodeVersion>
+            </configuration>
+        </execution>
+        <execution>
+            <id>npm install</id>
+            <goals><goal>npm</goal></goals>
+            <configuration>
+                <arguments>install terser --no-save</arguments>
+            </configuration>
+        </execution>
+        <execution>
+            <id>minify-js</id>
+            <phase>prepare-package</phase>
+            <goals><goal>npm</goal></goals>
+            <configuration>
+                <arguments>exec terser src/main/resources/static/js/decks.js -o target/classes/static/js/decks.js --compress --mangle</arguments>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
     </plugins>
 </build>
 </project>
