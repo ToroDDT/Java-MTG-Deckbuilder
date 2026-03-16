@@ -9,7 +9,7 @@
     <!-- HTML in your document's head -->
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
 </head>
 <body>
 <div th:replace="fragments/nav-bar.html :: header"></div>
@@ -20,7 +20,7 @@
                 <p>Browse and search your Magic: The Gathering decks</p>
             </div>
 
-            <form th:action="@{/search}" th:hx-get="@{/search}"  hx-target="#search-results" method="get" th:object="${deckSearchCriteria}" hx-trigger="input delay:200ms, change">
+            <form th:action="@{/search}" th:hx-get="@{/search}"  hx-target="#search-results" method="get" th:object="${deckSearchCriteria}" hx-trigger="input delay:100ms, change">
                 <div class="filter-section">
                     <div class="search-input-wrapper">
                         <i class="fas fa-search"></i>
@@ -200,7 +200,7 @@
     </main>
     <div th:replace="fragments/footer.html :: footer"></div>
 
-<script th:src="@{/js/decks.js}"></script>
+<script th:src="@{/js/decks.js}" defer></script>
 <script src='https://unpkg.com/htmx.org/dist/htmx.min.js'></script>
 </body>
 </html>

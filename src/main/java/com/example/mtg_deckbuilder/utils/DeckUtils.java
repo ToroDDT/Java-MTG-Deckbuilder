@@ -2,7 +2,6 @@ package com.example.mtg_deckbuilder.utils;
 
 import com.example.mtg_deckbuilder.model.Deck;
 import org.jspecify.annotations.NonNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;

@@ -1,7 +1,6 @@
 package com.example.mtg_deckbuilder.service;
 
-import com.example.mtg_deckbuilder.exceptions.DeckDoesNotExistException;
-import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.cache.UserDecksCache;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.DeckRepository;
@@ -17,14 +16,17 @@ import java.util.stream.IntStream;
 public class DeckService {
 
   private final DeckRepository deckRepository;
+  private final UserDecksCache userDecksCache;
 
-  @Autowired
-  public DeckService(DeckRepository deckRepository) {
+
+   @Autowired
+  public DeckService(DeckRepository deckRepository, UserDecksCache userDecksCache) {
     this.deckRepository = deckRepository;
+    this.userDecksCache = userDecksCache;
   }
 
-  public NewDeck addDeck(NewDeck newDeck) {
-    return deckRepository.createNewDeckEntry(newDeck);
+  public void addDeck(NewDeck newDeck) {
+    deckRepository.createNewDeckEntry(newDeck);
   }
 
   public List<Deck> getAllDecksForUser (UUID userId) {
@@ -32,11 +34,9 @@ public class DeckService {
   }
 
   public void addCardToDeck(UUID deckId, UUID userId, UUID cardId, boolean isSideboard, UUID personalLibraryCardId) {
-    var decks = this.getAllDecksForUser(userId);
-    System.out.println("this is from the html   " + deckId);
+     var decks = this.userDecksCache.getAllDecksForUser(userId);
 
     for (Deck deck : decks) {
-      System.out.println(deck.id());
       if (deck.id().equals(deckId)) {
         deckRepository.addCardToDeck(deckId, cardId, isSideboard, personalLibraryCardId);
       }
@@ -48,7 +48,7 @@ public class DeckService {
 
     var decks = deckRepository.getAllDecksForUser(userId);
     var filteredDecks = DeckUtils.filterDecks(decks, deckSearchCriteria);
-    var sortedDecks = DeckUtils.sortDecks(filteredDecks, deckSearchCriteria.getSortBy(), deckSearchCriteria.getSortOrder());
+    var sortedDecks = DeckUtils.sortDecks(filteredDecks, deckSearchCriteria.getSortBy());
 
     var colorIdentityForEachDeck = DeckUtils.getColorIdentityOfDecks(sortedDecks);
 
