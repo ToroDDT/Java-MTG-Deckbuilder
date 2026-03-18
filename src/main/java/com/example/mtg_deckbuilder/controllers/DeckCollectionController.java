@@ -40,7 +40,6 @@ public class DeckCollectionController {
                 "listOfCommanders", scryfallLibraryService.findAllLegalCommanders(),
                 "newDeck", newDeck
         ));
-        response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toHours(5));
         return "decks";
     }
 
@@ -50,7 +49,7 @@ public class DeckCollectionController {
         model.addAllAttributes(Map.of(
                 "decks", deckService.getAllDecksForUser(user.getId(), deckSearchCriteria)
         ));
-        return "fragments/deck-search-results :: #search-results";
+        return "fragments/deck-search-results :: decks";
     }
 
     @PostMapping("/add-deck")
