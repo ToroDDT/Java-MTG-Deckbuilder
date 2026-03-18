@@ -6,7 +6,7 @@ import com.example.mtg_deckbuilder.repository.CardLibrary;
 import com.example.mtg_deckbuilder.repository.ScryfallRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.DeckService;
-import com.example.mtg_deckbuilder.service.ScryfallLibraryService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,25 +19,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class DeckCardsController {
 
     private final ScryfallRepository scryfallRepository;
     private final CardLibrary cardLibrary;
-    private final ScryfallLibraryService scryfallLibraryService;
     private final DeckService deckService;
 
     @Autowired
-    public DeckCardsController(DeckService deckService, CardLibrary cardLibrary, ScryfallRepository scryfallRepository, ScryfallLibraryService scryfallLibraryService) {
+    public DeckCardsController(DeckService deckService, CardLibrary cardLibrary, ScryfallRepository scryfallRepository) {
         this.scryfallRepository = scryfallRepository;
         this.cardLibrary = cardLibrary;
-        this.scryfallLibraryService = scryfallLibraryService;
         this.deckService = deckService;
     }
 
     @GetMapping("/")
-    public String index() {
+    public String index(HttpServletResponse response) {
+        response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toSeconds(30));
         return "index";
     }
 
