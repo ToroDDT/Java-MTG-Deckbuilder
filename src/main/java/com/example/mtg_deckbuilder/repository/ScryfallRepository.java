@@ -37,7 +37,7 @@ public class ScryfallRepository implements CardRepository {
 
   public Optional<Card> findByColorIdentity(String name) {
     // Note the escaped double quotes around "colorIdentity"
-    return jdbcClient.sql("SELECT DISTINCT ON (\"colorIdentity\") * FROM cards WHERE name = :name")
+    return jdbcClient.sql("SELECT DISTINCT ON (\"color_identity\") * FROM cards WHERE name = :name")
         .param("name", name)
         .query(Card.class)
         .optional();
@@ -51,13 +51,13 @@ public class ScryfallRepository implements CardRepository {
         .list(); // Returns a List of <Cards> else returns []
   }
 
-  public List<Card> findLegalCommanderCards() {
+  public List<String> findLegalCommanderCards() {
     String sql = """
-        SELECT DISTINCT ON (name) * FROM cards
+        SELECT name FROM cards
         WHERE type_line ILIKE '%Legendary%'
           AND type_line ILIKE '%Creature%'
         """;
-    return jdbcTemplate.query(sql, new CardRowMapper());
+    return jdbcTemplate.queryForList(sql, String.class);
   }
 
   public List<Card> executeComplexQuery(String sql, Map<String, ?> params) {
