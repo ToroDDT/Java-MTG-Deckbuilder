@@ -22,7 +22,7 @@ public class ScryfallLibraryService {
   }
 
   @Cacheable("commanders")
-  public List<Card> findAllLegalCommanders() {
+  public List<String> findAllLegalCommanders() {
       return scryfallRepository.findLegalCommanderCards();
   }
 

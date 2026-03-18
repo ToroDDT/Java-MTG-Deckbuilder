@@ -22,7 +22,7 @@ public class DeckBuilderController {
     @GetMapping("/deck-builder")
     public String deckBuilderPage(Model model) {
 
-        List<Card> listOfCommanders = scryfallLibraryService.findAllLegalCommanders();
+        List<String> listOfCommanders = scryfallLibraryService.findAllLegalCommanders();
 
         model.addAttribute("listOfCommanders", listOfCommanders);
         model.addAttribute("newDeckForm", new DeckLayout());
