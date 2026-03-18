@@ -37,7 +37,8 @@ public class DeckCardsController {
 
     @GetMapping("/")
     public String index(HttpServletResponse response) {
-        response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toSeconds(30));
+        response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
+        response.setHeader("Content-Type", "text/html; charset=UTF-8");
         return "index";
     }
 
