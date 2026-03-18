@@ -4,6 +4,7 @@ import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.ScryfallRepository;
 import com.example.mtg_deckbuilder.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class ScryfallLibraryService {
     this.scryfallRepository = scryfallRepository;
   }
 
+  @Cacheable("commanders")
   public List<Card> findAllLegalCommanders() {
-
       return scryfallRepository.findLegalCommanderCards();
   }
 
