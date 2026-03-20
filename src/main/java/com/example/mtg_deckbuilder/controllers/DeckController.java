@@ -6,7 +6,6 @@ import com.example.mtg_deckbuilder.repository.CardLibrary;
 import com.example.mtg_deckbuilder.repository.ScryfallRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.DeckService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,29 +16,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Controller
-public class DeckCardsController {
+public class DeckController {
 
     private final ScryfallRepository scryfallRepository;
     private final CardLibrary cardLibrary;
     private final DeckService deckService;
 
     @Autowired
-    public DeckCardsController(DeckService deckService, CardLibrary cardLibrary, ScryfallRepository scryfallRepository) {
+    public DeckController(DeckService deckService, CardLibrary cardLibrary, ScryfallRepository scryfallRepository) {
         this.scryfallRepository = scryfallRepository;
         this.cardLibrary = cardLibrary;
         this.deckService = deckService;
-    }
-
-    @GetMapping("/")
-    public String index(HttpServletResponse response) {
-        response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
-        response.setHeader("Content-Type", "text/html; charset=UTF-8");
-        return "index";
     }
 
     @GetMapping("/collection/deck/{id}")
@@ -55,25 +45,6 @@ public class DeckCardsController {
         var card = scryfallRepository.findByName(cardName);
         var cardId = card.map(Card::getId).orElseThrow(() -> new CardDoesNotExistException(cardName));
         deckService.addCardToDeck(deckId, user.getId(), cardId, false, null );
-        return "mtg-dashboard";
-    }
-
-    @GetMapping("/search")
-    public String search(@RequestParam("query") String query, Model model) {
-        List<Card> results = scryfallRepository.findByCardsBySubstring(query);
-        model.addAttribute("results", results);
-        model.addAttribute("query", query);
-        return "search-results";
-    }
-
-    @GetMapping("/mtg-dashboard")
-    public String getPlayerProfile(Model model) throws IOException {
-        model.addAttribute("cards", cardLibrary.getCardLibrary());
-        return "mtg-dashboard";
-    }
-
-    @PostMapping("/add-card")
-    public String addCardToDeck(Model model) {
         return "mtg-dashboard";
     }
 }

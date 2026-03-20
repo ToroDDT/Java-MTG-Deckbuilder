@@ -22,12 +22,12 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Controller
-public class DeckCollectionController {
+public class DeckLibraryController {
 
     private final ScryfallLibraryService scryfallLibraryService;
     private final DeckService deckService;
 
-    public DeckCollectionController(ScryfallLibraryService scryfallLibraryService, DeckService deckService) {
+    public DeckLibraryController(ScryfallLibraryService scryfallLibraryService, DeckService deckService) {
         this.scryfallLibraryService = scryfallLibraryService;
         this.deckService = deckService;
     }

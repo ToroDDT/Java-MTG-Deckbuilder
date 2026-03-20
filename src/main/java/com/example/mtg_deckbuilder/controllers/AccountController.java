@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class RegistrationController {
+public class AccountController {
 
     private final UserService userService;
 
     @Autowired
-    public RegistrationController(UserService userService) {
+    public AccountController(UserService userService) {
         this.userService = userService;
     }
 
@@ -45,5 +45,14 @@ public class RegistrationController {
         }
 
         return "redirect:/login";
+    }
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login";
+    }
+
+    @GetMapping("/create-account")
+    public String showCreateAccount() {
+        return "register";
     }
 }
