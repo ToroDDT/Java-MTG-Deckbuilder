@@ -1,9 +1,7 @@
-    // Existing mobile nav toggle
     document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
     document.querySelector('nav').classList.toggle('active');
 });
 
-    // New Deck modal logic
     const modal = document.getElementById('newDeckModal');
     const openBtn = document.getElementById('openNewDeckModalBtn');
     const closeBtn = document.getElementById('closeNewDeckModalBtn');
@@ -38,7 +36,7 @@
     // Existing Deck List mode toggles
     const modeSelect = document.getElementById('existingDeckListMode');
     const panelPaste = document.getElementById('existingListPaste');
-    const panelFile = document.getElementById('existingListFile');
+    const panelFile = document.getElementById('file');
     const panelUrl = document.getElementById('existingListUrl');
 
     function syncExistingListPanels() {
