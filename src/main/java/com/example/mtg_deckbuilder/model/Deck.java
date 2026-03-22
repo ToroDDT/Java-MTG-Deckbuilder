@@ -1,7 +1,6 @@
 package com.example.mtg_deckbuilder.model;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 public record Deck(UUID id,
@@ -15,5 +14,6 @@ public record Deck(UUID id,
                    String colors_identity,
                    LocalDate last_updated,
                    UUID user_id,
-                   String url
+                   String url,
+                   String image
                    ) {}
