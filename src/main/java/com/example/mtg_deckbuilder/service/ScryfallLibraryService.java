@@ -26,10 +26,9 @@ public class ScryfallLibraryService {
       return scryfallRepository.findLegalCommanderCards();
   }
 
-  public Optional<Card> findColorIdentity(String name) {
-    return scryfallRepository.findByColorIdentity(name);
+  public Optional<Card> findByName(String name){
+    return scryfallRepository.findByName(name);
   }
-
 
   public List<Card> executeComplexQuery(CardSearchParameters cardSearchParameters, Map<String, ?> params) {
     SqlBuilder sql = new SqlBuilder.Builder("SELECT * FROM card WHERE 1=1")
@@ -37,6 +36,6 @@ public class ScryfallLibraryService {
         .build();
 
     return scryfallRepository.executeComplexQuery(sql.getSql(), params);
-
   }
+
 }
