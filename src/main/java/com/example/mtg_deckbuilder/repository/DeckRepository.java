@@ -1,6 +1,5 @@
 package com.example.mtg_deckbuilder.repository;
 
-import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.DeckCardEntry;
 import com.example.mtg_deckbuilder.model.NewDeck;
@@ -26,17 +25,17 @@ public class DeckRepository {
         this.jdbcClient = jdbcClient;
     }
 
-    public NewDeck createNewDeckEntry(NewDeck newDeck) {
+    public void createNewDeckEntry(NewDeck newDeck) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
         String sql = """
         INSERT INTO decks (
             user_id, name, format, commander, visibility,\s
-            folder, description, colors_identity, last_updated, bracket, url
+            folder, description, colors_identity, last_updated, bracket, url, image
         )\s
         VALUES (
             :userId, :name, :format, :commander, :visibility,\s
-            :folder, :description, :colorIdentity, :lastUpdate, :bracket, :url
+            :folder, :description, :colorIdentity, :lastUpdate, :bracket, :url, :image
         )
    \s""";
 
@@ -45,8 +44,6 @@ public class DeckRepository {
                 .update(keyHolder, "id"); // Tell JDBC to retrieve the generated "id" column
 
         newDeck.setId(keyHolder.getKeyAs(UUID.class));
-        System.out.println("New deck created with id: " + newDeck.getId());
-        return newDeck;
     }
 
 
@@ -61,7 +58,7 @@ public class DeckRepository {
                 .query(Deck.class)
                 .list();
     }
-    public DeckCardEntry addCardToDeck(UUID deckId, UUID cardId, boolean isSideboard, UUID personalLibraryCardId) {
+    public void addCardToDeck(UUID deckId, UUID cardId, boolean isSideboard, UUID personalLibraryCardId) {
         String sql = """
             INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
             VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id)
@@ -74,7 +71,7 @@ public class DeckRepository {
                 .addValue("isSideboard", isSideboard)
                 .addValue("personal_library_card_id", personalLibraryCardId);
 
-        return jdbcClient.sql(sql)
+        jdbcClient.sql(sql)
                 .paramSource(params)
                 .query(DeckCardEntry.class)
                 .single();
