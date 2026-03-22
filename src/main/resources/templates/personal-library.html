@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MTG Deckbuilder — Card Browser</title>
+  <link rel="stylesheet" href="/css/personal-library.css" />
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
+<body>
+
+  <!-- ══════════════ NAV ══════════════ -->
+  <header class="cb-nav">
+    <div class="cb-nav-inner">
+      <a href="/" class="cb-logo">MTG Deckbuilder</a>
+
+      <button class="cb-hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="cb-nav-menu" id="navMenu">
+        <ul class="cb-nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/build">Build</a></li>
+          <li><a href="/owned">Owned Library</a></li>
+          <li><a href="/cards" class="active">All Cards</a></li>
+          <li><a href="/commanders">Commanders</a></li>
+          <li><a href="/decks">Finished Decks</a></li>
+        </ul>
+        <a href="/build" class="cb-nav-btn">Build Deck</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ══════════════ PAGE ══════════════ -->
+  <main class="cb-page">
+
+    <!-- Page header -->
+    <div class="cb-page-header">
+      <div class="cb-page-header-bg"></div>
+      <h1 class="cb-page-title">Card Browser</h1>
+      <p class="cb-page-sub">Browse all 30,674 cards with filters and search.</p>
+    </div>
+
+    <div class="cb-layout">
+
+      <!-- ══════════════ SIDEBAR ══════════════ -->
+      <aside class="cb-sidebar">
+        <div class="cb-sidebar-title">Filters</div>
+
+        <!-- Search -->
+        <div class="cb-filter-section">
+          <span class="cb-filter-label">Search</span>
+          <div class="cb-search-wrap">
+            <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="cb-search-input" id="searchInput" type="text" placeholder="Search cards..." autocomplete="off" />
+          </div>
+        </div>
+
+        <!-- Color -->
+        <div class="cb-filter-section">
+          <span class="cb-filter-label">Color</span>
+          <div class="cb-color-row">
+            <button class="cb-color-btn pip-W" data-color="W" title="White">W</button>
+            <button class="cb-color-btn pip-U" data-color="U" title="Blue">U</button>
+            <button class="cb-color-btn pip-B" data-color="B" title="Black">B</button>
+            <button class="cb-color-btn pip-R" data-color="R" title="Red">R</button>
+            <button class="cb-color-btn pip-G" data-color="G" title="Green">G</button>
+          </div>
+        </div>
+
+        <!-- Type -->
+        <div class="cb-filter-section">
+          <span class="cb-filter-label">Type</span>
+          <select class="cb-select" id="typeFilter">
+            <option>All Types</option>
+            <option>Artifact</option>
+            <option>Creature</option>
+            <option>Enchantment</option>
+            <option>Instant</option>
+            <option>Land</option>
+            <option>Legendary</option>
+            <option>Sorcery</option>
+            <option>Vehicle</option>
+          </select>
+        </div>
+
+        <!-- CMC Range -->
+        <div class="cb-filter-section">
+          <span class="cb-filter-label">CMC Range</span>
+          <div class="cb-range-group">
+            <div class="cb-range-row">
+              <span class="cb-range-lbl">Min</span>
+              <input type="range" class="cb-range-input" id="cmcMin" min="0" max="16" value="0" />
+              <span class="cb-range-val" id="cmcMinVal">0</span>
+            </div>
+            <div class="cb-range-row">
+              <span class="cb-range-lbl">Max</span>
+              <input type="range" class="cb-range-input" id="cmcMax" min="0" max="16" value="16" />
+              <span class="cb-range-val" id="cmcMaxVal">∞</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div class="cb-filter-section">
+          <span class="cb-filter-label">Sort By</span>
+          <select class="cb-select" id="sortBy">
+            <option>Name (A-Z)</option>
+            <option>Name (Z-A)</option>
+            <option>CMC (Low-High)</option>
+            <option>CMC (High-Low)</option>
+          </select>
+        </div>
+
+        <div class="cb-btn-row">
+          <button class="cb-btn-apply" id="applyBtn">Apply Filters</button>
+          <button class="cb-btn-clear" id="clearBtn">Clear</button>
+        </div>
+      </aside>
+
+      <!-- ══════════════ RESULTS ══════════════ -->
+      <div class="cb-results-col">
+
+        <div class="cb-results-header">
+          <p class="cb-count">Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> cards</p>
+        </div>
+
+        <div class="cb-grid" id="cardGrid">
+          <!-- Cards injected by JS -->
+        </div>
+
+        <div class="cb-load-more" id="loadMoreWrap">
+          <button class="cb-btn-load" id="loadMoreBtn">Load More</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════════════ FOOTER ══════════════ -->
+  <footer class="cb-footer">
+    <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
+  </footer>
+
+
+</body>
+</html>
