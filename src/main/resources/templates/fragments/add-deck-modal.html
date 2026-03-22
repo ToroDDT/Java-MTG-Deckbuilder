@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<!-- New Deck Modal -->
+<div th:fragment="add-deck-modal" class="modal-overlay" id="newDeckModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="newDeckModalTitle">
+  <div class="modal-container" role="document">
+    <div class="modal-header">
+      <h2 id="newDeckModalTitle">Create New Deck</h2>
+      <button class="modal-close" type="button" id="closeNewDeckModalBtn" aria-label="Close modal">✕</button>
+    </div>
+    <form enctype="multipart/form-data" th:action="@{/add-deck}"  th:method="post" th:object="${newDeck}" class="modal-body" id="newDeckForm">
+      <div class="modal-section">
+        <label class="field-label" for="deckName">Name</label>
+        <input th:field="*{name}" class="field-input" type="text" id="deckName" name="name" placeholder="e.g., My Awesome Deck" maxlength="120">
+        <p class="field-help">
+          Enter a name for your deck.
+        </p>
+      </div>
+
+      <div class="modal-section grid-2">
+        <div class="field-group">
+          <label class="field-label" for="deckFormat">Format</label>
+          <select th:field="*{format}" class="field-select" id="deckFormat" name="format">
+            <option value="Commander" selected>Commander</option>
+            <option value="Modern">Modern</option>
+            <option value="Pioneer">Pioneer</option>
+            <option value="Standard">Standard</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group">
+            <input type="text"
+                   th:field="*{commander}"
+                   id="commanderList"
+                   class="field-input"
+                   list="commanderOptions"
+                   placeholder="Add a card to your deck..."
+                   autocomplete="on"
+                   name="name"
+            >
+          </div>
+          <datalist id="commanderOptions" class="field-input">
+            <option th:each="card : ${listOfCommanders}" th:value="${card}"></option>
+          </datalist>
+
+        </div>
+      </div>
+
+      <label class="check-row" for="legalOnly">
+        <input type="checkbox" id="legalOnly" name="legalOnly" checked>
+        <span>Search only legal cards</span>
+      </label>
+
+      <details class="advanced-details" id="newDeckAdvanced">
+        <summary>Advanced options</summary>
+        <div class="advanced-body">
+          <div class="modal-section grid-2">
+            <div class="field-group">
+              <label class="field-label" for="deckFolder">Folder</label>
+              <input class="field-input" type="text" id="deckFolder" name="folder" placeholder="Optional">
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">Visibility</span>
+              <div class="radio-row">
+                <label class="radio-chip">
+                  <input type="radio" name="visibility" value="PUBLIC" checked>
+                  <span>Public</span>
+                </label>
+                <label class="radio-chip">
+                  <input type="radio" name="visibility" value="UNLISTED">
+                  <span>Unlisted</span>
+                </label>
+                <label class="radio-chip">
+                  <input type="radio" name="visibility" value="PRIVATE">
+                  <span>Private</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-section">
+            <label class="field-label" for="existingDeckListMode">Existing Deck List (optional)</label>
+            <select class="field-select" id="existingDeckListMode" name="existingDeckListMode">
+              <option value="NONE" selected>None</option>
+              <option value="PASTE">Paste in List</option>
+              <option value="FILE">From File</option>
+              <option value="URL">From URL</option>
+            </select>
+
+            <div class="existing-list-panel" id="existingListPaste" hidden>
+              <label class="field-label" for="existingListText">Paste in List</label>
+              <textarea class="field-textarea" id="existingListText" name="existingListText"
+                        placeholder="Paste your deck list here..."></textarea>
+            </div>
+
+            <div class="existing-list-panel" id="file" hidden>
+              <label class="field-label" for="file">From File</label>
+              <input class="field-input" type="file"  name="file" accept=".txt,.csv">
+            </div>
+
+            <div class="existing-list-panel" id="existingListUrl" hidden>
+              <label class="field-label" for="existingListUrlInput">From URL</label>
+              <input class="field-input" type="url" id="existingListUrlInput" name="existingListUrlInput"
+                     placeholder="https://example.com/decklist">
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <div class="modal-footer">
+        <button class="btn-action btn-secondary" type="button" id="cancelNewDeckBtn">Cancel</button>
+        <button class="btn-action" type="submit">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
