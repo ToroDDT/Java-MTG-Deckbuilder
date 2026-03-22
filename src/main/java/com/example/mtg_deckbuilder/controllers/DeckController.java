@@ -1,11 +1,11 @@
 package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
-import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
 import com.example.mtg_deckbuilder.repository.CardLibrary;
 import com.example.mtg_deckbuilder.repository.ScryfallRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.service.DeckService;
+import com.example.mtg_deckbuilder.service.DefaultDeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -23,13 +23,13 @@ public class DeckController {
 
     private final ScryfallRepository scryfallRepository;
     private final CardLibrary cardLibrary;
-    private final DeckService deckService;
+    private final DefaultDeckService defaultDeckService;
 
     @Autowired
-    public DeckController(DeckService deckService, CardLibrary cardLibrary, ScryfallRepository scryfallRepository) {
+    public DeckController(DefaultDeckService defaultDeckService, CardLibrary cardLibrary, ScryfallRepository scryfallRepository) {
         this.scryfallRepository = scryfallRepository;
         this.cardLibrary = cardLibrary;
-        this.deckService = deckService;
+        this.defaultDeckService = defaultDeckService;
     }
 
     @GetMapping("/collection/deck/{id}")
@@ -41,10 +41,11 @@ public class DeckController {
 
     @PostMapping("/collection/add-card")
     public String addCardToDeck(@RequestParam String cardName, @RequestParam UUID deckId,
-                                Model model, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
-        var card = scryfallRepository.findByName(cardName);
-        var cardId = card.map(Card::getId).orElseThrow(() -> new CardDoesNotExistException(cardName));
-        deckService.addCardToDeck(deckId, user.getId(), cardId, false, null );
+                                 @AuthenticationPrincipal CustomUserDetails user) {
+        var card = scryfallRepository.findByName(cardName).orElseThrow(() -> new CardDoesNotExistException(cardName));
+
+        var cardRequest = new AddCardToDeckRequest(deckId, user.getId(), card.getId(), false, null);
+        defaultDeckService.addCardToDeck(cardRequest);
         return "mtg-dashboard";
     }
 }
