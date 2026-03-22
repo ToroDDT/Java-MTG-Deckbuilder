@@ -21,6 +21,12 @@
     :root { font-family: InterVariable, sans-serif; }
 }
 
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
 /* ── DECK CONTAINER ── */
 .deck-container {
     max-width: 1200px;
@@ -79,6 +85,14 @@
     font-weight: 300;
 }
 
+.deck-image {
+    width: 15%;
+    height: auto;
+    border-radius: 12px;
+    margin-top: 5px;
+    box-shadow: var(--shadow-md);
+}
+
 /* ── FILTER SECTION ── */
 .filter-section {
     padding: 24px;
@@ -114,7 +128,7 @@
     border: none;
     color: var(--text-primary);
     font-size: 0.95rem;
-    font-family: var(--font-body);
+    font-family: var(--font-body) serif;
     outline: none;
 }
 
@@ -330,15 +344,15 @@
 
 .deck-title-row {
     display: flex;
-    align-items: center;
+    align-items: start;
     gap: 10px;
     margin-bottom: 6px;
 }
 
 .deck-link {
-    font-size: 1.15rem;
+    font-size: 1.70rem;
     font-weight: 700;
-    font-family: var(--font-head);
+    font-family: var(--font-head), serif;
     color: var(--text-primary);
     text-decoration: none;
     transition: color 0.2s;

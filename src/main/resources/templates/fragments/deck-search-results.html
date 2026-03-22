@@ -11,7 +11,11 @@
       <div class="deck-info">
         <div class="deck-title-row">
           <img th:src="${deck.getKey().image()}" alt="Deck Image" class="deck-image">
+          <div class="info">
+            <div>
           <a th:href="${deck.getKey().name()}" th:text="${deck.getKey().name()}" class="deck-link">Deck Name</a>
+            </div>
+            <div>
           <span th:if="${deck.getKey().bracket!= null}" class="badge bracket-badge"
                 th:text="'Bracket ' + ${deck.getKey().bracket()}"></span>
         </div>
@@ -28,6 +32,8 @@
           <span th:if="${deck.getKey().format() == 'Commander'}" th:text="${deck.getKey().commander()}">Commander</span>
           <span class="meta-sep">•</span>
           <span th:text="${#temporals.format(deck.getKey().last_updated(),'dd MMM yyyy')}">Date</span>
+        </div>
+        </div>
         </div>
       </div>
       <a class="fas fa-external-link-alt external-icon"
