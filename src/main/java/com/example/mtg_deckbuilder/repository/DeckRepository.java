@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.repository;
 
+import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.DeckCardEntry;
 import com.example.mtg_deckbuilder.model.NewDeck;
@@ -58,7 +59,7 @@ public class DeckRepository {
                 .query(Deck.class)
                 .list();
     }
-    public void addCardToDeck(UUID deckId, UUID cardId, boolean isSideboard, UUID personalLibraryCardId) {
+    public void addCardToDeck(AddCardToDeckRequest request) {
         String sql = """
             INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
             VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id)
@@ -66,10 +67,10 @@ public class DeckRepository {
             """;
 
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("deckId", deckId)
-                .addValue("cardId", cardId)
-                .addValue("isSideboard", isSideboard)
-                .addValue("personal_library_card_id", personalLibraryCardId);
+                .addValue("deckId", request.deckId())
+                .addValue("cardId", request.cardId())
+                .addValue("isSideboard", request.isSideboard())
+                .addValue("personal_library_card_id", request.personalLibraryCardId());
 
         jdbcClient.sql(sql)
                 .paramSource(params)
