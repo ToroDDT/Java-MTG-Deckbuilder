@@ -51,7 +51,7 @@
 
         <!-- Search -->
         <div class="cb-filter-section">
-          <span class="cb-filter-label">Search</span>
+          <label for="searchInput" class="cb-filter-label">Search</label>
           <div class="cb-search-wrap">
             <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input class="cb-search-input" id="searchInput" type="text" placeholder="Search cards..." autocomplete="off" />
@@ -72,7 +72,7 @@
 
         <!-- Type -->
         <div class="cb-filter-section">
-          <span class="cb-filter-label">Type</span>
+          <label for="typeFilter" class="cb-filter-label">Type</label>
           <select class="cb-select" id="typeFilter">
             <option>All Types</option>
             <option>Artifact</option>
@@ -91,12 +91,12 @@
           <span class="cb-filter-label">CMC Range</span>
           <div class="cb-range-group">
             <div class="cb-range-row">
-              <span class="cb-range-lbl">Min</span>
+              <label for="cmcMin" class="cb-range-lbl">Min</label>
               <input type="range" class="cb-range-input" id="cmcMin" min="0" max="16" value="0" />
               <span class="cb-range-val" id="cmcMinVal">0</span>
             </div>
             <div class="cb-range-row">
-              <span class="cb-range-lbl">Max</span>
+              <label for="cmcMax" class="cb-range-lbl">Max</label>
               <input type="range" class="cb-range-input" id="cmcMax" min="0" max="16" value="16" />
               <span class="cb-range-val" id="cmcMaxVal">∞</span>
             </div>
@@ -105,7 +105,7 @@
 
         <!-- Sort -->
         <div class="cb-filter-section">
-          <span class="cb-filter-label">Sort By</span>
+          <label for="sortBy" class="cb-filter-label">Sort By</label>
           <select class="cb-select" id="sortBy">
             <option>Name (A-Z)</option>
             <option>Name (Z-A)</option>
@@ -144,6 +144,221 @@
     <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
   </footer>
 
+  <script>
+    // ══════════════════════════════════════════════
+    //  DATA — replace / extend with your API fetch
+    // ══════════════════════════════════════════════
+    const ALL_CARDS = [
+      { id:1,  name:"_____ _____ _____ Trespasser", type:"Creature — Human Rogue Guest",              cmc:2, colors:["B"],       tags:["Blink","ETB","Human Kindred","Rogue Kindred","Little Fellas","Outlaw Kindred"] },
+      { id:2,  name:"_____ _____ Rocketship",       type:"Artifact — Vehicle",                        cmc:4, colors:[""],        tags:["Aggro","Crew","Flying","Vehicles","Artifacts Matter","Combat Matters"] },
+      { id:3,  name:"+2 Mace",                       type:"Artifact — Equipment",                      cmc:2, colors:["W"],       tags:["Aggro","Equipment","Voltron","Artifacts Matter","Equipment Matters"] },
+      { id:4,  name:"A Good Day to Pie",             type:"Instant",                                   cmc:2, colors:["U"],       tags:["Mill","Spells Matter","Spellslinger"] },
+      { id:5,  name:"A Killer Among Us",             type:"Enchantment",                               cmc:5, colors:["W","B"],   tags:["Counters Matter","Tokens Matter","Goblin Kindred","Enchantments Matter"] },
+      { id:6,  name:"A Little Chat",                 type:"Instant",                                   cmc:2, colors:["U"],       tags:["Casualty","Spell Copy","Spellslinger","Topdeck"] },
+      { id:7,  name:"A Realm Reborn",                type:"Enchantment",                               cmc:6, colors:["W"],       tags:["Big Mana","Enchantments Matter"] },
+      { id:8,  name:"A Tale for the Ages",           type:"Enchantment",                               cmc:2, colors:["W"],       tags:["Aggro","Auras","Voltron","Enchantments Matter"] },
+      { id:9,  name:"Aang and Katara",               type:"Legendary Creature — Human Avatar Ally",    cmc:6, colors:["W","U"],   tags:["Legends Matter","Tokens Matter","Combat Matters","Historics Matter"] },
+      { id:10, name:"Aang, A Lot to Learn",          type:"Legendary Creature — Human Avatar Ally",    cmc:3, colors:["U"],       tags:["Counters Matter","Aristocrats","Voltron","Mill","Reanimate"] },
+      { id:11, name:"Aang, Air Nomad",               type:"Legendary Creature — Human Avatar Ally",    cmc:5, colors:["U","W"],   tags:["Flying","Legends Matter","Big Mana","Vigilance"] },
+      { id:12, name:"Aang, Airbending Master",       type:"Legendary Creature — Human Avatar Ally",    cmc:5, colors:["U"],       tags:["Airbending","Counters Matter","Tokens Matter","Experience Counters"] },
+      { id:13, name:"Aang, the Last Airbender",      type:"Legendary Creature — Human Avatar Ally",    cmc:4, colors:["U","W"],   tags:["Flying","Lifelink","Legends Matter","Airbending"] },
+      { id:14, name:"Aang's Defense",                type:"Instant",                                   cmc:1, colors:["U"],       tags:["Cantrips","Card Draw","Combat Tricks","Spellslinger"] },
+      { id:15, name:"_____-o-saurus",                type:"Creature — Alien Dinosaur",                 cmc:6, colors:["G"],       tags:["Counters Matter","Trample","Voltron","Big Mana","Dinosaur Kindred"] },
+      { id:16, name:"_____ Balls of Fire",           type:"Enchantment",                               cmc:4, colors:["R"],       tags:["Burn","Enchantments Matter"] },
+      { id:17, name:"_____ Bird Gets the Worm",      type:"Creature — Bird Guest",                     cmc:5, colors:["W","G"],   tags:["Flying","Lifegain","Little Fellas","Bird Kindred","Blink"] },
+      { id:18, name:"________ Goblin",               type:"Creature — Goblin Guest",                   cmc:3, colors:["R"],       tags:["ETB","Goblin Kindred","Mana Dork","Ramp"] },
+      { id:19, name:"Aang, Swift Savior",            type:"Legendary Creature — Human Avatar Ally",    cmc:3, colors:["U","W"],   tags:["Flying","Trample","Transform","Voltron","Flash"] },
+      { id:20, name:"Aang, at the Crossroads",       type:"Legendary Creature — Human Avatar Ally",    cmc:5, colors:["U","W","G"],tags:["Counters Matter","Landfall","Transform","Big Mana","Blink"] },
+      { id:21, name:"Absorb",                        type:"Instant",                                   cmc:3, colors:["W","U"],   tags:["Counterspell","Interaction","Lifegain","Spells Matter"] },
+      { id:22, name:"Acidic Slime",                  type:"Creature — Ooze",                           cmc:5, colors:["G"],       tags:["ETB","Removal","Ramp","Blink"] },
+      { id:23, name:"Avenger of Zendikar",           type:"Legendary Creature — Elemental",            cmc:7, colors:["G"],       tags:["Token Creation","Landfall","Big Mana","Tokens Matter"] },
+      { id:24, name:"Brainstorm",                    type:"Instant",                                   cmc:1, colors:["U"],       tags:["Cantrips","Card Draw","Topdeck","Spellslinger"] },
+      { id:25, name:"Command Tower",                 type:"Land",                                      cmc:0, colors:[""],        tags:["Mana Fixing","Lands Matter"] },
+      { id:26, name:"Cyclonic Rift",                 type:"Instant",                                   cmc:2, colors:["U"],       tags:["Boardwipe","Interaction","Spells Matter"] },
+      { id:27, name:"Dark Ritual",                   type:"Instant",                                   cmc:1, colors:["B"],       tags:["Mana Dork","Ramp","Spells Matter"] },
+      { id:28, name:"Dockside Extortionist",         type:"Creature — Goblin Pirate",                  cmc:2, colors:["R"],       tags:["ETB","Ramp","Goblin Kindred"] },
+      { id:29, name:"Enlightened Tutor",             type:"Instant",                                   cmc:1, colors:["W"],       tags:["Tutor","Artifacts Matter","Enchantments Matter"] },
+      { id:30, name:"Fierce Guardianship",           type:"Instant",                                   cmc:3, colors:["U"],       tags:["Counterspell","Interaction","Free Spells"] },
+    ];
 
+    const PAGE_SIZE = 20;
+    let page         = 1;
+    let activeColors = [];
+    let filtered     = [...ALL_CARDS];
+
+    // ── helpers ────────────────────────────────
+    const $  = id => document.getElementById(id);
+    const $$ = sel => document.querySelectorAll(sel);
+
+    // ── cached selectors ────────────────────────
+    const cmcMinEl    = $('cmcMin');
+    const cmcMaxEl    = $('cmcMax');
+    const cmcMinValEl = $('cmcMinVal');
+    const cmcMaxValEl = $('cmcMaxVal');
+
+    function imgSrc(name) {
+      return `https://deck-builder.wiz-ops.com/api/images/normal/${encodeURIComponent(name)}`;
+    }
+
+    function cardHTML(card) {
+      const tags  = card.tags.slice(0, 4).map(t => `<span class="cb-tag">${t}</span>`).join('');
+      const extra = card.tags.length > 4 ? `<span class="cb-tag">+${card.tags.length - 4}</span>` : '';
+      const href  = `https://deck-builder.wiz-ops.com/cards/${encodeURIComponent(card.name)}`;
+      return `
+        <div class="cb-card">
+          <div class="cb-card-img-wrap">
+            <img
+              class="cb-card-img"
+              src="${imgSrc(card.name)}"
+              alt="${card.name.replace(/"/g, '&quot;')}"
+              loading="lazy"
+            />
+            <div class="cb-card-img-placeholder" style="display:none">🃏</div>
+          </div>
+          <div class="cb-card-body">
+            <div class="cb-card-name">${card.name}</div>
+            <div class="cb-card-type">${card.type}</div>
+            <div class="cb-card-cmc">
+              <span class="cb-card-cmc-pip">${card.cmc}</span> CMC
+            </div>
+            <div class="cb-card-tags">${tags}${extra}</div>
+          </div>
+          <a class="cb-card-link" href="${href}" target="_blank" rel="noopener noreferrer">
+            Card Details ↗
+          </a>
+        </div>`;
+    }
+
+    function skeletonHTML() {
+      return `
+        <div class="cb-skeleton">
+          <div class="cb-skel-img"></div>
+          <div class="cb-skel-body">
+            <div class="cb-skel-line"></div>
+            <div class="cb-skel-line short"></div>
+            <div class="cb-skel-line shorter"></div>
+          </div>
+        </div>`;
+    }
+
+    // ── attach error handlers after grid render ─
+    function attachImgErrorHandlers() {
+      $('cardGrid').querySelectorAll('.cb-card-img').forEach(img => {
+        img.addEventListener('error', function() {
+          this.style.display = 'none';
+          this.nextElementSibling.style.display = 'flex';
+        }, { once: true });
+      });
+    }
+
+    function applyAndRender() {
+      const search = $('searchInput').value.toLowerCase();
+      const type   = $('typeFilter').value;
+      const sort   = $('sortBy').value;
+      const cmcMin = +cmcMinEl.value;
+      const cmcMax = +cmcMaxEl.value;
+
+      filtered = ALL_CARDS.filter(c => {
+        if (search && !c.name.toLowerCase().includes(search) && !c.type.toLowerCase().includes(search)) return false;
+        if (type !== 'All Types' && !c.type.includes(type)) return false;
+        if (activeColors.length > 0 && !activeColors.some(col => c.colors.includes(col))) return false;
+        return !(c.cmc < cmcMin || c.cmc > cmcMax);
+
+      }).sort((a, b) => {
+        if (sort === 'Name (A-Z)')     return a.name.localeCompare(b.name);
+        if (sort === 'Name (Z-A)')     return b.name.localeCompare(a.name);
+        if (sort === 'CMC (Low-High)') return a.cmc - b.cmc;
+        if (sort === 'CMC (High-Low)') return b.cmc - a.cmc;
+        return 0;
+      });
+
+      page = 1;
+      renderCards();
+    }
+
+    function renderCards() {
+      const grid    = $('cardGrid');
+      const visible = filtered.slice(0, page * PAGE_SIZE);
+      const hasMore = visible.length < filtered.length;
+
+      grid.innerHTML = filtered.length === 0
+        ? `<div class="cb-empty"><div class="cb-empty-icon">🃏</div><p>No cards match your filters.</p></div>`
+        : visible.map(cardHTML).join('');
+
+      attachImgErrorHandlers();
+
+      $('visibleCount').textContent       = visible.length;
+      $('totalCount').textContent         = filtered.length.toLocaleString();
+      $('loadMoreWrap').style.display     = hasMore ? 'block' : 'none';
+    }
+
+    function loadMore() {
+      const grid = $('cardGrid');
+      const div  = document.createElement('div');
+      div.innerHTML = Array(4).fill(skeletonHTML()).join('');
+      div.querySelectorAll('.cb-skeleton').forEach(s => grid.appendChild(s));
+      $('loadMoreBtn').disabled = true;
+
+      setTimeout(() => {
+        page++;
+        renderCards();
+        $('loadMoreBtn').disabled = false;
+      }, 600);
+    }
+
+    // ── range slider labels ─────────────────────
+    cmcMinEl.addEventListener('input', function() {
+      cmcMinValEl.textContent = this.value;
+    });
+    cmcMaxEl.addEventListener('input', function() {
+      cmcMaxValEl.textContent = +this.value === 16 ? '∞' : this.value;
+    });
+
+    // ── color pip toggles ───────────────────────
+    $$('.cb-color-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const c = this.dataset.color;
+        if (activeColors.includes(c)) {
+          activeColors = activeColors.filter(x => x !== c);
+          this.classList.remove('active');
+        } else {
+          activeColors.push(c);
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // ── apply / clear ───────────────────────────
+    $('applyBtn').addEventListener('click', applyAndRender);
+    $('clearBtn').addEventListener('click', () => {
+      $('searchInput').value  = '';
+      $('typeFilter').value   = 'All Types';
+      $('sortBy').value       = 'Name (A-Z)';
+      cmcMinEl.value          = 0; cmcMinValEl.textContent = '0';
+      cmcMaxEl.value          = 16; cmcMaxValEl.textContent = '∞';
+      activeColors = [];
+      $$('.cb-color-btn').forEach(b => b.classList.remove('active'));
+      applyAndRender();
+    });
+
+    // ── enter key in search ─────────────────────
+    $('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') applyAndRender();
+    });
+
+    // ── load more ───────────────────────────────
+    $('loadMoreBtn').addEventListener('click', loadMore);
+
+    // ── hamburger nav ───────────────────────────
+    $('hamburger').addEventListener('click', function() {
+      const menu   = $('navMenu');
+      const isOpen = menu.classList.toggle('open');
+      this.classList.toggle('open', isOpen);
+      this.setAttribute('aria-expanded', isOpen);
+    });
+
+    // ── initial render ──────────────────────────
+    applyAndRender();
+  </script>
 </body>
 </html>
