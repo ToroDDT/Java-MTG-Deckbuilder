@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -15,13 +14,14 @@ public class NewDeck {
     @NotBlank
     private String name;
     private UUID userId;
-    private String format; // must have format specified
+    private String format;
     private String commander = "None";
-    private String visibility = "public"; // must be public or private
-    private String folder = "home"; // default folder is home
+    private String visibility = "public";
+    private String folder = "home";
     private String description = "";
     private String colorIdentity;
     private Integer bracket;
     private LocalDate lastUpdate;
     private String url;
+    private String image;
 }
