@@ -39,7 +39,6 @@ public class AccountController {
             userService.saveUser(registrationDto);
         }
         catch (Exception e) {
-            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/register";
         }
