@@ -21,9 +21,9 @@ public class ScryfallRepository implements CardRepository {
   @Override
   public Optional<Card> findById(UUID id) {
     return jdbcClient.sql("select * from cards where id = :id")
-        .param("id", id) // Safely binds the UUID
-        .query(Card.class) // Auto-maps to your Card record
-        .optional(); // Returns Optional<Card> automatically
+        .param("id", id)
+        .query(Card.class)
+        .optional();
   }
 
   @Override
@@ -48,7 +48,7 @@ public class ScryfallRepository implements CardRepository {
     return jdbcClient.sql(sql)
         .param("name", name)
         .query(Card.class)
-        .list(); // Returns a List of <Cards> else returns []
+        .list();
   }
 
   public List<String> findLegalCommanderCards() {
