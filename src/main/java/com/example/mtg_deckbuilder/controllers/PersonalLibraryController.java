@@ -4,9 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class PersonalLibrary {
+public class PersonalLibraryController {
     @GetMapping("/personal-library")
     public String personalLibrary(){
+
         return "personal-library";
     }
 }

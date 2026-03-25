@@ -3,11 +3,14 @@ package com.example.mtg_deckbuilder.repository;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
+@Repository
 public class PersonalLibraryRepository {
+
     private final JdbcClient jdbcClient;
 
     public PersonalLibraryRepository(JdbcClient jdbcClient) {
