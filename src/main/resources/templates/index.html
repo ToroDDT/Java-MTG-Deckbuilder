@@ -1,71 +1,127 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTG Deckbuilder - Build Your Ultimate Deck</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTG Deckbuilder - Build Your Ultimate Deck</title>
+
+  <!-- Tailwind (CDN — swap for your build output in production) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Companion stylesheet: tokens, keyframes, pseudo-elements, mobile drawer -->
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        media="print" onload="this.media='all'">
 </head>
 <body>
+
+<!-- ══ HEADER (fragment) ══ -->
 <div th:replace="fragments/nav-bar.html :: header"></div>
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Build better decks.</h1>
-                <p>The most advanced deckbuilding platform for Magic: The Gathering.</p>
-                <form class="search-bar" th:action="@{/search}" method="GET">
-                    <div class="search-input-wrapper">
-                        <i class="fas fa-search"></i>
-                        <input type="text" name="query" placeholder="Search for cards, decks, or users...">
-                    </div>
-                    <button type="submit">Search</button>
-                </form>
-                <div class="hero-cta">
-                    <a href="#" class="btn-primary">Get Started</a>
-                    <a href="#" class="btn-secondary">Learn More</a>
-                </div>
-            </div>
-        </section>
 
+<main>
 
-        <section class="features container">
-            <div class="feature-card">
-                <i class="fas fa-bolt"></i>
-                <h3>Lightning Fast</h3>
-                <p>Search through hundreds of thousands of cards instantly with our optimized engine.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-chart-pie"></i>
-                <h3>Deep Analysis</h3>
-                <p>Visual mana curves, color distributions, and price trends for every deck you build.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-share-alt"></i>
-                <h3>Easy Sharing</h3>
-                <p>Export to Arena, MTGO, or share a beautiful public link with the world.</p>
-            </div>
-        </section>
-    </main>
+  <section class="hero
+                  py-[clamp(60px,10vw,100px)] px-[clamp(16px,4vw,20px)]
+                  pb-[clamp(48px,8vw,80px)]
+                  text-center border-b border-[#e2e8f8]"
+           style="background:
+             radial-gradient(ellipse at 65% 0%, #dbeafe99 0%, transparent 55%),
+             radial-gradient(ellipse at 15% 90%, #e0e7ff66 0%, transparent 50%),
+             #ffffff;">
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">MTG DECKBUILDER</div>
-                <div class="footer-links">
-                    <a href="#">Terms</a>
-                    <a href="#">Privacy</a>
-                    <a href="#">Discord</a>
-                    <a href="#">Twitter</a>
-                </div>
-            </div>
-            <p class="copyright">&copy; 2026 MTG Deckbuilder. Portions of MTG Deckbuilder are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, and Oracle text, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. MTG Deckbuilder is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.</p>
+    <div class="max-w-[800px] mx-auto">
+
+      <!-- Heading -->
+      <h1 class="hero-heading
+                 text-[clamp(2rem,6vw,3.8rem)] font-extrabold
+                 mb-[clamp(12px,2vw,16px)] leading-[1.08] tracking-[-0.025em]">
+        Build better decks.
+      </h1>
+
+      <!-- Subheading -->
+      <p class="text-[clamp(1rem,2.5vw,1.15rem)] text-[#64748b]
+                mb-[clamp(28px,5vw,40px)] font-light leading-[1.7]
+                max-w-150 mx-auto">
+        The most advanced deckbuilding platform for Magic: The Gathering.
+      </p>
+
+      <!-- Search bar -->
+      <form class="search-bar
+                   flex max-w-150 w-full mx-auto mb-[clamp(24px,4vw,40px)]
+                   bg-white border border-[#e2e8f8] rounded-xl overflow-hidden
+                   shadow-[0_4px_20px_rgba(37,99,235,.1)]
+                   transition-[border-color,box-shadow] duration-200"
+            th:action="@{/search}" method="GET">
+
+        <div class="search-input-wrapper flex flex-1 items-center pl-4 min-w-0">
+          <i class="fas fa-search text-[#64748b] shrink-0"></i>
+          <input type="text" name="query"
+                 placeholder="Search for cards, decks, or users..."
+                 class="w-full py-[clamp(12px,2vw,16px)] px-3
+                        bg-transparent border-none outline-none
+                        text-[#0f172a] text-[clamp(.9rem,2vw,1rem)]
+                        placeholder-[#64748b] min-w-0">
         </div>
-    </footer>
-    <script>
-        document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
-            document.querySelector('nav').classList.toggle('active');
-        });
-    </script>
+
+        <button type="submit"
+                class="grad-bg text-white border-none
+                       px-[clamp(16px,3vw,28px)]
+                       font-bold text-[clamp(.82rem,1.5vw,.9rem)]
+                       cursor-pointer transition-opacity duration-200
+                       hover:opacity-[.88] whitespace-nowrap self-stretch">
+          Search
+        </button>
+      </form>
+
+      <!-- CTA buttons -->
+      <div class="flex gap-[clamp(10px,2vw,14px)] justify-center flex-wrap
+                  max-md:flex-col max-md:items-center">
+
+        <a href="#"
+           class="bg-blue-500 text-white no-underline font-bold
+                  py-[clamp(10px,2vw,12px)] px-[clamp(20px,3vw,28px)]
+                  rounded-[10px] text-[clamp(.88rem,2vw,.95rem)]
+                  shadow-[0_4px_20px_rgba(37,99,235,.25)]
+                  transition-all duration-200
+                  hover:opacity-[.88] hover:-translate-y-0.5
+                  hover:shadow-[0_8px_28px_rgba(37,99,235,.35)]
+                  inline-flex items-center justify-center whitespace-nowrap
+                  max-md:w-full max-md:max-w-85">
+          Get Started
+        </a>
+
+        <a href="#"
+           class="bg-white text-[#0f172a] no-underline font-semibold
+                  py-[clamp(10px,2vw,12px)] px-[clamp(20px,3vw,28px)]
+                  border border-[#e2e8f8] rounded-[10px]
+                  text-[clamp(.88rem,2vw,.95rem)]
+                  shadow-[0_1px_4px_rgba(37,99,235,.07)]
+                  transition-all duration-200
+                  hover:border-[#2563eb] hover:text-[#2563eb]
+                  hover:shadow-[0_4px_16px_rgba(37,99,235,.1)]
+                  hover:-translate-y-px
+                  inline-flex items-center justify-center whitespace-nowrap
+                  max-md:w-full max-md:max-w-85">
+          Learn More
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ══ FOOTER (fragment) ══ -->
+<div th:replace="fragments/footer.html :: footer"></div>
+
+<!-- Mobile nav toggle -->
+<script>
+  document.querySelector('.mobile-menu-toggle')
+    .addEventListener('click', function () {
+      document.querySelector('.nav-drawer').classList.toggle('active');
+    });
+</script>
+
 </body>
 </html>
