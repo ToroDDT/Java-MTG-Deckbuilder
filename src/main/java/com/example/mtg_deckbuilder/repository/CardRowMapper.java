@@ -2,9 +2,11 @@ package com.example.mtg_deckbuilder.repository;
 
 import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.ImageUris;
+import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.RowMapper;
 import tools.jackson.databind.ObjectMapper;
 
+import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,14 +18,23 @@ public class CardRowMapper implements RowMapper<Card> {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper(); // shared, not per-row
 
     @Override
-    public Card mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public Card mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
         Card card = new Card();
+        extractFields(rs, card);
+        return card;
+    }
+    public void extractFields(ResultSet rs, Card card) throws SQLException {
         card.setName(rs.getString("name"));
         card.setId(rs.getObject("id", UUID.class));
         card.setMultiverseIds(extractMultiverseIds(rs));
         card.setImage(extractArtCrop(rs));
         card.setColorIdentity(List.of(extractColorIdentity(rs)));
-        return card;
+        card.setColors(List.of(extractColorIdentity(rs)));
+        card.setTypeLine(rs.getString("type_line"));
+        card.setCmc(BigDecimal.valueOf(rs.getInt("cmc")));
+        card.setToughness(rs.getString("toughness"));
+        card.setPower(rs.getString("power"));
+        card.setArtist(rs.getString("artist"));
     }
 
     private Integer[] extractMultiverseIds(ResultSet rs) throws SQLException {
