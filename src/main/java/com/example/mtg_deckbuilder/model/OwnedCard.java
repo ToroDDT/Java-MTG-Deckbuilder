@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Column;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -15,12 +17,21 @@ public class OwnedCard {
     @Column("card_id")
     private UUID cardId;
     @Column("image_id")
-    private String imageId;
-    @Column("created_at")
-    private String createdAt;
+    private String image;
+    @Column("date_added")
+    private LocalDate dateAdded;
     @Column("updated_at")
-    private String updatedAt;
+    private LocalDate updatedAt;
+    private String name;
+    private String type;
+    private List<String> colors;
+    @Column
+    private List<String> tags;
+    private Card card;
 
-    public OwnedCard() {
+    public OwnedCard() {}
+
+    public OwnedCard(Card card) {
+        this.card = card;
     }
 }
