@@ -3,22 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MTG Deckbuilder - Build Your Ultimate Deck</title>
+  <title>Card Modal</title>
 
-  <!-- Tailwind (CDN — swap for your build output in production) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Companion stylesheet: tokens, keyframes, pseudo-elements, mobile drawer -->
   <link rel="stylesheet" th:href="@{/css/style.css}">
-
-  <!-- Font Awesome -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         media="print" onload="this.media='all'">
 </head>
 <body>
 
-<!-- ══ HEADER (fragment) ══ -->
 <div th:replace="fragments/nav-bar.html :: header"></div>
 
 <main>
@@ -32,7 +25,7 @@
              radial-gradient(ellipse at 15% 90%, #e0e7ff66 0%, transparent 50%),
              #ffffff;">
 
-    <div class="max-w-[800px] mx-auto">
+    <div class="max-w-200 mx-auto">
 
       <!-- Heading -->
       <h1 class="hero-heading
@@ -58,7 +51,8 @@
 
         <div class="search-input-wrapper flex flex-1 items-center pl-4 min-w-0">
           <i class="fas fa-search text-[#64748b] shrink-0"></i>
-          <input type="text" name="query"
+          <label for="query" class="sr-only">Search</label>
+          <input type="text" name="query" id="query"
                  placeholder="Search for cards, decks, or users..."
                  class="w-full py-[clamp(12px,2vw,16px)] px-3
                         bg-transparent border-none outline-none

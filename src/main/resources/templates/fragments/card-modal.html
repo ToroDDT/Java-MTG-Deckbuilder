@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Modal — Erebos, God of the Dead</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          media="print" onload="this.media='all'">
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4 font-sans
+             bg-[#f1f5fe]
+             bg-[radial-gradient(circle,#cbd5e1_1px,transparent_1px)]
+             bg-size-[32px_32px]
+             bg-fixed">
+
+<!-- ══ DEMO TRIGGER ══ -->
+<button
+        onclick="document.getElementById('cardModal').style.display='flex'"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white
+           shadow-[0_4px_20px_rgba(37,99,235,.25)] transition-all duration-200
+           hover:opacity-90 hover:-translate-y-0.5
+           bg-[linear-gradient(135deg,#2563eb_0%,#6366f1_50%,#06b6d4_100%)]">
+    <i class="fas fa-eye"></i> Preview Card Modal
+</button>
+
+<div id="cardModal"
+     th:fragment="cardDetailModal"
+     class="fixed inset-0 z-2000 hidden items-center justify-center
+              bg-[rgba(15,23,42,.55)] backdrop-blur-md
+              p-[clamp(12px,3vw,16px)]"
+     onclick="if(event.target===this)this.style.display='none'">
+
+    <!-- Container -->
+    <div class="flex flex-col w-full max-w-205 max-h-[92vh] bg-white
+                border border-[#e2e8f8] rounded-[clamp(12px,2vw,18px)] overflow-hidden
+                shadow-[0_12px_40px_rgba(37,99,235,.14),0_0_0_1px_rgba(37,99,235,.06)]"
+         role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <!-- ── HEADER ── -->
+        <div class="relative flex items-center gap-3 shrink-0
+                  px-[clamp(16px,3vw,22px)] py-[clamp(12px,2vw,16px)]
+                  border-b border-[#e2e8f8] bg-[#f8faff]">
+
+            <!-- Top gradient stripe (replaces ::before) -->
+            <div class="absolute top-0 left-0 right-0 h-0.75
+                    bg-[linear-gradient(135deg,#2563eb_0%,#6366f1_50%,#06b6d4_100%)]"></div>
+
+            <!-- Mana pips -->
+            <div class="flex items-center gap-1" aria-label="Mana cost: 3 generic, 1 black">
+          <span class="inline-flex items-center justify-center w-6.5 h-6.5
+                       rounded-full text-[.75rem] font-extrabold shrink-0
+                       bg-[#9ca3af] text-white">3</span>
+                <span class="inline-flex items-center justify-center w-6.5 h-6.5
+                       rounded-full text-[.75rem] font-extrabold shrink-0
+                       bg-[#1e1b2e] text-[#e9d5ff] border border-[#4c1d95]">B</span>
+            </div>
+
+            <!-- Title -->
+            <h2 id="modalTitle"
+                class="flex-1 min-w-0 truncate font-extrabold tracking-wide text-[#0f172a]
+                   text-[clamp(.9rem,2vw,1.05rem)]">
+                Erebos, God of the Dead
+            </h2>
+
+            <!-- Mythic Rare badge -->
+            <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full
+                     text-[.72rem] font-bold whitespace-nowrap
+                     bg-orange-50 border border-orange-200 text-orange-700">
+          <i class="fas fa-star text-[.65rem]"></i> Mythic Rare
+        </span>
+
+            <button class="shrink-0 bg-transparent border border-[#e2e8f8] text-[#64748b]
+                       cursor-pointer px-2.25 py-1.25 rounded-lg text-base
+                       transition-all duration-150
+                       hover:bg-red-50 hover:border-red-300 hover:text-red-500"
+                    aria-label="Close"
+                    onclick="document.getElementById('cardModal').style.display='none'">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto overflow-x-hidden p-[clamp(14px,2.5vw,20px)]">
+
+            <div class="p-[clamp(12px,2vw,16px)] bg-[#f8faff] border border-[#e2e8f8] rounded-xl">
+                <div class="grid grid-cols-[200px_1fr] gap-[clamp(16px,3vw,24px)]
+                      items-start max-[580px]:grid-cols-1">
+
+                    <div class="max-[580px]:flex max-[580px]:justify-center">
+                        <div class="rounded-xl overflow-hidden
+                          shadow-[0_8px_32px_rgba(37,99,235,.15)]
+                          max-[580px]:max-w-50
+                          transition-[transform,box-shadow] duration-250
+                          hover:transform-[translateY(-4px)_scale(1.015)]
+                          hover:shadow-[0_16px_48px_rgba(37,99,235,.22)]">
+                            <img src="https://cards.scryfall.io/png/front/d/0/d0787e1f-0b75-44ab-a8fd-90358906a787.png?1562831894"
+                                 alt="Erebos, God of the Dead card art"
+                                 class="w-full block rounded-xl"
+                                 loading="lazy">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+
+                        <div>
+                            <p class="text-[.7rem] font-bold uppercase tracking-widest text-[#64748b] mb-1">
+                                Type
+                            </p>
+                            <p class="font-semibold text-[.92rem] text-[#0f172a]">
+                                Legendary Enchantment Creature — God
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <div class="inline-flex items-center gap-1.5 bg-white border border-[#e2e8f8]
+                            rounded-lg px-3 py-1.5 text-[.8rem] font-bold text-[#0f172a]">
+                                <i class="fas fa-shield-alt text-[#6366f1] text-[.75rem]"></i>
+                                P/T: <strong>5 / 7</strong>
+                            </div>
+                            <div class="inline-flex items-center gap-1.5 bg-white border border-[#e2e8f8]
+                            rounded-lg px-3 py-1.5 text-[.8rem] font-bold text-[#0f172a]">
+                                <i class="fas fa-lock text-[#2563eb] text-[.75rem]"></i>
+                                Indestructible
+                            </div>
+                            <div class="inline-flex items-center gap-1.5 bg-white border border-[#e2e8f8]
+                            rounded-lg px-3 py-1.5 text-[.8rem] font-bold text-[#0f172a]">
+                                <i class="fas fa-crown text-orange-400 text-[.75rem]"></i>
+                                Legendary
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-[#e2e8f8] rounded-xl
+                          p-4 text-[.88rem] leading-[1.7] text-[#0f172a]">
+                            <p>
+                                As long as your devotion to black is less than five, Erebos isn't a creature.
+                                <span class="italic text-[#64748b]">(Each {B} in the mana costs of permanents
+                  you control counts toward your devotion to black.)</span>
+                            </p>
+                            <p class="mt-2">Your opponents can't gain life.</p>
+                            <p class="mt-2 flex items-center gap-1 flex-wrap">
+                  <span class="inline-flex items-center gap-0.5">
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full
+                                 text-[.6rem] font-extrabold bg-[#9ca3af] text-white">1</span>
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full
+                                 text-[.6rem] font-extrabold bg-[#1e1b2e] text-[#e9d5ff]
+                                 border border-[#4c1d95]">B</span>
+                  </span>
+                                , Pay 2 life: Draw a card.
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap gap-x-4 gap-y-1 text-[.78rem] text-[#64748b]">
+                <span>
+                  <i class="fas fa-palette mr-1 text-[#2563eb]"></i>
+                  Illustrated by <strong class="text-[#0f172a]">Peter Mohrbacher</strong>
+                </span>
+                            <span>
+                  <i class="fas fa-layer-group mr-1 text-[#6366f1]"></i>
+                  Theros (THS) · #85
+                </span>
+                            <span>
+                  <i class="fas fa-language mr-1 text-[#06b6d4]"></i>
+                  English · Nonfoil / Foil
+                </span>
+                        </div>
+
+                    </div><!-- /oracle col -->
+                </div>
+            </div><!-- /section 1 -->
+
+            <!-- SECTION 2: Format Legality -->
+            <div class="p-[clamp(12px,2vw,16px)] bg-[#f8faff] border border-[#e2e8f8]
+                    rounded-xl mt-3">
+                <p class="text-[.7rem] font-extrabold uppercase tracking-widest text-[#64748b] mb-3">
+                    <i class="fas fa-gavel mr-1 text-[#2563eb]"></i>Format Legality
+                </p>
+                <div class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-1.5">
+                    <!-- Legal -->
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Pioneer
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Modern
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Legacy
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Vintage
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Commander
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Historic
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Timeless
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Oathbreaker
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-green-50 border border-green-200 text-green-700">
+              <i class="fas fa-check text-[.65rem]"></i> Penny
+            </span>
+                    <!-- Not legal -->
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-red-50 border border-red-200 text-red-700">
+              <i class="fas fa-times text-[.65rem]"></i> Standard
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-red-50 border border-red-200 text-red-700">
+              <i class="fas fa-times text-[.65rem]"></i> Alchemy
+            </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
+                         text-[.75rem] font-semibold bg-red-50 border border-red-200 text-red-700">
+              <i class="fas fa-times text-[.65rem]"></i> Pauper
+            </span>
+                </div>
+            </div><!-- /section 2 -->
+
+            <!-- SECTION 3: Add to Deck -->
+            <div class="p-[clamp(12px,2vw,16px)] bg-[#f8faff] border border-[#e2e8f8]
+                    rounded-xl mt-3">
+                <p class="text-[.7rem] font-extrabold uppercase tracking-widest text-[#64748b] mb-3">
+                    <i class="fas fa-plus-circle mr-1 text-[#2563eb]"></i>Add to Deck
+                </p>
+                <div class="flex flex-wrap gap-3 items-center">
+
+                    <!-- Quantity stepper -->
+                    <div class="flex items-center bg-white border border-[#e2e8f8] rounded-lg
+                        overflow-hidden shadow-[0_1px_4px_rgba(37,99,235,.07)]">
+                        <button onclick="adjustQty(-1)"
+                                class="px-3 py-2 text-sm font-bold text-[#64748b] transition-colors duration-150
+                             hover:text-[#2563eb] hover:bg-[#f0f7ff]">−</button>
+                        <label for="cardQty"></label>
+                        <input id="cardQty" type="number" value="1" min="1" max="4"
+                                                            class="w-10 text-center text-[.9rem] font-bold border-none outline-none
+                            bg-transparent text-[#0f172a]
+                            appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                            [&::-webkit-outer-spin-button]:appearance-none">
+                        <button onclick="adjustQty(1)"
+                                class="px-3 py-2 text-sm font-bold text-[#64748b] transition-colors duration-150
+                             hover:text-[#2563eb] hover:bg-[#f0f7ff]">+</button>
+                    </div>
+
+                    <!-- Board selector -->
+                    <label>
+                        <select class="bg-white border border-[#e2e8f8] rounded-lg text-[.88rem] font-medium
+                               text-[#0f172a] outline-none px-3 py-2 cursor-pointer transition-all
+                               focus:border-[#2563eb] focus:ring-2 focus:ring-[rgba(37,99,235,.1)]">
+                            <option>Mainboard</option>
+                            <option>Sideboard</option>
+                            <option>Commander</option>
+                        </select>
+                    </label>
+
+                    <!-- Add to Deck -->
+                    <button class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2
+                           px-5.5 py-2.5 rounded-[10px] font-bold text-[.9rem] text-white
+                           border-none cursor-pointer whitespace-nowrap
+                           bg-[linear-gradient(135deg,#2563eb_0%,#6366f1_50%,#06b6d4_100%)]
+                           shadow-[0_4px_20px_rgba(37,99,235,.25)] transition-all duration-200
+                           hover:opacity-90 hover:-translate-y-0.5
+                           hover:shadow-[0_8px_28px_rgba(37,99,235,.35)]">
+                        <i class="fas fa-plus"></i> Add to Deck
+                    </button>
+
+                </div>
+            </div><!-- /section 3 -->
+
+        </div><!-- /body -->
+
+        <!-- ── FOOTER ── -->
+        <div class="shrink-0 flex justify-end flex-wrap gap-2.5
+                  px-[clamp(16px,3vw,22px)] py-[clamp(10px,2vw,14px)]
+                  border-t border-[#e2e8f8] bg-[#f8faff]">
+
+            <a href="https://scryfall.com/card/ths/85/erebos-god-of-the-dead"
+               target="_blank" rel="noopener"
+               class="inline-flex items-center gap-2 px-5.5 py-2.5 rounded-[10px]
+                  font-semibold text-[.9rem] text-[#0f172a] bg-white no-underline
+                  border border-[#e2e8f8] whitespace-nowrap cursor-pointer
+                  shadow-[0_1px_4px_rgba(37,99,235,.07)] transition-all duration-200
+                  hover:border-[#2563eb] hover:text-[#2563eb] hover:-translate-y-px">
+                <i class="fas fa-external-link-alt text-[.8rem]"></i> View on Scryfall
+            </a>
+
+            <button onclick="document.getElementById('cardModal').style.display='none'"
+                    class="inline-flex items-center gap-2 px-5.5 py-2.5 rounded-[10px]
+                       font-semibold text-[.9rem] text-[#0f172a] bg-white
+                       border border-[#e2e8f8] whitespace-nowrap cursor-pointer
+                       shadow-[0_1px_4px_rgba(37,99,235,.07)] transition-all duration-200
+                       hover:border-[#2563eb] hover:text-[#2563eb] hover:-translate-y-px">
+                Close
+            </button>
+
+            <button class="inline-flex items-center gap-2 px-5.5 py-2.5 rounded-[10px]
+                       font-bold text-[.9rem] text-white border-none cursor-pointer whitespace-nowrap
+                       bg-[linear-gradient(135deg,#2563eb_0%,#6366f1_50%,#06b6d4_100%)]
+                       shadow-[0_4px_20px_rgba(37,99,235,.25)] transition-all duration-200
+                       hover:opacity-90 hover:-translate-y-0.5
+                       hover:shadow-[0_8px_28px_rgba(37,99,235,.35)]">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+
+        </div>
+
+    </div><!-- /modal-container -->
+</div><!-- /modal-overlay -->
+
+<script>
+    function adjustQty(delta) {
+        const el = document.getElementById('cardQty');
+        el.value = Math.min(4, Math.max(1, parseInt(el.value || 1) + delta));
+    }
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') document.getElementById('cardModal').style.display = 'none';
+    });
+</script>
+
+</body>
+</html>
