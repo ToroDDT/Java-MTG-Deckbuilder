@@ -10,4 +10,9 @@ public class PersonalLibraryController {
 
         return "personal-library";
     }
+    @PostMapping("/personal-library/add")
+    public String addCardToPersonalLibrary(@ModelAttribute("ownedCard") OwnedCard ownedCard, @AuthenticationPrincipal CustomUserDetails user) {
+        personalLibraryService.addCardToPersonalLibrary(ownedCard, user.getId());
+        return "redirect:/personal-library";
+    }
 }
