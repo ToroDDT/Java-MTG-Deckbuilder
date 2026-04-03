@@ -136,10 +136,9 @@
         </form>
 
       </aside>
-      <div th:replace="fragments/card-modal :: cardDetailModal">
-      </div>
 
       <div class="cb-results-col">
+
 
         <div class="cb-results-header">
           <p class="cb-count">Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> cards</p>
@@ -205,6 +204,8 @@
       </div>
     </div>
   </main>
+  <div th:replace="fragments/card-modal :: cardDetailModal">
+  </div>
 
   <!-- ══════════════ FOOTER ══════════════ -->
   <footer class="cb-footer">

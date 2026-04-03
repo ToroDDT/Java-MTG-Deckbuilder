@@ -28,13 +28,13 @@
 
 <div id="cardModal"
      th:fragment="cardDetailModal"
-     class="fixed inset-0 z-2000 hidden items-center justify-center
-              bg-[rgba(15,23,42,.55)] backdrop-blur-md
-              p-[clamp(12px,3vw,16px)]"
+     class="fixed inset-0 z-[2000] hidden items-center justify-center
+            bg-[rgba(15,23,42,.55)] backdrop-blur-md
+            p-[clamp(12px,3vw,16px)] overflow-hidden"
      onclick="if(event.target===this)this.style.display='none'">
 
     <!-- Container -->
-    <div class="flex flex-col w-full max-w-205 max-h-[92vh] bg-white
+    <div class="flex flex-col w-full min-w-0 max-w-[min(820px,100%)] max-h-[92vh] bg-white
                 border border-[#e2e8f8] rounded-[clamp(12px,2vw,18px)] overflow-hidden
                 shadow-[0_12px_40px_rgba(37,99,235,.14),0_0_0_1px_rgba(37,99,235,.06)]"
          role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -49,14 +49,7 @@
                     bg-[linear-gradient(135deg,#2563eb_0%,#6366f1_50%,#06b6d4_100%)]"></div>
 
             <!-- Mana pips -->
-            <div class="flex items-center gap-1" aria-label="Mana cost: 3 generic, 1 black">
-          <span class="inline-flex items-center justify-center w-6.5 h-6.5
-                       rounded-full text-[.75rem] font-extrabold shrink-0
-                       bg-[#9ca3af] text-white">3</span>
-                <span class="inline-flex items-center justify-center w-6.5 h-6.5
-                       rounded-full text-[.75rem] font-extrabold shrink-0
-                       bg-[#1e1b2e] text-[#e9d5ff] border border-[#4c1d95]">B</span>
-            </div>
+
 
             <!-- Title -->
             <h2 id="modalTitle"
