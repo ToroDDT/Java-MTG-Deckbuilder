@@ -156,7 +156,7 @@
             <div class="cb-card-img-wrap">
               <img
                 class="cb-card-img"
-                th:src="@{https://deck-builder.wiz-ops.com/api/images/normal/{name}(name=${card.getCard().getName()})}"
+                th:src="${card.getCard().getImage()}"
                 th:alt="${card.getCard().getName()}"
                 loading="lazy"
               />
@@ -165,11 +165,14 @@
 
             <div class="cb-card-body">
               <div class="cb-card-name" th:text="${card.getCard().getName()}">Card Name</div>
+              <div class="cb-card-name">
+                Price: <span class="cb-card-type" th:text="${'$'+ card.getCard().getPrices().getUsd()}">0</span>
+              </div>
               <div class="cb-card-type" th:text="${card.getCard().getTypeLine()}">Type</div>
               <div class="cb-card-cmc">
                 <span class="cb-card-cmc-pip" th:text="${card.getCard().getCmc()}">0</span> CMC
               </div>
-              <div class="cb-card-tags">
+            <div class="cb-card-tags">
                 <th:block th:each="tag, tagStat : ${card.tags}">
                   <span class="cb-tag" th:text="${tag}" th:if="${tagStat.index} < 4"></span>
                 </th:block>
