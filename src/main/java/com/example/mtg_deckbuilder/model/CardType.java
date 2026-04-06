@@ -1,9 +1,11 @@
 package com.example.mtg_deckbuilder.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public enum CardType {
+    ALL("All"),
     SORCERY("Sorcery"),
     INSTANT("Instant"),
     CREATURE("Creature"),
@@ -16,7 +18,6 @@ public enum CardType {
 
     private final String type;
 
-    // Constructor - Note: Enum constructors are always private
     CardType(String type) {
         this.type = type;
     }
@@ -27,6 +28,6 @@ public enum CardType {
                 return cardType;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Unknown card type: " + text);
     }
 }
