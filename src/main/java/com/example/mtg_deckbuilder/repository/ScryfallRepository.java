@@ -30,7 +30,7 @@ public class ScryfallRepository implements CardRepository {
   public Optional<Card> findByName(String name) {
     return jdbcTemplate.query(
             "select * from cards where name = ?",
-            new CardRowMapper(),
+            new ScryfallCardRowMapper(),
             name
     ).stream().findFirst();
   }
