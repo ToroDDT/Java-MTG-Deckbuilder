@@ -1,9 +1,12 @@
 package com.example.mtg_deckbuilder.service;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
+import com.example.mtg_deckbuilder.model.CardType;
 import com.example.mtg_deckbuilder.model.OwnedCard;
+import com.example.mtg_deckbuilder.model.PersonalLibraryFilters;
 import com.example.mtg_deckbuilder.repository.DefaultPersonalLibraryRepository;
 import com.example.mtg_deckbuilder.repository.PersonalLibraryRepository;
+import com.example.mtg_deckbuilder.utils.CardUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,5 +42,17 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
     @Override
     public List<OwnedCard> getCardsFromPersonalLibrary(UUID userId) {
         return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId);
+    }
+    @Override
+    public List<OwnedCard> getCardsFromPersonalLibrary(UUID userid, PersonalLibraryFilters personalLibraryFilters) {
+
+        var cardType = CardType.fromString(personalLibraryFilters.getCardType());
+
+        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid).stream()
+                .filter(card -> CardUtils.matchesSearchQuery(card, personalLibraryFilters.getCardName()))
+                .filter(card -> CardUtils.matchesSelectedColors(card, personalLibraryFilters.getSelectedColors()))
+                .filter(card -> CardUtils.matchesSelectedType(card, cardType))
+                .filter(card -> CardUtils.matchesCmcRange(card, personalLibraryFilters))
+                .toList();
     }
 }
