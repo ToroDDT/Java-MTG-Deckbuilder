@@ -11,41 +11,47 @@
 </head>
 <body>
 
-  <header class="cb-nav">
-    <div class="cb-nav-inner">
-      <a href="/" class="cb-logo">MTG Deckbuilder</a>
+<header class="cb-nav">
+  <div class="cb-nav-inner">
+    <a href="/" class="cb-logo">MTG Deckbuilder</a>
 
-      <button class="cb-hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+    <button class="cb-hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
 
-      <nav class="cb-nav-menu" id="navMenu">
-        <ul class="cb-nav-links">
-          <li><a href="/">Home</a></li>
-          <li><a href="/build">Build</a></li>
-          <li><a href="/owned">Owned Library</a></li>
-          <li><a href="/cards" class="active">All Cards</a></li>
-          <li><a href="/commanders">Commanders</a></li>
-          <li><a href="/decks">Finished Decks</a></li>
-        </ul>
-        <a href="/build" class="cb-nav-btn">Build Deck</a>
-      </nav>
-    </div>
-  </header>
+    <nav class="cb-nav-menu" id="navMenu">
+      <ul class="cb-nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/build">Build</a></li>
+        <li><a href="/owned">Owned Library</a></li>
+        <li><a href="/cards" class="active">All Cards</a></li>
+        <li><a href="/commanders">Commanders</a></li>
+        <li><a href="/decks">Finished Decks</a></li>
+      </ul>
+      <a href="/build" class="cb-nav-btn">Build Deck</a>
+    </nav>
+  </div>
+</header>
 
-  <!-- ══════════════ PAGE ══════════════ -->
-  <main class="cb-page">
+<!-- ══════════════ PAGE ══════════════ -->
+<main class="cb-page">
 
-    <!-- Page header -->
-    <div class="cb-page-header">
-      <div class="cb-page-header-bg"></div>
-      <h1 class="cb-page-title">Card Browser</h1>
-      <p class="cb-page-sub">Browse all cards with filters and search.</p>
-    </div>
+  <!-- Page header -->
+  <div class="cb-page-header">
+    <div class="cb-page-header-bg"></div>
+    <h1 class="cb-page-title">Card Browser</h1>
+    <p class="cb-page-sub">Browse all cards with filters and search.</p>
+  </div>
 
-    <div class="cb-layout">
+  <div class="cb-layout">
 
-      <aside class="cb-sidebar">
+    <aside class="cb-sidebar">
+      <form th:action="@{/personal-library/search}"
+            th:hx-get="@{/personal-library/search}"
+            hx-target="#personal-cards"
+            th:object="${personalLibraryFilters}"
+            hx-trigger="input delay:100ms, change">
+
         <div class="cb-sidebar-title">Filters</div>
 
         <div class="cb-filter-section">
@@ -54,33 +60,58 @@
             <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input class="cb-search-input" id="searchInput" type="text" placeholder="Search cards..." autocomplete="off" />
+            <input th:field="*{cardName}" class="cb-search-input" id="searchInput" type="text" placeholder="Search cards..." autocomplete="off" />
           </div>
         </div>
 
         <div class="cb-filter-section">
           <span class="cb-filter-label">Color</span>
           <div class="cb-color-row">
-            <button class="cb-color-btn pip-W" data-color="W" title="White">W</button>
-            <button class="cb-color-btn pip-U" data-color="U" title="Blue">U</button>
-            <button class="cb-color-btn pip-B" data-color="B" title="Black">B</button>
-            <button class="cb-color-btn pip-R" data-color="R" title="Red">R</button>
-            <button class="cb-color-btn pip-G" data-color="G" title="Green">G</button>
+
+            <div class="pip-container flex flex-wrap gap-2" id="color-row">
+
+            <input hx-trigger="change"   type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
+            <label onclick="toggleWhite(this)" for="colorW" id="whiteToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-[#f9f6ee] text-[#6b6245] border-[#c8b97e] opacity-40" >W</label>
+
+            <input hx-trigger="change" type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
+            <label onclick="toggleBlue(this)" for="colorU" id="blueToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-[#0e68ab] text-[#d4edff] border-[#0e68ab] opacity-40" >U</label>
+
+            <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
+            <label onclick="toggleBlack(this)" for="colorB" id="blackToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-gray-800 text-[#d4edff] border-[#0e68ab] opacity-40">B</label>
+
+            <input type="checkbox" th:field="*{selectedColors}" value="R" id="colorR" style="display:none;">
+            <label onclick="toggleRed(this)" for="colorR" id="redToggle"  class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-red-700 text-[#d4edff] border-[#0e68ab] opacity-40" >R</label>
+
+            <input type="checkbox" th:field="*{selectedColors}" value="G" id="colorG" style="display:none;">
+            <label onclick="toggleGreen(this)" for="colorG" id="greenToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-green-900 text-[#d4edff] border-[#0e68ab] opacity-40" >G</label>
+            </div>
+
           </div>
+
         </div>
 
         <div class="cb-filter-section">
           <label for="typeFilter" class="cb-filter-label">Type</label>
-          <select class="cb-select" id="typeFilter">
-            <option>All Types</option>
-            <option>Artifact</option>
-            <option>Creature</option>
-            <option>Enchantment</option>
-            <option>Instant</option>
-            <option>Land</option>
-            <option>Legendary</option>
-            <option>Sorcery</option>
-            <option>Vehicle</option>
+          <select hx-trigger="change" th:field="*{cardType}"  class="cb-select" id="typeFilter">
+            <option th:value="ALL"> All Types</option>
+            <option th:value="ARTIFACT">Artifact</option>
+            <option th:value="CREATURE">Creature</option>
+            <option th:value="ENCHANTMENT">Enchantment</option>
+            <option th:value="INSTANT">Instant</option>
+            <option th:value="LAND">Land</option>
+            <option th:value="LEGENDARY">Legendary</option>
+            <option th:value="SORCERY">Sorcery</option>
+            <option th:value="VEHICLE">Vehicle</option>
           </select>
         </div>
 
@@ -117,104 +148,121 @@
           <button class="cb-btn-clear" id="clearBtn">Clear</button>
         </div>
 
-        <!-- ══════ Add Card ══════ -->
-        <div class="cb-sidebar-title" style="margin-top: 1.5rem;">Add Card</div>
+      </form>
 
-        <form th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
+      <!-- ══════ Add Card ══════ -->
+      <div class="cb-sidebar-title" style="margin-top: 1.5rem;">Add Card</div>
 
-          <div class="cb-filter-section">
-            <label for="card-name" class="cb-filter-label">Image ID</label>
-            <input class="cb-search-input" id="card-name" name="card-name" type="text"
-                   th:field="*{name}"
-                   placeholder="Enter card name.." />
-          </div>
+      <form th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
 
-          <div class="cb-btn-row">
-            <button type="submit" class="cb-btn-apply">Add Card</button>
-          </div>
-
-        </form>
-
-      </aside>
-
-      <div class="cb-results-col">
-
-
-        <div class="cb-results-header">
-          <p class="cb-count">Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> cards</p>
+        <div class="cb-filter-section">
+          <label for="card-name" class="cb-filter-label">Image ID</label>
+          <input class="cb-search-input" id="card-name" name="card-name" type="text"
+                 th:field="*{name}"
+                 placeholder="Enter card name.." />
         </div>
 
-        <div class="cb-grid" id="cardGrid">
+        <div class="cb-btn-row">
+          <button type="submit" class="cb-btn-apply">Add Card</button>
+        </div>
 
-          <div class="cb-card"
-               th:each="card : ${cards}"
-               th:data-name="${card.getCard().getName()}"
-               th:data-type="${card.getCard().getTypeLine()}"
-               th:data-cmc="${card.getCard().getCmc()}"
-               th:data-colors="${#strings.listJoin(card.getColors(), ',')}">
+      </form>
 
-            <div class="cb-card-img-wrap">
-              <img
-                class="cb-card-img"
-                th:src="${card.getCard().getImage()}"
-                th:alt="${card.getCard().getName()}"
-                loading="lazy"
-              />
-              <div class="cb-card-img-placeholder" style="display:none">🃏</div>
+    </aside>
+
+    <div id="personal-cards" class="cb-results-col">
+
+
+      <div class="cb-results-header">
+        <p class="cb-count">Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> cards</p>
+      </div>
+
+      <div class="cb-grid" id="cardGrid">
+
+        <div class="cb-card"
+             th:each="card : ${cards}"
+             th:data-name="${card.getCard().getName()}"
+             th:data-type="${card.getCard().getTypeLine()}"
+             th:data-cmc="${card.getCard().getCmc()}"
+             th:data-colors="${#strings.listJoin(card.getColors(), ',')}">
+
+          <div class="cb-card-img-wrap">
+            <img
+                    class="cb-card-img"
+                    th:src="${card.getCard().getImage()}"
+                    th:alt="${card.getCard().getName()}"
+                    loading="lazy"
+            />
+            <div class="cb-card-img-placeholder" style="display:none">🃏</div>
+          </div>
+
+          <div class="cb-card-body">
+            <div class="cb-card-name" th:text="${card.getCard().getName()}">Card Name</div>
+            <div class="cb-card-name">
+              Price: <span class="cb-card-type" th:text="${'$'+ card.getCard().getPrices().getUsd()}">0</span>
             </div>
-
-            <div class="cb-card-body">
-              <div class="cb-card-name" th:text="${card.getCard().getName()}">Card Name</div>
-              <div class="cb-card-name">
-                Price: <span class="cb-card-type" th:text="${'$'+ card.getCard().getPrices().getUsd()}">0</span>
-              </div>
-              <div class="cb-card-type" th:text="${card.getCard().getTypeLine()}">Type</div>
-              <div class="cb-card-cmc">
-                <span class="cb-card-cmc-pip" th:text="${card.getCard().getCmc()}">0</span> CMC
-              </div>
+            <div class="cb-card-type" th:text="${card.getCard().getTypeLine()}">Type</div>
+            <div class="cb-card-cmc">
+              <span class="cb-card-cmc-pip" th:text="${card.getCard().getCmc()}">0</span> CMC
+            </div>
             <div class="cb-card-tags">
-                <th:block th:each="tag, tagStat : ${card.tags}">
-                  <span class="cb-tag" th:text="${tag}" th:if="${tagStat.index} < 4"></span>
-                </th:block>
-                <span class="cb-tag"
-                      th:if="${#lists.size(card.tags)} > 4"
-                      th:text="'+' + (${#lists.size(card.tags)} - 4)">
+              <th:block th:each="tag, tagStat : ${card.tags}">
+                <span class="cb-tag" th:text="${tag}" th:if="${tagStat.index} < 4"></span>
+              </th:block>
+              <span class="cb-tag"
+                    th:if="${#lists.size(card.tags)} > 4"
+                    th:text="'+' + (${#lists.size(card.tags)} - 4)">
                 </span>
-              </div>
             </div>
-
-            <button
-                    onclick="document.getElementById('cardModal').style.display='flex'"
-                    class="cb-card-link">
-              <i class="fas fa-eye"></i>
-              Card Details ↗
-            </button>
-
           </div>
 
-          <!-- Empty state when model returns no cards -->
-          <div class="cb-empty" th:if="${#lists.isEmpty(cards)}">
-            <div class="cb-empty-icon">🃏</div>
-            <p>No cards in your library yet.</p>
-          </div>
+          <button
+                  onclick="document.getElementById('cardModal').style.display='flex'"
+                  class="cb-card-link">
+            <i class="fas fa-eye"></i>
+            Card Details ↗
+          </button>
 
         </div>
 
-        <div class="cb-load-more" id="loadMoreWrap" style="display:none">
-          <button class="cb-btn-load" id="loadMoreBtn">Load More</button>
+        <!-- Empty state when model returns no cards -->
+        <div class="cb-empty" th:if="${#lists.isEmpty(cards)}">
+          <div class="cb-empty-icon">🃏</div>
+          <p>No cards in your library yet.</p>
         </div>
 
       </div>
-    </div>
-  </main>
-  <div th:replace="fragments/card-modal :: cardDetailModal">
-  </div>
 
-  <!-- ══════════════ FOOTER ══════════════ -->
-  <footer class="cb-footer">
-    <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
-  </footer>
-  <script>
-     </script>
+      <div class="cb-load-more" id="loadMoreWrap" style="display:none">
+        <button class="cb-btn-load" id="loadMoreBtn">Load More</button>
+      </div>
+
+    </div>
+  </div>
+</main>
+<div th:replace="fragments/card-modal :: cardDetailModal">
+</div>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="cb-footer">
+  <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
+</footer>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.pip').forEach(btn => {
+      btn.addEventListener('click', () => toggle(btn));
+    });
+
+    function toggle(btn) {
+      const isActive = btn.dataset.active === 'true';
+      btn.dataset.active = !isActive;
+      btn.style.opacity = isActive ? '0.4' : '1';
+      btn.classList.toggle('ring-offset-2', !isActive);
+// Toggle the corresponding checkbox
+      const checkbox = document.getElementById(btn.dataset.color);
+    }
+  });
+</script>
+<script src='https://unpkg.com/htmx.org/dist/htmx.min.js'></script>
 </body>
 </html>
