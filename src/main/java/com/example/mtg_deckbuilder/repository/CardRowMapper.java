@@ -5,7 +5,6 @@ import com.example.mtg_deckbuilder.model.CardPrices;
 import com.example.mtg_deckbuilder.model.ImageUris;
 import tools.jackson.databind.ObjectMapper;
 
-import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,11 +20,11 @@ public class CardRowMapper {
         card.setColorIdentity(List.of(extractColorIdentity(rs)));
         card.setColors(List.of(extractColorIdentity(rs)));
         card.setTypeLine(rs.getString("type_line"));
-        card.setCmc(BigDecimal.valueOf(rs.getInt("cmc")));
         card.setToughness(rs.getString("toughness"));
         card.setPower(rs.getString("power"));
         card.setArtist(rs.getString("artist"));
         card.setPrices(extractCardPrices(rs));
+        card.setCmc(rs.getInt("cmc"));
     }
 
     private static Integer[] extractMultiverseIds(ResultSet rs) throws SQLException {

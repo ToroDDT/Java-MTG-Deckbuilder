@@ -3,7 +3,6 @@ package com.example.mtg_deckbuilder.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +35,7 @@ public class Card {
     // Gameplay
     private String name;
     private String manaCost;
-    private BigDecimal cmc;
+    private Integer cmc;
     private String typeLine;
     private String oracleText;
     private String power;
