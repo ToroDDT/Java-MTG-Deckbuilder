@@ -103,15 +103,15 @@
         <div class="cb-filter-section">
           <label for="typeFilter" class="cb-filter-label">Type</label>
           <select hx-trigger="change" th:field="*{cardType}"  class="cb-select" id="typeFilter">
-            <option th:value="ALL"> All Types</option>
-            <option th:value="ARTIFACT">Artifact</option>
-            <option th:value="CREATURE">Creature</option>
-            <option th:value="ENCHANTMENT">Enchantment</option>
-            <option th:value="INSTANT">Instant</option>
-            <option th:value="LAND">Land</option>
-            <option th:value="LEGENDARY">Legendary</option>
-            <option th:value="SORCERY">Sorcery</option>
-            <option th:value="VEHICLE">Vehicle</option>
+            <option th:value="All"> All Types</option>
+            <option th:value="Artifact">Artifact</option>
+            <option th:value="Creature">Creature</option>
+            <option th:value="Enchantment">Enchantment</option>
+            <option th:value="Instant">Instant</option>
+            <option th:value="Land">Land</option>
+            <option th:value="Legendary">Legendary</option>
+            <option th:value="Sorcery">Sorcery</option>
+            <option th:value="Vehicle">Vehicle</option>
           </select>
         </div>
 
@@ -121,12 +121,12 @@
           <div class="cb-range-group">
             <div class="cb-range-row">
               <label for="cmcMin" class="cb-range-lbl">Min</label>
-              <input type="range" class="cb-range-input" id="cmcMin" min="0" max="16" value="0" />
+              <input hx-trigger="change" th:field="*{minCMC}" type="range" class="cb-range-input" id="cmcMin" min="0" max="16" value="0" />
               <span class="cb-range-val" id="cmcMinVal">0</span>
             </div>
             <div class="cb-range-row">
               <label for="cmcMax" class="cb-range-lbl">Max</label>
-              <input type="range" class="cb-range-input" id="cmcMax" min="0" max="16" value="16" />
+              <input hx-trigger="change" th:field="*{maxCMC}" type="range" class="cb-range-input" id="cmcMax" min="0" max="16" value="16" />
               <span class="cb-range-val" id="cmcMaxVal">∞</span>
             </div>
           </div>
@@ -248,6 +248,27 @@
   <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
 </footer>
 <script>
+  const cmcMin = document.getElementById('cmcMin');
+  const cmcMax = document.getElementById('cmcMax');
+  const cmcMinVal = document.getElementById('cmcMinVal');
+  const cmcMaxVal = document.getElementById('cmcMaxVal');
+
+  cmcMin.addEventListener('input', () => {
+    // prevent min from exceeding max
+    if (parseInt(cmcMin.value) > parseInt(cmcMax.value)) {
+      cmcMin.value = cmcMax.value;
+    }
+    cmcMinVal.textContent = cmcMin.value;
+  });
+
+  cmcMax.addEventListener('input', () => {
+    // prevent max from going below min
+    if (parseInt(cmcMax.value) < parseInt(cmcMin.value)) {
+      cmcMax.value = cmcMin.value;
+    }
+    // show ∞ when at max value
+    cmcMaxVal.textContent = parseInt(cmcMax.value) === 16 ? '∞' : cmcMax.value;
+  });
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.pip').forEach(btn => {
       btn.addEventListener('click', () => toggle(btn));
