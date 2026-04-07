@@ -248,7 +248,12 @@
 <footer class="cb-footer">
   <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
 </footer>
-<div th:replace="fragments/collection-info :: stickyStatsBar"></div>
+<div th:replace="~{fragments/collection-info :: stickyStatsBar(
+    colorCounts=${colorCounts},
+    totalPrice=${totalPrice},
+    totalCards=${totalCards},
+    avgPrice=${avgPrice})}">
+</div>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const cmcMin = document.getElementById('cmcMin');
