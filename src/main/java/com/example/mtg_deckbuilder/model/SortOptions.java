@@ -5,10 +5,12 @@ import lombok.Getter;
 @Getter
 public enum SortOptions {
 
-    PRICELOW("Price (Low-High) "),
-    PRICEHIGH("Price (High-Low)"),
-    CMCLOW("CMC (Low-High)"),
-    CMCHIGH("CMC (High-Low)");
+    PRICE_ASC("Price (Low-High) "),
+    PRICE_DESC("Price (High-Low)"),
+    CMC_ASC("CMC (Low-High)"),
+    CMC_DESC("CMC (High-Low)"),
+    NAME_ASC("Name (A-Z) "),
+    NAME_DESC("Name (Z-A) "),;
 
     private final String sortType;
 
@@ -22,6 +24,6 @@ public enum SortOptions {
                 return sortType;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Unknown sort type: " + text);
     }
 }
