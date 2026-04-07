@@ -20,7 +20,6 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")               // Points to your custom GET controller
                 .loginProcessingUrl("/login")      // The POST URL Spring Security handles automatically
-                .defaultSuccessUrl("/collection", true)
                 .permitAll()
             )
             .logout(logout -> logout
