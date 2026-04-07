@@ -11,7 +11,9 @@ import javax.swing.*;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DefaultPersonalLibraryService implements PersonalLibraryService {
@@ -76,5 +78,11 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
                     default -> Comparator.comparing(OwnedCard::getName); // or whatever your default sort is
                 })
                 .toList();
+    }
+    @Override
+    public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId) {
+        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId)
+                .stream()
+                .collect(Collectors.groupingBy(ColorIdentity::fromString,  Collectors.counting()));
     }
 }

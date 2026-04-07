@@ -1,0 +1,180 @@
+<!-- ══════════════════════════════════════════════════════
+     sticky-stats-bar.html
+     Thymeleaf fragment — include with:
+     <div th:replace="fragments/sticky-stats-bar :: stickyStatsBar"></div>
+     Requires Tailwind CDN already loaded in the host page.
+     ══════════════════════════════════════════════════════ -->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <style>
+    .grad-text {
+      background: linear-gradient(135deg, #2563eb 0%, #6366f1 50%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .grad-bg {
+      background: linear-gradient(135deg, #2563eb 0%, #6366f1 50%, #06b6d4 100%);
+    }
+  </style>
+  <title></title>
+</head>
+<body class="p-8 bg-[#f1f5fe] font-[Inter]">
+
+<!-- ── STICKY STATS BAR FRAGMENT ── -->
+<div th:fragment="stickyStatsBar">
+
+  <!-- Spacer so page content isn't hidden behind the bar -->
+  <div class="h-20"></div>
+
+  <div id="stickyStatsBar"
+       class="fixed bottom-0 left-0 right-0 z-[500] border-t border-[#e2e8f8] rounded-md"
+       style="background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 -4px 28px rgba(37,99,235,0.10);">
+
+    <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 flex items-center gap-3 md:gap-4">
+
+      <!-- Label -->
+      <span class="hidden sm:block text-[10px] font-bold uppercase tracking-widest text-slate-400 shrink-0">
+        Colors
+      </span>
+
+      <!-- ── Color chips ── -->
+      <div class="flex items-center gap-1.5 md:gap-2">
+
+        <!-- White -->
+        <div class="flex items-center gap-1.5 bg-[#f8faff] border border-[#e2e8f8] rounded-[9px] px-2.5 py-1.5 hover:border-blue-200 hover:bg-blue-50 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-[#f9f6ee] text-[#6b6245] border-2 border-[#c8b97e]">W</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                id="countW"
+                th:text="${colorIdentityAmount != null ? colorIdentityAmount.get(ColorIdentity.WHITE) : 0}">14</span>
+          <span class="hidden md:inline text-[11px] text-slate-400" id="pctW">22%</span>
+        </div>
+
+        <!-- Blue -->
+        <div class="flex items-center gap-1.5 bg-[#f8faff] border border-[#e2e8f8] rounded-[9px] px-2.5 py-1.5 hover:border-blue-200 hover:bg-blue-50 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-[#0e68ab] text-[#d4edff] border-2 border-[#0e68ab]">U</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                id="countU"
+                th:text="${colorCounts != null ? colorCounts['U'] : 0}">22</span>
+          <span class="hidden md:inline text-[11px] text-slate-400" id="pctU">35%</span>
+        </div>
+
+        <!-- Black -->
+        <div class="flex items-center gap-1.5 bg-[#f8faff] border border-[#e2e8f8] rounded-[9px] px-2.5 py-1.5 hover:border-blue-200 hover:bg-blue-50 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-gray-800 text-[#d4edff] border-2 border-slate-600">B</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                id="countB"
+                th:text="${colorCounts != null ? colorCounts['B'] : 0}">18</span>
+          <span class="hidden md:inline text-[11px] text-slate-400" id="pctB">29%</span>
+        </div>
+
+        <!-- Red -->
+        <div class="flex items-center gap-1.5 bg-[#f8faff] border border-[#e2e8f8] rounded-[9px] px-2.5 py-1.5 hover:border-blue-200 hover:bg-blue-50 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-red-700 text-red-100 border-2 border-red-700">R</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                id="countR"
+                th:text="${colorCounts != null ? colorCounts['R'] : 0}">7</span>
+          <span class="hidden md:inline text-[11px] text-slate-400" id="pctR">11%</span>
+        </div>
+
+        <!-- Green -->
+        <div class="flex items-center gap-1.5 bg-[#f8faff] border border-[#e2e8f8] rounded-[9px] px-2.5 py-1.5 hover:border-blue-200 hover:bg-blue-50 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-green-900 text-green-100 border-2 border-green-700">G</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                id="countG"
+                th:text="${colorCounts != null ? colorCounts['G'] : 0}">12</span>
+          <span class="hidden md:inline text-[11px] text-slate-400" id="pctG">19%</span>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div class="hidden sm:block w-px h-8 bg-[#e2e8f8] shrink-0"></div>
+
+      <!-- Spacer -->
+      <div class="flex-1"></div>
+
+      <!-- ── Pricing block ── -->
+      <div class="flex items-center gap-3 bg-[#f8faff] border border-[#e2e8f8] rounded-[9px] px-3.5 py-1.5 shrink-0">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Value</div>
+          <div class="text-[18px] font-extrabold leading-tight grad-text"
+               id="totalPrice"
+               th:text="${totalPrice != null ? '$' + #numbers.formatDecimal(totalPrice, 1, 2) : '$0.00'}">
+            $214.87
+          </div>
+        </div>
+
+        <div class="w-px h-8 bg-[#e2e8f8]"></div>
+        <div>
+
+          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Cards</div>
+          <div class="text-[18px] font-extrabold leading-tight grad-text"
+               id="totalCards"
+               th:text="${totalCards != null ? 'Total: ' + totalCards : '10'}">
+            $214.87
+          </div>
+        </div>
+
+        <!-- Sub-divider -->
+        <div class="w-px h-8 bg-[#e2e8f8]"></div>
+
+        <div class="flex flex-col items-end">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Avg / card</span>
+          <span class="text-[13px] font-bold text-blue-600"
+                id="avgPrice"
+                th:text="${avgPrice != null ? '$' + #numbers.formatDecimal(avgPrice, 1, 2) : '$0.00'}">
+            $3.41
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<!-- end th:fragment="stickyStatsBar" -->
+
+<!-- ══════════════════════════════════════════════════════
+     JS — computes live percentages from the count spans
+     and re-runs after any HTMX swap (filter refreshes).
+     ══════════════════════════════════════════════════════ -->
+<script>
+  function updateBarPercentages() {
+    const colors = ['W', 'U', 'B', 'R', 'G'];
+
+    const total = colors.reduce((sum, c) => {
+      const el = document.getElementById('count' + c);
+      return sum + (el ? parseInt(el.textContent) || 0 : 0);
+    }, 0);
+
+    document.getElementById('cardCountPill').textContent =
+      total + ' card' + (total !== 1 ? 's' : '');
+
+    colors.forEach(c => {
+      const countEl = document.getElementById('count' + c);
+      const pctEl   = document.getElementById('pct'   + c);
+      if (!countEl || !pctEl) return;
+      const count = parseInt(countEl.textContent) || 0;
+      pctEl.textContent = total > 0
+        ? Math.round((count / total) * 100) + '%'
+        : '0%';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', updateBarPercentages);
+  document.addEventListener('htmx:afterSwap',   updateBarPercentages);
+</script>
+
+</body>
+</html>

@@ -250,6 +250,8 @@ a { color: inherit; }
     box-shadow: var(--shadow-sm);
     position: sticky;
     top: calc(var(--header-height) + 16px);
+    max-height: calc(100dvh - var(--header-height) - 16px - 64px);
+    overflow-y: auto;
 }
 
 .cb-sidebar-title {

@@ -27,6 +27,7 @@ public class PersonalLibraryController {
     @GetMapping("/personal-library")
     public String getPersonalLibrary(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         var cards = personalLibraryService.getCardsFromPersonalLibrary(user.getId());
+        var colorIdentity= personalLibraryService.getAmountOfEachColorIdentity(user.getId());
         for (OwnedCard card : cards) {
             card.setTags(List.of());
         }
@@ -36,6 +37,7 @@ public class PersonalLibraryController {
         model.addAttribute("personalLibraryFilters", new PersonalLibraryFilters());
         model.addAttribute("allColors", allColors);
         model.addAttribute("sortOptions", SortOptions.values());
+        model.addAttribute("colorIdentityAmount", colorIdentity);
         return "personal-library";
     }
     @PostMapping("/personal-library/add")

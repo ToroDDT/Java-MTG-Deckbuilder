@@ -30,12 +30,4 @@ public class ScryfallLibraryService {
     return scryfallRepository.findByName(name);
   }
 
-  public List<Card> executeComplexQuery(CardSearchParameters cardSearchParameters, Map<String, ?> params) {
-    SqlBuilder sql = new SqlBuilder.Builder("SELECT * FROM card WHERE 1=1")
-        .whereName(true, "farewell")
-        .build();
-
-    return scryfallRepository.executeComplexQuery(sql.getSql(), params);
-  }
-
 }
