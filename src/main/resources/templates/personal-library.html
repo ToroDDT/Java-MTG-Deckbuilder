@@ -70,28 +70,28 @@
 
             <div class="pip-container flex flex-wrap gap-2" id="color-row">
 
-            <input hx-trigger="change"   type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
-            <label onclick="toggleWhite(this)" for="colorW" id="whiteToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+              <input hx-trigger="change"   type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
+              <label onclick="toggleWhite(this)" for="colorW" id="whiteToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
                 flex items-center justify-center hover:scale-110 active:scale-95
                 bg-[#f9f6ee] text-[#6b6245] border-[#c8b97e] opacity-40" >W</label>
 
-            <input hx-trigger="change" type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
-            <label onclick="toggleBlue(this)" for="colorU" id="blueToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+              <input hx-trigger="change" type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
+              <label onclick="toggleBlue(this)" for="colorU" id="blueToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
                 flex items-center justify-center hover:scale-110 active:scale-95
                 bg-[#0e68ab] text-[#d4edff] border-[#0e68ab] opacity-40" >U</label>
 
-            <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
-            <label onclick="toggleBlack(this)" for="colorB" id="blackToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+              <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
+              <label onclick="toggleBlack(this)" for="colorB" id="blackToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
                 flex items-center justify-center hover:scale-110 active:scale-95
                 bg-gray-800 text-[#d4edff] border-[#0e68ab] opacity-40">B</label>
 
-            <input type="checkbox" th:field="*{selectedColors}" value="R" id="colorR" style="display:none;">
-            <label onclick="toggleRed(this)" for="colorR" id="redToggle"  class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+              <input type="checkbox" th:field="*{selectedColors}" value="R" id="colorR" style="display:none;">
+              <label onclick="toggleRed(this)" for="colorR" id="redToggle"  class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
                 flex items-center justify-center hover:scale-110 active:scale-95
                 bg-red-700 text-[#d4edff] border-[#0e68ab] opacity-40" >R</label>
 
-            <input type="checkbox" th:field="*{selectedColors}" value="G" id="colorG" style="display:none;">
-            <label onclick="toggleGreen(this)" for="colorG" id="greenToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+              <input type="checkbox" th:field="*{selectedColors}" value="G" id="colorG" style="display:none;">
+              <label onclick="toggleGreen(this)" for="colorG" id="greenToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
                 flex items-center justify-center hover:scale-110 active:scale-95
                 bg-green-900 text-[#d4edff] border-[#0e68ab] opacity-40" >G</label>
             </div>
@@ -135,11 +135,11 @@
         <!-- Sort -->
         <div class="cb-filter-section">
           <label for="sortBy" class="cb-filter-label">Sort By</label>
-          <select class="cb-select" id="sortBy">
-            <option>Name (A-Z)</option>
-            <option>Name (Z-A)</option>
-            <option>CMC (Low-High)</option>
-            <option>CMC (High-Low)</option>
+          <select hx-trigger="change" th:field="*{sortBy}" class="cb-select" id="sortBy">
+            <option th:each="option : ${sortOptions}"
+                    th:value="${option}"
+                    th:text="${option.getSortType()}">
+            </option>
           </select>
         </div>
 
@@ -247,7 +247,7 @@
   <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
 </footer>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     const cmcMin = document.getElementById('cmcMin');
     const cmcMax = document.getElementById('cmcMax');
     const cmcMinVal = document.getElementById('cmcMinVal');
@@ -260,31 +260,31 @@ document.addEventListener('DOMContentLoaded', () => {
     cmcMaxVal.textContent = '∞';
 
     cmcMin.addEventListener('input', () => {
-        if (parseInt(cmcMin.value) > parseInt(cmcMax.value)) {
-            cmcMin.value = cmcMax.value;
-        }
-        cmcMinVal.textContent = cmcMin.value;
+      if (parseInt(cmcMin.value) > parseInt(cmcMax.value)) {
+        cmcMin.value = cmcMax.value;
+      }
+      cmcMinVal.textContent = cmcMin.value;
     });
 
     cmcMax.addEventListener('input', () => {
-        if (parseInt(cmcMax.value) < parseInt(cmcMin.value)) {
-            cmcMax.value = cmcMin.value;
-        }
-        cmcMaxVal.textContent = parseInt(cmcMax.value) === 16 ? '∞' : cmcMax.value;
+      if (parseInt(cmcMax.value) < parseInt(cmcMin.value)) {
+        cmcMax.value = cmcMin.value;
+      }
+      cmcMaxVal.textContent = parseInt(cmcMax.value) === 16 ? '∞' : cmcMax.value;
     });
 
     document.querySelectorAll('.pip').forEach(btn => {
-        btn.addEventListener('click', () => toggle(btn));
+      btn.addEventListener('click', () => toggle(btn));
     });
 
     function toggle(btn) {
-        const isActive = btn.dataset.active === 'true';
-        btn.dataset.active = !isActive;
-        btn.style.opacity = isActive ? '0.4' : '1';
-        btn.classList.toggle('ring-offset-2', !isActive);
-        const checkbox = document.getElementById(btn.dataset.color);
+      const isActive = btn.dataset.active === 'true';
+      btn.dataset.active = !isActive;
+      btn.style.opacity = isActive ? '0.4' : '1';
+      btn.classList.toggle('ring-offset-2', !isActive);
+      const checkbox = document.getElementById(btn.dataset.color);
     }
-});
+  });
 </script>
 <script src='https://unpkg.com/htmx.org/dist/htmx.min.js'></script>
 </body>
