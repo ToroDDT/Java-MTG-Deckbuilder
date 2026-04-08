@@ -16,4 +16,5 @@ public interface PersonalLibraryService {
     List<OwnedCard> getCardsFromPersonalLibrary(UUID userId, PersonalLibraryFilters personalLibraryFilters);
     Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId);
     LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user);
+    LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user, PersonalLibraryFilters personalLibraryFilters);
 }
