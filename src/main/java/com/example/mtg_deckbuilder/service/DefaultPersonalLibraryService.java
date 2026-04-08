@@ -85,8 +85,21 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
                                             .getCard()
                                             .getCmc())
                             .reversed();
-                    case NAME_DESC-> Comparator.comparing(OwnedCard::getName).reversed();
-                    default -> Comparator.comparing(OwnedCard::getName); // or whatever your default sort is
+                    case NAME_DESC-> Comparator.comparing((OwnedCard ownedCard) ->
+                                    ownedCard
+                                            .getCard()
+                                            .getName())
+                            .reversed();
+                    case NAME_ASC-> Comparator.comparing((OwnedCard ownedCard) ->
+                            ownedCard
+                                    .getCard()
+                                    .getName()
+                    );
+                    default -> Comparator.comparing((OwnedCard ownedCard) ->
+                            ownedCard
+                                    .getCard()
+                                    .getName()
+                    ); // or whatever your default sort is
                 })
                 .toList();
     }
@@ -102,15 +115,8 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
         var cards = getCardsFromPersonalLibrary(userId.getId());
 
         // Calculate total value
-        double total = cards.stream()
-                .filter(c -> c.getCard() != null && c.getCard().getPrices() != null)
-                .mapToDouble(c -> c.getCard().getPrices().getUsd() != null ? c.getCard().getPrices().getUsd() : 0.0)
-                .sum();
-
-        // Format color counts
-        Map<String, Long> colorCounts = new HashMap<>();
-        getAmountOfEachColorIdentity(userId.getId())
-                .forEach((key, value) -> colorCounts.put(key.name(), value));
+        var total = getTotalValue(cards);
+        var colorCounts = getColorCount(userId);
 
         // Use the Builder to assemble the object
         return LibraryViewModel.builder()
@@ -120,5 +126,40 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
                 .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
                 .colorIdentityAmounts(colorCounts)
                 .build();
+    }
+
+    @Override
+    public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId, PersonalLibraryFilters personalLibraryFilters) {
+        var cards = this.getCardsFromPersonalLibrary(userId.getId(), personalLibraryFilters);
+
+
+        var total = getTotalValue(cards);
+        var colorCounts = getColorCount(userId);
+
+
+        // Use the Builder to assemble the object
+        return LibraryViewModel.builder()
+                .cards(cards)
+                .totalCards(cards.size())
+                .totalValue(total)
+                .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
+                .colorIdentityAmounts(colorCounts)
+                .build();
+    }
+
+    private Double getTotalValue(List<OwnedCard> cards) {
+        // Calculate total value
+        return cards.stream()
+                .filter(c -> c.getCard() != null && c.getCard().getPrices().getUsd() != null)
+                .mapToDouble(c -> c.getCard().getPrices().getUsd())
+                .sum();
+    }
+
+    private Map<String, Long> getColorCount(CustomUserDetails userId) {
+        // Format color counts
+        Map<String, Long> colorCounts = new HashMap<>();
+        getAmountOfEachColorIdentity(userId.getId())
+                .forEach((key, value) -> colorCounts.put(key.name(), value));
+        return colorCounts;
     }
 }
