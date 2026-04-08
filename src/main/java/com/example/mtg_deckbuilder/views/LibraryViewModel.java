@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.views;
 
 import com.example.mtg_deckbuilder.model.OwnedCard;
+import com.example.mtg_deckbuilder.model.PersonalLibraryFilters;
 import com.example.mtg_deckbuilder.model.SortOptions;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,4 +19,5 @@ public class LibraryViewModel {
     private final Integer totalCards;
     private final Double avgPrice;
     private final SortOptions[] sortOptions = SortOptions.values();
+    private final PersonalLibraryFilters filters = new PersonalLibraryFilters();
 }

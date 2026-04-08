@@ -2,7 +2,6 @@ package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.PersonalLibraryFilters;
-import com.example.mtg_deckbuilder.model.SortOptions;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.DefaultPersonalLibraryService;
 import com.example.mtg_deckbuilder.service.PersonalLibraryService;
@@ -14,14 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
 
 @Controller
 public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
-
-    private  final List<String> allColors = List.of("W", "U", "B", "R", "G");
 
     PersonalLibraryController(DefaultPersonalLibraryService personalLibraryService) {
         this.personalLibraryService = personalLibraryService;
@@ -44,12 +40,11 @@ public class PersonalLibraryController {
 
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") PersonalLibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
-         var cards = personalLibraryService.getCardsFromPersonalLibrary(user.getId(), personalLibraryFilters);
-        model.addAttribute("cards", cards);
+        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
+
+        model.addAttribute("cards", libraryView.getCards());
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("personalLibraryFilters", new PersonalLibraryFilters());
-        model.addAttribute("allColors", allColors);
-        model.addAttribute("sortOptions", SortOptions.values());
         return "fragments/personal-cards :: personal-cards";
     }
 }
