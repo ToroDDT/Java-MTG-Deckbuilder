@@ -6,6 +6,7 @@ import com.example.mtg_deckbuilder.model.SortOptions;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.DefaultPersonalLibraryService;
 import com.example.mtg_deckbuilder.service.PersonalLibraryService;
+import com.example.mtg_deckbuilder.views.LibraryViewModel;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,24 +21,19 @@ public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
 
+    private  final List<String> allColors = List.of("W", "U", "B", "R", "G");
+
     PersonalLibraryController(DefaultPersonalLibraryService personalLibraryService) {
         this.personalLibraryService = personalLibraryService;
     }
 
     @GetMapping("/personal-library")
     public String getPersonalLibrary(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        var cards = personalLibraryService.getCardsFromPersonalLibrary(user.getId());
-        var colorIdentity= personalLibraryService.getAmountOfEachColorIdentity(user.getId());
-        for (OwnedCard card : cards) {
-            card.setTags(List.of());
-        }
-        List<String> allColors = List.of("W", "U", "B", "R", "G");
-        model.addAttribute("cards", cards);
+        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+        model.addAttribute("personalLibrary", libraryView);
         model.addAttribute("ownedCard", new OwnedCard());
-        model.addAttribute("personalLibraryFilters", new PersonalLibraryFilters());
-        model.addAttribute("allColors", allColors);
-        model.addAttribute("sortOptions", SortOptions.values());
-        model.addAttribute("colorIdentityAmount", colorIdentity);
+        model.addAttribute("filters", new PersonalLibraryFilters());
+
         return "personal-library";
     }
     @PostMapping("/personal-library/add")
@@ -49,10 +45,6 @@ public class PersonalLibraryController {
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") PersonalLibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
          var cards = personalLibraryService.getCardsFromPersonalLibrary(user.getId(), personalLibraryFilters);
-        for (OwnedCard card : cards) {
-            card.setTags(List.of());
-        }
-        List<String> allColors = List.of("W", "U", "B", "R", "G");
         model.addAttribute("cards", cards);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("personalLibraryFilters", new PersonalLibraryFilters());

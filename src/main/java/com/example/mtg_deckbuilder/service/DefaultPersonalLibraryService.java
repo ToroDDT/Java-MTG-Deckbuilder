@@ -4,15 +4,14 @@ import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
 import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.DefaultPersonalLibraryRepository;
 import com.example.mtg_deckbuilder.repository.PersonalLibraryRepository;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.utils.CardUtils;
+import com.example.mtg_deckbuilder.views.LibraryViewModel;
 import org.springframework.stereotype.Service;
 
 import javax.swing.*;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,10 +39,17 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
             throw new CardDoesNotExistException(ownedCard.getName());
         }
     }
-
     @Override
     public List<OwnedCard> getCardsFromPersonalLibrary(UUID userId) {
-        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId);
+        return personalLibraryRepository
+                .getAllPersonalLibraryCardsForUser(userId)
+                .stream()
+                .peek(ownedCard -> {
+                    if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
+                        ownedCard.setTags(List.of());
+                    }
+                })
+                .toList();
     }
     @Override
     public List<OwnedCard> getCardsFromPersonalLibrary(UUID userid, PersonalLibraryFilters personalLibraryFilters) {
@@ -56,6 +62,11 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
                 .filter(card -> CardUtils.matchesSelectedColors(card, personalLibraryFilters.getSelectedColors()))
                 .filter(card -> CardUtils.matchesSelectedType(card, cardType))
                 .filter(card -> CardUtils.matchesCmcRange(card, personalLibraryFilters))
+                .peek(ownedCard -> {
+                    if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
+                        ownedCard.setTags(List.of());
+                    }
+                })
                 .sorted(switch (sortBy) {
                     case PRICE_ASC -> Comparator.comparing(
                             (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
@@ -84,5 +95,30 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
         return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId)
                 .stream()
                 .collect(Collectors.groupingBy(ColorIdentity::fromString,  Collectors.counting()));
+    }
+
+    @Override
+    public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId) {
+        var cards = getCardsFromPersonalLibrary(userId.getId());
+
+        // Calculate total value
+        double total = cards.stream()
+                .filter(c -> c.getCard() != null && c.getCard().getPrices() != null)
+                .mapToDouble(c -> c.getCard().getPrices().getUsd() != null ? c.getCard().getPrices().getUsd() : 0.0)
+                .sum();
+
+        // Format color counts
+        Map<String, Long> colorCounts = new HashMap<>();
+        getAmountOfEachColorIdentity(userId.getId())
+                .forEach((key, value) -> colorCounts.put(key.name(), value));
+
+        // Use the Builder to assemble the object
+        return LibraryViewModel.builder()
+                .cards(cards)
+                .totalCards(cards.size())
+                .totalValue(total)
+                .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
+                .colorIdentityAmounts(colorCounts)
+                .build();
     }
 }
