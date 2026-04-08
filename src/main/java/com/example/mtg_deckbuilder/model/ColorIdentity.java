@@ -11,7 +11,10 @@ public enum ColorIdentity {
     BLACK("B"),
     RED("R"),
     GREEN("G"),
-    COLORLESS("");
+    COLORLESS(""),
+    RAKDOS("B,R"),
+    SIMIC("G,U"),
+    ABZAN("B,G,W");
 
     private final String colorIdentity;
 
