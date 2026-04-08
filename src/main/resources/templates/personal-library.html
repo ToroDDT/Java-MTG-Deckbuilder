@@ -49,7 +49,7 @@
       <form th:action="@{/personal-library/search}"
             th:hx-get="@{/personal-library/search}"
             hx-target="#personal-cards"
-            th:object="${personalLibraryFilters}"
+            th:object="${filters}"
             hx-trigger="input delay:100ms, change">
 
         <div class="cb-sidebar-title">Filters</div>
@@ -136,7 +136,7 @@
         <div class="cb-filter-section">
           <label for="sortBy" class="cb-filter-label">Sort By</label>
           <select hx-trigger="change" th:field="*{sortBy}" class="cb-select" id="sortBy">
-            <option th:each="option : ${sortOptions}"
+            <option th:each="option : ${personalLibrary.sortOptions}"
                     th:value="${option}"
                     th:text="${option.getSortType()}">
             </option>
@@ -179,7 +179,7 @@
       <div class="cb-grid" id="cardGrid">
 
         <div class="cb-card"
-             th:each="card : ${cards}"
+             th:each="card : ${personalLibrary.cards}"
              th:data-name="${card.getCard().getName()}"
              th:data-type="${card.getCard().getTypeLine()}"
              th:data-cmc="${card.getCard().getCmc()}"
@@ -241,7 +241,6 @@
 
 </main>
 <div th:replace="fragments/card-modal :: cardDetailModal">
-
 </div>
 
 <!-- ══════════════ FOOTER ══════════════ -->
@@ -249,10 +248,10 @@
   <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
 </footer>
 <div th:replace="~{fragments/collection-info :: stickyStatsBar(
-    colorCounts=${colorCounts},
-    totalPrice=${totalPrice},
-    totalCards=${totalCards},
-    avgPrice=${avgPrice})}">
+    colorCounts=${personalLibrary.colorIdentityAmounts},
+    totalPrice=${personalLibrary.totalCards},
+    totalCards=${personalLibrary.totalCards},
+    avgPrice=${personalLibrary.avgPrice})}">
 </div>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
