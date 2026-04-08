@@ -9,8 +9,8 @@ public enum SortOptions {
     PRICE_DESC("Price (High-Low)"),
     CMC_ASC("CMC (Low-High)"),
     CMC_DESC("CMC (High-Low)"),
-    NAME_ASC("Name (A-Z) "),
-    NAME_DESC("Name (Z-A) "),;
+    NAME_ASC("Name (A-Z)"),
+    NAME_DESC("Name (Z-A)"),;
 
     private final String sortType;
 
