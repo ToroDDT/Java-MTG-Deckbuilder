@@ -176,6 +176,16 @@
                 <arguments>exec terser src/main/resources/static/js/decks.js -o target/classes/static/js/decks.js --compress --mangle</arguments>
             </configuration>
         </execution>
+        <execution>
+            <id>bundle-and-minify-css</id>
+            <phase>prepare-package</phase>
+            <goals>
+                <goal>npm</goal>
+            </goals>
+            <configuration>
+                <arguments>run build-css</arguments>
+            </configuration>
+        </execution>
     </executions>
 </plugin>
     </plugins>
