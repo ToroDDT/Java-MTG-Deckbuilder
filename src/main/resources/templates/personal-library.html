@@ -4,10 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MTG Deckbuilder — Card Browser</title>
-  <link rel="stylesheet" href="/css/personal-library.css" />
-  <script src="https://cdn.tailwindcss.com"></script>
+
   <link rel="preconnect" href="https://rsms.me/">
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="preconnect" href="https://cards.scryfall.io">
+  <link rel="preload" href="https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+  <link rel="stylesheet" href="/css/personal-library.css" />
+  <link rel="stylesheet" href="/css/combos.css" />
+
 </head>
 <body>
 
@@ -46,6 +51,14 @@
   <div class="cb-layout">
 
     <aside class="cb-sidebar">
+      <label for="toggleCombos"></label>
+      <input th:attr="hx-get=@{/personal-library/combos}"
+                                               hx-target="#personal-cards"
+                                               hx-trigger="change"
+                                               type="checkbox"
+                                               id="toggleCombos"
+                                               class="cb-toggle">
+
       <form th:action="@{/personal-library/search}"
             th:hx-get="@{/personal-library/search}"
             hx-target="#personal-cards"
@@ -188,9 +201,9 @@
           <div class="cb-card-img-wrap">
             <img
                     class="cb-card-img"
+                    fetchpriority="high"
                     th:src="${card.getCard().getImage()}"
                     th:alt="${card.getCard().getName()}"
-                    loading="lazy"
             />
             <div class="cb-card-img-placeholder" style="display:none">🃏</div>
           </div>
@@ -293,6 +306,7 @@
     }
   });
 </script>
-<script src='https://unpkg.com/htmx.org/dist/htmx.min.js'></script>
+<script src='https://unpkg.com/htmx.org/dist/htmx.min.js' defer></script>
+<script th:src="@{/js/combos.js}" defer></script>
 </body>
 </html>

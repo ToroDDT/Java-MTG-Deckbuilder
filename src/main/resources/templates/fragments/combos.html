@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card Hand</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="dot-bg min-h-screen">
+
+<div class="min-h-screen flex flex-col items-center justify-center px-4 pb-14 pt-10">
+
+    <!-- Scene label -->
+    <p class="grad-text text-[11px] font-bold tracking-[0.2em] uppercase mb-10">Your Hand</p>
+
+    <!-- Cards fan container -->
+   <div id="personal-cards" th:class="cb-results-row"
+     th:fragment="combos-section"
+     hx-swap-oob="true"
+     class="flex flex-wrap gap-4"
+     >
+
+  <div class="flex flex-col gap-4 p-6 border-b border-slate-100" th:each="cardList, comboStat : ${cardCombos.images}">
+
+    <div class="flex flex-wrap gap-4">
+        <div th:each="img : ${cardList}" class="card-wrap">
+
+            <div class="card-top-bar relative w-[213px] h-[300px] rounded-[14px] border border-blue-100 bg-white overflow-hidden flex flex-col"
+                 style="box-shadow: 0 12px 40px rgba(37,99,235,0.18);">
+
+                <div class="h-full">
+                    <img class="card-img-zoom w-full h-full object-cover object-top"
+                         th:src="${img}"
+                         alt="Card Art" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-800"
+         th:text="${cardCombos.description[comboStat.index]}">
+        Combo description will appear here.
+    </div>
+</div>
+    <!-- Glow base -->
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none"
+         style="width:500px;height:90px;background:radial-gradient(ellipse,rgba(37,99,235,0.1) 0%,transparent 70%);"></div>
+
+</div>
+</div>
+
+    <script>
+   </script>
+
+</body>
+</html>

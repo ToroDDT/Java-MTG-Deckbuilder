@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* Go up two levels (out of css, out of static) then into templates */
+@source "../../templates/**/*.html";

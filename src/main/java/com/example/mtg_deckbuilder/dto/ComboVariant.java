@@ -9,6 +9,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ComboVariant {
     public String id;
+    public String name;
     public String identity;
     public String status;
     public boolean spoiler;

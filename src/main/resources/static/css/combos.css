@@ -1,0 +1,41 @@
+.grad-text {
+    background: linear-gradient(135deg, #2563eb, #6366f1, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.grad-bg {
+    background: linear-gradient(135deg, #2563eb 0%, #6366f1 50%, #06b6d4 100%);
+}
+.dot-bg {
+    background-color: #f1f5fe;
+    background-image:
+            radial-gradient(ellipse at 65% 0%, #dbeafe99 0%, transparent 55%),
+            radial-gradient(ellipse at 15% 100%, #e0e7ff66 0%, transparent 50%),
+            radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+    background-size: auto, auto, 32px 32px;
+    background-attachment: fixed;
+}
+.card-top-bar::before {
+    content: '';
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #2563eb 0%, #6366f1 50%, #06b6d4 100%);
+    z-index: 2;
+    border-radius: 14px 14px 0 0;
+}
+.card-divider {
+    height: 1px;
+    background: linear-gradient(to right, #2563eb22, #6366f144, #06b6d422);
+    margin: 4px 0;
+}
+
+/* Card wrap base — JS will set transform and left via inline style */
+.card-wrap {
+    display: flex;
+    flex-direction: row;   /* default, but make explicit */
+    gap: 16px;
+}
+
+.card-img-zoom { transition: transform 0.3s; }
+.card-wrap:hover .card-img-zoom { transform: scale(1.04); }

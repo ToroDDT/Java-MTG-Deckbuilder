@@ -53,7 +53,7 @@
                 id="countW"
                 th:text="${colorCounts != null ? colorCounts['WHITE'] : 0}">14</span>
           <span th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal(colorCounts['WHITE'] * 100.0 / totalCards, 1, 1) + '%'
+    ? #numbers.formatDecimal((colorCounts['WHITE'] ?: 0 ) * 100.0 / totalCards, 1, 1) + '%'
     : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctW">22%</span>
         </div>
 
@@ -65,7 +65,7 @@
                 id="countU"
                 th:text="${colorCounts != null ? colorCounts['BLUE'] : 0}">22</span>
           <span  th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal(colorCounts['BLUE'] * 100.0 / totalCards, 1, 1) + '%'
+    ? #numbers.formatDecimal((colorCounts['BLUE'] ?: 0 ) * 100.0 / totalCards, 1, 1) + '%'
     : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctU">35%</span>
         </div>
 
@@ -77,7 +77,7 @@
                 id="countB"
                 th:text="${colorCounts != null ? colorCounts['BLACK'] : 0}">18</span>
           <span th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal(colorCounts['BLACK'] * 100.0 / totalCards, 1, 1) + '%'
+    ? #numbers.formatDecimal((colorCounts['BLACK'] ?: 0 ) * 100.0 / totalCards, 1, 1) + '%'
     : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctB">29%</span>
         </div>
 
@@ -89,7 +89,7 @@
                 id="countR"
                 th:text="${colorCounts != null ? colorCounts['RED'] : 0}">7</span>
           <span th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal(colorCounts['RED'] * 100.0 / totalCards, 1, 1) + '%'
+    ? #numbers.formatDecimal((colorCounts['RED'] ?: 0 ) * 100.0 / totalCards, 1, 1) + '%'
     : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctR">11%</span>
         </div>
 
@@ -101,7 +101,7 @@
                 id="countG"
                 th:text="${colorCounts != null ? colorCounts['GREEN'] : 0}">12</span>
           <span th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal(colorCounts['GREEN'] * 100.0 / totalCards, 1, 1) + '%'
+    ? #numbers.formatDecimal((colorCounts['GREEN'] ?: 0) * 100.0 / totalCards, 1, 1) + '%'
     : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctG">19%</span>
         </div>
 

@@ -1,7 +1,6 @@
 /* ============================================================
    cards.css — Card Browser, Blue Gradient / White Style
    ============================================================ */
-
 :root {
     --bg-dark:        #f8faff;
     --bg-card:        #ffffff;
@@ -210,17 +209,35 @@ a { color: inherit; }
     font-size: clamp(1.8rem, 4.5vw, 3rem);
     letter-spacing: -0.025em;
     line-height: 1.08;
-    background: var(--grad-text);
-    background-size: 200% 200%;
+
+    /* Clipping setup */
+    background: transparent;
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: gradShift 5s ease infinite;
+    -webkit-text-fill-color: transparent;
+
+    overflow: hidden;
+}
+
+.cb-page-title::before {
+    content: "";
+    position: absolute;
+    inset: -50%; /* Make it larger than the text to allow for "movement" */
+    z-index: -1;
+    background: var(--grad-text);
+    background-size: cover;
+
+    /* Use transform instead of background-position */
+    animation: gradShift 8s linear infinite;
+
+    /* Ensures the gradient clips to the text of the parent */
+    pointer-events: none;
 }
 
 @keyframes gradShift {
-    0%, 100% { background-position: 0% 50%; }
-    50%       { background-position: 100% 50%; }
+    0% { transform: translate(-10%, -10%) rotate(0deg); }
+    50% { transform: translate(10%, 10%) rotate(5deg); }
+    100% { transform: translate(-10%, -10%) rotate(0deg); }
 }
 
 .cb-page-sub {

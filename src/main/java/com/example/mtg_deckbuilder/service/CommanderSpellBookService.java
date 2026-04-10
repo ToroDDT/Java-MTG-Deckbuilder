@@ -1,5 +1,7 @@
 package com.example.mtg_deckbuilder.service;
 
+import com.example.mtg_deckbuilder.dto.CardCombos;
+import com.example.mtg_deckbuilder.dto.ComboVariant;
 import com.example.mtg_deckbuilder.dto.Combos;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -32,9 +34,40 @@ public class CommanderSpellBookService{
         this.personalLibraryService = personalLibraryService;
     }
 
-    public Combos getComboResults(CustomUserDetails userId) throws Exception {
+    public CardCombos findCombos (CustomUserDetails userId) throws Exception {
        var cards = personalLibraryService.getCardsFromPersonalLibrary(userId.getId());
-       return searchCombos(cards);
+       var searchedCombos = searchCombos(cards);
+        System.out.println(searchedCombos.getResults().getIncluded().get(0).getUses());
+
+       return CardCombos.builder()
+                .cardCombinations(searchedCombos
+                        .getResults()
+                        .getIncluded()
+                        .stream()
+                        .map(comboVariant -> comboVariant
+                                .getUses()
+                                .stream()
+                                .map(cardUse -> cardUse
+                                        .getCard()
+                                        .getName())
+                                .toList()  // collect inner stream → List<String>
+                        )
+                        .toList())
+                .description(searchedCombos
+                        .getResults()
+                        .getIncluded()
+                        .stream()
+                        .map(ComboVariant::getDescription).toList())
+                .images(searchedCombos.getResults().getIncluded().stream()
+                        .map(comboVariant -> comboVariant
+                                .getUses()
+                                .stream()
+                                .map(cardUse -> cardUse
+                                        .getCard()
+                                        .getImageUriFrontNormal())
+                                .toList())
+                        .toList())
+               .build();
     }
 
 

@@ -1,8 +1,10 @@
 package com.example.mtg_deckbuilder.controllers;
 
+import com.example.mtg_deckbuilder.dto.CardCombos;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.PersonalLibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.CommanderSpellBookService;
 import com.example.mtg_deckbuilder.service.DefaultPersonalLibraryService;
 import com.example.mtg_deckbuilder.service.PersonalLibraryService;
 import com.example.mtg_deckbuilder.views.LibraryViewModel;
@@ -18,14 +20,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
+    private final CommanderSpellBookService commanderSpellBookService;
 
-    PersonalLibraryController(DefaultPersonalLibraryService personalLibraryService) {
+    PersonalLibraryController(DefaultPersonalLibraryService personalLibraryService, CommanderSpellBookService commanderSpellBookService) {
         this.personalLibraryService = personalLibraryService;
+        this.commanderSpellBookService = commanderSpellBookService;
     }
 
     @GetMapping("/personal-library")
-    public String getPersonalLibrary(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+    public String getPersonalLibrary(Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+        CardCombos combos = commanderSpellBookService.findCombos(user);
+
         model.addAttribute("personalLibrary", libraryView);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new PersonalLibraryFilters());
@@ -46,5 +52,14 @@ public class PersonalLibraryController {
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("personalLibraryFilters", new PersonalLibraryFilters());
         return "fragments/personal-cards :: personal-cards";
+    }
+
+    @GetMapping(path = "/personal-library/combos", headers = "hx-request=true")
+    public  String getCombos(@ModelAttribute("personalLibraryFilters") PersonalLibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
+        var combosList = commanderSpellBookService.findCombos(user);
+        System.out.println(combosList.getImages());
+
+        model.addAttribute("cardCombos", combosList );
+        return "fragments/combos :: combos-section ";
     }
 }
