@@ -120,74 +120,73 @@
         </dependency>
     </dependencies>
 
-<build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <annotationProcessorPaths>
-                    <path>
-                        <groupId>org.projectlombok</groupId>
-                        <artifactId>lombok</artifactId>
-                    </path>
-                </annotationProcessorPaths>
-            </configuration>
-        </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
 
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-                <excludes>
-                    <exclude>
-                        <groupId>org.projectlombok</groupId>
-                        <artifactId>lombok</artifactId>
-                    </exclude>
-                </excludes>
-            </configuration>
-        </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.15.0</version>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals><goal>install-node-and-npm</goal></goals>
+                        <configuration>
+                            <nodeVersion>v22.0.0</nodeVersion>
+                        </configuration>
+                    </execution>
 
+                    <execution>
+                        <id>npm install</id>
+                        <goals><goal>npm</goal></goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
 
-       <plugin>
-    <groupId>com.github.eirslett</groupId>
-    <artifactId>frontend-maven-plugin</artifactId>
-    <version>1.15.0</version>
-    <executions>
-        <execution>
-            <id>install node and npm</id>
-            <goals><goal>install-node-and-npm</goal></goals>
-            <configuration>
-                <nodeVersion>v22.0.0</nodeVersion>
-            </configuration>
-        </execution>
-        <execution>
-            <id>npm install</id>
-            <goals><goal>npm</goal></goals>
-            <configuration>
-                <arguments>install terser --no-save</arguments>
-            </configuration>
-        </execution>
-        <execution>
-            <id>minify-js</id>
-            <phase>prepare-package</phase>
-            <goals><goal>npm</goal></goals>
-            <configuration>
-                <arguments>exec terser src/main/resources/static/js/decks.js -o target/classes/static/js/decks.js --compress --mangle</arguments>
-            </configuration>
-        </execution>
-        <execution>
-            <id>bundle-and-minify-css</id>
-            <phase>prepare-package</phase>
-            <goals>
-                <goal>npm</goal>
-            </goals>
-            <configuration>
-                <arguments>run build-css</arguments>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-    </plugins>
-</build>
+                    <execution>
+                        <id>minify-js</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration>
+                            <arguments>exec terser src/main/resources/static/js/decks.js -o target/classes/static/js/decks.js --compress --mangle</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>bundle-and-minify-css</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>npm</goal></goals>
+                        <configuration>
+                            <arguments>run build-css</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
