@@ -1,0 +1,40 @@
+{
+  "name": "mtg_deckbuilder",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/ToroDDT/Java-MTG-Deckbuilder#readme",
+  "bugs": {
+    "url": "https://github.com/ToroDDT/Java-MTG-Deckbuilder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ToroDDT/Java-MTG-Deckbuilder.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx @tailwindcss/cli -i ./src/main/resources/static/css/projectStyle.css -o ./src/main/resources/static/css/main.css --minify",
+    "watch": "npx @tailwindcss/cli --watch -i ./style.css -o ../resources/static/css/main.css --minify",
+    "build-css": "postcss src/main/resources/static/css/bundle.css -o target/classes/static/css/site.min.css --use postcss-import autoprefixer cssnano"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "acorn": "^8.16.0",
+    "buffer-from": "^1.1.2",
+    "commander": "^2.20.3",
+    "source-map": "^0.6.1",
+    "source-map-support": "^0.5.21",
+    "tailwindcss": "^4.2.2",
+    "terser": "^5.46.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.27",
+    "cssnano": "^7.1.4",
+    "postcss": "^8.5.9",
+    "postcss-cli": "^11.0.1",
+    "postcss-import": "^16.1.1"
+  }
+}
