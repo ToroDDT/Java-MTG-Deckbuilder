@@ -30,7 +30,6 @@ public class PersonalLibraryController {
     @GetMapping("/personal-library")
     public String getPersonalLibrary(Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
-        CardCombos combos = commanderSpellBookService.findCombos(user);
 
         model.addAttribute("personalLibrary", libraryView);
         model.addAttribute("ownedCard", new OwnedCard());

@@ -22,36 +22,74 @@
      class="flex flex-wrap gap-4"
      >
 
-  <div class="flex flex-col gap-4 p-6 border-b border-slate-100" th:each="cardList, comboStat : ${cardCombos.images}">
+<div class="flex flex-col">
 
-    <div class="flex flex-wrap gap-4">
-        <div th:each="img : ${cardList}" class="card-wrap">
+  <div class="flex flex-col gap-4 px-6 py-6 border-b border-blue-100 bg-white transition-colors duration-200 hover:bg-blue-50/30
+              first:rounded-t-2xl last:rounded-b-2xl last:border-b-0 only:rounded-2xl only:border-b-0
+              relative overflow-hidden"
+       th:each="cardList, comboStat : ${cardCombos.images}">
 
-            <div class="card-top-bar relative w-[213px] h-[300px] rounded-[14px] border border-blue-100 bg-white overflow-hidden flex flex-col"
-                 style="box-shadow: 0 12px 40px rgba(37,99,235,0.18);">
+    <!-- Gradient top bar (first entry only) -->
+    <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400 opacity-0
+                group-first:opacity-100"
+         th:if="${comboStat.first}"></div>
 
-                <div class="h-full">
-                    <img class="card-img-zoom w-full h-full object-cover object-top"
-                         th:src="${img}"
-                         alt="Card Art" />
-                </div>
+    <!-- Card images row -->
+    <div class="flex flex-wrap gap-3">
+
+      <div th:each="img : ${cardList}" class="flex-shrink-0">
+
+        <!-- Card tile — mirrors .cb-card look -->
+        <div class="group/card relative flex flex-col overflow-hidden rounded-[14px] border-[1.5px] border-blue-100 bg-white
+                    shadow-[0_12px_40px_rgba(37,99,235,0.14)]
+                    transition-all duration-200
+                    hover:-translate-y-1.5 hover:border-blue-300 hover:shadow-[0_20px_50px_rgba(37,99,235,0.22)]"
+             style="width: clamp(140px, 18vw, 213px);">
+
+          <!-- Gradient top bar on hover -->
+          <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400
+                      opacity-0 transition-opacity duration-200 group-hover/card:opacity-100 z-10"></div>
+
+          <!-- Card image — 5:7 MTG aspect ratio -->
+          <div class="relative bg-blue-50 overflow-hidden"
+               style="aspect-ratio: 5/7;">
+            <img
+              class="w-full font-bold h-full object-cover object-top transition-transform duration-300 group-hover/card:scale-[1.04]"
+              th:src="${img}"
+              alt="Card Art"
+              loading="lazy"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+            />
+            <!-- Fallback placeholder -->
+            <div class="absolute inset-0 hidden items-center justify-center
+                        bg-gradient-to-br from-blue-50 to-indigo-50 text-4xl text-slate-400">
+              🃏
             </div>
+          </div>
+
         </div>
+      </div>
+
+    </div><!-- /combo-cards-row -->
+      <div class="font-bold">Description:</div>
+
+    <!-- Combo description -->
+    <div class="font-medium rounded-xl border-[1.5px] border-blue-100 bg-blue-50/60
+                text-slate-800 leading-relaxed"
+         th:text="${cardCombos.description[comboStat.index]}">
+      Combo description will appear here.
     </div>
 
-    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-800"
-         th:text="${cardCombos.description[comboStat.index]}">
-        Combo description will appear here.
-    </div>
-</div>
-    <!-- Glow base -->
+  </div><!-- /combo-entry -->
+
+</div><!-- /combo-list -->
+</div><!-- /combo-list -->   <!-- Glow base -->
     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none"
          style="width:500px;height:90px;background:radial-gradient(ellipse,rgba(37,99,235,0.1) 0%,transparent 70%);"></div>
 
 </div>
-</div>
 
-    <script>
+<script>
    </script>
 
 </body>

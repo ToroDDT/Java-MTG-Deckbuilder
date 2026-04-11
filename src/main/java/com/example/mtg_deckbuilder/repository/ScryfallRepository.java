@@ -12,10 +12,12 @@ public class ScryfallRepository implements CardRepository {
 
   private final JdbcClient jdbcClient;
   private final JdbcTemplate jdbcTemplate;
+  private final ScryfallCardRowMapper scryfallCardRowMapper;
 
-  public ScryfallRepository(JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
+  public ScryfallRepository(ScryfallCardRowMapper scryfallCardRowMapper,JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
     this.jdbcClient = jdbcClient;
+    this.scryfallCardRowMapper = scryfallCardRowMapper;
   }
 
   @Override
@@ -30,7 +32,7 @@ public class ScryfallRepository implements CardRepository {
   public Optional<Card> findByName(String name) {
     return jdbcTemplate.query(
             "select * from cards where name = ?",
-            new ScryfallCardRowMapper(),
+            scryfallCardRowMapper,
             name
     ).stream().findFirst();
   }

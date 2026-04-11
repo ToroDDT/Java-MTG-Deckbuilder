@@ -14,10 +14,12 @@ public class DefaultPersonalLibraryRepository implements PersonalLibraryReposito
 
     private final JdbcClient jdbcClient;
     private final JdbcTemplate jdbcTemplate;
+    private final OwnedCardRowMapper ownedCardRowMapper;
 
-    public DefaultPersonalLibraryRepository(JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
+    public DefaultPersonalLibraryRepository(OwnedCardRowMapper ownedCardRowMapper, JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
         this.jdbcClient = jdbcClient;
         this.jdbcTemplate = jdbcTemplate;
+        this.ownedCardRowMapper = ownedCardRowMapper;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class DefaultPersonalLibraryRepository implements PersonalLibraryReposito
                 WHERE personal_collection_library.user_id = ?;
                \s""";
 
-        return jdbcTemplate.query(sql, new OwnedCardRowMapper(), userId)
+        return jdbcTemplate.query(sql, ownedCardRowMapper, userId)
                 .stream()
                 .toList();
     }
