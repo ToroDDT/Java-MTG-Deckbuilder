@@ -3,6 +3,7 @@ package com.example.mtg_deckbuilder.utils;
 import com.example.mtg_deckbuilder.model.Deck;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class DeckUtils {
@@ -27,14 +28,26 @@ public class DeckUtils {
         return deck.folder().contains(folder);
     }
 
-    static public List<List<String>> getColorIdentityOfDecks(List<Deck> decks) {
-         List<List<String>> colorIdentityList = new ArrayList<>();
-         for (Deck deck : decks){
-             var colorIdentityAsArray = Arrays.stream(deck.colors_identity().split(","))
-                     .map(String::trim)
-                     .toList();
-             colorIdentityList.add(colorIdentityAsArray);
-         }
-         return colorIdentityList;
+static public List<List<String>> getColorIdentityOfDecks(List<Deck> decks) {
+    List<List<String>> colorIdentityList = new ArrayList<>();
+
+    for (Deck deck : decks) {
+        if (deck.colors_identity() == null) {
+            colorIdentityList.add(Collections.emptyList());
+            continue;
+        }
+
+        // 1. Remove everything that isn't a letter (removes { } [ ] , and spaces)
+        String cleanColors = deck.colors_identity().replaceAll("[^a-zA-Z]", "");
+
+        // 2. Split into individual letters
+        List<String> colorIdentityAsArray = Arrays.stream(cleanColors.split(""))
+                .filter(s -> !s.isEmpty())
+                .toList();
+
+        colorIdentityList.add(colorIdentityAsArray);
     }
+
+    return colorIdentityList;
+}
 }
