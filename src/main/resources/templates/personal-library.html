@@ -225,12 +225,12 @@
             </div>
           </div>
 
-          <button
-                  onclick="document.getElementById('cardModal').style.display='flex'"
+          <a
+                  th:href="*{card.getCard().getScryfallUri()}"
                   class="cb-card-link">
             <i class="fas fa-eye"></i>
             Card Details ↗
-          </button>
+          </a>
 
         </div>
 
