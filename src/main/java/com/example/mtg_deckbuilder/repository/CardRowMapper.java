@@ -31,6 +31,7 @@ public class CardRowMapper {
         card.setPower(rs.getString("power"));
         card.setArtist(rs.getString("artist"));
         card.setCmc(rs.getInt("cmc"));
+        card.setScryfallUri(rs.getString("scryfall_uri"));
 
         String[] colors = extractColorIdentity(rs);
         List<String> colorList = List.of(colors);
