@@ -23,7 +23,6 @@
      >
 
 <div class="flex flex-col">
-
   <div class="flex flex-col gap-4 px-6 py-6 border-b border-blue-100 bg-white transition-colors duration-200 hover:bg-blue-50/30
               first:rounded-t-2xl last:rounded-b-2xl last:border-b-0 only:rounded-2xl only:border-b-0
               relative overflow-hidden"
@@ -36,23 +35,15 @@
 
     <!-- Card images row -->
     <div class="flex flex-wrap gap-3">
-
       <div th:each="img : ${cardList}" class="flex-shrink-0">
-
-        <!-- Card tile — mirrors .cb-card look -->
         <div class="group/card relative flex flex-col overflow-hidden rounded-[14px] border-[1.5px] border-blue-100 bg-white
                     shadow-[0_12px_40px_rgba(37,99,235,0.14)]
                     transition-all duration-200
                     hover:-translate-y-1.5 hover:border-blue-300 hover:shadow-[0_20px_50px_rgba(37,99,235,0.22)]"
              style="width: clamp(140px, 18vw, 213px);">
-
-          <!-- Gradient top bar on hover -->
           <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400
                       opacity-0 transition-opacity duration-200 group-hover/card:opacity-100 z-10"></div>
-
-          <!-- Card image — 5:7 MTG aspect ratio -->
-          <div class="relative bg-blue-50 overflow-hidden"
-               style="aspect-ratio: 5/7;">
+          <div class="relative bg-blue-50 overflow-hidden" style="aspect-ratio: 5/7;">
             <img
               class="w-full font-bold h-full object-cover object-top transition-transform duration-300 group-hover/card:scale-[1.04]"
               th:src="${img}"
@@ -60,28 +51,35 @@
               loading="lazy"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
             />
-            <!-- Fallback placeholder -->
             <div class="absolute inset-0 hidden items-center justify-center
                         bg-gradient-to-br from-blue-50 to-indigo-50 text-4xl text-slate-400">
               🃏
             </div>
           </div>
-
         </div>
       </div>
+    </div>
 
-    </div><!-- /combo-cards-row -->
-      <div class="font-bold">Description:</div>
-
-    <!-- Combo description -->
-    <div class="font-medium rounded-xl border-[1.5px] border-blue-100 bg-blue-50/60
-                text-slate-800 leading-relaxed"
-         th:text="${cardCombos.description[comboStat.index]}">
-      Combo description will appear here.
+    <!-- Combo description — redesigned -->
+    <div class="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50/40 px-4 py-3">
+      <!-- Icon column -->
+      <div class="mt-0.5 flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600/10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+      <!-- Text column -->
+      <div class="flex flex-col gap-0.5 min-w-0">
+        <span class="text-[11px] font-semibold tracking-widest uppercase text-blue-500 leading-none">Combo</span>
+        <p class="text-sm text-slate-700 leading-relaxed m-0"
+           th:text="${cardCombos.description[comboStat.index]}">
+          Combo description will appear here.
+        </p>
+      </div>
     </div>
 
   </div><!-- /combo-entry -->
-
+</div>
 </div><!-- /combo-list -->
 </div><!-- /combo-list -->   <!-- Glow base -->
     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none"
