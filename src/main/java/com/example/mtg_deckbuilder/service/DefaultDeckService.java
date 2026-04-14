@@ -6,6 +6,7 @@ import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.DeckRepository;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,4 +65,10 @@ public class DefaultDeckService implements DeckService {
                 .forEach(i -> finalDecks.put(decks.get(i), colorIdentityForEachDeck.get(i)));
         return finalDecks;
     }
+
+    @Override
+    public List<String> getALlDeckNames(CustomUserDetails user) {
+        return deckRepository.getAllDeckNames(user);
+    }
+
 }

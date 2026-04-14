@@ -4,6 +4,7 @@ import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.DeckCardEntry;
 import com.example.mtg_deckbuilder.model.NewDeck;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -59,6 +60,19 @@ public class DeckRepository {
                 .query(Deck.class)
                 .list();
     }
+
+    public List<String> getAllDeckNames(CustomUserDetails user) {
+        String sql = """
+        SELECT name FROM decks
+        WHERE user_id = :userId
+        """;
+
+        return jdbcClient.sql(sql)
+                .param("userId", user.getId())
+                .query(String.class)
+                .list();
+    }
+
     public void addCardToDeck(AddCardToDeckRequest request) {
         String sql = """
             INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
