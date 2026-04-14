@@ -1,7 +1,7 @@
 <!-- ══════════════════════════════════════════════════════
-     sticky-stats-bar.html
+     collection-info.html
      Thymeleaf fragment — include with:
-     <div th:replace="fragments/sticky-stats-bar :: stickyStatsBar"></div>
+     <div th:replace="fragments/collection-info :: stickyStatsBar"></div>
      Requires Tailwind CDN already loaded in the host page.
      ══════════════════════════════════════════════════════ -->
 
@@ -27,7 +27,7 @@
 <body class="p-8 bg-[#f1f5fe] font-[Inter]">
 
 <!-- ── STICKY STATS BAR FRAGMENT ── -->
-  <div th:fragment="stickyStatsBar(colorCounts, totalPrice, totalCards, avgPrice)">
+  <div th:fragment="stickyStatsBar">
   <!-- Spacer so page content isn't hidden behind the bar -->
   <div class="h-20"></div>
 
@@ -51,10 +51,10 @@
                        bg-[#f9f6ee] text-[#6b6245] border-2 border-[#c8b97e]">W</span>
           <span class="text-[13px] font-bold text-slate-800"
                 id="countW"
-                th:text="${colorCounts != null ? colorCounts['WHITE'] : 0}">14</span>
-          <span th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal((colorCounts['WHITE'] ?: 0 ) * 100.0 / totalCards, 1, 1) + '%'
-    : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctW">22%</span>
+                th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['WHITE'] : 0}">14</span>
+          <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
+    ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['WHITE'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctW">22%</span>
         </div>
 
         <!-- Blue -->
@@ -63,10 +63,10 @@
                        bg-[#0e68ab] text-[#d4edff] border-2 border-[#0e68ab]">U</span>
           <span class="text-[13px] font-bold text-slate-800"
                 id="countU"
-                th:text="${colorCounts != null ? colorCounts['BLUE'] : 0}">22</span>
-          <span  th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal((colorCounts['BLUE'] ?: 0 ) * 100.0 / totalCards, 1, 1) + '%'
-    : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctU">35%</span>
+                th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['BLUE'] : 0}">22</span>
+          <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
+    ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['BLUE'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctU">35%</span>
         </div>
 
         <!-- Black -->
@@ -75,10 +75,10 @@
                        bg-gray-800 text-[#d4edff] border-2 border-slate-600">B</span>
           <span class="text-[13px] font-bold text-slate-800"
                 id="countB"
-                th:text="${colorCounts != null ? colorCounts['BLACK'] : 0}">18</span>
-          <span th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal((colorCounts['BLACK'] ?: 0 ) * 100.0 / totalCards, 1, 1) + '%'
-    : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctB">29%</span>
+                th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['BLACK'] : 0}">18</span>
+          <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
+    ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['BLACK'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctB">29%</span>
         </div>
 
         <!-- Red -->
@@ -87,10 +87,10 @@
                        bg-red-700 text-red-100 border-2 border-red-700">R</span>
           <span class="text-[13px] font-bold text-slate-800"
                 id="countR"
-                th:text="${colorCounts != null ? colorCounts['RED'] : 0}">7</span>
-          <span th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal((colorCounts['RED'] ?: 0 ) * 100.0 / totalCards, 1, 1) + '%'
-    : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctR">11%</span>
+                th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['RED'] : 0}">7</span>
+          <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
+    ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['RED'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctR">11%</span>
         </div>
 
         <!-- Green -->
@@ -99,10 +99,10 @@
                        bg-green-900 text-green-100 border-2 border-green-700">G</span>
           <span class="text-[13px] font-bold text-slate-800"
                 id="countG"
-                th:text="${colorCounts != null ? colorCounts['GREEN'] : 0}">12</span>
-          <span th:text="${colorCounts != null and totalCards > 0
-    ? #numbers.formatDecimal((colorCounts['GREEN'] ?: 0) * 100.0 / totalCards, 1, 1) + '%'
-    : '0%'}"  class="hidden md:inline text-[11px] text-slate-400" id="pctG">19%</span>
+                th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['GREEN'] : 0}">12</span>
+          <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
+    ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['GREEN'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctG">19%</span>
         </div>
 
       </div>
@@ -119,19 +119,18 @@
           <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Value</div>
           <div class="text-[18px] font-extrabold leading-tight grad-text"
                id="totalPrice"
-               th:text="${totalPrice != null ? '$' + #numbers.formatDecimal(totalPrice, 1, 2) : '$0.00'}">
+               th:text="${personalLibrary.totalValue != null ? '$' + #numbers.formatDecimal(personalLibrary.totalValue, 1, 2) : '$0.00'}">
             $214.87
           </div>
         </div>
 
         <div class="w-px h-8 bg-[#e2e8f8]"></div>
         <div>
-
           <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Cards</div>
           <div class="text-[18px] font-extrabold leading-tight grad-text"
                id="totalCards"
-               th:text="${totalCards != null ? 'Total: ' + totalCards : '10'}">
-            $214.87
+               th:text="${personalLibrary.totalCards != null ? 'Total: ' + personalLibrary.totalCards : '10'}">
+            10
           </div>
         </div>
 
@@ -142,7 +141,7 @@
           <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Avg / card</span>
           <span class="text-[13px] font-bold text-blue-600"
                 id="avgPrice"
-                th:text="${avgPrice != null ? '$' + #numbers.formatDecimal(avgPrice, 1, 2) : '$0.00'}">
+                th:text="${personalLibrary.avgPrice != null ? '$' + #numbers.formatDecimal(personalLibrary.avgPrice, 1, 2) : '$0.00'}">
             $3.41
           </span>
         </div>
