@@ -37,7 +37,6 @@ public class CommanderSpellBookService{
     public CardCombos findCombos (CustomUserDetails userId) throws Exception {
        var cards = personalLibraryService.getCardsFromPersonalLibrary(userId.getId());
        var searchedCombos = searchCombos(cards);
-        System.out.println(searchedCombos.getResults().getIncluded().get(0).getUses());
 
        return CardCombos.builder()
                 .cardCombinations(searchedCombos
@@ -69,7 +68,6 @@ public class CommanderSpellBookService{
                         .toList())
                .build();
     }
-
 
 public static Combos searchCombos(List<OwnedCard> cards) throws Exception {
     List<Map<String, Object>> mainBoard = cards.stream()

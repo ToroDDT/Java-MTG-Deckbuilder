@@ -1,7 +1,7 @@
 package com.example.mtg_deckbuilder.repository;
 
 import com.example.mtg_deckbuilder.model.Card;
-import com.example.mtg_deckbuilder.model.CardPrices;
+import com.example.mtg_deckbuilder.model.Prices;
 import com.example.mtg_deckbuilder.model.ImageUris;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -54,33 +54,33 @@ public class CardRowMapper {
         }
     }
 
-    private CardPrices extractCardPrices(ResultSet rs) throws SQLException {
+    private Prices extractCardPrices(ResultSet rs) throws SQLException {
         String raw = rs.getString("prices");
 
         if (raw == null || raw.isBlank()) {
-            return CardPrices.builder()
+            return Prices.builder()
                     .tix(0.0).eurFoil(0.0).usdFoil(0.0).usd(0.0)
                     .build();
         }
 
         try {
-            CardPrices cardPrices = objectMapper.readValue(raw, CardPrices.class);
+            Prices prices = objectMapper.readValue(raw, Prices.class);
 
-            if (cardPrices.getUsd() == null) {
+            if (prices.getUsd() == null) {
                 // If both are null, it still remains null, which is fine
                 // because we handle that in the UI or set to 0.0 below
-                cardPrices.setUsd(cardPrices.getUsdFoil() != null ? cardPrices.getUsdFoil() : 0.0);
+                prices.setUsd(prices.getUsdFoil() != null ? prices.getUsdFoil() : 0.0);
             }
 
-            if (cardPrices.getUsdFoil() == null) cardPrices.setUsdFoil(0.0);
-            if (cardPrices.getEurFoil() == null) cardPrices.setEurFoil(0.0);
-            if (cardPrices.getTix() == null) cardPrices.setTix(0.0);
-            return cardPrices; // Essential: Return the processed object
+            if (prices.getUsdFoil() == null) prices.setUsdFoil(0.0);
+            if (prices.getEurFoil() == null) prices.setEurFoil(0.0);
+            if (prices.getTix() == null) prices.setTix(0.0);
+            return prices; // Essential: Return the processed object
 
         } catch (Exception e) {
             e.printStackTrace();
             // Return a zeroed-out builder on parse error rather than null
-            return CardPrices.builder().tix(0.0).eurFoil(0.0).usdFoil(0.0).usd(0.0).build();
+            return Prices.builder().tix(0.0).eurFoil(0.0).usdFoil(0.0).usd(0.0).build();
         }
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PersonalLibraryFilters {
+public class LibraryFilters {
     private String cardName;
     private List<String> selectedColors = new ArrayList<>();
     private String cardType;
@@ -16,7 +16,7 @@ public class PersonalLibraryFilters {
     private Integer maxCMC;
     private SortOptions sortBy;
 
-    public PersonalLibraryFilters() {
+    public LibraryFilters() {
 
     }
 }

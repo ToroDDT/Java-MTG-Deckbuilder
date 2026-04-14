@@ -2,7 +2,7 @@ package com.example.mtg_deckbuilder.service;
 
 import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.model.OwnedCard;
-import com.example.mtg_deckbuilder.model.PersonalLibraryFilters;
+import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.views.LibraryViewModel;
 
@@ -13,8 +13,8 @@ import java.util.UUID;
 public interface PersonalLibraryService {
     void addCardToPersonalLibrary(OwnedCard ownedCard, UUID userId);
     List<OwnedCard> getCardsFromPersonalLibrary(UUID userId);
-    List<OwnedCard> getCardsFromPersonalLibrary(UUID userId, PersonalLibraryFilters personalLibraryFilters);
+    List<OwnedCard> getCardsFromPersonalLibrary(UUID userId, LibraryFilters personalLibraryFilters);
     Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId);
     LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user);
-    LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user, PersonalLibraryFilters personalLibraryFilters);
+    LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);
 }

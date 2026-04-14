@@ -101,7 +101,7 @@ public class Card {
     private String lifeModifier;
 
     // Nested jsonb
-    private CardPrices prices;
+    private Prices prices;
     private String purchaseUris;
     private String relatedUris;
     private String preview;

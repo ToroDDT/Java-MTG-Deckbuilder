@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor  // Necessary: Jackson uses this to create the instance
 @AllArgsConstructor // Necessary: Allows @Builder to coexist with NoArgs
-public class CardPrices {
+public class Prices {
 
     @JsonProperty("usd")
     private Double usd;

@@ -2,7 +2,7 @@ package com.example.mtg_deckbuilder.utils;
 
 import com.example.mtg_deckbuilder.model.CardType;
 import com.example.mtg_deckbuilder.model.OwnedCard;
-import com.example.mtg_deckbuilder.model.PersonalLibraryFilters;
+import com.example.mtg_deckbuilder.model.LibraryFilters;
 
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +34,7 @@ public class CardUtils {
                 .getTypeLine()
                 .contains(cardType.getType());
     }
-    public static boolean matchesCmcRange(OwnedCard ownedCard, PersonalLibraryFilters personalLibraryFilters) {
+    public static boolean matchesCmcRange(OwnedCard ownedCard, LibraryFilters personalLibraryFilters) {
         return ownedCard.getCard().getCmc() >= personalLibraryFilters.getMinCMC() && ownedCard.getCard().getCmc() <= personalLibraryFilters.getMaxCMC();
     }
 
