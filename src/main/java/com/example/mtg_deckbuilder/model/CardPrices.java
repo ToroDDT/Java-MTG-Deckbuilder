@@ -1,14 +1,15 @@
 package com.example.mtg_deckbuilder.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor  // Necessary: Jackson uses this to create the instance
+@AllArgsConstructor // Necessary: Allows @Builder to coexist with NoArgs
 public class CardPrices {
+
     @JsonProperty("usd")
     private Double usd;
 
