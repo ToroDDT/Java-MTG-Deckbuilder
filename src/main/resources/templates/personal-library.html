@@ -5,6 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MTG Deckbuilder — Card Browser</title>
 
+
+<style>
+  /* Design System Token Integration */
+  :root {
+    --archivist-blue: #3b82f6;
+    --archivist-slate: #0f172a;
+    --archivist-gray: #64748b;
+    --archivist-light: #f8fafc;
+    --archivist-border: #e2e8f0;
+  }
+
+  /* Configured tailwind extends via standard CSS if script-based config is removed */
+  /* Note: Since tailwind.config script was removed per instruction, we use standard tailwind classes or @layer */
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc;
+  }
+
+  .grad-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #0f172a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
+
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="preconnect" href="https://cards.scryfall.io">
   <link rel="preload" href="https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1" as="font" type="font/woff2" crossorigin>
@@ -179,7 +206,7 @@
 
     </aside>
 
-    <div id="personal-cards" class="cb-results-col">
+    <div id="personal-cards" class="cb-results-col rounded-2xl">
 
 
       <div class="cb-results-header">
@@ -188,56 +215,15 @@
 
       <div class="cb-grid" id="cardGrid">
 
-        <div class="cb-card"
-             th:each="card : ${personalLibrary.cards}"
-             th:data-name="${card.getCard().getName()}"
-             th:data-type="${card.getCard().getTypeLine()}"
-             th:data-cmc="${card.getCard().getCmc()}"
-             th:data-colors="${#strings.listJoin(card.getColors(), ',')}">
-
-          <div class="cb-card-img-wrap">
-            <img
-                    class="cb-card-img"
-                    fetchpriority="high"
-                    th:src="${card.getCard().getImage()}"
-                    th:alt="${card.getCard().getName()}"
-            />
-            <div class="cb-card-img-placeholder" style="display:none">🃏</div>
-          </div>
-
-          <div class="cb-card-body">
-            <div class="cb-card-name" th:text="${card.getCard().getName()}">Card Name</div>
-            <div class="cb-card-name">
-              Price: <span class="cb-card-type" th:text="${'$'+ card.getCard().getPrices().getUsd()}">0</span>
-            </div>
-            <div class="cb-card-type" th:text="${card.getCard().getTypeLine()}">Type</div>
-            <div class="cb-card-cmc">
-              <span class="cb-card-cmc-pip" th:text="${card.getCard().getCmc()}">0</span> CMC
-            </div>
-            <div class="cb-card-tags">
-              <th:block th:each="tag, tagStat : ${card.tags}">
-                <span class="cb-tag" th:text="${tag}" th:if="${tagStat.index} < 4"></span>
-              </th:block>
-              <span class="cb-tag"
-                    th:if="${#lists.size(card.tags)} > 4"
-                    th:text="'+' + (${#lists.size(card.tags)} - 4)">
-                </span>
-            </div>
-          </div>
-
-          <a
-                  th:href="*{card.getCard().getScryfallUri()}"
-                  class="cb-card-link">
-            <i class="fas fa-eye"></i>
-            Card Details ↗
-          </a>
-
-        </div>
-
-        <!-- Empty state when model returns no cards -->
-        <div class="cb-empty" th:if="${#lists.isEmpty(cards)}">
+        <div class="cb-empty">
           <div class="cb-empty-icon">🃏</div>
           <p>No cards in your library yet.</p>
+        </div>
+
+        <div th:attr="hx-get=@{/personal-library/cards}"
+             hx-trigger="load"
+             hx-target="#personal-cards">
+          Loading details...
         </div>
 
       </div>
@@ -250,19 +236,18 @@
   </div>
 
 </main>
-<div th:replace="fragments/card-modal :: cardDetailModal">
-</div>
+
 
 <!-- ══════════════ FOOTER ══════════════ -->
 <footer class="cb-footer">
   <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
 </footer>
-<div th:replace="~{fragments/collection-info :: stickyStatsBar(
-    colorCounts=${personalLibrary.colorIdentityAmounts},
-    totalPrice=${personalLibrary.totalValue},
-    totalCards=${personalLibrary.totalCards},
-    avgPrice=${personalLibrary.avgPrice})}">
+<div hx-get="/personal-library/info"
+     hx-trigger="load"
+     hx-swap="outerHTML">
 </div>
+
+<div id="personal-cards-info"></div>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const cmcMin = document.getElementById('cmcMin');
