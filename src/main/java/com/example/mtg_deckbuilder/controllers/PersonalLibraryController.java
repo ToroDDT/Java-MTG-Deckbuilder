@@ -1,19 +1,22 @@
 package com.example.mtg_deckbuilder.controllers;
 
-import com.example.mtg_deckbuilder.dto.CardCombos;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.PersonalLibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.CommanderSpellBookService;
 import com.example.mtg_deckbuilder.service.DefaultPersonalLibraryService;
 import com.example.mtg_deckbuilder.service.PersonalLibraryService;
+import com.example.mtg_deckbuilder.views.CardBrowserViewModel;
 import com.example.mtg_deckbuilder.views.LibraryViewModel;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Controller
@@ -28,15 +31,38 @@ public class PersonalLibraryController {
     }
 
     @GetMapping("/personal-library")
-    public String getPersonalLibrary(Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
-        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+    public String getPersonalLibrary(HttpServletResponse response, Model model) {
+        CardBrowserViewModel cardBrowserViewModel = new CardBrowserViewModel();
 
-        model.addAttribute("personalLibrary", libraryView);
+        model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new PersonalLibraryFilters());
 
+        response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
+        response.setHeader("Content-Type", "text/html; charset=UTF-8");
+
         return "personal-library";
     }
+    @GetMapping("/personal-library/cards")
+    public String getPersonalCards(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+
+        model.addAttribute("cards", libraryView.getCards());
+        model.addAttribute("ownedCard", new OwnedCard());
+        model.addAttribute("personalLibraryFilters", new PersonalLibraryFilters());
+
+        return "fragments/personal-cards :: personal-cards";
+    }
+    @GetMapping("/personal-library/info")
+    public String getPersonalCardsInfo(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+
+        model.addAttribute("personalLibrary", libraryView);
+
+        return "fragments/collection-info :: stickyStatsBar";
+    }
+
+
     @PostMapping("/personal-library/add")
     public String addCardToPersonalLibrary(@ModelAttribute("ownedCard") OwnedCard ownedCard, @AuthenticationPrincipal CustomUserDetails user) {
         personalLibraryService.addCardToPersonalLibrary(ownedCard, user.getId());
@@ -60,5 +86,6 @@ public class PersonalLibraryController {
 
         model.addAttribute("cardCombos", combosList );
         return "fragments/combos :: combos-section ";
+
     }
 }
