@@ -75,10 +75,10 @@ public class CardRowMapper {
             if (cardPrices.getUsdFoil() == null) cardPrices.setUsdFoil(0.0);
             if (cardPrices.getEurFoil() == null) cardPrices.setEurFoil(0.0);
             if (cardPrices.getTix() == null) cardPrices.setTix(0.0);
-
             return cardPrices; // Essential: Return the processed object
 
         } catch (Exception e) {
+            e.printStackTrace();
             // Return a zeroed-out builder on parse error rather than null
             return CardPrices.builder().tix(0.0).eurFoil(0.0).usdFoil(0.0).usd(0.0).build();
         }
@@ -102,7 +102,6 @@ private String[] extractColorIdentity(ResultSet rs) throws SQLException {
         // .replaceAll("[^a-zA-Z]", "") removes EVERYTHING that isn't a letter
         // This nukes { } [ ] , and spaces in one go.
         String cleanString = array.toString().replaceAll("[^a-zA-Z]", "");
-        System.out.println("DEBUG RAW STRING: " + array.toString());
         return cleanString.chars()
                 .mapToObj(c -> String.valueOf((char) c))
                 .toArray(String[]::new);
