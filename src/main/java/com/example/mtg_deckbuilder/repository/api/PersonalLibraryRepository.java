@@ -1,4 +1,4 @@
-package com.example.mtg_deckbuilder.repository;
+package com.example.mtg_deckbuilder.repository.api;
 
 import com.example.mtg_deckbuilder.model.OwnedCard;
 

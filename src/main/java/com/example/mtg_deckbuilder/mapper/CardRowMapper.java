@@ -1,4 +1,4 @@
-package com.example.mtg_deckbuilder.repository;
+package com.example.mtg_deckbuilder.mapper;
 
 import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.Prices;

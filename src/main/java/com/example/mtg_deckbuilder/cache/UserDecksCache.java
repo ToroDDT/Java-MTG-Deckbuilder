@@ -1,7 +1,7 @@
 package com.example.mtg_deckbuilder.cache;
 
 import com.example.mtg_deckbuilder.model.Deck;
-import com.example.mtg_deckbuilder.repository.DeckRepository;
+import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;

@@ -2,8 +2,8 @@ package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.service.ScryfallLibraryService;
-import com.example.mtg_deckbuilder.service.DefaultDeckService;
+import com.example.mtg_deckbuilder.service.api.CardService;
+import com.example.mtg_deckbuilder.service.impl.DeckServiceImpl;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,20 +21,20 @@ import java.util.*;
 @Controller
 public class DeckLibraryController {
 
-    private final ScryfallLibraryService scryfallLibraryService;
-    private final DefaultDeckService defaultDeckService;
+    private final CardService cardService;
+    private final DeckServiceImpl deckServiceImpl;
 
-    public DeckLibraryController(ScryfallLibraryService scryfallLibraryService, DefaultDeckService defaultDeckService) {
-        this.scryfallLibraryService = scryfallLibraryService;
-        this.defaultDeckService = defaultDeckService;
+    public DeckLibraryController(CardService cardService, DeckServiceImpl deckServiceImpl) {
+        this.cardService = cardService;
+        this.deckServiceImpl = deckServiceImpl;
     }
 
     @GetMapping("/collection")
     public String getDecks(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model, @AuthenticationPrincipal CustomUserDetails user) {
         model.addAllAttributes(Map.of(
-                "decks", defaultDeckService.getAllDecksForUser(user.getId(), deckSearchCriteria),
+                "decks", deckServiceImpl.getAllDecksForUser(user.getId(), deckSearchCriteria),
                 "deckSearchCriteria", deckSearchCriteria,
-                "listOfCommanders", scryfallLibraryService.findAllLegalCommanders(),
+                "listOfCommanders", cardService.findAllLegalCommanders(),
                 "newDeck", newDeck
         ));
         return "decks";
@@ -43,7 +43,7 @@ public class DeckLibraryController {
     @GetMapping(path = "/search", headers = "hx-request=true")
     String getAllDecksMatchingSearch(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model, @AuthenticationPrincipal CustomUserDetails user) {
         model.addAllAttributes(Map.of(
-                "decks", defaultDeckService.getAllDecksForUser(user.getId(), deckSearchCriteria)
+                "decks", deckServiceImpl.getAllDecksForUser(user.getId(), deckSearchCriteria)
         ));
         return "fragments/deck-search-results :: decks";
     }
@@ -62,7 +62,7 @@ public class DeckLibraryController {
             }
         }
 
-        scryfallLibraryService.findByName(newDeck.getCommander())
+        cardService.findByName(newDeck.getCommander())
                 .ifPresent(card -> {
                     newDeck.setImage(card.getImage());
                     newDeck.setColorIdentity(card.getColorIdentity().toString());
@@ -71,7 +71,7 @@ public class DeckLibraryController {
                     newDeck.setUserId(user.getId());
                 });
 
-        defaultDeckService.addDeck(newDeck);
+        deckServiceImpl.addDeck(newDeck);
 
         return "redirect:/collection";
     }

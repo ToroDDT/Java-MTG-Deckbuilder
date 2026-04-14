@@ -1,12 +1,13 @@
-package com.example.mtg_deckbuilder.service;
+package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.cache.UserDecksCache;
 import com.example.mtg_deckbuilder.exceptions.DeckDoesNotExistException;
 import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
-import com.example.mtg_deckbuilder.repository.DeckRepository;
+import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,14 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 @Service
-public class DefaultDeckService implements DeckService {
+public class DeckServiceImpl implements DeckService {
 
     private final DeckRepository deckRepository;
     private final UserDecksCache userDecksCache;
 
 
     @Autowired
-    public DefaultDeckService(DeckRepository deckRepository, UserDecksCache userDecksCache) {
+    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache) {
         this.deckRepository = deckRepository;
         this.userDecksCache = userDecksCache;
     }

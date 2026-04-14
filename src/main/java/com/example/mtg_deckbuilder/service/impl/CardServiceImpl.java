@@ -1,31 +1,32 @@
-package com.example.mtg_deckbuilder.service;
+package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.model.*;
-import com.example.mtg_deckbuilder.repository.ScryfallRepository;
-import com.example.mtg_deckbuilder.utils.*;
+import com.example.mtg_deckbuilder.repository.impl.CardRepositoryImpl;
+import com.example.mtg_deckbuilder.service.api.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class ScryfallLibraryService {
+public class CardServiceImpl implements CardService {
 
-  private final ScryfallRepository scryfallRepository;
+  private final CardRepositoryImpl scryfallRepository;
 
   @Autowired
-  public ScryfallLibraryService(ScryfallRepository scryfallRepository) {
+  public CardServiceImpl(CardRepositoryImpl scryfallRepository) {
     this.scryfallRepository = scryfallRepository;
   }
 
   @Cacheable("commanders")
+  @Override
   public List<String> findAllLegalCommanders() {
       return scryfallRepository.findLegalCommanderCards();
   }
 
+  @Override
   public Optional<Card> findByName(String name){
     return scryfallRepository.findByName(name);
   }

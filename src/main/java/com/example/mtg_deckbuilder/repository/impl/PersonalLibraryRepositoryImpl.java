@@ -1,6 +1,8 @@
-package com.example.mtg_deckbuilder.repository;
+package com.example.mtg_deckbuilder.repository.impl;
 
+import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
 import com.example.mtg_deckbuilder.model.OwnedCard;
+import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -10,13 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public class DefaultPersonalLibraryRepository implements PersonalLibraryRepository{
+public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository {
 
     private final JdbcClient jdbcClient;
     private final JdbcTemplate jdbcTemplate;
     private final OwnedCardRowMapper ownedCardRowMapper;
 
-    public DefaultPersonalLibraryRepository(OwnedCardRowMapper ownedCardRowMapper, JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
+    public PersonalLibraryRepositoryImpl(OwnedCardRowMapper ownedCardRowMapper, JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
         this.jdbcClient = jdbcClient;
         this.jdbcTemplate = jdbcTemplate;
         this.ownedCardRowMapper = ownedCardRowMapper;

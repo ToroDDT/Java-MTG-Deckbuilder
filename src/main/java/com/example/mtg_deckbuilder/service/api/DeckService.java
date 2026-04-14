@@ -1,4 +1,4 @@
-package com.example.mtg_deckbuilder.service;
+package com.example.mtg_deckbuilder.service.api;
 
 import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
 import com.example.mtg_deckbuilder.model.NewDeck;

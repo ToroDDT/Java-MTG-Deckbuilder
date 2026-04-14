@@ -2,10 +2,9 @@ package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
 import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
-import com.example.mtg_deckbuilder.repository.CardLibrary;
-import com.example.mtg_deckbuilder.repository.ScryfallRepository;
+import com.example.mtg_deckbuilder.repository.impl.CardRepositoryImpl;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.service.DefaultDeckService;
+import com.example.mtg_deckbuilder.service.impl.DeckServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -21,15 +20,15 @@ import java.util.UUID;
 @Controller
 public class DeckController {
 
-    private final ScryfallRepository scryfallRepository;
+    private final CardRepositoryImpl scryfallRepository;
     private final CardLibrary cardLibrary;
-    private final DefaultDeckService defaultDeckService;
+    private final DeckServiceImpl deckServiceImpl;
 
     @Autowired
-    public DeckController(DefaultDeckService defaultDeckService, CardLibrary cardLibrary, ScryfallRepository scryfallRepository) {
+    public DeckController(DeckServiceImpl deckServiceImpl, CardLibrary cardLibrary, CardRepositoryImpl scryfallRepository) {
         this.scryfallRepository = scryfallRepository;
         this.cardLibrary = cardLibrary;
-        this.defaultDeckService = defaultDeckService;
+        this.deckServiceImpl = deckServiceImpl;
     }
 
     @GetMapping("/collection/deck/{id}")
@@ -45,7 +44,7 @@ public class DeckController {
         var card = scryfallRepository.findByName(cardName).orElseThrow(() -> new CardDoesNotExistException(cardName));
 
         var cardRequest = new AddCardToDeckRequest(deckId, user.getId(), card.getId(), false, null);
-        defaultDeckService.addCardToDeck(cardRequest);
+        deckServiceImpl.addCardToDeck(cardRequest);
         return "mtg-dashboard";
     }
 }

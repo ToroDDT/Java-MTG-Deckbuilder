@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.controllers;
 import com.example.mtg_deckbuilder.dto.UserRegistrationDto;
-import com.example.mtg_deckbuilder.service.UserService;
+import com.example.mtg_deckbuilder.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,17 +12,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AccountController {
 
-    private final UserService userService;
+    private final UserDetailsServiceImpl userService;
 
     @Autowired
-    public AccountController(UserService userService) {
+    public AccountController(UserDetailsServiceImpl userService) {
         this.userService = userService;
     }
 
-    // 1. Display the Registration Form
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
-        // This allows Thymeleaf to bind form fields to this object
         model.addAttribute("user", new UserRegistrationDto());
         return "register"; // matches the name of your HTML file (register.html)
     }

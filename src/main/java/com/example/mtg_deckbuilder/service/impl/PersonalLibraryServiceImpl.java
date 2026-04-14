@@ -1,10 +1,13 @@
-package com.example.mtg_deckbuilder.service;
+package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
 import com.example.mtg_deckbuilder.model.*;
-import com.example.mtg_deckbuilder.repository.DefaultPersonalLibraryRepository;
-import com.example.mtg_deckbuilder.repository.PersonalLibraryRepository;
+import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl;
+import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.api.CardService;
+import com.example.mtg_deckbuilder.service.api.DeckService;
+import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.utils.CardUtils;
 import com.example.mtg_deckbuilder.views.LibraryViewModel;
 import org.springframework.stereotype.Service;
@@ -15,19 +18,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
-public class DefaultPersonalLibraryService implements PersonalLibraryService {
+public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     private final PersonalLibraryRepository personalLibraryRepository;
-    private final ScryfallLibraryService scryfallLibraryService;
-    private final DefaultDeckService defaultDeckService;
+    private final CardService cardServiceImpl;
+    private final DeckService deckServiceImpl;
 
-    public DefaultPersonalLibraryService(DefaultPersonalLibraryRepository personalLibraryRepository, ScryfallLibraryService scryfallLibraryService, DefaultDeckService defaultDeckService) {
+    public PersonalLibraryServiceImpl(PersonalLibraryRepositoryImpl personalLibraryRepository, CardService cardServiceImpl, DeckServiceImpl deckServiceImpl) {
         this.personalLibraryRepository = personalLibraryRepository;
-        this.scryfallLibraryService = scryfallLibraryService;
-        this.defaultDeckService = defaultDeckService;
+        this.cardServiceImpl = cardServiceImpl;
+        this.deckServiceImpl = deckServiceImpl;
     }
     @Override
     public void addCardToPersonalLibrary(OwnedCard ownedCard, UUID user) throws CardDoesNotExistException{
-        var card = scryfallLibraryService.findByName(ownedCard.getName());
+        var card = cardServiceImpl.findByName(ownedCard.getName());
         if (card.isPresent()) {
             ownedCard.setId(card.get().getId());
             ownedCard.setCardId(card.get().getId());
@@ -179,6 +182,6 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
         return colorCounts;
     }
     private List<String> getDeckNames(CustomUserDetails userId) {
-        return defaultDeckService.getALlDeckNames(userId);
+        return deckServiceImpl.getALlDeckNames(userId);
     }
 }

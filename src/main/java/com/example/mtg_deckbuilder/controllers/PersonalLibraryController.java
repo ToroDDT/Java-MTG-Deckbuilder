@@ -3,9 +3,9 @@ package com.example.mtg_deckbuilder.controllers;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.service.CommanderSpellBookService;
-import com.example.mtg_deckbuilder.service.DefaultPersonalLibraryService;
-import com.example.mtg_deckbuilder.service.PersonalLibraryService;
+import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
+import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
+import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.views.CardBrowserViewModel;
 import com.example.mtg_deckbuilder.views.LibraryViewModel;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,11 +23,11 @@ import java.util.concurrent.TimeUnit;
 public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
-    private final CommanderSpellBookService commanderSpellBookService;
+    private final ComboServiceImpl comboServiceImpl;
 
-    PersonalLibraryController(DefaultPersonalLibraryService personalLibraryService, CommanderSpellBookService commanderSpellBookService) {
+    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService, ComboServiceImpl comboServiceImpl) {
         this.personalLibraryService = personalLibraryService;
-        this.commanderSpellBookService = commanderSpellBookService;
+        this.comboServiceImpl = comboServiceImpl;
     }
 
     @GetMapping("/personal-library")
@@ -77,13 +77,13 @@ public class PersonalLibraryController {
         model.addAttribute("cards", libraryView.getCards());
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("personalLibraryFilters", new LibraryFilters());
+        model.addAttribute("libraryView", libraryView);
         return "fragments/personal-cards :: personal-cards";
     }
 
     @GetMapping(path = "/personal-library/combos", headers = "hx-request=true")
     public  String getCombos(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
-        var combosList = commanderSpellBookService.findCombos(user);
-        System.out.println(combosList.getImages());
+        var combosList = comboServiceImpl.findCombos(user);
 
         model.addAttribute("cardCombos", combosList );
         return "fragments/combos :: combos-section ";

@@ -1,6 +1,8 @@
-package com.example.mtg_deckbuilder.repository;
+package com.example.mtg_deckbuilder.repository.impl;
 
+import com.example.mtg_deckbuilder.mapper.ScryfallCardRowMapper;
 import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.repository.api.CardRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -8,13 +10,13 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 
 @Repository
-public class ScryfallRepository implements CardRepository {
+public class CardRepositoryImpl implements CardRepository {
 
   private final JdbcClient jdbcClient;
   private final JdbcTemplate jdbcTemplate;
   private final ScryfallCardRowMapper scryfallCardRowMapper;
 
-  public ScryfallRepository(ScryfallCardRowMapper scryfallCardRowMapper,JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
+  public CardRepositoryImpl(ScryfallCardRowMapper scryfallCardRowMapper, JdbcClient jdbcClient, JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
     this.jdbcClient = jdbcClient;
     this.scryfallCardRowMapper = scryfallCardRowMapper;

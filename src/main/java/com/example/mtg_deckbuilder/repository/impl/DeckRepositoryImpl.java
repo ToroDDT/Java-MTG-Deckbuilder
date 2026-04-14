@@ -1,9 +1,10 @@
-package com.example.mtg_deckbuilder.repository;
+package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.DeckCardEntry;
 import com.example.mtg_deckbuilder.model.NewDeck;
+import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -20,13 +21,14 @@ import java.util.UUID;
  * It relies on the {@code JdbcClient} for database interactions.
  */
 @Repository
-public class DeckRepository {
+public class DeckRepositoryImpl implements DeckRepository {
     private final JdbcClient jdbcClient;
 
-    public DeckRepository(JdbcClient jdbcClient) {
+    public DeckRepositoryImpl(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
     }
 
+    @Override
     public void createNewDeckEntry(NewDeck newDeck) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -49,6 +51,7 @@ public class DeckRepository {
     }
 
 
+    @Override
     public List<Deck> getAllDecksForUser(UUID userId) {
         String sql = """
         SELECT * FROM decks
@@ -61,6 +64,7 @@ public class DeckRepository {
                 .list();
     }
 
+    @Override
     public List<String> getAllDeckNames(CustomUserDetails user) {
         String sql = """
         SELECT name FROM decks
@@ -73,6 +77,7 @@ public class DeckRepository {
                 .list();
     }
 
+    @Override
     public void addCardToDeck(AddCardToDeckRequest request) {
         String sql = """
             INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)

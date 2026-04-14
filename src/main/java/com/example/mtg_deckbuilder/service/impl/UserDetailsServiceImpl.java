@@ -1,8 +1,11 @@
-package com.example.mtg_deckbuilder.service;
+package com.example.mtg_deckbuilder.service.impl;
 
+import com.example.mtg_deckbuilder.dto.UserRegistrationDto;
+import com.example.mtg_deckbuilder.exceptions.InvalidRegistrationFormException;
 import com.example.mtg_deckbuilder.model.User;
-import com.example.mtg_deckbuilder.repository.UserRepository;
+import com.example.mtg_deckbuilder.repository.api.UserRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import jakarta.validation.constraints.NotNull;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,17 +19,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MyUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
     @Autowired
-    public  MyUserDetailsService (UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public UserDetails loadUserByUsername (@NonNull String username) throws UsernameNotFoundException {
+    public @NonNull UserDetails loadUserByUsername (@NonNull String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("username input was empty");
@@ -39,5 +42,11 @@ public class MyUserDetailsService implements UserDetailsService {
                 user.get().id()
 
         );
+    }
+    public void saveUser(@NotNull UserRegistrationDto userRegistrationDto) throws InvalidRegistrationFormException {
+        if (userRegistrationDto.getUsername().isBlank() || userRegistrationDto.getPassword().isBlank() || userRegistrationDto.getEmail().isBlank()){
+            throw new InvalidRegistrationFormException("Missing required fields, some form fields are empty.");
+        }
+        userRepository.saveUser(userRegistrationDto);
     }
 }
