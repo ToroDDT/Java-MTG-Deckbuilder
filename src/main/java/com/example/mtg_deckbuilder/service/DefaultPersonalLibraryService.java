@@ -9,19 +9,21 @@ import com.example.mtg_deckbuilder.utils.CardUtils;
 import com.example.mtg_deckbuilder.views.LibraryViewModel;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
 public class DefaultPersonalLibraryService implements PersonalLibraryService {
     private final PersonalLibraryRepository personalLibraryRepository;
     private final ScryfallLibraryService scryfallLibraryService;
+    private final DefaultDeckService defaultDeckService;
 
-    public DefaultPersonalLibraryService(DefaultPersonalLibraryRepository personalLibraryRepository, ScryfallLibraryService scryfallLibraryService) {
+    public DefaultPersonalLibraryService(DefaultPersonalLibraryRepository personalLibraryRepository, ScryfallLibraryService scryfallLibraryService, DefaultDeckService defaultDeckService) {
         this.personalLibraryRepository = personalLibraryRepository;
         this.scryfallLibraryService = scryfallLibraryService;
+        this.defaultDeckService = defaultDeckService;
     }
     @Override
     public void addCardToPersonalLibrary(OwnedCard ownedCard, UUID user) throws CardDoesNotExistException{
@@ -52,7 +54,7 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
                 .toList();
     }
     @Override
-    public List<OwnedCard> getCardsFromPersonalLibrary(UUID userid, PersonalLibraryFilters personalLibraryFilters) {
+    public List<OwnedCard> getCardsFromPersonalLibrary(UUID userid, LibraryFilters personalLibraryFilters) {
 
         var cardType = CardType.fromString(personalLibraryFilters.getCardType());
         SortOptions sortBy = personalLibraryFilters.getSortBy();
@@ -112,8 +114,14 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
 
     @Override
     public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId) {
-        var cards = getCardsFromPersonalLibrary(userId.getId());
+        var cardsFuture = CompletableFuture.supplyAsync(() ->
+                this.getCardsFromPersonalLibrary(userId.getId()));
 
+        var deckNamesFuture = CompletableFuture.supplyAsync(() ->
+                getDeckNames(userId));
+
+        var cards = cardsFuture.join();
+        var deckNames = deckNamesFuture.join();
         // Calculate total value
         var total = getTotalValue(cards);
         var colorCounts = getColorCount(userId);
@@ -121,6 +129,7 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
         // Use the Builder to assemble the object
         return LibraryViewModel.builder()
                 .cards(cards)
+                .deckNames(deckNames)
                 .totalCards(cards.size())
                 .totalValue(total)
                 .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
@@ -129,9 +138,15 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
     }
 
     @Override
-    public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId, PersonalLibraryFilters personalLibraryFilters) {
-        var cards = this.getCardsFromPersonalLibrary(userId.getId(), personalLibraryFilters);
+    public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId, LibraryFilters personalLibraryFilters) {
+        var cardsFuture = CompletableFuture.supplyAsync(() ->
+                this.getCardsFromPersonalLibrary(userId.getId(), personalLibraryFilters));
 
+        var deckNamesFuture = CompletableFuture.supplyAsync(() ->
+                getDeckNames(userId));
+
+        var cards = cardsFuture.join();
+        var deckNames = deckNamesFuture.join();
 
         var total = getTotalValue(cards);
         var colorCounts = getColorCount(userId);
@@ -140,6 +155,7 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
         // Use the Builder to assemble the object
         return LibraryViewModel.builder()
                 .cards(cards)
+                .deckNames(deckNames)
                 .totalCards(cards.size())
                 .totalValue(total)
                 .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
@@ -161,5 +177,8 @@ public class DefaultPersonalLibraryService implements PersonalLibraryService {
         getAmountOfEachColorIdentity(userId.getId())
                 .forEach((key, value) -> colorCounts.put(key.name(), value));
         return colorCounts;
+    }
+    private List<String> getDeckNames(CustomUserDetails userId) {
+        return defaultDeckService.getALlDeckNames(userId);
     }
 }
