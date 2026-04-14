@@ -1,7 +1,7 @@
 package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.model.OwnedCard;
-import com.example.mtg_deckbuilder.model.PersonalLibraryFilters;
+import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.CommanderSpellBookService;
 import com.example.mtg_deckbuilder.service.DefaultPersonalLibraryService;
@@ -36,7 +36,7 @@ public class PersonalLibraryController {
 
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
-        model.addAttribute("filters", new PersonalLibraryFilters());
+        model.addAttribute("filters", new LibraryFilters());
 
         response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
@@ -49,7 +49,8 @@ public class PersonalLibraryController {
 
         model.addAttribute("cards", libraryView.getCards());
         model.addAttribute("ownedCard", new OwnedCard());
-        model.addAttribute("personalLibraryFilters", new PersonalLibraryFilters());
+        model.addAttribute("personalLibraryFilters", new LibraryFilters());
+        model.addAttribute("libraryView", libraryView);
 
         return "fragments/personal-cards :: personal-cards";
     }
@@ -70,17 +71,17 @@ public class PersonalLibraryController {
     }
 
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
-    public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") PersonalLibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
+    public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
         LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
 
         model.addAttribute("cards", libraryView.getCards());
         model.addAttribute("ownedCard", new OwnedCard());
-        model.addAttribute("personalLibraryFilters", new PersonalLibraryFilters());
+        model.addAttribute("personalLibraryFilters", new LibraryFilters());
         return "fragments/personal-cards :: personal-cards";
     }
 
     @GetMapping(path = "/personal-library/combos", headers = "hx-request=true")
-    public  String getCombos(@ModelAttribute("personalLibraryFilters") PersonalLibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
+    public  String getCombos(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         var combosList = commanderSpellBookService.findCombos(user);
         System.out.println(combosList.getImages());
 
