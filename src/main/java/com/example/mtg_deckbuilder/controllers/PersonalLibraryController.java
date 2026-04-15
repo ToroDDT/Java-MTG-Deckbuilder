@@ -81,12 +81,5 @@ public class PersonalLibraryController {
         return "fragments/personal-cards :: personal-cards";
     }
 
-    @GetMapping(path = "/personal-library/combos", headers = "hx-request=true")
-    public  String getCombos(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
-        var combosList = comboServiceImpl.findCombos(user);
 
-        model.addAttribute("cardCombos", combosList );
-        return "fragments/combos :: combos-section ";
-
-    }
 }

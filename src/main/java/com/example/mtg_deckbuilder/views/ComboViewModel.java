@@ -2,7 +2,6 @@ package com.example.mtg_deckbuilder.views;
 
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.SortOptions;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;

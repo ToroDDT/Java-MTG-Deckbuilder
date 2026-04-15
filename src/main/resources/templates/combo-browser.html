@@ -2,24 +2,87 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Card Browser</title>
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="preconnect" href="https://cards.scryfall.io">
-    <link rel="preload" href="https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1" as="font" type="font/woff2" crossorigin>
+    <link rel="preload"
+          href="https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1"
+          as="font"
+          type="font/woff2"
+          crossorigin>
+
+    <!-- Styles -->
     <link rel="stylesheet" th:href="@{/css/site.min.css}">
     <link rel="stylesheet" th:href="@{/css/bundle.css}">
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
 </head>
+
 <body>
+
+<header class="cb-nav">
+    <div class="cb-nav-inner">
+        <a href="/" class="cb-logo">MTG Deckbuilder</a>
+
+        <button class="cb-hamburger"
+                id="hamburger"
+                aria-label="Open menu"
+                aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+
+        <nav class="cb-nav-menu" id="navMenu">
+            <ul class="cb-nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/build">Build</a></li>
+                <li><a href="/owned">Owned Library</a></li>
+                <li><a href="/cards" class="active">All Cards</a></li>
+                <li><a href="/commanders">Commanders</a></li>
+                <li><a href="/decks">Finished Decks</a></li>
+            </ul>
+            <a href="/build" class="cb-nav-btn">Build Deck</a>
+        </nav>
+    </div>
+</header>
+
+<main class="cb-page">
 <!-- Page header -->
 <div class="cb-page-header">
     <div class="cb-page-header-bg"></div>
-    <h1 class="cb-page-title">Card Browser</h1>
-    <p class="cb-page-sub">Browse all cards with filters and search.</p>
+    <h1 class="cb-page-title">Combo Browser</h1>
+    <p class="cb-page-sub">
+        Browse all cards with filters and search.
+    </p>
 </div>
-<aside th:replace="combo-explorer :: combo-explorer(${personalLibrary}, ${filters}, ${ownedCard})">
-</aside>
 
+<!-- Layout -->
+<div class="cb-layout">
 
+    <!-- Sidebar filters -->
+    <aside th:replace="combo-explorer :: combo-explorer(${personalLibrary}, ${filters}, ${ownedCard})">
+    </aside>
+
+    <!-- Results (HTMX loads here) -->
+    <div id="combos-list"
+         class="cb-results-col rounded-2xl"
+         th:hx-get="@{/personal-library/combos-list}"
+         hx-trigger="load">
+        Loading combos...
+    </div>
+
+</div>
+    </main>
+
+<footer class="cb-footer">
+    <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
+</footer>
+
+<script th:src="@{/js/personal-library.js}" defer></script>
 </body>
 </html>

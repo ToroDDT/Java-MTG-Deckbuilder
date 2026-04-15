@@ -6,16 +6,8 @@
 </head>
 <body>
 <aside class="cb-sidebar" th:fragment="combo-explorer(personalLibrary, filters, ownedCard)">
-  <label for="toggleCombos"></label>
-  <input th:attr="hx-get=@{/personal-library/combos}"
-         hx-target="#personal-cards"
-         hx-trigger="change"
-         type="checkbox"
-         id="toggleCombos"
-         class="cb-toggle">
-
-  <form th:action="@{/personal-library/search}"
-        th:hx-get="@{/personal-library/search}"
+  <form th:action="@{/personal-library/combo-list}"
+        th:hx-get="@{/personal-library/combo-list}"
         hx-target="#personal-cards"
         th:object="${filters}"
         hx-trigger="input delay:100ms, change">
@@ -117,23 +109,6 @@
 
   </form>
 
-  <!-- ══════ Add Card ══════ -->
-  <div class="cb-sidebar-title" style="margin-top: 1.5rem;">Add Card</div>
-
-  <form th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
-
-    <div class="cb-filter-section">
-      <label for="card-name" class="cb-filter-label">Image ID</label>
-      <input class="cb-search-input" id="card-name" name="card-name" type="text"
-             th:field="*{name}"
-             placeholder="Enter card name.." />
-    </div>
-
-    <div class="cb-btn-row">
-      <button type="submit" class="cb-btn-apply">Add Card</button>
-    </div>
-
-  </form>
 </aside>
 </body>
 </html>
