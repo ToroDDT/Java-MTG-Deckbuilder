@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.service.api;
 
-import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
+import com.example.mtg_deckbuilder.model.DeckRequest;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface DeckService {
     void addDeck(NewDeck newDeck);
-    void addCardToDeck(AddCardToDeckRequest card);
-    Map<?, ?> getAllDecksForUser(UUID user , DeckSearchCriteria deckSearchCriteria);
-    List<String> getALlDeckNames(CustomUserDetails user);
+    void addCard(DeckRequest card);
+    Map<?, ?> getDecks(UUID user , DeckSearchCriteria deckSearchCriteria);
+    List<String> getDeckNames(CustomUserDetails user);
 }

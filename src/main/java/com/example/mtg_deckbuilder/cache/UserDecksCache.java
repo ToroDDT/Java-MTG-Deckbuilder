@@ -19,6 +19,6 @@ public class UserDecksCache {
     }
     @Cacheable("userId")
     public List<Deck> getAllDecksForUser (UUID userId) {
-        return deckRepository.getAllDecksForUser(userId);
+        return deckRepository.getDecks(userId);
     }
 }

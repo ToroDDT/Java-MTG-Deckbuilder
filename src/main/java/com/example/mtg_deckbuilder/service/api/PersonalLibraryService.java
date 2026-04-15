@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface PersonalLibraryService {
-    void addCardToPersonalLibrary(OwnedCard ownedCard, UUID userId);
-    List<OwnedCard> getCardsFromPersonalLibrary(UUID userId);
-    List<OwnedCard> getCardsFromPersonalLibrary(UUID userId, LibraryFilters personalLibraryFilters);
+    void addCard(OwnedCard ownedCard, UUID userId);
+    List<OwnedCard> getCards(UUID userId);
+    List<OwnedCard> getCards(UUID userId, LibraryFilters personalLibraryFilters);
     Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId);
     LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user);
     LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);

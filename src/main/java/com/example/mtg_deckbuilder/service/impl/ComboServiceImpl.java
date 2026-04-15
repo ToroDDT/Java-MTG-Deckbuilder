@@ -35,7 +35,7 @@ public class ComboServiceImpl implements ComboService {
 
     @Override
     public CardCombos findCombos(CustomUserDetails userId) throws Exception {
-       var cards = personalLibraryService.getCardsFromPersonalLibrary(userId.getId());
+       var cards = personalLibraryService.getCards(userId.getId());
        var searchedCombos = searchCombos(cards);
 
        return CardCombos.builder()

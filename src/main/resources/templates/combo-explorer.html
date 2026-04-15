@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Combo Explorer</title>
+</head>
+<body>
+<aside class="cb-sidebar" th:fragment="combo-explorer(personalLibrary, filters, ownedCard)">
+  <label for="toggleCombos"></label>
+  <input th:attr="hx-get=@{/personal-library/combos}"
+         hx-target="#personal-cards"
+         hx-trigger="change"
+         type="checkbox"
+         id="toggleCombos"
+         class="cb-toggle">
+
+  <form th:action="@{/personal-library/search}"
+        th:hx-get="@{/personal-library/search}"
+        hx-target="#personal-cards"
+        th:object="${filters}"
+        hx-trigger="input delay:100ms, change">
+
+    <div class="cb-sidebar-title">Filters</div>
+
+    <div class="cb-filter-section">
+      <label for="searchInput" class="cb-filter-label">Search</label>
+      <div class="cb-search-wrap">
+        <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input th:field="*{cardName}" class="cb-search-input" id="searchInput" type="text" placeholder="Search cards..." autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="cb-filter-section">
+      <span class="cb-filter-label">Color</span>
+      <div class="cb-color-row">
+
+        <div class="pip-container flex flex-wrap gap-2" id="color-row">
+
+          <input hx-trigger="change"   type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
+          <label onclick="toggleWhite(this)" for="colorW" id="whiteToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-[#f9f6ee] text-[#6b6245] border-[#c8b97e] opacity-40" >W</label>
+
+          <input hx-trigger="change" type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
+          <label onclick="toggleBlue(this)" for="colorU" id="blueToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-[#0e68ab] text-[#d4edff] border-[#0e68ab] opacity-40" >U</label>
+
+          <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
+          <label onclick="toggleBlack(this)" for="colorB" id="blackToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-gray-800 text-[#d4edff] border-[#0e68ab] opacity-40">B</label>
+
+          <input type="checkbox" th:field="*{selectedColors}" value="R" id="colorR" style="display:none;">
+          <label onclick="toggleRed(this)" for="colorR" id="redToggle"  class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-red-700 text-[#d4edff] border-[#0e68ab] opacity-40" >R</label>
+
+          <input type="checkbox" th:field="*{selectedColors}" value="G" id="colorG" style="display:none;">
+          <label onclick="toggleGreen(this)" for="colorG" id="greenToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
+                flex items-center justify-center hover:scale-110 active:scale-95
+                bg-green-900 text-[#d4edff] border-[#0e68ab] opacity-40" >G</label>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="cb-filter-section">
+      <label for="typeFilter" class="cb-filter-label">Type</label>
+      <select hx-trigger="change" th:field="*{cardType}"  class="cb-select" id="typeFilter">
+        <option th:value="All"> All Types</option>
+        <option th:value="Artifact">Artifact</option>
+        <option th:value="Creature">Creature</option>
+        <option th:value="Enchantment">Enchantment</option>
+        <option th:value="Instant">Instant</option>
+        <option th:value="Land">Land</option>
+        <option th:value="Legendary">Legendary</option>
+        <option th:value="Sorcery">Sorcery</option>
+        <option th:value="Vehicle">Vehicle</option>
+      </select>
+    </div>
+
+    <!-- CMC Range -->
+    <div class="cb-filter-section">
+      <span class="cb-filter-label">CMC Range</span>
+      <div class="cb-range-group">
+        <div class="cb-range-row">
+          <label for="cmcMin" class="cb-range-lbl">Min</label>
+          <input hx-trigger="change" th:field="*{minCMC}" type="range" class="cb-range-input" id="cmcMin" min="0" max="16" value="0" />
+          <span class="cb-range-val" id="cmcMinVal">0</span>
+        </div>
+        <div class="cb-range-row">
+          <label for="cmcMax" class="cb-range-lbl">Max</label>
+          <input hx-trigger="change" th:field="*{maxCMC}" type="range" class="cb-range-input" id="cmcMax" min="0" max="16" value="16" />
+          <span class="cb-range-val" id="cmcMaxVal">∞</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sort -->
+    <div class="cb-filter-section">
+      <label for="sortBy" class="cb-filter-label">Sort By</label>
+      <select hx-trigger="change" th:field="*{sortBy}" class="cb-select" id="sortBy">
+        <option th:each="option : ${personalLibrary.sortOptions}"
+                th:value="${option}"
+                th:text="${option.getSortType()}">
+        </option>
+      </select>
+    </div>
+
+    <div class="cb-btn-row">
+      <button class="cb-btn-apply" id="clearBtn">Clear</button>
+    </div>
+
+  </form>
+
+  <!-- ══════ Add Card ══════ -->
+  <div class="cb-sidebar-title" style="margin-top: 1.5rem;">Add Card</div>
+
+  <form th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
+
+    <div class="cb-filter-section">
+      <label for="card-name" class="cb-filter-label">Image ID</label>
+      <input class="cb-search-input" id="card-name" name="card-name" type="text"
+             th:field="*{name}"
+             placeholder="Enter card name.." />
+    </div>
+
+    <div class="cb-btn-row">
+      <button type="submit" class="cb-btn-apply">Add Card</button>
+    </div>
+
+  </form>
+</aside>
+</body>
+</html>

@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
-import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
+import com.example.mtg_deckbuilder.model.DeckRequest;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.DeckCardEntry;
 import com.example.mtg_deckbuilder.model.NewDeck;
@@ -52,7 +52,7 @@ public class DeckRepositoryImpl implements DeckRepository {
 
 
     @Override
-    public List<Deck> getAllDecksForUser(UUID userId) {
+    public List<Deck> getDecks(UUID userId) {
         String sql = """
         SELECT * FROM decks
         WHERE user_id = :userId
@@ -65,7 +65,7 @@ public class DeckRepositoryImpl implements DeckRepository {
     }
 
     @Override
-    public List<String> getAllDeckNames(CustomUserDetails user) {
+    public List<String> getDeckNames(CustomUserDetails user) {
         String sql = """
         SELECT name FROM decks
         WHERE user_id = :userId
@@ -78,7 +78,7 @@ public class DeckRepositoryImpl implements DeckRepository {
     }
 
     @Override
-    public void addCardToDeck(AddCardToDeckRequest request) {
+    public void addCard(DeckRequest request) {
         String sql = """
             INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
             VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id)

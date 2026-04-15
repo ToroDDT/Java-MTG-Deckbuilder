@@ -29,7 +29,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         this.deckServiceImpl = deckServiceImpl;
     }
     @Override
-    public void addCardToPersonalLibrary(OwnedCard ownedCard, UUID user) throws CardDoesNotExistException{
+    public void addCard(OwnedCard ownedCard, UUID user) throws CardDoesNotExistException{
         var card = cardServiceImpl.findByName(ownedCard.getName());
         if (card.isPresent()) {
             ownedCard.setId(card.get().getId());
@@ -45,7 +45,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         }
     }
     @Override
-    public List<OwnedCard> getCardsFromPersonalLibrary(UUID userId) {
+    public List<OwnedCard> getCards(UUID userId) {
         return personalLibraryRepository
                 .getAllPersonalLibraryCardsForUser(userId)
                 .stream()
@@ -57,7 +57,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 .toList();
     }
     @Override
-    public List<OwnedCard> getCardsFromPersonalLibrary(UUID userid, LibraryFilters personalLibraryFilters) {
+    public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
 
         var cardType = CardType.fromString(personalLibraryFilters.getCardType());
         SortOptions sortBy = personalLibraryFilters.getSortBy();
@@ -118,7 +118,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     @Override
     public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId) {
         var cardsFuture = CompletableFuture.supplyAsync(() ->
-                this.getCardsFromPersonalLibrary(userId.getId()));
+                this.getCards(userId.getId()));
 
         var deckNamesFuture = CompletableFuture.supplyAsync(() ->
                 getDeckNames(userId));
@@ -143,7 +143,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     @Override
     public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId, LibraryFilters personalLibraryFilters) {
         var cardsFuture = CompletableFuture.supplyAsync(() ->
-                this.getCardsFromPersonalLibrary(userId.getId(), personalLibraryFilters));
+                this.getCards(userId.getId(), personalLibraryFilters));
 
         var deckNamesFuture = CompletableFuture.supplyAsync(() ->
                 getDeckNames(userId));
@@ -182,6 +182,6 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         return colorCounts;
     }
     private List<String> getDeckNames(CustomUserDetails userId) {
-        return deckServiceImpl.getALlDeckNames(userId);
+        return deckServiceImpl.getDeckNames(userId);
     }
 }

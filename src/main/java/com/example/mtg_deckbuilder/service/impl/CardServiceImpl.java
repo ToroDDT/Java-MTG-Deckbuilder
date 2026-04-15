@@ -22,7 +22,7 @@ public class CardServiceImpl implements CardService {
 
   @Cacheable("commanders")
   @Override
-  public List<String> findAllLegalCommanders() {
+  public List<String> findLegalCommanders() {
       return scryfallRepository.findLegalCommanderCards();
   }
 
@@ -30,5 +30,7 @@ public class CardServiceImpl implements CardService {
   public Optional<Card> findByName(String name){
     return scryfallRepository.findByName(name);
   }
+
+
 
 }

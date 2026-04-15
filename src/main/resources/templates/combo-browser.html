@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="preconnect" href="https://cards.scryfall.io">
+    <link rel="preload" href="https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" th:href="@{/css/site.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bundle.css}">
+</head>
+<body>
+<!-- Page header -->
+<div class="cb-page-header">
+    <div class="cb-page-header-bg"></div>
+    <h1 class="cb-page-title">Card Browser</h1>
+    <p class="cb-page-sub">Browse all cards with filters and search.</p>
+</div>
+<aside th:replace="combo-explorer :: combo-explorer(${personalLibrary}, ${filters}, ${ownedCard})">
+</aside>
+
+
+</body>
+</html>

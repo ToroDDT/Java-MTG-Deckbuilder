@@ -2,7 +2,7 @@ package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.cache.UserDecksCache;
 import com.example.mtg_deckbuilder.exceptions.DeckDoesNotExistException;
-import com.example.mtg_deckbuilder.model.AddCardToDeckRequest;
+import com.example.mtg_deckbuilder.model.DeckRequest;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
@@ -35,21 +35,21 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
-    public void addCardToDeck(AddCardToDeckRequest cardRequest) {
+    public void addCard(DeckRequest cardRequest) {
 
         userDecksCache.getAllDecksForUser(cardRequest.userId()).stream()
                 .filter(deck -> deck.id().equals(cardRequest.deckId()))
                 .findFirst()
                 .orElseThrow(() -> new DeckDoesNotExistException(cardRequest.deckId()));
 
-        deckRepository.addCardToDeck(cardRequest);
+        deckRepository.addCard(cardRequest);
     }
 
     @Override
-    public Map<Deck, List<String>> getAllDecksForUser(UUID user, DeckSearchCriteria deckSearchCriteria) {
+    public Map<Deck, List<String>> getDecks(UUID user, DeckSearchCriteria deckSearchCriteria) {
         Map<Deck, List<String>> finalDecks = new LinkedHashMap<>();
 
-        var decks = deckRepository.getAllDecksForUser(user).stream()
+        var decks = deckRepository.getDecks(user).stream()
                 .filter(deck -> DeckUtils.matchesSearchQuery(deck, deckSearchCriteria.getSearchQuery()))
                 .filter(deck -> DeckUtils.matchesSelectedColors(deck, deckSearchCriteria.getSelectedColors()))
                 .filter(deck -> DeckUtils.matchesFolder(deck, deckSearchCriteria.getFolder()))
@@ -68,8 +68,8 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
-    public List<String> getALlDeckNames(CustomUserDetails user) {
-        return deckRepository.getAllDeckNames(user);
+    public List<String> getDeckNames(CustomUserDetails user) {
+        return deckRepository.getDeckNames(user);
     }
 
 }
