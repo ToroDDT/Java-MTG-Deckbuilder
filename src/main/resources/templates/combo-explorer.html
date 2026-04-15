@@ -6,11 +6,11 @@
 </head>
 <body>
 <aside class="cb-sidebar" th:fragment="combo-explorer(personalLibrary, filters, ownedCard)">
-  <form th:action="@{/personal-library/combo-list}"
-        th:hx-get="@{/personal-library/combo-list}"
+  <form th:action="@{/personal-library/combos-list}"
+        th:hx-get="@{/personal-library/combos-list}"
         hx-target="#personal-cards"
         th:object="${filters}"
-        hx-trigger="input delay:100ms, change">
+        hx-trigger="input delay:500ms, change">
 
     <div class="cb-sidebar-title">Filters</div>
 
