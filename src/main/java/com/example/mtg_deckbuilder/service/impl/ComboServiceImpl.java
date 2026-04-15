@@ -3,6 +3,7 @@ package com.example.mtg_deckbuilder.service.impl;
 import com.example.mtg_deckbuilder.dto.CardCombos;
 import com.example.mtg_deckbuilder.dto.ComboVariant;
 import com.example.mtg_deckbuilder.dto.Combos;
+import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.ComboService;
@@ -34,11 +35,23 @@ public class ComboServiceImpl implements ComboService {
     }
 
     @Override
-    public CardCombos findCombos(CustomUserDetails userId) throws Exception {
+    public CardCombos findCombos(CustomUserDetails userId, LibraryFilters libraryFilters) throws Exception {
        var cards = personalLibraryService.getCards(userId.getId());
-       var searchedCombos = searchCombos(cards);
 
-       return CardCombos.builder()
+       if (libraryFilters.getCardName() == null) {
+           var searchedCombos = searchCombos(cards);
+           return buildIncludedCombos(searchedCombos);
+       }
+       else {
+           var searchedCombos = searchCombos(libraryFilters.getCardName());
+           System.out.println(buildAlmostIncludedCombos(searchedCombos).getCardCombinations());
+           System.out.println(buildAlmostIncludedCombos(searchedCombos).getDescription());
+           return buildAlmostIncludedCombos(searchedCombos);
+       }
+    }
+
+    private CardCombos buildIncludedCombos(Combos searchedCombos){
+        return CardCombos.builder()
                 .cardCombinations(searchedCombos
                         .getResults()
                         .getIncluded()
@@ -66,8 +79,38 @@ public class ComboServiceImpl implements ComboService {
                                         .getImageUriFrontNormal())
                                 .toList())
                         .toList())
-               .build();
+                .build();
     }
+
+    private CardCombos buildAlmostIncludedCombos(Combos searchedCombos) {
+    List<ComboVariant> variants = searchedCombos.getResults().getAlmostIncludedByAddingColors();
+
+    return CardCombos.builder()
+            .cardCombinations(variants
+                    .stream()
+                    .map(comboVariant -> comboVariant
+                            .getUses()
+                            .stream()
+                            .filter(cardUse -> cardUse.getCard() != null) // guard against template-only uses
+                            .map(cardUse -> cardUse.getCard().getName())
+                            .toList()
+                    )
+                    .toList())
+            .description(variants
+                    .stream()
+                    .map(ComboVariant::getDescription)
+                    .toList())
+            .images(variants
+                    .stream()
+                    .map(comboVariant -> comboVariant
+                            .getUses()
+                            .stream()
+                            .filter(cardUse -> cardUse.getCard() != null) // same guard
+                            .map(cardUse -> cardUse.getCard().getImageUriFrontNormal())
+                            .toList())
+                    .toList())
+            .build();
+}
 
 public static Combos searchCombos(List<OwnedCard> cards) throws Exception {
     List<Map<String, Object>> mainBoard = cards.stream()
@@ -100,5 +143,29 @@ public static Combos searchCombos(List<OwnedCard> cards) throws Exception {
 
     return objectMapper.readValue(response.body(), Combos.class);
 }
+    public static Combos searchCombos(String card) throws Exception {
+        List<Map<String, Object>> mainBoard = List.of(Map.of("card", card, "quantity", 1));
 
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("main", mainBoard);
+        requestBody.put("commanders", List.of());
+
+        String body = objectMapper.writeValueAsString(requestBody);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL))
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("API error: HTTP " + response.statusCode());
+        }
+
+        return objectMapper.readValue(response.body(), Combos.class);
+    }
 }
+
