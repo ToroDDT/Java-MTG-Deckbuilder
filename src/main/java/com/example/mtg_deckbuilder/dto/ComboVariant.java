@@ -16,7 +16,7 @@ public class ComboVariant {
     public String description;
     public String manaNeeded;
     public int manaValueNeeded;
-    public int popularity;
+    public Integer popularity;
     public String bracketTag;
     public String notes;
     public String easyPrerequisites;
