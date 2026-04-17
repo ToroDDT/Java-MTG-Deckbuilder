@@ -75,13 +75,6 @@
   <div class="cb-layout">
 
     <aside class="cb-sidebar">
-      <label for="toggleCombos"></label>
-      <input th:attr="hx-get=@{/personal-library/combos}"
-             hx-target="#personal-cards"
-             hx-trigger="change"
-             type="checkbox"
-             id="toggleCombos"
-             class="cb-toggle">
 
       <form th:action="@{/personal-library/search}"
             th:hx-get="@{/personal-library/search}"
