@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Archivist | Galadriel, Light of Valinor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191b23",
+                        "inverse-surface": "#2e3038",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-secondary-fixed-variant": "#304671",
+                        "background": "#f9f9ff",
+                        "secondary-container": "#b6ccff",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-dim": "#d8d9e3",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#eff0fa",
+                        "surface-container-highest": "#e1e2ec",
+                        "secondary-fixed": "#d8e2ff",
+                        "tertiary-container": "#b75b00",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-primary": "#adc6ff",
+                        "surface": "#f9f9ff",
+                        "primary": "#0058be",
+                        "on-secondary-container": "#405682",
+                        "secondary": "#495e8a",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e6e7f2",
+                        "on-surface": "#191b23",
+                        "outline-variant": "#c2c6d6",
+                        "on-surface-variant": "#424754",
+                        "on-secondary-fixed": "#001a42",
+                        "on-tertiary-fixed": "#311400",
+                        "primary-fixed": "#d8e2ff",
+                        "on-primary-container": "#fefcff",
+                        "secondary-fixed-dim": "#b1c6f9",
+                        "on-error": "#ffffff",
+                        "tertiary": "#924700",
+                        "surface-tint": "#005ac2",
+                        "on-primary-fixed": "#001a42",
+                        "outline": "#727785",
+                        "surface-variant": "#e1e2ec",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f2f3fd",
+                        "on-primary-fixed-variant": "#004395",
+                        "tertiary-fixed": "#ffdcc6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#ecedf7",
+                        "primary-container": "#2170e4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c2c6d6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-background font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(25,27,35,0.06)] flex justify-between items-center px-8 h-16 max-w-full mx-auto antialiased">
+<div class="flex items-center gap-12">
+<span class="text-xl font-black tracking-tighter bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">Digital Archivist</span>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Browse</a>
+<a class="text-blue-700 font-bold border-b-2 border-blue-600 pb-1" href="#">Decks</a>
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Collections</a>
+<a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Brewery</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 mr-4">
+<button class="p-2 text-on-surface-variant hover:bg-blue-50/50 rounded-full transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-blue-50/50 rounded-full transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-white px-6 py-2 rounded-xl font-bold scale-98 active:scale-95 transition-transform shadow-sm">
+                Create Deck
+            </button>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-outline-variant/20" data-alt="Portrait of a modern digital artist in a soft blue lit studio atmosphere with high-end tech gear" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQxXYCzRZcj-oVin_4LwKx3NJYo5aegWDrNZOu8i4p98WhhcUB2zhpuJoIXDjUj4FTPRD2aDJ-Fc2LFLYlrGVCo3jbA8rK4s8gO0rxFpliIwFDUlBX3hPTwbm848aIlA-xD36aYvKOeT05sslJOMa5UitUOXkG10jygU-mP8iYvTt0vBGjfQ5i7Wyvfua9qhafv4Tz45wf7tM74hQdhIaonDwZRU4eitvjlbyQ1ZVuMsgMzQgsTimVTGGFAuTYv71s-yKf67Ievn8"/>
+</div>
+</nav>
+<div class="flex min-h-screen pt-16">
+<!-- SideNavBar -->
+<aside class="fixed left-0 h-[calc(100vh-64px)] w-64 bg-slate-50 flex flex-col gap-2 p-4 border-r-0 z-40 hidden lg:flex">
+<div class="flex items-center gap-4 mb-6 px-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-white font-black overflow-hidden">
+<img alt="Commander Portrait" class="w-full h-full object-cover" data-alt="Intricate digital illustration of Galadriel with ethereal golden light and white tree background in high fantasy style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtbgpTdq2qsOMmRTunqYsxkPAR3IAJO1VMcu9ufUUBdjYyQPz7MM0xd2EpPJvHFO_TjCBZ4lRCR_OcXdaAYjX3pi98CjwchcJKiQKHXQjPRrPewXUTRwwMB6LsnznjLMEpf4FQSSQTF655vPzZs4Ksh2XhSogjG0hvxtatsqN7MQgE4U78MEb7dwTHIv6Ef5EBor13c0mvDgjy3MD-hnVAoijPHN1Xn4y0w46cait8Khm3XkTx_1W8M4nYkLha41YKLQdp9MxG8kY"/>
+</div>
+<div>
+<h3 class="font-bold text-on-background leading-none">Deck Master</h3>
+<p class="text-xs text-on-surface-variant mt-1">Mythic Archivist</p>
+</div>
+</div>
+<div class="space-y-1">
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:bg-slate-100 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Overview</span>
+</a>
+<a class="flex items-center gap-3 bg-white text-blue-700 rounded-lg shadow-sm font-bold px-4 py-3" href="#">
+<span class="material-symbols-outlined" data-icon="list_alt">list_alt</span>
+<span class="font-medium text-sm">Decklist</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:bg-slate-100 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="font-medium text-sm">Stats</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:bg-slate-100 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-medium text-sm">History</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:bg-slate-100 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="videogame_asset">videogame_asset</span>
+<span class="font-medium text-sm">Playtest</span>
+</a>
+</div>
+<div class="mt-auto space-y-1 pb-4">
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:bg-slate-100 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-medium text-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 px-4 py-3 hover:bg-slate-100 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span class="font-medium text-sm">API</span>
+</a>
+<button class="w-full mt-4 bg-surface-container-highest text-on-surface text-sm font-bold py-3 rounded-lg hover:bg-blue-50 transition-colors">
+                    Export Deck
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-64 p-8 bg-surface">
+<!-- Hero Header -->
+<section class="mb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="flex gap-8 items-start">
+<div class="w-48 h-64 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(25,27,35,0.12)] shrink-0 border-4 border-white">
+<img alt="Galadriel, Light of Valinor" class="w-full h-full object-cover" data-alt="Full art of Galadriel standing in Lothlorien with golden mallorn trees and mystical glowing white light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJpCHpz04-1_0yZAkVimxDuwTfomyAZDkmExqHugfzDUF_SNnB-dBmBvpIXbF9dj2SlZkMwvV6GMrWDW5INbFclai1G6TMiWB3V76lXKb1qk5XokIcCyEfwcxeR2XYmFSG-SF4_szSoX87v3mUlCdfN0GL5ujhTsmZ5FGSqs9IYnNfyNsdtSW64fGEHa7r21gtwmh2fkJihcfmFpkGq7FHKwzfKso4y08hxIeYpq49A1RdC0i8rS-h--wEjFjeZ4wkd2PnQ7GCWDU"/>
+</div>
+<div class="pt-4">
+<div class="flex items-center gap-3 mb-2">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-2 py-1 rounded-full tracking-widest uppercase">Commander</span>
+<span class="flex items-center gap-1">
+<div class="w-4 h-4 rounded-full bg-blue-500 border border-black/10"></div>
+<div class="w-4 h-4 rounded-full bg-green-500 border border-black/10"></div>
+<div class="w-4 h-4 rounded-full bg-white border border-black/10 shadow-sm"></div>
+</span>
+</div>
+<h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none">Galadriel, Light of Valinor</h1>
+<div class="flex gap-6 text-on-surface-variant font-medium">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-wider text-slate-400">Archivist</span>
+<span>Ethereal_Curation</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant pl-6">
+<span class="text-[10px] uppercase tracking-wider text-slate-400">Win Rate</span>
+<span class="text-blue-600">62.4%</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant pl-6">
+<span class="text-[10px] uppercase tracking-wider text-slate-400">Value</span>
+<span>$482.00</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 rounded-xl font-bold bg-white text-on-surface shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="share">share</span> Share
+                        </button>
+<button class="px-6 py-3 rounded-xl font-bold bg-primary text-white shadow-lg hover:shadow-blue-200/50 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="edit">edit</span> Modify
+                        </button>
+</div>
+</div>
+</section>
+<!-- Grid Content -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Left Column: Decklist (8/12) -->
+<div class="col-span-12 xl:col-span-8 space-y-12">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+<!-- Creatures -->
+<div class="space-y-4">
+<div class="flex justify-between items-baseline mb-2">
+<h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                    Creatures <span class="text-slate-300 font-medium">28</span>
+</h2>
+<span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Avg CMC: 3.2</span>
+</div>
+<div class="space-y-4">
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Noble Hierarch</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-green-500 border border-black/5"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Birds of Paradise</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-green-500 border border-black/5"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Elesh Norn, Mother of Machines</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-white border border-black/10"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Mulldrifter</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-blue-500 border border-black/5"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Kinnan, Bonder Prodigy</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-blue-500 border border-black/5"></div>
+<div class="w-4 h-4 rounded-full bg-green-500 border border-black/5"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sorceries & Instants -->
+<div class="space-y-4">
+<div class="flex justify-between items-baseline mb-2">
+<h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                    Spells <span class="text-slate-300 font-medium">14</span>
+</h2>
+<span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Interaction</span>
+</div>
+<div class="space-y-4">
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Cyclonic Rift</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-blue-500"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Teferi's Protection</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-white border border-black/10"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Cultivate</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-green-500"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Fierce Guardianship</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-blue-500"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Artifacts & Enchantments -->
+<div class="space-y-4">
+<div class="flex justify-between items-baseline mb-2">
+<h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                    Permanents <span class="text-slate-300 font-medium">21</span>
+</h2>
+<span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Utility</span>
+</div>
+<div class="space-y-4">
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Rhystic Study</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-blue-500"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Smothering Tithe</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-white border border-black/10"></div>
+</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">The Great Henge</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-green-500"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Lands -->
+<div class="space-y-4">
+<div class="flex justify-between items-baseline mb-2">
+<h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                    Lands <span class="text-slate-300 font-medium">37</span>
+</h2>
+<span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Core Foundation</span>
+</div>
+<div class="space-y-4">
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Command Tower</span>
+</div>
+<div class="flex gap-1 italic text-[10px] text-slate-400">Universal</div>
+</div>
+<div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-400">1</span>
+<span class="text-sm font-medium group-hover:text-blue-700 transition-colors">Breeding Pool</span>
+</div>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-blue-500"></div>
+<div class="w-4 h-4 rounded-full bg-green-500"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Asymmetric Visual: Featured Mechanic -->
+<div class="bg-surface-container-low rounded-3xl p-8 flex flex-col md:flex-row items-center gap-10">
+<div class="flex-1">
+<span class="text-primary font-black uppercase text-xs tracking-widest mb-2 block">Curation Strategy</span>
+<h3 class="text-3xl font-black text-on-background mb-4">The Convergence of Light</h3>
+<p class="text-on-surface-variant leading-relaxed text-sm max-w-md">
+                                This deck maximizes Galadriel's utility by cycling between card selection, massive mana production, and creature enhancement. Our archival data suggests a 45% increase in efficiency when landing a permanent before turn 4.
+                            </p>
+</div>
+<div class="w-64 h-40 bg-white rounded-2xl shadow-xl p-4 relative overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 opacity-50"></div>
+<div class="z-10 text-center">
+<div class="text-4xl font-black text-blue-600 mb-1">94.2</div>
+<div class="text-[10px] font-bold text-slate-400 tracking-tighter uppercase">Synergy Score</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Statistics (4/12) -->
+<div class="col-span-12 xl:col-span-4 space-y-8">
+<!-- Mana Curve Bento -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
+<h4 class="text-sm font-black text-on-background uppercase tracking-wider mb-8">Mana Curve</h4>
+<div class="flex items-end justify-between h-48 gap-2">
+<!-- Histogram Bars -->
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg h-[20%] transition-all hover:bg-primary-container"></div>
+<span class="text-[10px] font-bold text-slate-400">1</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary rounded-t-lg h-[85%] transition-all"></div>
+<span class="text-[10px] font-bold text-slate-400">2</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary-container rounded-t-lg h-[65%] transition-all"></div>
+<span class="text-[10px] font-bold text-slate-400">3</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg h-[45%] transition-all hover:bg-primary-container"></div>
+<span class="text-[10px] font-bold text-slate-400">4</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg h-[30%] transition-all hover:bg-primary-container"></div>
+<span class="text-[10px] font-bold text-slate-400">5</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t-lg h-[15%] transition-all hover:bg-primary-container"></div>
+<span class="text-[10px] font-bold text-slate-400">6+</span>
+</div>
+</div>
+</div>
+<!-- Color Balance -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
+<h4 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Color Production</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-blue-500"></div>
+<span class="text-xs font-bold text-on-surface">Blue</span>
+</div>
+<span class="text-xs font-bold text-slate-400">38%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 w-[38%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-green-500"></div>
+<span class="text-xs font-bold text-on-surface">Green</span>
+</div>
+<span class="text-xs font-bold text-slate-400">42%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-green-500 w-[42%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-white border border-slate-200"></div>
+<span class="text-xs font-bold text-on-surface">White</span>
+</div>
+<span class="text-xs font-bold text-slate-400">20%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 w-[20%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Composition Analysis -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
+<h4 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Type Distribution</h4>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-slate-50 rounded-2xl">
+<span class="text-[10px] text-slate-400 uppercase font-black block mb-1">Ramp</span>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black text-on-background">12</span>
+<span class="text-[10px] font-bold text-green-600">+2 High</span>
+</div>
+</div>
+<div class="p-4 bg-slate-50 rounded-2xl">
+<span class="text-[10px] text-slate-400 uppercase font-black block mb-1">Draw</span>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black text-on-background">9</span>
+<span class="text-[10px] font-bold text-blue-600">Optimal</span>
+</div>
+</div>
+<div class="p-4 bg-slate-50 rounded-2xl">
+<span class="text-[10px] text-slate-400 uppercase font-black block mb-1">Removal</span>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black text-on-background">7</span>
+<span class="text-[10px] font-bold text-slate-400">Low</span>
+</div>
+</div>
+<div class="p-4 bg-slate-50 rounded-2xl">
+<span class="text-[10px] text-slate-400 uppercase font-black block mb-1">Board Wipes</span>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-black text-on-background">3</span>
+<span class="text-[10px] font-bold text-slate-400">Balanced</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Nav Bar (Visible on Small Screens) -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around items-center h-16 z-50">
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-blue-600">
+<span class="material-symbols-outlined" data-icon="list_alt">list_alt</span>
+<span class="text-[10px] font-bold">Decks</span>
+</button>
+<div class="relative -top-6">
+<button class="bg-primary text-white p-4 rounded-full shadow-lg shadow-blue-300">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="text-[10px] font-bold">Stats</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</div>
+</body></html>
