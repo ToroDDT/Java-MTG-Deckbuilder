@@ -24,7 +24,7 @@ public class CardRowMapper {
 
 
     public void extractFields(ResultSet rs, Card card) throws SQLException {
-        card.setId(rs.getObject("id", UUID.class));
+card.setId(rs.getObject("card_id", UUID.class)); // instead of "id"
         card.setName(rs.getString("name"));
         card.setTypeLine(rs.getString("type_line"));
         card.setToughness(rs.getString("toughness"));

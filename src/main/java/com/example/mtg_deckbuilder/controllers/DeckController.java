@@ -32,7 +32,7 @@ public class DeckController {
     @GetMapping("/collection")
     public String getDecks(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model, @AuthenticationPrincipal CustomUserDetails user) {
         model.addAllAttributes(Map.of(
-                "decks", deckServiceImpl.getDecks(user.getId(), deckSearchCriteria),
+                "decks", deckServiceImpl.getDecks(user, deckSearchCriteria),
                 "deckSearchCriteria", deckSearchCriteria,
                 "listOfCommanders", cardService.findLegalCommanders(),
                 "newDeck", newDeck
@@ -43,7 +43,7 @@ public class DeckController {
     @GetMapping(path = "/search", headers = "hx-request=true")
     String getAllDecksMatchingSearch(@ModelAttribute("newDeck") NewDeck newDeck, @ModelAttribute("deckSearchCriteria") DeckSearchCriteria deckSearchCriteria, Model model, @AuthenticationPrincipal CustomUserDetails user) {
         model.addAllAttributes(Map.of(
-                "decks", deckServiceImpl.getDecks(user.getId(), deckSearchCriteria)
+                "decks", deckServiceImpl.getDecks(user, deckSearchCriteria)
         ));
         return "fragments/deck-search-results :: decks";
     }

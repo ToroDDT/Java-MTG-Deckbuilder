@@ -2,11 +2,12 @@ package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.cache.UserDecksCache;
 import com.example.mtg_deckbuilder.exceptions.DeckDoesNotExistException;
-import com.example.mtg_deckbuilder.model.DeckRequest;
+import com.example.mtg_deckbuilder.model.CardEntry;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
@@ -21,32 +22,49 @@ public class DeckServiceImpl implements DeckService {
 
     private final DeckRepository deckRepository;
     private final UserDecksCache userDecksCache;
+    private final CardService cardService;
 
 
     @Autowired
-    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache) {
+    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache, CardService cardService) {
         this.deckRepository = deckRepository;
         this.userDecksCache = userDecksCache;
+        this.cardService = cardService;
     }
+
 
     @Override
     public void addDeck(NewDeck newDeck) {
-        deckRepository.createNewDeckEntry(newDeck);
+
     }
 
     @Override
-    public void addCard(DeckRequest cardRequest) {
+    public void addCard(CardEntry cardEntry) {
 
-        userDecksCache.getAllDecksForUser(cardRequest.userId()).stream()
-                .filter(deck -> deck.id().equals(cardRequest.deckId()))
+        userDecksCache.getAllDecksForUser(cardEntry.userId()).stream()
+                .filter(deck -> deck.id().equals(cardEntry.deckId()))
                 .findFirst()
-                .orElseThrow(() -> new DeckDoesNotExistException(cardRequest.deckId()));
+                .orElseThrow(() -> new DeckDoesNotExistException(cardEntry.personalLibraryCardId().toString()));
 
-        deckRepository.addCard(cardRequest);
+        deckRepository.addCard(cardEntry);
     }
 
     @Override
-    public Map<Deck, List<String>> getDecks(UUID user, DeckSearchCriteria deckSearchCriteria) {
+    public String addCard(CustomUserDetails user, String deck, UUID cardId, UUID personalLibraryCardId) {
+        var decks = userDecksCache.getAllDecksForUser(user);
+
+        for (Deck ownedDeck : decks) {
+            if (Objects.equals(ownedDeck.name(), deck)) {
+                addCard(new CardEntry(ownedDeck.id(), user, cardId, false, personalLibraryCardId));
+                return ownedDeck.name();
+            }
+        }
+
+        throw new DeckDoesNotExistException(deck);
+    }
+
+    @Override
+    public Map<Deck, List<String>> getDecks(CustomUserDetails user, DeckSearchCriteria deckSearchCriteria) {
         Map<Deck, List<String>> finalDecks = new LinkedHashMap<>();
 
         var decks = deckRepository.getDecks(user).stream()
@@ -65,6 +83,10 @@ public class DeckServiceImpl implements DeckService {
         IntStream.range(0, decks.size())
                 .forEach(i -> finalDecks.put(decks.get(i), colorIdentityForEachDeck.get(i)));
         return finalDecks;
+    }
+    @Override
+    public List<Deck> getDecks(CustomUserDetails user) {
+        return deckRepository.getDecks(user);
     }
 
     @Override

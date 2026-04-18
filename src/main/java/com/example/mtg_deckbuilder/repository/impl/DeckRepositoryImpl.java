@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
-import com.example.mtg_deckbuilder.model.DeckRequest;
+import com.example.mtg_deckbuilder.model.CardEntry;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.DeckCardEntry;
 import com.example.mtg_deckbuilder.model.NewDeck;
@@ -52,14 +52,14 @@ public class DeckRepositoryImpl implements DeckRepository {
 
 
     @Override
-    public List<Deck> getDecks(UUID userId) {
+    public List<Deck> getDecks(CustomUserDetails user) {
         String sql = """
         SELECT * FROM decks
         WHERE user_id = :userId
         """;
 
         return jdbcClient.sql(sql)
-                .param("userId", userId)
+                .param("userId", user.getId())
                 .query(Deck.class)
                 .list();
     }
@@ -77,23 +77,23 @@ public class DeckRepositoryImpl implements DeckRepository {
                 .list();
     }
 
-    @Override
-    public void addCard(DeckRequest request) {
-        String sql = """
-            INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
-            VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id)
-            RETURNING *
-            """;
-
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("deckId", request.deckId())
-                .addValue("cardId", request.cardId())
-                .addValue("isSideboard", request.isSideboard())
-                .addValue("personal_library_card_id", request.personalLibraryCardId());
-
-        jdbcClient.sql(sql)
-                .paramSource(params)
-                .query(DeckCardEntry.class)
-                .single();
-    }
+@Override
+public void addCard(CardEntry request) {
+    String sql = """
+        INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
+        VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id)
+        ON CONFLICT (personal_library_card_id)
+        DO UPDATE SET deck_id = EXCLUDED.deck_id
+        RETURNING *
+        """;
+    MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("deckId", request.deckId())
+            .addValue("cardId", request.cardId())
+            .addValue("isSideboard", request.isSideboard())
+            .addValue("personal_library_card_id", request.personalLibraryCardId());
+    jdbcClient.sql(sql)
+            .paramSource(params)
+            .query(DeckCardEntry.class)
+            .single();
+}
 }

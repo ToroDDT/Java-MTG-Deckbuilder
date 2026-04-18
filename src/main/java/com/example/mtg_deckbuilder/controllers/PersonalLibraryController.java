@@ -3,17 +3,21 @@ package com.example.mtg_deckbuilder.controllers;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.views.CardBrowserViewModel;
 import com.example.mtg_deckbuilder.views.LibraryViewModel;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -22,10 +26,14 @@ public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
     private final ComboServiceImpl comboServiceImpl;
+    private final DeckService deckService;
+    private final DataSourceTransactionManager dataSourceTransactionManager;
 
-    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService, ComboServiceImpl comboServiceImpl) {
+    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService, ComboServiceImpl comboServiceImpl, DeckService deckService, DataSourceTransactionManager dataSourceTransactionManager) {
         this.personalLibraryService = personalLibraryService;
         this.comboServiceImpl = comboServiceImpl;
+        this.deckService = deckService;
+        this.dataSourceTransactionManager = dataSourceTransactionManager;
     }
 
     @GetMapping("/personal-library")
@@ -72,7 +80,7 @@ public class PersonalLibraryController {
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
         LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
 
-        model.addAttribute("cards", libraryView.getCards());
+        model.addAttribute("cards", libraryView);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("personalLibraryFilters", new LibraryFilters());
         model.addAttribute("libraryView", libraryView);
@@ -81,11 +89,8 @@ public class PersonalLibraryController {
 
     @GetMapping(value = "/card/location", headers = "hx-request=true")
     @ResponseBody
-    public String changeCardLocation(@RequestParam String deck) {
-        System.out.println("deck: " + deck);
-        return deck;
+    public String changeCardLocation(@RequestParam String deck, @RequestParam String cardId, @RequestParam String personalCardId,  @AuthenticationPrincipal CustomUserDetails user) {
+        System.out.println(deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId))));
+       return deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId)));
     }
-
-
-
 }

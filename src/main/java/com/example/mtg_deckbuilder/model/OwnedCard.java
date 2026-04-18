@@ -31,7 +31,9 @@ public class OwnedCard {
 
     public OwnedCard() {}
 
-    public OwnedCard(Card card) {
+    public OwnedCard(Card card, UUID id, UUID cardId) {
         this.card = card;
+        this.id = id;
+        this.cardId = cardId;
     }
 }
