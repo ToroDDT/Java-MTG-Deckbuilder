@@ -2,6 +2,7 @@ package com.example.mtg_deckbuilder.cache;
 
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class UserDecksCache {
         this.deckRepository = deckRepository;
     }
     @Cacheable("userId")
-    public List<Deck> getAllDecksForUser (UUID userId) {
-        return deckRepository.getDecks(userId);
+    public List<Deck> getAllDecksForUser (CustomUserDetails user) {
+        return deckRepository.getDecks(user);
     }
 }

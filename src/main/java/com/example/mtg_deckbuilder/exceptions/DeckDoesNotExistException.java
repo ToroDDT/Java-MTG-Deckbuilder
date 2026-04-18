@@ -7,7 +7,7 @@ public class DeckDoesNotExistException extends RuntimeException {
         super("Deck does not exist.");
     }
 
-    public DeckDoesNotExistException(UUID deckId) {
+    public DeckDoesNotExistException(String deckId) {
         super("Deck with id \"" + deckId + "\" does not exist.");
     }
 }
