@@ -73,18 +73,24 @@
   </div>
 
   <div class="cb-layout">
-
     <aside class="cb-sidebar">
-
       <form th:action="@{/personal-library/search}"
             th:hx-get="@{/personal-library/search}"
+            id="librarySearchForm"
+            hx-trigger="input delay:200ms, change"
             hx-target="#personal-cards"
-            th:object="${filters}"
-            hx-trigger="input delay:100ms, change">
+            th:object="${filters}">
 
         <div class="cb-sidebar-title">Filters</div>
+        <div></div>
 
-        <div class="cb-filter-section">
+       <div id="pagination">
+    <div id="prev" th:value="${id}"></div>
+    <div id="next" th:value="${operator}"></div>
+         23
+</div>
+
+       <div class="cb-filter-section">
           <label for="searchInput" class="cb-filter-label">Search</label>
           <div class="cb-search-wrap">
             <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

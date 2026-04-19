@@ -1,4 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const pageHistory = []; // stack of previous lastIds
+
+    function changePage(direction) {
+        const currentLastId = document.getElementById('lastId')?.getAttribute('value') ?? '';
+
+        if (direction === 'next') {
+            // Push current cursor onto history before moving forward
+            pageHistory.push(document.getElementById('lastIdInput').value);
+            document.getElementById('lastIdInput').value = currentLastId;
+
+        } else if (direction === 'prev') {
+            // Pop the last cursor off the stack to go back
+            const previous = pageHistory.pop() ?? '';
+            document.getElementById('lastIdInput').value = previous;
+        }
+
+        // Disable prev button if no history
+        document.getElementById('btn-prev').disabled = pageHistory.length === 0;
+
+        htmx.trigger('#librarySearchForm', 'change');
+    }
+
+// Re-run after every HTMX swap to keep prev button state correct
+    document.addEventListener('htmx:afterSwap', () => {
+        document.getElementById('btn-prev').disabled = pageHistory.length === 0;
+    });
+
+
     const cmcMin = document.getElementById('cmcMin');
     const cmcMax = document.getElementById('cmcMax');
     const cmcMinVal = document.getElementById('cmcMinVal');

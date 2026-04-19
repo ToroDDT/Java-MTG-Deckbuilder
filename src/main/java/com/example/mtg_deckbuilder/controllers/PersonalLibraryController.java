@@ -43,6 +43,9 @@ public class PersonalLibraryController {
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
+        model.addAttribute("id", 1);
+        model.addAttribute("operator", ">");
+
 
         response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
@@ -60,11 +63,13 @@ public class PersonalLibraryController {
 
         return "fragments/personal-cards :: personal-cards";
     }
+
     @GetMapping("/personal-library/info")
     public String getPersonalCardsInfo(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
 
         model.addAttribute("personalLibrary", libraryView);
+        model.addAttribute("lastId", 2);
 
         return "fragments/collection-info :: stickyStatsBar";
     }
@@ -79,6 +84,8 @@ public class PersonalLibraryController {
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
         LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
+        System.out.println(personalLibraryFilters.getLastId() + "this is the last id");
+        System.out.println(personalLibraryFilters.getOperator() + "this is the operator");
 
         model.addAttribute("cards", libraryView.getCards());
         model.addAttribute("ownedCard", new OwnedCard());
@@ -90,7 +97,24 @@ public class PersonalLibraryController {
     @GetMapping(value = "/card/location", headers = "hx-request=true")
     @ResponseBody
     public String changeCardLocation(@RequestParam String deck, @RequestParam String cardId, @RequestParam String personalCardId,  @AuthenticationPrincipal CustomUserDetails user) {
-        System.out.println(deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId))));
-       return deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId)));
+        return deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId)));
+    }
+
+    @GetMapping(value = "/personal-library/pagination", headers = "hx-request=true")
+    public String getPagination(@AuthenticationPrincipal CustomUserDetails user,
+                                @RequestParam String lastId,
+                                @RequestParam String action,
+                                Model model) {
+
+        model.addAttribute("lastId", lastId);
+
+        if (action.equals("next")){
+            model.addAttribute("operator", "<");
+            return "previous-fragment :: page";
+        }
+        else {
+            model.addAttribute("operator", ">");
+            return "next-fragment :: page";
+        }
     }
 }

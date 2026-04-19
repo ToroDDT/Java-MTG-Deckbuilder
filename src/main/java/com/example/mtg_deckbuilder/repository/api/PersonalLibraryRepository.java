@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PersonalLibraryRepository {
-    List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId);
+    List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, String lastId);
     void addCardToPersonalLibrary(OwnedCard ownedCard);
 }

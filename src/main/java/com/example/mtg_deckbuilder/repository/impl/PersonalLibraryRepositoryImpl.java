@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
+import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,11 +25,20 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         this.jdbcTemplate = jdbcTemplate;
         this.ownedCardRowMapper = ownedCardRowMapper;
     }
+@Override
+public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, String lastId) {
+    var pageSize = 12;
+    var sortingOrder = "ASC";
 
-    @Override
-    public List<OwnedCard> getAllPersonalLibraryCardsForUser (UUID userId) {
+    String operator = "ASC".equalsIgnoreCase(sortingOrder) ? ">" : "<";
+    String direction = "ASC".equalsIgnoreCase(sortingOrder) ? "ASC" : "DESC";
 
-   String sql = """
+    // 1. Build the dynamic WHERE clause
+    String paginationFilter = (lastId == null || lastId.isEmpty())
+            ? ""
+            : "AND personal_collection_library.id " + operator + " ? ";
+
+    String sql = """
         SELECT\s
             personal_collection_library.id AS personal_library_id,
             personal_collection_library.user_id,
@@ -46,15 +57,27 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             cards.image_uris,
             cards.prices
         FROM cards
-        INNER JOIN personal_collection_library
-        ON personal_collection_library.card_id = cards.id
+        INNER JOIN personal_collection_library\s
+            ON personal_collection_library.card_id = cards.id
         WHERE personal_collection_library.user_id = ?
+        %s
+        ORDER BY personal_collection_library.id %s
+        LIMIT ?
        \s""";
-        return jdbcTemplate.query(sql, ownedCardRowMapper, userId)
-                .stream()
-                .toList();
+
+    sql = String.format(sql, paginationFilter, direction);
+
+    List<Object> args = new ArrayList<>();
+    args.add(userId);
+
+    if (lastId != null && !lastId.isEmpty()) {
+        args.add(lastId);
     }
 
+    args.add(pageSize);
+
+    return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());
+}
     @Override
     public void addCardToPersonalLibrary (OwnedCard ownedCard) {
         String sql = """

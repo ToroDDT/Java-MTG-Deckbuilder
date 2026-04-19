@@ -50,7 +50,12 @@ public class DeckRepositoryImpl implements DeckRepository {
         newDeck.setId(keyHolder.getKeyAs(UUID.class));
     }
 
-
+    /**
+     * Retrieves a list of all decks associated with the specified user.
+     *
+     * @param user the user whose decks are to be retrieved
+     * @return a list of {@code Deck} objects of the user's decks
+     */
     @Override
     public List<Deck> getDecks(CustomUserDetails user) {
         String sql = """
@@ -63,7 +68,7 @@ public class DeckRepositoryImpl implements DeckRepository {
                 .query(Deck.class)
                 .list();
     }
-
+    //
     @Override
     public List<String> getDeckNames(CustomUserDetails user) {
         String sql = """
@@ -77,23 +82,22 @@ public class DeckRepositoryImpl implements DeckRepository {
                 .list();
     }
 
-@Override
-public void addCard(CardEntry request) {
-    String sql = """
+    @Override
+    public void addCard(CardEntry request) {
+        String sql = """
         INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
         VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id)
         ON CONFLICT (personal_library_card_id)
         DO UPDATE SET deck_id = EXCLUDED.deck_id
-        RETURNING *
         """;
-    MapSqlParameterSource params = new MapSqlParameterSource()
-            .addValue("deckId", request.deckId())
-            .addValue("cardId", request.cardId())
-            .addValue("isSideboard", request.isSideboard())
-            .addValue("personal_library_card_id", request.personalLibraryCardId());
-    jdbcClient.sql(sql)
-            .paramSource(params)
-            .query(DeckCardEntry.class)
-            .single();
-}
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("deckId", request.deckId())
+                .addValue("cardId", request.cardId())
+                .addValue("isSideboard", request.isSideboard())
+                .addValue("personal_library_card_id", request.personalLibraryCardId());
+        jdbcClient.sql(sql)
+                .paramSource(params)
+                .query(DeckCardEntry.class)
+                .single();
+    }
 }

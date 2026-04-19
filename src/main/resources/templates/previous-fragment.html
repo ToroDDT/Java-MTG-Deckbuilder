@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="pagination" th:fragment="page" class="col-md-12" hx-swap-oob="true">
+    <input type="hidden" name="lastId" th:value="${lastId}" />
+    <input type="hidden" name="operator" th:value="${operator}" />
+</div>
+</body>
+</html>

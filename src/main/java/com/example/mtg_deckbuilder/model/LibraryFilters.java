@@ -15,6 +15,8 @@ public class LibraryFilters {
     private Integer minCMC;
     private Integer maxCMC;
     private SortOptions sortBy;
+    private String operator;
+    private String lastId;
 
     public LibraryFilters() {
 

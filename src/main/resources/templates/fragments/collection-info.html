@@ -147,25 +147,22 @@
         </div>
      </div>
       <div>
-      <button
-  style="display:inline-flex; align-items:center; justify-content:center;
-         width:32px; height:32px; border-radius:8px; border:1px solid #e2e8f8;
-         background:rgba(255,255,255,0.7); color:#2563eb;
-         font-size:15px; font-weight:700; cursor:pointer;
-         transition:background 0.15s, border-color 0.15s;"
-  onmouseover="this.style.background='#eff3ff'; this.style.borderColor='#93c5fd';"
-  onmouseout="this.style.background='rgba(255,255,255,0.7)'; this.style.borderColor='#e2e8f8';"
->&lt;</button>
+ <button
+  th:hx-get="@{/personal-library/pagination(lastId=${lastId}, action='prev')}"
+  hx-trigger="click"
+  hx-target="#pagination"
+  >
+&lt;
+</button>
 
 <button
-  style="display:inline-flex; align-items:center; justify-content:center;
-         width:32px; height:32px; border-radius:8px; border:1px solid #e2e8f8;
-         background:rgba(255,255,255,0.7); color:#2563eb;
-         font-size:15px; font-weight:700; cursor:pointer;
-         transition:background 0.15s, border-color 0.15s;"
-  onmouseover="this.style.background='#eff3ff'; this.style.borderColor='#93c5fd';"
-  onmouseout="this.style.background='rgba(255,255,255,0.7)'; this.style.borderColor='#e2e8f8';"
->&gt;</button>
+  th:hx-get="@{/personal-library/pagination(lastId=${lastId}, action='next')}"
+  hx-trigger="click"
+  hx-target="#pagination"
+  hx-swap="innerHTML"
+  >
+&gt;
+</button>
       </div>
     </div>
   </div>
@@ -178,6 +175,7 @@
      and re-runs after any HTMX swap (filter refreshes).
      ══════════════════════════════════════════════════════ -->
 <script>
+  const myElement = document.getElementById('next');
   function updateBarPercentages() {
     const colors = ['W', 'U', 'B', 'R', 'G'];
 
