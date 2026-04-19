@@ -9,6 +9,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.sql.Array;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -24,7 +25,13 @@ public class CardRowMapper {
 
 
     public void extractFields(ResultSet rs, Card card) throws SQLException {
-card.setId(rs.getObject("card_id", UUID.class)); // instead of "id"
+        UUID id;
+        if (hasColumn(rs, "card_id")) {
+            id = rs.getObject("card_id", UUID.class);
+        } else {
+            id = rs.getObject("id", UUID.class);
+        }
+        card.setId(id);
         card.setName(rs.getString("name"));
         card.setTypeLine(rs.getString("type_line"));
         card.setToughness(rs.getString("toughness"));
@@ -41,6 +48,17 @@ card.setId(rs.getObject("card_id", UUID.class)); // instead of "id"
         card.setMultiverseIds(extractMultiverseIds(rs));
         card.setImage(extractArtCrop(rs));
         card.setPrices(extractCardPrices(rs));
+    }
+    // Helper method to check column existence
+    private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int columns = rsmd.getColumnCount();
+        for (int x = 1; x <= columns; x++) {
+            if (columnName.equalsIgnoreCase(rsmd.getColumnName(x))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String extractArtCrop(ResultSet rs) throws SQLException {
