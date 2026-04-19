@@ -25,9 +25,9 @@ public class CardRepositoryImpl implements CardRepository {
   @Override
   public Optional<Card> findById(UUID id) {
     return jdbcClient.sql("select * from cards where id = :id")
-        .param("id", id)
-        .query(Card.class)
-        .optional();
+            .param("id", id)
+            .query(Card.class)
+            .optional();
   }
 
   @Override
@@ -42,17 +42,17 @@ public class CardRepositoryImpl implements CardRepository {
   public Optional<Card> findByColorIdentity(String name) {
     // Note the escaped double quotes around "colorIdentity"
     return jdbcClient.sql("SELECT DISTINCT ON (\"color_identity\") * FROM cards WHERE name = :name")
-        .param("name", name)
-        .query(Card.class)
-        .optional();
+            .param("name", name)
+            .query(Card.class)
+            .optional();
   }
 
   public List<Card> findByCardsBySubstring(String name) {
     String sql = "SELECT * FROM cards WHERE name ILIKE CONCAT('%', :name, '%')";
     return jdbcClient.sql(sql)
-        .param("name", name)
-        .query(Card.class)
-        .list();
+            .param("name", name)
+            .query(Card.class)
+            .list();
   }
 
   public List<String> findLegalCommanderCards() {
@@ -64,10 +64,28 @@ public class CardRepositoryImpl implements CardRepository {
     return jdbcTemplate.queryForList(sql, String.class);
   }
 
-  public List<Card> executeComplexQuery(String sql, Map<String, ?> params) {
+  public List<Card> getCards(String sortingOrder, UUID lastId) {
+    String operator = "ASC".equalsIgnoreCase(sortingOrder) ? ">" : "<";
+    String direction = "ASC".equalsIgnoreCase(sortingOrder) ? "ASC" : "DESC";
+    var pageSize = 12;
+
+    String sql = """
+        SELECT name, id
+        FROM cards
+        WHERE id %s :id
+        ORDER BY id %s
+        LIMIT :limit
+        """;
+
+    // Format the structural SQL (operator and direction)
+    sql = String.format(sql, operator, direction);
+
     return jdbcClient.sql(sql)
-        .params(params)
-        .query(Card.class)
-        .list();
+            .param("id", lastId)
+            .param("limit", pageSize) // Restrict the result set size
+            .query(Card.class)
+            .list();
   }
 }
+
+
