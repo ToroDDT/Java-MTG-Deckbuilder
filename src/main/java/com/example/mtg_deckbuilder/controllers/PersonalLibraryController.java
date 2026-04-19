@@ -80,7 +80,7 @@ public class PersonalLibraryController {
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
         LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
 
-        model.addAttribute("cards", libraryView);
+        model.addAttribute("cards", libraryView.getCards());
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("personalLibraryFilters", new LibraryFilters());
         model.addAttribute("libraryView", libraryView);
