@@ -1,4 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
+    document.body.addEventListener("htmx:afterSwap", function(evt) {
+        const lastIdHolder = document.getElementById("lastIdHolder");
+        if (!lastIdHolder) return; // guard for other swaps
+
+        const lastId = lastIdHolder.dataset.lastid;
+        if (!lastId) return;
+
+        document.getElementById("lastId").value = lastId;
+        console.log("lastId updated to:", lastId);
+    });
+
+    document.body.addEventListener("click", function(evt) {
+        if (evt.target.id === "prevBtn") {
+            document.getElementById("operator").value = ">";
+            console.log("this is working ")
+            htmx.trigger("#librarySearchForm", "submit");
+        }
+        if (evt.target.id === "nextBtn") {
+            document.getElementById("operator").value = "<";
+            console.log("this is working ")
+            htmx.trigger("#librarySearchForm", "submit");
+        }
+    });
+    document.body.addEventListener("htmx:configRequest", function(evt) {})
     const pageHistory = []; // stack of previous lastIds
 
     function changePage(direction) {

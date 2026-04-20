@@ -64,6 +64,19 @@ public class PersonalLibraryController {
         return "fragments/personal-cards :: personal-cards";
     }
 
+    @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
+    public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
+        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
+        System.out.println(personalLibraryFilters.getLastId());
+        System.out.println("working");
+
+        model.addAttribute("cards", libraryView.getCards());
+        model.addAttribute("ownedCard", new OwnedCard());
+        model.addAttribute("personalLibraryFilters", new LibraryFilters());
+        model.addAttribute("libraryView", libraryView);
+        return "fragments/personal-cards :: personal-cards";
+    }
+
     @GetMapping("/personal-library/info")
     public String getPersonalCardsInfo(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
@@ -79,19 +92,6 @@ public class PersonalLibraryController {
     public String addCardToPersonalLibrary(@ModelAttribute("ownedCard") OwnedCard ownedCard, @AuthenticationPrincipal CustomUserDetails user) {
         personalLibraryService.addCard(ownedCard, user.getId());
         return "redirect:/personal-library";
-    }
-
-    @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
-    public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
-        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
-        System.out.println(personalLibraryFilters.getLastId() + "this is the last id");
-        System.out.println(personalLibraryFilters.getOperator() + "this is the operator");
-
-        model.addAttribute("cards", libraryView.getCards());
-        model.addAttribute("ownedCard", new OwnedCard());
-        model.addAttribute("personalLibraryFilters", new LibraryFilters());
-        model.addAttribute("libraryView", libraryView);
-        return "fragments/personal-cards :: personal-cards";
     }
 
     @GetMapping(value = "/card/location", headers = "hx-request=true")

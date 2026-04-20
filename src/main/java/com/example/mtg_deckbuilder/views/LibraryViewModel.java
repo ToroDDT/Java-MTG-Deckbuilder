@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @Builder // This generates the Builder pattern for you
@@ -21,4 +22,5 @@ public class LibraryViewModel {
     private final SortOptions[] sortOptions = SortOptions.values();
     private final LibraryFilters filters = new LibraryFilters();
     private final List<String> deckNames;
+    private final UUID lastId;
 }

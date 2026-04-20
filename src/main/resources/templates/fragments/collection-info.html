@@ -148,18 +148,13 @@
      </div>
       <div>
  <button
-  th:hx-get="@{/personal-library/pagination(lastId=${lastId}, action='prev')}"
-  hx-trigger="click"
-  hx-target="#pagination"
+         id="prevBtn"
   >
 &lt;
 </button>
 
 <button
-  th:hx-get="@{/personal-library/pagination(lastId=${lastId}, action='next')}"
-  hx-trigger="click"
-  hx-target="#pagination"
-  hx-swap="innerHTML"
+        id="nextBtn"
   >
 &gt;
 </button>
@@ -168,13 +163,9 @@
   </div>
 
 </div>
-<!-- end th:fragment="stickyStatsBar" -->
 
-<!-- ══════════════════════════════════════════════════════
-     JS — computes live percentages from the count spans
-     and re-runs after any HTMX swap (filter refreshes).
-     ══════════════════════════════════════════════════════ -->
 <script>
+
   const myElement = document.getElementById('next');
   function updateBarPercentages() {
     const colors = ['W', 'U', 'B', 'R', 'G'];

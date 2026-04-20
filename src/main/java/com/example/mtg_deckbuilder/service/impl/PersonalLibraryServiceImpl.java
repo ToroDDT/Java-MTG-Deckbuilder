@@ -124,6 +124,8 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 getDeckNames(userId));
 
         var cards = cardsFuture.join();
+        var lastIndex = cards.getLast().getId();
+
         var deckNames = deckNamesFuture.join();
         // Calculate total value
         var total = getTotalValue(cards);
@@ -132,6 +134,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         // Use the Builder to assemble the object
         return LibraryViewModel.builder()
                 .cards(cards)
+                .lastId(lastIndex)
                 .deckNames(deckNames)
                 .totalCards(cards.size())
                 .totalValue(total)
@@ -149,6 +152,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 getDeckNames(userId));
 
         var cards = cardsFuture.join();
+        var lastIndex = cards.getLast().getId();
         var deckNames = deckNamesFuture.join();
 
         var total = getTotalValue(cards);
@@ -158,6 +162,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         // Use the Builder to assemble the object
         return LibraryViewModel.builder()
                 .cards(cards)
+                .lastId(lastIndex)
                 .deckNames(deckNames)
                 .totalCards(cards.size())
                 .totalValue(total)
@@ -181,6 +186,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 .forEach((key, value) -> colorCounts.put(key.name(), value));
         return colorCounts;
     }
+
     private List<String> getDeckNames(CustomUserDetails userId) {
         return deckServiceImpl.getDeckNames(userId);
     }
