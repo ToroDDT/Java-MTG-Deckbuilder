@@ -9,7 +9,7 @@ import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.utils.CardUtils;
-import com.example.mtg_deckbuilder.views.LibraryViewModel;
+import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -116,7 +116,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     }
 
     @Override
-    public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId) {
+    public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId) {
         var cardsFuture = CompletableFuture.supplyAsync(() ->
                 this.getCards(userId.getId()));
 
@@ -132,7 +132,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         var colorCounts = getColorCount(userId);
 
         // Use the Builder to assemble the object
-        return LibraryViewModel.builder()
+        return LibraryViewModelImpl.builder()
                 .cards(cards)
                 .lastId(lastIndex)
                 .deckNames(deckNames)
@@ -144,7 +144,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     }
 
     @Override
-    public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId, LibraryFilters personalLibraryFilters) {
+    public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId, LibraryFilters personalLibraryFilters) {
         var cardsFuture = CompletableFuture.supplyAsync(() ->
                 this.getCards(userId.getId(), personalLibraryFilters));
 
@@ -160,7 +160,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
 
 
         // Use the Builder to assemble the object
-        return LibraryViewModel.builder()
+        return LibraryViewModelImpl.builder()
                 .cards(cards)
                 .lastId(lastIndex)
                 .deckNames(deckNames)

@@ -7,8 +7,8 @@ import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
-import com.example.mtg_deckbuilder.views.CardBrowserViewModel;
-import com.example.mtg_deckbuilder.views.LibraryViewModel;
+import com.example.mtg_deckbuilder.views.CardBrowserViewModelImpl;
+import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,7 +38,7 @@ public class PersonalLibraryController {
 
     @GetMapping("/personal-library")
     public String getPersonalLibrary(HttpServletResponse response, Model model) {
-        CardBrowserViewModel cardBrowserViewModel = new CardBrowserViewModel();
+        CardBrowserViewModelImpl cardBrowserViewModel = new CardBrowserViewModelImpl();
 
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
@@ -54,7 +54,7 @@ public class PersonalLibraryController {
     }
     @GetMapping("/personal-library/cards")
     public String getPersonalCards(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+        LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
 
         model.addAttribute("cards", libraryView.getCards());
         model.addAttribute("ownedCard", new OwnedCard());
@@ -66,7 +66,7 @@ public class PersonalLibraryController {
 
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
-        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
+        LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
         System.out.println(personalLibraryFilters.getLastId());
         System.out.println("working");
 
@@ -79,7 +79,7 @@ public class PersonalLibraryController {
 
     @GetMapping("/personal-library/info")
     public String getPersonalCardsInfo(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+        LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
 
         model.addAttribute("personalLibrary", libraryView);
         model.addAttribute("lastId", 2);

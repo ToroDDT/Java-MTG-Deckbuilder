@@ -4,7 +4,7 @@ import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
-import com.example.mtg_deckbuilder.views.ComboViewModel;
+import com.example.mtg_deckbuilder.views.ComboViewModelImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +19,7 @@ public class CombosController {
     }
     @GetMapping("/personal-library/combos")
     public String combos(Model model) {
-        ComboViewModel cardBrowserViewModel = new ComboViewModel();
+        ComboViewModelImpl cardBrowserViewModel = new ComboViewModelImpl();
 
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
@@ -30,7 +30,7 @@ public class CombosController {
     @GetMapping(path = "/personal-library/combos-list", headers = "hx-request=true")
     public  String getCombos(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
 
-        ComboViewModel cardBrowserViewModel = new ComboViewModel();
+        ComboViewModelImpl cardBrowserViewModel = new ComboViewModelImpl();
         var combosList = comboServiceImpl.findCombos(user, personalLibraryFilters);
 
         model.addAttribute("personalLibrary", cardBrowserViewModel);

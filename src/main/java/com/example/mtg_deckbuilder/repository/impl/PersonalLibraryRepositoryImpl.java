@@ -2,6 +2,7 @@ package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
 import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,15 +27,15 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         this.ownedCardRowMapper = ownedCardRowMapper;
     }
 @Override
-public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, String lastId) {
+public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters) {
     var pageSize = 12;
     var sortingOrder = "ASC";
 
-    String operator = "ASC".equalsIgnoreCase(sortingOrder) ? ">" : "<";
+    String operator = "ASC".equalsIgnoreCase(personalLibraryFilters.getOperator()) ? ">" : "<";
     String direction = "ASC".equalsIgnoreCase(sortingOrder) ? "ASC" : "DESC";
 
     // 1. Build the dynamic WHERE clause
-    String paginationFilter = (lastId == null || lastId.isEmpty())
+    String paginationFilter = (personalLibraryFilters.getLastId() == null || personalLibraryFilters.getLastId().isEmpty())
             ? ""
             : "AND personal_collection_library.id " + operator + " ? ";
 
@@ -70,14 +71,15 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, String las
     List<Object> args = new ArrayList<>();
     args.add(userId);
 
-    if (lastId != null && !lastId.isEmpty()) {
-        args.add(lastId);
+    if (personalLibraryFilters.getLastId() != null && personalLibraryFilters.getLastId().isEmpty()) {
+        args.add(personalLibraryFilters.getLastId());
     }
 
     args.add(pageSize);
 
     return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());
 }
+
     @Override
     public void addCardToPersonalLibrary (OwnedCard ownedCard) {
         String sql = """
