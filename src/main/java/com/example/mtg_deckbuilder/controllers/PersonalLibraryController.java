@@ -54,6 +54,7 @@ public class PersonalLibraryController {
     }
     @GetMapping("/personal-library/cards")
     public String getPersonalCards(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+        System.out.println("Its coming from /personal-library/cards");
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
 
         model.addAttribute("cards", libraryView.getCards());
@@ -66,6 +67,7 @@ public class PersonalLibraryController {
 
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
+        System.out.println("Its coming from /personal-library/search");
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
         System.out.println(personalLibraryFilters.getLastId());
         System.out.println("working");

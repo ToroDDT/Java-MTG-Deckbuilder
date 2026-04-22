@@ -8,5 +8,6 @@ import java.util.UUID;
 
 public interface PersonalLibraryRepository {
     List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters);
+    List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId);
     void addCardToPersonalLibrary(OwnedCard ownedCard);
 }

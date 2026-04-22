@@ -26,20 +26,61 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         this.jdbcTemplate = jdbcTemplate;
         this.ownedCardRowMapper = ownedCardRowMapper;
     }
-@Override
-public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters) {
-    var pageSize = 12;
-    var sortingOrder = "ASC";
+    @Override
+    public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId) {
+        var pageSize = 12;
 
-    String operator = "ASC".equalsIgnoreCase(personalLibraryFilters.getOperator()) ? ">" : "<";
-    String direction = "ASC".equalsIgnoreCase(sortingOrder) ? "ASC" : "DESC";
+        String sql = """
+        SELECT\s
+            personal_collection_library.id AS personal_library_id,
+            personal_collection_library.user_id,
+            personal_collection_library.date_added,
+            personal_collection_library.updated_at,
+            cards.id AS card_id,
+            cards.name,
+            cards.type_line,
+            cards.toughness,
+            cards.power,
+            cards.artist,
+            cards.cmc,
+            cards.scryfall_uri,
+            cards.color_identity,
+            cards.multiverse_ids,
+            cards.image_uris,
+            cards.prices
+        FROM cards
+        INNER JOIN personal_collection_library\s
+            ON personal_collection_library.card_id = cards.id
+        WHERE personal_collection_library.user_id = ?
+        LIMIT ?
+       \s""";
 
-    // 1. Build the dynamic WHERE clause
-    String paginationFilter = (personalLibraryFilters.getLastId() == null || personalLibraryFilters.getLastId().isEmpty())
-            ? ""
-            : "AND personal_collection_library.id " + operator + " ? ";
+        List<Object> args = new ArrayList<>();
+        args.add(userId);
+        args.add(pageSize);
 
-    String sql = """
+        return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());
+    }
+    @Override
+    public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters) {
+        var pageSize = 12;
+        var sortingOrder = "ASC";
+
+        String operator = ">";
+        String direction = "ASC";
+
+        if (personalLibraryFilters.getOperator() == null) {
+            operator = ">";
+        } else {
+            operator = "ASC".equalsIgnoreCase(personalLibraryFilters.getOperator()) ? ">" : "<";
+        }
+
+        // 1. Build the dynamic WHERE clause
+        String paginationFilter = (personalLibraryFilters.getLastId() == null || personalLibraryFilters.getLastId().isEmpty())
+                ? ""
+                : "AND personal_collection_library.id " + operator + " ? ";
+
+        String sql = """
         SELECT\s
             personal_collection_library.id AS personal_library_id,
             personal_collection_library.user_id,
@@ -66,19 +107,19 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFil
         LIMIT ?
        \s""";
 
-    sql = String.format(sql, paginationFilter, direction);
+        sql = String.format(sql, paginationFilter, direction);
 
-    List<Object> args = new ArrayList<>();
-    args.add(userId);
+        List<Object> args = new ArrayList<>();
+        args.add(userId);
 
-    if (personalLibraryFilters.getLastId() != null && personalLibraryFilters.getLastId().isEmpty()) {
-        args.add(personalLibraryFilters.getLastId());
+        if (personalLibraryFilters.getLastId() != null && personalLibraryFilters.getLastId().isEmpty()) {
+            args.add(personalLibraryFilters.getLastId());
+        }
+
+        args.add(pageSize);
+
+        return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());
     }
-
-    args.add(pageSize);
-
-    return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());
-}
 
     @Override
     public void addCardToPersonalLibrary (OwnedCard ownedCard) {

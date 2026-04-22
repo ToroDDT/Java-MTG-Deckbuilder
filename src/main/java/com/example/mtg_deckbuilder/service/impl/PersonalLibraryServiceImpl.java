@@ -47,7 +47,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     @Override
     public List<OwnedCard> getCards(UUID userId) {
         return personalLibraryRepository
-                .getAllPersonalLibraryCardsForUser(userId, null)
+                .getAllPersonalLibraryCardsForUser(userId)
                 .stream()
                 .peek(ownedCard -> {
                     if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
@@ -58,11 +58,13 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     }
     @Override
     public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
-
+        if (personalLibraryFilters == null) {
+            System.out.println("personalLibraryFilters is null");
+        }
         var cardType = CardType.fromString(personalLibraryFilters.getCardType());
         SortOptions sortBy = personalLibraryFilters.getSortBy();
 
-        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid, null).stream()
+        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters).stream()
                 .filter(card -> CardUtils.matchesSearchQuery(card, personalLibraryFilters.getCardName()))
                 .filter(card -> CardUtils.matchesSelectedColors(card, personalLibraryFilters.getSelectedColors()))
                 .filter(card -> CardUtils.matchesSelectedType(card, cardType))
@@ -108,12 +110,6 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 })
                 .toList();
     }
-    @Override
-    public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId) {
-        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId, null)
-                .stream()
-                .collect(Collectors.groupingBy(ColorIdentity::fromString,  Collectors.counting()));
-    }
 
     @Override
     public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId) {
@@ -156,7 +152,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         var deckNames = deckNamesFuture.join();
 
         var total = getTotalValue(cards);
-        var colorCounts = getColorCount(userId);
+        var colorCounts = getColorCount(userId, personalLibraryFilters);
 
 
         // Use the Builder to assemble the object
@@ -179,6 +175,20 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 .sum();
     }
 
+    @Override
+    public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId) {
+        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId)
+                .stream()
+                .collect(Collectors.groupingBy(ColorIdentity::fromString,  Collectors.counting()));
+    }
+
+    public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId, LibraryFilters personalLibraryFilters) {
+        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId, personalLibraryFilters)
+                .stream()
+                .collect(Collectors.groupingBy(ColorIdentity::fromString,  Collectors.counting()));
+    }
+
+
     private Map<String, Long> getColorCount(CustomUserDetails userId) {
         // Format color counts
         Map<String, Long> colorCounts = new HashMap<>();
@@ -186,6 +196,15 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 .forEach((key, value) -> colorCounts.put(key.name(), value));
         return colorCounts;
     }
+
+    private Map<String, Long> getColorCount(CustomUserDetails userId,LibraryFilters personalLibraryFilters) {
+        // Format color counts
+        Map<String, Long> colorCounts = new HashMap<>();
+        getAmountOfEachColorIdentity(userId.getId(), personalLibraryFilters)
+                .forEach((key, value) -> colorCounts.put(key.name(), value));
+        return colorCounts;
+    }
+
 
     private List<String> getDeckNames(CustomUserDetails userId) {
         return deckServiceImpl.getDeckNames(userId);
