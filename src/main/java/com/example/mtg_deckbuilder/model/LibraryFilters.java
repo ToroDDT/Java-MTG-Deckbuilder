@@ -16,7 +16,7 @@ public class LibraryFilters {
     private Integer maxCMC;
     private SortOptions sortBy;
     private String operator = ">";
-    private String lastId;
+    private String dateAdded;
 
     public LibraryFilters() {
 

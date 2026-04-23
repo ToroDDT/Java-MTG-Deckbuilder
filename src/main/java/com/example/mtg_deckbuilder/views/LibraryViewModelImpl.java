@@ -6,6 +6,7 @@ import com.example.mtg_deckbuilder.model.SortOptions;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -22,5 +23,5 @@ public class LibraryViewModelImpl {
     private final SortOptions[] sortOptions = SortOptions.values();
     private final LibraryFilters filters = new LibraryFilters();
     private final List<String> deckNames;
-    private final UUID lastId;
+    private final LocalDate dateAdded;
 }

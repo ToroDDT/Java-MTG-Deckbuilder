@@ -1,7 +1,6 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
-import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
@@ -10,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -72,13 +72,13 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         if (personalLibraryFilters.getOperator() == null) {
             operator = ">";
         } else {
-            operator = "ASC".equalsIgnoreCase(personalLibraryFilters.getOperator()) ? ">" : "<";
+            operator = ">".equalsIgnoreCase(personalLibraryFilters.getOperator()) ? ">" : "<";
         }
 
         // 1. Build the dynamic WHERE clause
-        String paginationFilter = (personalLibraryFilters.getLastId() == null || personalLibraryFilters.getLastId().isEmpty())
+        String paginationFilter = (personalLibraryFilters.getDateAdded() == null || personalLibraryFilters.getDateAdded().isEmpty())
                 ? ""
-                : "AND personal_collection_library.id " + operator + " ? ";
+                : "AND personal_collection_library.date_added " + operator + " ? ";
 
         String sql = """
         SELECT\s
@@ -103,19 +103,19 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             ON personal_collection_library.card_id = cards.id
         WHERE personal_collection_library.user_id = ?
         %s
-        ORDER BY personal_collection_library.id %s
+        ORDER BY personal_collection_library.date_added %s
         LIMIT ?
        \s""";
 
         sql = String.format(sql, paginationFilter, direction);
 
         List<Object> args = new ArrayList<>();
+
         args.add(userId);
 
-        if (personalLibraryFilters.getLastId() != null && personalLibraryFilters.getLastId().isEmpty()) {
-            args.add(personalLibraryFilters.getLastId());
+        if (personalLibraryFilters.getDateAdded() != null && !personalLibraryFilters.getDateAdded().isEmpty()) {
+            args.add(LocalDate.parse(personalLibraryFilters.getDateAdded())); // e.g. "2024-03-15"
         }
-
         args.add(pageSize);
 
         return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());

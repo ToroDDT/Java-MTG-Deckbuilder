@@ -120,7 +120,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 getDeckNames(userId));
 
         var cards = cardsFuture.join();
-        var lastIndex = cards.getLast().getId();
+        var lastCard = cards.getLast().getDateAdded();
 
         var deckNames = deckNamesFuture.join();
         // Calculate total value
@@ -130,7 +130,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         // Use the Builder to assemble the object
         return LibraryViewModelImpl.builder()
                 .cards(cards)
-                .lastId(lastIndex)
+                .dateAdded(lastCard)
                 .deckNames(deckNames)
                 .totalCards(cards.size())
                 .totalValue(total)
@@ -148,7 +148,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 getDeckNames(userId));
 
         var cards = cardsFuture.join();
-        var lastIndex = cards.getLast().getId();
+        var lastCard = cards.getLast().getDateAdded();
         var deckNames = deckNamesFuture.join();
 
         var total = getTotalValue(cards);
@@ -158,7 +158,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         // Use the Builder to assemble the object
         return LibraryViewModelImpl.builder()
                 .cards(cards)
-                .lastId(lastIndex)
+                .dateAdded(lastCard)
                 .deckNames(deckNames)
                 .totalCards(cards.size())
                 .totalValue(total)

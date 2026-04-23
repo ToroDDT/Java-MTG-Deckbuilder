@@ -8,6 +8,10 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Component
@@ -24,6 +28,9 @@ public class OwnedCardRowMapper implements  RowMapper<OwnedCard> {
         cardRowMapper.extractFields(rs, card);
         UUID personalLibraryId = rs.getObject("personal_library_id", UUID.class);
         UUID cardId = rs.getObject("card_id", UUID.class);
-        return new OwnedCard(card, personalLibraryId, cardId);
+        LocalDate dateAdded = rs.getObject("date_added", OffsetDateTime.class)
+                .atZoneSameInstant(ZoneId.of("UTC"))  // or your app's zone
+                .toLocalDate();
+        return new OwnedCard(card, personalLibraryId, cardId, dateAdded);
     }
 }

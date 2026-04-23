@@ -61,7 +61,6 @@ public class PersonalLibraryController {
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("personalLibraryFilters", new LibraryFilters());
         model.addAttribute("libraryView", libraryView);
-
         return "fragments/personal-cards :: personal-cards";
     }
 
@@ -69,8 +68,6 @@ public class PersonalLibraryController {
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
         System.out.println("Its coming from /personal-library/search");
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
-        System.out.println(personalLibraryFilters.getLastId());
-        System.out.println("working");
 
         model.addAttribute("cards", libraryView.getCards());
         model.addAttribute("ownedCard", new OwnedCard());
