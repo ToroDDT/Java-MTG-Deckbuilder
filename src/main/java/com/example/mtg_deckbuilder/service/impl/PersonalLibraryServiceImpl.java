@@ -56,61 +56,35 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 })
                 .toList();
     }
-    @Override
-    public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
-        if (personalLibraryFilters == null) {
-            System.out.println("personalLibraryFilters is null");
-        }
-        var cardType = CardType.fromString(personalLibraryFilters.getCardType());
-        SortOptions sortBy = personalLibraryFilters.getSortBy();
-
-        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters).stream()
-                .filter(card -> CardUtils.matchesSearchQuery(card, personalLibraryFilters.getCardName()))
-                .filter(card -> CardUtils.matchesSelectedColors(card, personalLibraryFilters.getSelectedColors()))
-                .filter(card -> CardUtils.matchesSelectedType(card, cardType))
-                .filter(card -> CardUtils.matchesCmcRange(card, personalLibraryFilters))
-                .peek(ownedCard -> {
-                    if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
-                        ownedCard.setTags(List.of());
-                    }
-                })
-                .sorted(switch (sortBy) {
-                    case PRICE_ASC -> Comparator.comparing(
-                            (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
-                            Comparator.nullsLast(Comparator.naturalOrder())
-                    );
-
-                    case PRICE_DESC -> Comparator.comparing(
-                            (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
-                            Comparator.nullsLast(Comparator.reverseOrder())
-                    );                   case CMC_ASC-> Comparator.comparing(ownedCard ->
-                            ownedCard
-                                    .getCard()
-                                    .getCmc());
-                    case CMC_DESC-> Comparator.comparing((OwnedCard ownedCard) ->
-                                    ownedCard
-                                            .getCard()
-                                            .getCmc())
-                            .reversed();
-                    case NAME_DESC-> Comparator.comparing((OwnedCard ownedCard) ->
-                                    ownedCard
-                                            .getCard()
-                                            .getName())
-                            .reversed();
-                    case NAME_ASC-> Comparator.comparing((OwnedCard ownedCard) ->
-                            ownedCard
-                                    .getCard()
-                                    .getName()
-                    );
-                    default -> Comparator.comparing((OwnedCard ownedCard) ->
-                            ownedCard
-                                    .getCard()
-                                    .getName()
-                    ); // or whatever your default sort is
-                })
-                .toList();
+@Override
+public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
+    if (personalLibraryFilters == null) {
+        System.out.println("personalLibraryFilters is null");
     }
+    SortOptions sortBy = personalLibraryFilters.getSortBy();
 
+    return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters).stream()
+            .peek(ownedCard -> {
+                if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
+                    ownedCard.setTags(List.of());
+                }
+            })
+            .sorted(switch (sortBy) {
+                case PRICE_ASC -> Comparator.comparing(
+                        (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+                case PRICE_DESC -> Comparator.comparing(
+                        (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
+                        Comparator.nullsLast(Comparator.reverseOrder())
+                );
+                case CMC_ASC -> Comparator.comparing(ownedCard -> ownedCard.getCard().getCmc());
+                case CMC_DESC -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getCmc()).reversed();
+                case NAME_DESC -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getName()).reversed();
+                default -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getName());
+            })
+            .toList();
+}
     @Override
     public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId) {
         var cardsFuture = CompletableFuture.supplyAsync(() ->
@@ -148,12 +122,15 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
                 getDeckNames(userId));
 
         var cards = cardsFuture.join();
-        var lastCard = cards.getLast().getDateAdded();
         var deckNames = deckNamesFuture.join();
 
         var total = getTotalValue(cards);
         var colorCounts = getColorCount(userId, personalLibraryFilters);
+        boolean hasSearchFilter = personalLibraryFilters.hasSearchFilter();
 
+        var lastCard = cards.isEmpty() ? null
+                : hasSearchFilter ? null  // frontend uses page+1 itself
+                : cards.getLast().getDateAdded();
 
         // Use the Builder to assemble the object
         return LibraryViewModelImpl.builder()
