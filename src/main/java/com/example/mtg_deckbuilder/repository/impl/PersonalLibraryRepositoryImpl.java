@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
+import com.example.mtg_deckbuilder.model.CardType;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
@@ -61,24 +62,31 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
 
         return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());
     }
+
     @Override
     public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters) {
         var pageSize = 12;
-        var sortingOrder = "ASC";
-
-        String operator = ">";
+        String operator = (personalLibraryFilters.getOperator() == null || ">".equalsIgnoreCase(personalLibraryFilters.getOperator())) ? ">" : "<";
         String direction = "ASC";
 
-        if (personalLibraryFilters.getOperator() == null) {
-            operator = ">";
-        } else {
-            operator = ">".equalsIgnoreCase(personalLibraryFilters.getOperator()) ? ">" : "<";
-        }
+        // Use cursor pagination when browsing, offset when filtering
+        String paginationFilter = (!personalLibraryFilters.hasSearchFilter() && personalLibraryFilters.getDateAdded() != null && !personalLibraryFilters.getDateAdded().isEmpty())
+                ? "AND personal_collection_library.date_added " + operator + " ? "
+                : "";
 
-        // 1. Build the dynamic WHERE clause
-        String paginationFilter = (personalLibraryFilters.getDateAdded() == null || personalLibraryFilters.getDateAdded().isEmpty())
-                ? ""
-                : "AND personal_collection_library.date_added " + operator + " ? ";
+        String limitClause = personalLibraryFilters.hasSearchFilter()
+                ? "LIMIT ? OFFSET ?"
+                : "LIMIT ?";
+
+        String nameFilter = (personalLibraryFilters.getCardName() == null || personalLibraryFilters.getCardName().isEmpty())
+                ? "" : "AND cards.name ILIKE ? ";
+        // In your SQL filter builder:
+        String typeFilter = (personalLibraryFilters.getCardType() == null
+                || personalLibraryFilters.getCardType().isEmpty()
+                || "ALL".equalsIgnoreCase(personalLibraryFilters.getCardType()))  // ✅ catches "All"
+                ? "" : "AND cards.type_line ILIKE ? ";
+        String colorFilter = (personalLibraryFilters.getSelectedColors() == null || personalLibraryFilters.getSelectedColors().isEmpty())
+                ? "" : "AND cards.color_identity @> ?::text[] AND ?::text[] @> cards.color_identity ";
 
         String sql = """
         SELECT\s
@@ -103,20 +111,42 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             ON personal_collection_library.card_id = cards.id
         WHERE personal_collection_library.user_id = ?
         %s
+        %s
+        %s
+        %s
+        AND cards.cmc BETWEEN ? AND ?
         ORDER BY personal_collection_library.date_added %s
-        LIMIT ?
+        %s
        \s""";
 
-        sql = String.format(sql, paginationFilter, direction);
+        sql = String.format(sql, paginationFilter, nameFilter, typeFilter, colorFilter, direction, limitClause);
 
         List<Object> args = new ArrayList<>();
-
         args.add(userId);
 
-        if (personalLibraryFilters.getDateAdded() != null && !personalLibraryFilters.getDateAdded().isEmpty()) {
-            args.add(LocalDate.parse(personalLibraryFilters.getDateAdded())); // e.g. "2024-03-15"
+        if (!personalLibraryFilters.hasSearchFilter() && personalLibraryFilters.getDateAdded() != null && !personalLibraryFilters.getDateAdded().isEmpty()) {
+            args.add(LocalDate.parse(personalLibraryFilters.getDateAdded()));
         }
+        if (personalLibraryFilters.getCardName() != null && !personalLibraryFilters.getCardName().isEmpty()) {
+            args.add(personalLibraryFilters.getCardName() + "%");
+        }
+        if (personalLibraryFilters.getCardType() != null && !personalLibraryFilters.getCardType().isEmpty() && !"ALL".equalsIgnoreCase(personalLibraryFilters.getCardType())) {
+            args.add("%" + CardType.fromString(personalLibraryFilters.getCardType()).getType() + "%");
+        }
+        if (personalLibraryFilters.getSelectedColors() != null && !personalLibraryFilters.getSelectedColors().isEmpty()) {
+            String[] colorsArray = personalLibraryFilters.getSelectedColors().toArray(new String[0]);
+            args.add(colorsArray);
+            args.add(colorsArray);
+        }
+
+        args.add(personalLibraryFilters.getMinCMC());
+        args.add(personalLibraryFilters.getMaxCMC());
         args.add(pageSize);
+
+        if (personalLibraryFilters.hasSearchFilter()) {
+            int page = personalLibraryFilters.getPage() != null ? personalLibraryFilters.getPage() : 0;
+            args.add(page * pageSize); // OFFSET
+        }
 
         return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());
     }
