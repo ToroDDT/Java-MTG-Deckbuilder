@@ -56,6 +56,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         INNER JOIN personal_collection_library\s
             ON personal_collection_library.card_id = cards.id
         WHERE personal_collection_library.user_id = ?
+        ORDER BY personal_collection_library.date_added ASC, personal_collection_library.id ASC
         LIMIT ?
        \s""";
 
@@ -69,17 +70,9 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
     @Override
     public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters) {
         var pageSize = 12;
-        String operator = (personalLibraryFilters.getOperator() == null || ">".equalsIgnoreCase(personalLibraryFilters.getOperator())) ? ">" : "<";
-        String direction = "ASC";
+        int page = personalLibraryFilters.getPage() != null ? Math.max(personalLibraryFilters.getPage(), 0) : 0;
 
-        // Use cursor pagination when browsing, offset when filtering
-        String paginationFilter = (!personalLibraryFilters.hasSearchFilter() && personalLibraryFilters.getDateAdded() != null && !personalLibraryFilters.getDateAdded().isEmpty())
-                ? "AND personal_collection_library.date_added " + operator + " ? "
-                : "";
-
-        String limitClause = personalLibraryFilters.hasSearchFilter()
-                ? "LIMIT ? OFFSET ?"
-                : "LIMIT ?";
+        String limitClause = "LIMIT ? OFFSET ?";
 
         String nameFilter = (personalLibraryFilters.getCardName() == null || personalLibraryFilters.getCardName().isEmpty())
                 ? "" : "AND cards.name ILIKE ? ";
@@ -116,20 +109,16 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         %s
         %s
         %s
-        %s
         AND cards.cmc BETWEEN ? AND ?
-        ORDER BY personal_collection_library.date_added %s
+        ORDER BY personal_collection_library.date_added ASC, personal_collection_library.id ASC
         %s
        \s""";
 
-        sql = String.format(sql, paginationFilter, nameFilter, typeFilter, colorFilter, direction, limitClause);
+        sql = String.format(sql, nameFilter, typeFilter, colorFilter, limitClause);
 
         List<Object> args = new ArrayList<>();
         args.add(userId);
 
-        if (!personalLibraryFilters.hasSearchFilter() && personalLibraryFilters.getDateAdded() != null && !personalLibraryFilters.getDateAdded().isEmpty()) {
-            args.add(LocalDate.parse(personalLibraryFilters.getDateAdded()));
-        }
         if (personalLibraryFilters.getCardName() != null && !personalLibraryFilters.getCardName().isEmpty()) {
             args.add(personalLibraryFilters.getCardName() + "%");
         }
@@ -145,11 +134,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         args.add(personalLibraryFilters.getMinCMC());
         args.add(personalLibraryFilters.getMaxCMC());
         args.add(pageSize);
-
-        if (personalLibraryFilters.hasSearchFilter()) {
-            int page = personalLibraryFilters.getPage() != null ? personalLibraryFilters.getPage() : 0;
-            args.add(page * pageSize); // OFFSET
-        }
+        args.add(page * pageSize);
 
         return jdbcTemplate.query(sql, ownedCardRowMapper, args.toArray());
     }

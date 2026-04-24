@@ -5,12 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetPaginationState() {
         const lastIdInput = document.getElementById("lastId");
         const operatorInput = document.getElementById("operator");
+        const pageInput = document.getElementById("page");
 
         if (lastIdInput) {
             lastIdInput.value = "";
         }
         if (operatorInput) {
             operatorInput.value = "";
+        }
+        if (pageInput) {
+            pageInput.value = "0";
         }
     }
 
@@ -19,31 +23,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!target || target.id !== "personal-cards") {
             return;
         }
-
-        const lastIdHolder = document.getElementById("lastIdHolder");
-        if (!lastIdHolder) return; // guard for other swaps
-
-        const lastId = lastIdHolder.dataset.lastid;
-        if (!lastId) {
-            resetPaginationState();
-            return;
-        }
-
-        document.getElementById("lastId").value = lastId;
-        console.log("lastId updated to:", lastId);
     });
 
     document.body.addEventListener("click", function(evt) {
+        const pageInput = document.getElementById("page");
+        if (!pageInput) {
+            return;
+        }
+
         if (evt.target.id === "prevBtn") {
             isPagingRequest = true;
-            document.getElementById("operator").value = ">";
-            console.log("this is working ")
+            pageInput.value = String(Math.max((parseInt(pageInput.value, 10) || 0) - 1, 0));
             htmx.trigger("#librarySearchForm", "submit");
         }
         if (evt.target.id === "nextBtn") {
             isPagingRequest = true;
-            document.getElementById("operator").value = "<";
-            console.log("this is working ")
+            pageInput.value = String((parseInt(pageInput.value, 10) || 0) + 1);
             htmx.trigger("#librarySearchForm", "submit");
         }
     });
@@ -57,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resetPaginationState();
             evt.detail.parameters.dateAdded = "";
             evt.detail.parameters.operator = "";
+            evt.detail.parameters.page = 0;
         }
     })
 
@@ -67,29 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const pageHistory = []; // stack of previous lastIds
-
-    function changePage(direction) {
-        const currentLastId = document.getElementById('lastId')?.getAttribute('value') ?? '';
-
-        if (direction === 'next') {
-            // Push current cursor onto history before moving forward
-            pageHistory.push(document.getElementById('lastIdInput').value);
-            document.getElementById('lastIdInput').value = currentLastId;
-
-        } else if (direction === 'prev') {
-            // Pop the last cursor off the stack to go back
-            const previous = pageHistory.pop() ?? '';
-            document.getElementById('lastIdInput').value = previous;
-        }
-
-        // Disable prev button if no history
-        document.getElementById('btn-prev').disabled = pageHistory.length === 0;
-
-        htmx.trigger('#librarySearchForm', 'change');
-    }
-
-// Re-run after every HTMX swap to keep prev button state correct
     document.addEventListener('htmx:afterSwap', (evt) => {
         const target = evt.detail.target;
         if (!target || target.id !== "personal-cards") {
@@ -98,7 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const prevButton = document.getElementById('prevBtn');
         if (prevButton) {
-            prevButton.disabled = pageHistory.length === 0;
+            const currentPage = parseInt(document.getElementById('page')?.value ?? '0', 10) || 0;
+            prevButton.disabled = currentPage === 0;
         }
     });
 
