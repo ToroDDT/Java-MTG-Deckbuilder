@@ -17,5 +17,6 @@ public interface PersonalLibraryService {
     Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId);
     LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user);
     LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);
+    Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user);
 
 }

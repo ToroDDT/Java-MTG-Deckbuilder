@@ -14,6 +14,7 @@ public enum ColorIdentity {
     COLORLESS(""),
     RAKDOS("B,R"),
     SIMIC("G,U"),
+    THE("B,G"),
     ABZAN("B,G,W");
 
     private final String colorIdentity;

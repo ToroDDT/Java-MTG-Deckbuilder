@@ -55,6 +55,7 @@ public class PersonalLibraryController {
     @GetMapping("/personal-library/cards")
     public String getPersonalCards(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         System.out.println("Its coming from /personal-library/cards");
+        System.out.println(personalLibraryService.getDeckLocationsOfCards(user));
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
 
         model.addAttribute("cards", libraryView.getCards());

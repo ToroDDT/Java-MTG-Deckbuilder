@@ -5,6 +5,7 @@ import com.example.mtg_deckbuilder.model.CardType;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository {
@@ -168,5 +171,36 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         jdbcClient.sql(sql)
                 .paramSource(params)
                 .update();
+    }
+
+    @Override
+    public Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user, List<UUID> cardIds) {
+
+        String sql = """
+            SELECT dce.card_id, deck.name
+            FROM deck_card_entries dce
+            JOIN decks deck ON deck.id = dce.deck_id
+            JOIN personal_collection_library pcl ON pcl.id = dce.personal_library_card_id
+            WHERE deck.user_id = :userId
+            AND dce.personal_library_card_id IN (:cardIds)
+            ORDER BY dce.card_id, deck.name;
+              \s""";
+
+        MapSqlParameterSource  params = new MapSqlParameterSource();
+        params.addValue("userId", user.getId());
+        params.addValue("cardIds", cardIds );
+
+        return jdbcClient.sql(sql)
+                .paramSource(params)
+                .query((rs, rowNum) -> Map.entry(
+                        rs.getObject("card_id", UUID.class),
+                        rs.getString("name")
+                ))
+                .list()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+                ));
     }
 }

@@ -28,7 +28,9 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         this.cardServiceImpl = cardServiceImpl;
         this.deckServiceImpl = deckServiceImpl;
     }
-    @Override
+
+
+   @Override
     public void addCard(OwnedCard ownedCard, UUID user) throws CardDoesNotExistException{
         var card = cardServiceImpl.findByName(ownedCard.getName());
         if (card.isPresent()) {
@@ -142,6 +144,15 @@ public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilte
                 .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
                 .colorIdentityAmounts(colorCounts)
                 .build();
+    }
+
+    @Override
+    public Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user) {
+        var cards = personalLibraryRepository.getAllPersonalLibraryCardsForUser(user.getId())
+                .stream()
+                .map(OwnedCard::getId)
+                .toList();
+        return personalLibraryRepository.getDeckLocationsOfCards(user, cards);
     }
 
     private Double getTotalValue(List<OwnedCard> cards) {
