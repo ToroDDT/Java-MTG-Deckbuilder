@@ -9,6 +9,7 @@ import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.views.CardBrowserViewModelImpl;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
+import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -79,10 +80,9 @@ public class PersonalLibraryController {
 
     @GetMapping("/personal-library/info")
     public String getPersonalCardsInfo(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+        PersonalLibraryStats libraryView = personalLibraryService.getStatsOfPersonalLibrary(user);
 
         model.addAttribute("personalLibrary", libraryView);
-        model.addAttribute("lastId", 2);
 
         return "fragments/collection-info :: stickyStatsBar";
     }

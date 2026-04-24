@@ -1,17 +1,15 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
-import com.example.mtg_deckbuilder.model.CardType;
-import com.example.mtg_deckbuilder.model.LibraryFilters;
-import com.example.mtg_deckbuilder.model.OwnedCard;
+import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -188,4 +186,50 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())
                 ));
     }
+
+    @Override
+    public PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user) {
+        String sql = """
+        SELECT\s
+            personal_collection_library.id AS personal_library_id,
+            personal_collection_library.user_id,
+            personal_collection_library.date_added,
+            personal_collection_library.updated_at,
+            cards.id AS card_id,
+            cards.name,
+            cards.type_line,
+            cards.toughness,
+            cards.power,
+            cards.artist,
+            cards.cmc,
+            cards.scryfall_uri,
+            cards.color_identity,
+            cards.multiverse_ids,
+            cards.image_uris,
+            cards.prices
+        FROM cards
+        INNER JOIN personal_collection_library\s
+            ON personal_collection_library.card_id = cards.id
+        WHERE personal_collection_library.user_id = ?
+        ORDER BY personal_collection_library.date_added ASC, personal_collection_library.id ASC
+       \s""";
+
+        List<OwnedCard> cards = jdbcTemplate.query(sql, ownedCardRowMapper, user.getId());
+        System.out.println(cards);
+
+        double totalValue = cards.stream()
+                .filter(card -> card.getCard() != null && card.getCard().getPrices() != null)
+                .filter(card -> card.getCard().getPrices().getUsd() != null)
+                .mapToDouble(card -> card.getCard().getPrices().getUsd())
+                .sum();
+        System.out.println(totalValue);
+
+        var colorCounts = cards.stream()
+                .collect(Collectors.groupingBy(ColorIdentity::fromString,  Collectors.counting()));
+        var totalCards = cards.size();
+        var avgPrice = totalCards == 0 ? 0.0 : totalValue / totalCards;
+
+        return new PersonalLibraryStats(totalValue, colorCounts, totalCards, avgPrice);
+    }
+
 }

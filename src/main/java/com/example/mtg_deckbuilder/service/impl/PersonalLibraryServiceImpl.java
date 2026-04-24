@@ -10,6 +10,7 @@ import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.utils.CardUtils;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
+import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -153,6 +154,11 @@ public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilte
                 .map(OwnedCard::getId)
                 .toList();
         return personalLibraryRepository.getDeckLocationsOfCards(user, cards);
+    }
+
+    @Override
+    public PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user) {
+        return personalLibraryRepository.getStatsOfPersonalLibrary(user);
     }
 
     private Double getTotalValue(List<OwnedCard> cards) {

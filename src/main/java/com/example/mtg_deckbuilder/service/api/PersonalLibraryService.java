@@ -5,6 +5,7 @@ import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
+import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 
 import java.util.List;
 import java.util.Map;
@@ -18,5 +19,5 @@ public interface PersonalLibraryService {
     LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user);
     LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);
     Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user);
-
+    PersonalLibraryStats getStatsOfPersonalLibrary (CustomUserDetails user);
 }
