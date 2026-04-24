@@ -73,6 +73,7 @@
       <form th:action="@{/personal-library/search}"
             th:hx-get="@{/personal-library/search}"
             id="librarySearchForm"
+            hx-sync="this:replace"
             hx-trigger="input delay:200ms, submit"
             hx-target="#personal-cards"
             th:object="${filters}">

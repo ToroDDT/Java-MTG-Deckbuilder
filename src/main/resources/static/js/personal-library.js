@@ -1,10 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let isPagingRequest = false;
+    const searchForm = document.getElementById("librarySearchForm");
+
+    function resetPaginationState() {
+        const lastIdInput = document.getElementById("lastId");
+        const operatorInput = document.getElementById("operator");
+
+        if (lastIdInput) {
+            lastIdInput.value = "";
+        }
+        if (operatorInput) {
+            operatorInput.value = "";
+        }
+    }
+
     document.body.addEventListener("htmx:afterSwap", function(evt) {
+        const target = evt.detail.target;
+        if (!target || target.id !== "personal-cards") {
+            return;
+        }
+
         const lastIdHolder = document.getElementById("lastIdHolder");
         if (!lastIdHolder) return; // guard for other swaps
 
         const lastId = lastIdHolder.dataset.lastid;
-        if (!lastId) return;
+        if (!lastId) {
+            resetPaginationState();
+            return;
+        }
 
         document.getElementById("lastId").value = lastId;
         console.log("lastId updated to:", lastId);
@@ -12,17 +35,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.body.addEventListener("click", function(evt) {
         if (evt.target.id === "prevBtn") {
+            isPagingRequest = true;
             document.getElementById("operator").value = ">";
             console.log("this is working ")
             htmx.trigger("#librarySearchForm", "submit");
         }
         if (evt.target.id === "nextBtn") {
+            isPagingRequest = true;
             document.getElementById("operator").value = "<";
             console.log("this is working ")
             htmx.trigger("#librarySearchForm", "submit");
         }
     });
-    document.body.addEventListener("htmx:configRequest", function(evt) {})
+    document.body.addEventListener("htmx:configRequest", function(evt) {
+        const source = evt.detail.elt;
+        if (!searchForm || !source || (source !== searchForm && !searchForm.contains(source))) {
+            return;
+        }
+
+        if (!isPagingRequest) {
+            resetPaginationState();
+            evt.detail.parameters.dateAdded = "";
+            evt.detail.parameters.operator = "";
+        }
+    })
+
+    document.body.addEventListener("htmx:afterRequest", function(evt) {
+        const source = evt.detail.elt;
+        if (searchForm && source && (source === searchForm || searchForm.contains(source))) {
+            isPagingRequest = false;
+        }
+    });
+
     const pageHistory = []; // stack of previous lastIds
 
     function changePage(direction) {
@@ -46,8 +90,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 // Re-run after every HTMX swap to keep prev button state correct
-    document.addEventListener('htmx:afterSwap', () => {
-        document.getElementById('btn-prev').disabled = pageHistory.length === 0;
+    document.addEventListener('htmx:afterSwap', (evt) => {
+        const target = evt.detail.target;
+        if (!target || target.id !== "personal-cards") {
+            return;
+        }
+
+        const prevButton = document.getElementById('prevBtn');
+        if (prevButton) {
+            prevButton.disabled = pageHistory.length === 0;
+        }
     });
 
 
