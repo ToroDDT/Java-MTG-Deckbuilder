@@ -4,6 +4,7 @@ import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.DeckService;
+import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
@@ -26,12 +27,14 @@ import java.util.concurrent.TimeUnit;
 public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
+    private final CardService cardService;
     private final ComboServiceImpl comboServiceImpl;
     private final DeckService deckService;
     private final DataSourceTransactionManager dataSourceTransactionManager;
 
-    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService, ComboServiceImpl comboServiceImpl, DeckService deckService, DataSourceTransactionManager dataSourceTransactionManager) {
+    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService, CardService cardService, ComboServiceImpl comboServiceImpl, DeckService deckService, DataSourceTransactionManager dataSourceTransactionManager) {
         this.personalLibraryService = personalLibraryService;
+        this.cardService = cardService;
         this.comboServiceImpl = comboServiceImpl;
         this.deckService = deckService;
         this.dataSourceTransactionManager = dataSourceTransactionManager;
@@ -44,6 +47,8 @@ public class PersonalLibraryController {
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
+        model.addAttribute("cards", java.util.List.of());
+        model.addAttribute("query", "");
         model.addAttribute("id", 1);
         model.addAttribute("operator", ">");
 
@@ -87,10 +92,31 @@ public class PersonalLibraryController {
         return "fragments/collection-info :: stickyStatsBar";
     }
 
+    @GetMapping(path = "/personal-library/card-query", headers = "hx-request=true")
+    public String getCardsForAdd(@RequestParam(name = "query", required = false) String query, Model model) {
+        String trimmedQuery = query == null ? "" : query.trim();
+        model.addAttribute("query", trimmedQuery);
+        model.addAttribute("cards", trimmedQuery.isEmpty()
+                ? java.util.List.of()
+                : cardService.findByNameContaining(trimmedQuery).stream().limit(8).toList());
+        return "card-query :: card-results";
+    }
+
 
     @PostMapping("/personal-library/add")
-    public String addCardToPersonalLibrary(@ModelAttribute("ownedCard") OwnedCard ownedCard, @AuthenticationPrincipal CustomUserDetails user) {
+    public String addCardToPersonalLibrary(@ModelAttribute("ownedCard") OwnedCard ownedCard,
+                                           @AuthenticationPrincipal CustomUserDetails user,
+                                           @RequestHeader(value = "HX-Request", required = false) String hxRequest,
+                                           Model model) {
         personalLibraryService.addCard(ownedCard, user.getId());
+
+        if (hxRequest != null) {
+            model.addAttribute("query", "");
+            model.addAttribute("cards", java.util.List.of());
+            model.addAttribute("message", ownedCard.getName() + " added to your library.");
+            return "card-query :: card-results";
+        }
+
         return "redirect:/personal-library";
     }
 

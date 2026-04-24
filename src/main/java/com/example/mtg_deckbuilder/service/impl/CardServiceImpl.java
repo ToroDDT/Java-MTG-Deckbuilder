@@ -31,6 +31,11 @@ public class CardServiceImpl implements CardService {
     return scryfallRepository.findByName(name);
   }
 
+  @Override
+  public List<Card> findByNameContaining(String name) {
+    return scryfallRepository.findByCardsBySubstring(name);
+  }
+
 
 
 }

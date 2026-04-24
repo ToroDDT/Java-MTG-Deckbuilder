@@ -51,7 +51,7 @@ public class CardRepositoryImpl implements CardRepository {
     String sql = "SELECT * FROM cards WHERE name ILIKE CONCAT('%', :name, '%')";
     return jdbcClient.sql(sql)
             .param("name", name)
-            .query(Card.class)
+            .query(scryfallCardRowMapper)
             .list();
   }
 
@@ -87,5 +87,4 @@ public class CardRepositoryImpl implements CardRepository {
             .list();
   }
 }
-
 

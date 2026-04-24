@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface CardService {
     List<String> findLegalCommanders();
     Optional<Card> findByName(String name);
+    List<Card> findByNameContaining(String name);
 }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<div id="card-query-results" th:fragment="card-results">
+    <div th:if="${message != null and !message.isEmpty()}"
+         class="cb-card-type"
+         style="margin-top: 0.75rem; color: #166534; font-weight: 600;"
+         th:text="${message}">
+        Card added.
+    </div>
+
+    <div th:if="${query != null and !query.isEmpty() and #lists.isEmpty(cards)}"
+         class="cb-card-type"
+         style="margin-top: 0.75rem;"
+         th:text="'No cards found for &quot;' + ${query} + '&quot;.'">
+        No cards found.
+    </div>
+
+    <div th:if="${cards != null and !#lists.isEmpty(cards)}"
+         style="display: grid; gap: 0.5rem; margin-top: 0.75rem;">
+        <button type="button"
+                th:each="card : ${cards}"
+                th:attr="hx-post=@{/personal-library/add}"
+                name="name"
+                th:value="${card.name}"
+                hx-target="#card-query-results"
+                hx-swap="innerHTML"
+                hx-include="#addCardForm"
+                style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0.75rem 0.9rem; border: 1px solid #dbe4f0; border-radius: 0.85rem; background: #fff; text-align: left; cursor: pointer;">
+            <span style="font-weight: 600;" th:text="${card.name}">Card Name</span>
+            <span th:text="${card.prices != null and card.prices.usd != null ? '$' + #numbers.formatDecimal(card.prices.usd, 1, 2) : '$0.00'}">Price</span>
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

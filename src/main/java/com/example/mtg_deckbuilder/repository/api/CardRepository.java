@@ -9,5 +9,6 @@ import java.util.UUID;
 public interface CardRepository {
     Optional<Card> findByName(String name);
     Optional<Card> findById(UUID id);
+    List<Card> findByCardsBySubstring(String name);
     List<String> findLegalCommanderCards();
 }
