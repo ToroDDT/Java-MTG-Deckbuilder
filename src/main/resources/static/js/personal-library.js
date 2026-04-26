@@ -2,6 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let isPagingRequest = false;
     const searchForm = document.getElementById("librarySearchForm");
 
+    function updateVisibleCardCounts() {
+        const cardGrid = document.getElementById("cardGrid");
+        const visibleCount = document.getElementById("visibleCount");
+        const totalCount = document.getElementById("totalCount");
+
+        if (!cardGrid || !visibleCount || !totalCount) {
+            return;
+        }
+
+        const shownCards = cardGrid.querySelectorAll(".cb-card").length;
+        visibleCount.textContent = String(shownCards);
+        totalCount.textContent = String(shownCards);
+    }
+
     function resetPaginationState() {
         const lastIdInput = document.getElementById("lastId");
         const operatorInput = document.getElementById("operator");
@@ -23,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!target || target.id !== "personal-cards") {
             return;
         }
+
+        updateVisibleCardCounts();
     });
 
     document.body.addEventListener("click", function(evt) {
@@ -74,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentPage = parseInt(document.getElementById('page')?.value ?? '0', 10) || 0;
             prevButton.disabled = currentPage === 0;
         }
+
+        updateVisibleCardCounts();
     });
 
 
@@ -113,4 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.classList.toggle('ring-offset-2', !isActive);
         const checkbox = document.getElementById(btn.dataset.color);
     }
+
+    updateVisibleCardCounts();
 });
