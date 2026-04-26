@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:id="'cb-card-tags-' + ${card.id}"
+     th:fragment="tags"
+     class="cb-card-tags"
+     hx-swap-oob="true">
+
+    <th:block th:each="tag, tagStat : ${card.tags}">
+        <span class="cb-tag"
+              th:text="${tag}"
+              th:if="${tagStat.index < 4}">
+        </span>
+    </th:block>
+
+    <span class="cb-tag"
+          th:if="${#lists.size(card.tags) > 4}"
+          th:text="'+' + (${#lists.size(card.tags)} - 4)">
+    </span>
+</div>
+</body>
+</html>

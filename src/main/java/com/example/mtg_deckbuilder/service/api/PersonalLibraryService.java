@@ -7,7 +7,6 @@ import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
-import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.Map;
@@ -23,5 +22,5 @@ public interface PersonalLibraryService {
     Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user);
     PersonalLibraryStats getStatsOfPersonalLibrary (CustomUserDetails user);
     List<Card> getCardQuery(String query);
-    List<String> updateCardTags(String tag, String cardId, CustomUserDetails user);
+    List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user);
 }

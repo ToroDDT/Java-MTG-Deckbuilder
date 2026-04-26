@@ -8,11 +8,9 @@ import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
-import com.example.mtg_deckbuilder.utils.CardUtils;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -32,8 +30,8 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     }
 
     @Override
-    public List<String> updateCardTags(String tag, String cardId, CustomUserDetails user){
-        return personalLibraryRepository.updateTagsOnCard(tag, UUID.fromString(cardId), user);
+    public List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user){
+        return personalLibraryRepository.updateTagsOnCard(tag, UUID.fromString(personalCardId), user);
     }
 
     @Override

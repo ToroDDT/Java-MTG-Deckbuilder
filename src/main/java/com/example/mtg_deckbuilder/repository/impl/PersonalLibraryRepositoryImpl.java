@@ -26,17 +26,23 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         this.ownedCardRowMapper = ownedCardRowMapper;
     }
 
-    private List<String> getUpdatedCardTags(UUID cardId, CustomUserDetails user) {
+    private List<String> getUpdatedCardTags(UUID personalCardId, CustomUserDetails user) {
     String sql = """
             SELECT tags
             FROM personal_collection_library
-            WHERE card_id = :cardId AND user_id = :userId
+            WHERE id = :personalCardId AND user_id = :userId
             """;
 
     return jdbcClient.sql(sql)
-            .param("cardId", cardId)
+            .param("personalCardId", personalCardId)
             .param("userId", user.getId())
-            .query((rs, rowNum) -> rs.getObject("tags", String[].class))
+            .query((rs, rowNum) -> {
+                var sqlArray = rs.getArray("tags");
+                if (sqlArray == null) {
+                    return new String[0];
+                }
+                return (String[]) sqlArray.getArray();
+            })
             .list()
             .stream()
             .flatMap(Arrays::stream)
@@ -44,14 +50,14 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
 }
 
     @Override
-    public List<String> updateTagsOnCard(String tag, UUID cardId, CustomUserDetails user) {
+    public List<String> updateTagsOnCard(String tag, UUID personalCardId, CustomUserDetails user) {
         String sql = """
             UPDATE personal_collection_library
-            SET tags = array_append(tags, ?)
-            WHERE card_id = ? AND user_id = ?
+            SET tags = array_append(COALESCE(tags, ARRAY[]::text[]), ?)
+            WHERE id = ? AND user_id = ?
             """;
-        jdbcTemplate.update(sql, tag, cardId, user.getId());
-        return getUpdatedCardTags(cardId, user);
+        jdbcTemplate.update(sql, tag, personalCardId, user.getId());
+        return getUpdatedCardTags(personalCardId, user);
     }
 
     @Override
@@ -80,7 +86,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         INNER JOIN personal_collection_library\s
             ON personal_collection_library.card_id = cards.id
         WHERE personal_collection_library.user_id = ?
-        ORDER BY personal_collection_library.date_added ASC, personal_collection_library.id ASC
+        ORDER BY personal_collection_library.date_added , personal_collection_library.id\s
         LIMIT ?
        \s""";
 
@@ -134,7 +140,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         %s
         %s
         AND cards.cmc BETWEEN ? AND ?
-        ORDER BY personal_collection_library.date_added ASC, personal_collection_library.id ASC
+        ORDER BY personal_collection_library.date_added , personal_collection_library.id ASC
         %s
        \s""";
 
@@ -239,11 +245,10 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         INNER JOIN personal_collection_library\s
             ON personal_collection_library.card_id = cards.id
         WHERE personal_collection_library.user_id = ?
-        ORDER BY personal_collection_library.date_added ASC, personal_collection_library.id ASC
+        ORDER BY personal_collection_library.date_added , personal_collection_library.id\s
        \s""";
 
         List<OwnedCard> cards = jdbcTemplate.query(sql, ownedCardRowMapper, user.getId());
-        System.out.println(cards);
 
         double totalValue = cards.stream()
                 .filter(card -> card.getCard() != null && card.getCard().getPrices() != null)

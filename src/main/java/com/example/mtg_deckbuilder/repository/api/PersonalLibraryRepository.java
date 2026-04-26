@@ -15,5 +15,5 @@ public interface PersonalLibraryRepository {
     void addCardToPersonalLibrary(OwnedCard ownedCard);
     Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user, List<UUID> cardIds);
     PersonalLibraryStats getStatsOfPersonalLibrary (CustomUserDetails user);
-    List<String> updateTagsOnCard(String tag, UUID cardId, CustomUserDetails user);
+    List<String> updateTagsOnCard(String tag, UUID personalCardId, CustomUserDetails user);
 }

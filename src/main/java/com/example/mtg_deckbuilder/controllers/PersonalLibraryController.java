@@ -5,14 +5,13 @@ import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.api.CardService;
-import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.views.CardBrowserViewModelImpl;
+import com.example.mtg_deckbuilder.views.CardTagsViewModel;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,12 +27,10 @@ import java.util.concurrent.TimeUnit;
 public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
-    private final CardService cardService;
     private final DeckService deckService;
 
-    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService, CardService cardService, DeckService deckService ) {
+    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService,  DeckService deckService ) {
         this.personalLibraryService = personalLibraryService;
-        this.cardService = cardService;
         this.deckService = deckService;
     }
 
@@ -103,11 +100,16 @@ public class PersonalLibraryController {
         return "redirect:/personal-library";
     }
 
-
     @GetMapping(value = "/update-tags", headers = "hx-request=true")
-    public String addTag(@RequestParam String tag, @RequestParam String cardId, @AuthenticationPrincipal CustomUserDetails user) {
-        var tags = personalLibraryService.updateCardTags(tag, cardId, user);
-        return "";
+    public String addTag(
+            @RequestParam String tag,
+            @RequestParam String personalCardId,
+            @AuthenticationPrincipal CustomUserDetails user,
+            Model model) {
+
+        List<String> tags = personalLibraryService.updateCardTags(tag, personalCardId, user);
+        model.addAttribute("card", new CardTagsViewModel(personalCardId, tags));
+        return "fragments/tags :: tags";
     }
 
     @GetMapping(value = "/card/location", headers = "hx-request=true")
@@ -115,5 +117,4 @@ public class PersonalLibraryController {
     public String changeCardLocation(@RequestParam String deck, @RequestParam String cardId, @RequestParam String personalCardId,  @AuthenticationPrincipal CustomUserDetails user) {
         return deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId)));
     }
-
 }
