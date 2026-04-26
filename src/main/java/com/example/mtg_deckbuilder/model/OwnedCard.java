@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Column;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ public class OwnedCard {
     private List<String> colors;
     @Column
     private List<String> tags;
+    private List<String> deckLocations = new ArrayList<>();
     private Card card;
 
     public OwnedCard() {}

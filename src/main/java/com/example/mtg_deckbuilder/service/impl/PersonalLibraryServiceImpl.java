@@ -95,6 +95,7 @@ public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilte
                 getDeckNames(userId));
 
         var cards = cardsFuture.join();
+        hydrateDeckLocations(userId, cards);
         var lastCard = cards.getLast().getDateAdded();
 
         var deckNames = deckNamesFuture.join();
@@ -123,6 +124,7 @@ public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilte
                 getDeckNames(userId));
 
         var cards = cardsFuture.join();
+        hydrateDeckLocations(userId, cards);
         var deckNames = deckNamesFuture.join();
 
         var total = getTotalValue(cards);
@@ -152,6 +154,21 @@ public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilte
                 .map(OwnedCard::getId)
                 .toList();
         return personalLibraryRepository.getDeckLocationsOfCards(user, cards);
+    }
+
+    private void hydrateDeckLocations(CustomUserDetails user, List<OwnedCard> cards) {
+        if (cards == null || cards.isEmpty()) {
+            return;
+        }
+
+        Map<UUID, List<String>> deckLocations = personalLibraryRepository.getDeckLocationsOfCards(
+                user,
+                cards.stream().map(OwnedCard::getId).toList()
+        );
+
+        cards.forEach(card -> card.setDeckLocations(
+                deckLocations.getOrDefault(card.getId(), List.of())
+        ));
     }
 
     @Override

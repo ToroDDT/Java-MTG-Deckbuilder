@@ -158,15 +158,17 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
 
     @Override
     public Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user, List<UUID> cardIds) {
+        if (cardIds == null || cardIds.isEmpty()) {
+            return Map.of();
+        }
 
         String sql = """
-            SELECT dce.card_id, deck.name
+            SELECT dce.personal_library_card_id, deck.name
             FROM deck_card_entries dce
             JOIN decks deck ON deck.id = dce.deck_id
-            JOIN personal_collection_library pcl ON pcl.id = dce.personal_library_card_id
             WHERE deck.user_id = :userId
             AND dce.personal_library_card_id IN (:cardIds)
-            ORDER BY dce.card_id, deck.name;
+            ORDER BY dce.personal_library_card_id, deck.name;
               \s""";
 
         MapSqlParameterSource  params = new MapSqlParameterSource();
@@ -176,7 +178,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         return jdbcClient.sql(sql)
                 .paramSource(params)
                 .query((rs, rowNum) -> Map.entry(
-                        rs.getObject("card_id", UUID.class),
+                        rs.getObject("personal_library_card_id", UUID.class),
                         rs.getString("name")
                 ))
                 .list()

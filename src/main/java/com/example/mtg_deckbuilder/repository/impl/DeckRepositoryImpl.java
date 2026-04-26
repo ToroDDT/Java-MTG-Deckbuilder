@@ -2,7 +2,6 @@ package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.model.CardEntry;
 import com.example.mtg_deckbuilder.model.Deck;
-import com.example.mtg_deckbuilder.model.DeckCardEntry;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -88,7 +87,10 @@ public class DeckRepositoryImpl implements DeckRepository {
         INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
         VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id)
         ON CONFLICT (personal_library_card_id)
-        DO UPDATE SET deck_id = EXCLUDED.deck_id
+        DO UPDATE SET
+            deck_id = EXCLUDED.deck_id,
+            card_id = EXCLUDED.card_id,
+            is_sideboard = EXCLUDED.is_sideboard
         """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("deckId", request.deckId())
@@ -97,7 +99,6 @@ public class DeckRepositoryImpl implements DeckRepository {
                 .addValue("personal_library_card_id", request.personalLibraryCardId());
         jdbcClient.sql(sql)
                 .paramSource(params)
-                .query(DeckCardEntry.class)
-                .single();
+                .update();
     }
 }
