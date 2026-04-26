@@ -33,10 +33,11 @@ public class OwnedCard {
 
     public OwnedCard() {}
 
-    public OwnedCard(Card card, UUID id, UUID cardId, LocalDate dateAdded) {
+    public OwnedCard(Card card, UUID id, UUID cardId, LocalDate dateAdded, List<String> tags) {
         this.card = card;
         this.id = id;
         this.cardId = cardId;
         this.dateAdded = dateAdded;
+        this.tags = tags;
     }
 }
