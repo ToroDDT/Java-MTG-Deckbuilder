@@ -23,4 +23,5 @@ public interface PersonalLibraryService {
     Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user);
     PersonalLibraryStats getStatsOfPersonalLibrary (CustomUserDetails user);
     List<Card> getCardQuery(String query);
+    List<String> updateCardTags(String tag, String cardId, CustomUserDetails user);
 }

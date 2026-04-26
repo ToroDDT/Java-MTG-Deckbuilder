@@ -10,10 +10,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -28,6 +25,35 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         this.jdbcTemplate = jdbcTemplate;
         this.ownedCardRowMapper = ownedCardRowMapper;
     }
+
+    private List<String> getUpdatedCardTags(UUID cardId, CustomUserDetails user) {
+    String sql = """
+            SELECT tags
+            FROM personal_collection_library
+            WHERE card_id = :cardId AND user_id = :userId
+            """;
+
+    return jdbcClient.sql(sql)
+            .param("cardId", cardId)
+            .param("userId", user.getId())
+            .query((rs, rowNum) -> rs.getObject("tags", String[].class))
+            .list()
+            .stream()
+            .flatMap(Arrays::stream)
+            .toList();
+}
+
+    @Override
+    public List<String> updateTagsOnCard(String tag, UUID cardId, CustomUserDetails user) {
+        String sql = """
+            UPDATE personal_collection_library
+            SET tags = array_append(tags, ?)
+            WHERE card_id = ? AND user_id = ?
+            """;
+        jdbcTemplate.update(sql, tag, cardId, user.getId());
+        return getUpdatedCardTags(cardId, user);
+    }
+
     @Override
     public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId) {
         var pageSize = 12;

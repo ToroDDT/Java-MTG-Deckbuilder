@@ -31,15 +31,19 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         this.deckServiceImpl = deckServiceImpl;
     }
 
-// Service
-@Override
-public List<Card> getCardQuery(String query) {
-    return query.isEmpty()
-            ? List.of()
-            : cardServiceImpl.findByNameContaining(query).stream().limit(8).toList();
-}
+    @Override
+    public List<String> updateCardTags(String tag, String cardId, CustomUserDetails user){
+        return personalLibraryRepository.updateTagsOnCard(tag, UUID.fromString(cardId), user);
+    }
 
-   @Override
+    @Override
+    public List<Card> getCardQuery(String query) {
+        return query.isEmpty()
+                ? List.of()
+                : cardServiceImpl.findByNameContaining(query).stream().limit(8).toList();
+    }
+
+    @Override
     public void addCard(OwnedCard ownedCard, UUID user) throws CardDoesNotExistException{
         var card = cardServiceImpl.findByName(ownedCard.getName());
         if (card.isPresent()) {
@@ -67,33 +71,33 @@ public List<Card> getCardQuery(String query) {
                 })
                 .toList();
     }
-@Override
-public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
+    @Override
+    public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
 
-    SortOptions sortBy = personalLibraryFilters.getSortBy();
+        SortOptions sortBy = personalLibraryFilters.getSortBy();
 
-    return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters).stream()
-            .peek(ownedCard -> {
-                if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
-                    ownedCard.setTags(List.of());
-                }
-            })
-            .sorted(switch (sortBy) {
-                case PRICE_ASC -> Comparator.comparing(
-                        (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
-                        Comparator.nullsLast(Comparator.naturalOrder())
-                );
-                case PRICE_DESC -> Comparator.comparing(
-                        (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
-                        Comparator.nullsLast(Comparator.reverseOrder())
-                );
-                case CMC_ASC -> Comparator.comparing(ownedCard -> ownedCard.getCard().getCmc());
-                case CMC_DESC -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getCmc()).reversed();
-                case NAME_DESC -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getName()).reversed();
-                default -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getName());
-            })
-            .toList();
-}
+        return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters).stream()
+                .peek(ownedCard -> {
+                    if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
+                        ownedCard.setTags(List.of());
+                    }
+                })
+                .sorted(switch (sortBy) {
+                    case PRICE_ASC -> Comparator.comparing(
+                            (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
+                            Comparator.nullsLast(Comparator.naturalOrder())
+                    );
+                    case PRICE_DESC -> Comparator.comparing(
+                            (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
+                            Comparator.nullsLast(Comparator.reverseOrder())
+                    );
+                    case CMC_ASC -> Comparator.comparing(ownedCard -> ownedCard.getCard().getCmc());
+                    case CMC_DESC -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getCmc()).reversed();
+                    case NAME_DESC -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getName()).reversed();
+                    default -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getName());
+                })
+                .toList();
+    }
     @Override
     public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId) {
         var cardsFuture = CompletableFuture.supplyAsync(() ->

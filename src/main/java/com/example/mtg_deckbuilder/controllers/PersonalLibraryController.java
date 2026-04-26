@@ -103,6 +103,13 @@ public class PersonalLibraryController {
         return "redirect:/personal-library";
     }
 
+
+    @GetMapping(value = "/update-tags", headers = "hx-request=true")
+    public String addTag(@RequestParam String tag, @RequestParam String cardId, @AuthenticationPrincipal CustomUserDetails user) {
+        var tags = personalLibraryService.updateCardTags(tag, cardId, user);
+        return "";
+    }
+
     @GetMapping(value = "/card/location", headers = "hx-request=true")
     @ResponseBody
     public String changeCardLocation(@RequestParam String deck, @RequestParam String cardId, @RequestParam String personalCardId,  @AuthenticationPrincipal CustomUserDetails user) {
