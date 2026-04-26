@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -28,16 +29,12 @@ public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
     private final CardService cardService;
-    private final ComboServiceImpl comboServiceImpl;
     private final DeckService deckService;
-    private final DataSourceTransactionManager dataSourceTransactionManager;
 
-    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService, CardService cardService, ComboServiceImpl comboServiceImpl, DeckService deckService, DataSourceTransactionManager dataSourceTransactionManager) {
+    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService, CardService cardService, DeckService deckService ) {
         this.personalLibraryService = personalLibraryService;
         this.cardService = cardService;
-        this.comboServiceImpl = comboServiceImpl;
         this.deckService = deckService;
-        this.dataSourceTransactionManager = dataSourceTransactionManager;
     }
 
     @GetMapping("/personal-library")
@@ -47,10 +44,7 @@ public class PersonalLibraryController {
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
-        model.addAttribute("cards", java.util.List.of());
-        model.addAttribute("query", "");
-        model.addAttribute("id", 1);
-        model.addAttribute("operator", ">");
+        model.addAttribute("cards", List.of());
 
 
         response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
@@ -60,25 +54,16 @@ public class PersonalLibraryController {
     }
     @GetMapping("/personal-library/cards")
     public String getPersonalCards(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        System.out.println("Its coming from /personal-library/cards");
-        System.out.println(personalLibraryService.getDeckLocationsOfCards(user));
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
 
-        model.addAttribute("cards", libraryView.getCards());
-        model.addAttribute("ownedCard", new OwnedCard());
-        model.addAttribute("personalLibraryFilters", new LibraryFilters());
         model.addAttribute("libraryView", libraryView);
         return "fragments/personal-cards :: personal-cards";
     }
 
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
-        System.out.println("Its coming from /personal-library/search");
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
 
-        model.addAttribute("cards", libraryView.getCards());
-        model.addAttribute("ownedCard", new OwnedCard());
-        model.addAttribute("personalLibraryFilters", new LibraryFilters());
         model.addAttribute("libraryView", libraryView);
         return "fragments/personal-cards :: personal-cards";
     }
@@ -108,6 +93,7 @@ public class PersonalLibraryController {
                                            @AuthenticationPrincipal CustomUserDetails user,
                                            @RequestHeader(value = "HX-Request", required = false) String hxRequest,
                                            Model model) {
+
         personalLibraryService.addCard(ownedCard, user.getId());
 
         if (hxRequest != null) {
@@ -126,21 +112,4 @@ public class PersonalLibraryController {
         return deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId)));
     }
 
-    @GetMapping(value = "/personal-library/pagination", headers = "hx-request=true")
-    public String getPagination(@AuthenticationPrincipal CustomUserDetails user,
-                                @RequestParam String lastId,
-                                @RequestParam String action,
-                                Model model) {
-
-        model.addAttribute("lastId", lastId);
-
-        if (action.equals("next")){
-            model.addAttribute("operator", "<");
-            return "previous-fragment :: page";
-        }
-        else {
-            model.addAttribute("operator", ">");
-            return "next-fragment :: page";
-        }
-    }
 }

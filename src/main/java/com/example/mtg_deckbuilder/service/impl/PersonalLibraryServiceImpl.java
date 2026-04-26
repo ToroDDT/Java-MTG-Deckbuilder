@@ -61,9 +61,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     }
 @Override
 public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
-    if (personalLibraryFilters == null) {
-        System.out.println("personalLibraryFilters is null");
-    }
+
     SortOptions sortBy = personalLibraryFilters.getSortBy();
 
     return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters).stream()
