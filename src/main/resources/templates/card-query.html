@@ -5,24 +5,24 @@
     <title></title>
 </head>
 <body>
+<div id="card-query-results" class="max-h-[100px] overflow-y-auto" th:fragment="card-results">
 
-<div id="card-query-results" th:fragment="card-results">
     <div th:if="${message != null and !message.isEmpty()}"
          class="cb-card-type"
-         style="margin-top: 0.75rem; color: #166534; font-weight: 600;"
+         style="margin-top: 0.15rem; color: #166534; font-weight: 600; font-size: 0.75rem;"
          th:text="${message}">
         Card added.
     </div>
 
     <div th:if="${query != null and !query.isEmpty() and #lists.isEmpty(cards)}"
          class="cb-card-type"
-         style="margin-top: 0.75rem;"
+         style="margin-top: 0.15rem; font-size: 0.75rem;"
          th:text="'No cards found for &quot;' + ${query} + '&quot;.'">
         No cards found.
     </div>
 
     <div th:if="${cards != null and !#lists.isEmpty(cards)}"
-         style="display: grid; gap: 0.5rem; margin-top: 0.75rem;">
+         style="display: grid; gap: 0.05rem; margin-top: 0.1rem;">
         <button type="button"
                 th:each="card : ${cards}"
                 th:attr="hx-post=@{/personal-library/add}"
@@ -31,12 +31,12 @@
                 hx-target="#card-query-results"
                 hx-swap="innerHTML"
                 hx-include="#addCardForm"
-                style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0.75rem 0.9rem; border: 1px solid #dbe4f0; border-radius: 0.85rem; background: #fff; text-align: left; cursor: pointer;">
-            <span style="font-weight: 600;" th:text="${card.name}">Card Name</span>
+                style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0.35rem 0.6rem; border: 1px solid #dbe4f0; border-radius: 0.5rem; background: #fff; text-align: left; cursor: pointer; font-size: 0.75rem;">
+            <span style="font-weight: 400;" th:text="${card.name}">Card Name</span>
             <span th:text="${card.prices != null and card.prices.usd != null ? '$' + #numbers.formatDecimal(card.prices.usd, 1, 2) : '$0.00'}">Price</span>
         </button>
     </div>
-</div>
 
+</div>
 </body>
 </html>

@@ -1,33 +1,12 @@
-<!-- ══════════════════════════════════════════════════════
-     collection-info.html
-     Thymeleaf fragment — include with:
-     <div th:replace="fragments/collection-info :: stickyStatsBar"></div>
-     Requires Tailwind CDN already loaded in the host page.
-     ══════════════════════════════════════════════════════ -->
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://rsms.me/">
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-  <style>
-    .grad-text {
-      background: linear-gradient(135deg, #2563eb 0%, #6366f1 50%, #06b6d4 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .grad-bg {
-      background: linear-gradient(135deg, #2563eb 0%, #6366f1 50%, #06b6d4 100%);
-    }
-  </style>
   <title></title>
 </head>
 <body class="p-8 bg-[#f1f5fe] font-[Inter]">
 
 <!-- ── STICKY STATS BAR FRAGMENT ── -->
-  <div th:fragment="stickyStatsBar">
+<div th:fragment="stickyStatsBar">
   <!-- Spacer so page content isn't hidden behind the bar -->
   <div class="h-20"></div>
 
@@ -145,53 +124,27 @@
             $3.41
           </span>
         </div>
-     </div>
-      <div>
- <button
-         id="prevBtn"
-  >
-&lt;
-</button>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+                id="prevBtn"
+                class="group inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#d7e3fb] bg-[#f8faff] text-[22px] font-semibold text-[#2563eb] shadow-[0_8px_20px_rgba(37,99,235,0.10)] transition-all hover:-translate-y-[1px] hover:border-[#bfdbfe] hover:bg-white hover:text-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
+                aria-label="Previous page"
+        >
+          <span class="pointer-events-none transition-transform group-hover:-translate-x-px">&lt;</span>
+        </button>
 
-<button
-        id="nextBtn"
-  >
-&gt;
-</button>
+        <button
+                id="nextBtn"
+                class="group inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-transparent grad-bg text-[22px] font-semibold text-white shadow-[0_10px_24px_rgba(37,99,235,0.22)] transition-all hover:-translate-y-[1px] hover:shadow-[0_14px_28px_rgba(37,99,235,0.28)]"
+                aria-label="Next page"
+        >
+          <span class="pointer-events-none transition-transform group-hover:translate-x-px">&gt;</span>
+        </button>
       </div>
     </div>
   </div>
-
 </div>
-
-<script>
-
-  const myElement = document.getElementById('next');
-  function updateBarPercentages() {
-    const colors = ['W', 'U', 'B', 'R', 'G'];
-
-    const total = colors.reduce((sum, c) => {
-      const el = document.getElementById('count' + c);
-      return sum + (el ? parseInt(el.textContent) || 0 : 0);
-    }, 0);
-
-    document.getElementById('cardCountPill').textContent =
-      total + ' card' + (total !== 1 ? 's' : '');
-
-    colors.forEach(c => {
-      const countEl = document.getElementById('count' + c);
-      const pctEl   = document.getElementById('pct'   + c);
-      if (!countEl || !pctEl) return;
-      const count = parseInt(countEl.textContent) || 0;
-      pctEl.textContent = total > 0
-        ? Math.round((count / total) * 100) + '%'
-        : '0%';
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', updateBarPercentages);
-  document.addEventListener('htmx:afterSwap',   updateBarPercentages);
-</script>
 
 </body>
 </html>

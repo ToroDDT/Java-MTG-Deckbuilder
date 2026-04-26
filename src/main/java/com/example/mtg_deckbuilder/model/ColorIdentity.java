@@ -13,8 +13,10 @@ public enum ColorIdentity {
     GREEN("G"),
     COLORLESS(""),
     RAKDOS("B,R"),
+    MARDU("B,R,W"),
     SIMIC("G,U"),
-    THE("B,G"),
+    GOLGARI("B,G"),
+    Orzhov("B,W"),
     ABZAN("B,G,W");
 
     private final String colorIdentity;
