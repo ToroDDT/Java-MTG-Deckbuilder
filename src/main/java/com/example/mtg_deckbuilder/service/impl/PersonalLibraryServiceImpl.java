@@ -12,6 +12,7 @@ import com.example.mtg_deckbuilder.utils.CardUtils;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -30,6 +31,13 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         this.deckServiceImpl = deckServiceImpl;
     }
 
+// Service
+@Override
+public List<Card> getCardQuery(String query) {
+    return query.isEmpty()
+            ? List.of()
+            : cardServiceImpl.findByNameContaining(query).stream().limit(8).toList();
+}
 
    @Override
     public void addCard(OwnedCard ownedCard, UUID user) throws CardDoesNotExistException{

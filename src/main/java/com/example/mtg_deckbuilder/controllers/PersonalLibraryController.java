@@ -44,7 +44,6 @@ public class PersonalLibraryController {
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
-        model.addAttribute("cards", List.of());
 
 
         response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
@@ -81,9 +80,7 @@ public class PersonalLibraryController {
     public String getCardsForAdd(@RequestParam(name = "query", required = false) String query, Model model) {
         String trimmedQuery = query == null ? "" : query.trim();
         model.addAttribute("query", trimmedQuery);
-        model.addAttribute("cards", trimmedQuery.isEmpty()
-                ? java.util.List.of()
-                : cardService.findByNameContaining(trimmedQuery).stream().limit(8).toList());
+        model.addAttribute("cards", personalLibraryService.getCardQuery(trimmedQuery));
         return "card-query :: card-results";
     }
 
