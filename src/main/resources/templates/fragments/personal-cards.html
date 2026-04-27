@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="cb-results-col" id="personal-cards" hx-swap-oob="true" th:fragment="personal-cards">
+
+    <div id="display-area">
+    </div>
+    <div class="cb-results-header">
+        <p class="cb-count">Showing <span id="visibleCount">12</span> of <span id="totalCount">12</span> cards</p>
+    </div>
+    <div id="lastIdHolder" th:data-lastid="${libraryView.getDateAdded()}"></div>
+    <div class="cb-grid" id="cardGrid">
+
+        <div class="cb-card"
+             th:each="card : ${libraryView.getCards()}"
+             th:data-name="${card.getCard().getName()}"
+             th:data-type="${card.getCard().getTypeLine()}"
+             th:data-cmc="${card.getCard().getCmc()}"
+             th:data-colors="${#strings.listJoin(card.getColors(), ',')}">
+
+            <div class="cb-card-img-wrap">
+                <img
+                        class="cb-card-img"
+                        th:src="${card.getCard().getImage()}"
+                        th:alt="${card.getCard().getName()}"
+                        loading="lazy"
+                />
+                <div class="cb-card-img-placeholder" style="display:none">🃏</div>
+            </div>
+
+            <div class="cb-card-body">
+                <div class="cb-card-name" th:text="${card.getCard().getName()}">Card Name</div>
+                <div class="cb-card-name">
+                    Price: <span class="cb-card-type" th:text="${'$'+ card.getCard().getPrices().getUsd()}">0</span>
+                </div>
+
+                <div class="flex gap-2">
+                    <label class=" text-sm font-bold" th:for="'addTag-' + ${card.getId()}">Add Tag:</label>
+
+                    <input class="border border-blue-400 rounded px-2 text-xs w-1/2 focus:outline-none focus:ring-1 focus:ring-green-300"
+                           type="text"
+                           name="tag"
+                           th:id="'addTag-' + ${card.getId()}"
+                           placeholder="Add a tag"
+                           th:attr="hx-get='/update-tags?personalCardId=' + ${card.getId()},
+                           hx-target='#cb-card-tags-' + ${card.getId()}"
+                           hx-trigger="keydown[key=='Enter']"
+                           hx-include="this"/>
+                </div>
+                <span class="cb-card-type">Located in:
+<span th:id="'located-in-' + ${card.getId()}"
+      th:text="${#lists.isEmpty(card.deckLocations) ? 'None' : #strings.listJoin(card.deckLocations, ', ')}">None</span>
+        </span>
+
+                <div class="flex">
+                    <label class="cb-card-type" for="deck">Add to a Deck:</label>
+                    <select class="cb-card-type" name="deck" id="deck"
+                            th:attr="hx-get='/card/location?cardId=' + ${card.getCard().getId()} + '&personalCardId=' + ${card.getId()},
+                 hx-target='#located-in-' + ${card.getId()}"
+                            hx-trigger="change"
+                            hx-include="this">
+                        <option th:each="deck : ${libraryView.deckNames}"
+                                th:value="${deck}"
+                                th:text="${deck}">Default Text</option>
+                    </select>
+                </div>
+                <div class="cb-card-type" th:text="${card.getCard().getTypeLine()}">Type</div>
+
+
+                <div th:id="'cb-card-tags-' + ${card.getId()}" class="cb-card-tags">
+                    <th:block th:each="tag, tagStat : ${card.tags}">
+                        <span class="cb-tag" th:text="${tag}" th:if="${tagStat.index} < 4"></span>
+                    </th:block>
+                    <span class="cb-tag"
+                          th:if="${#lists.size(card.tags)} > 4"
+                          th:text="'+' + (${#lists.size(card.tags)} - 4)">
+                </span>
+                </div>
+            </div>
+
+            <a th:href="${card.getCard().getScryfallUri()}"
+               class="cb-card-link">
+                <i class="fas fa-eye"></i>
+                Card Details ↗
+            </a>
+        </div>
+
+        <div class="cb-empty" th:if="${#lists.isEmpty(libraryView.getCards())}">
+            <div class="cb-empty-icon">🃏</div>
+            <p>No cards in your library yet.</p>
+        </div>
+
+    </div>
+
+    <div class="cb-load-more" id="loadMoreWrap" style="display:none">
+        <button class="cb-btn-load" id="loadMoreBtn">Load More</button>
+    </div>
+
+</div>
+</body>
+</html>

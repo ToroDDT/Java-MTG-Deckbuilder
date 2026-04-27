@@ -36,9 +36,8 @@ public class PersonalLibraryController {
 
     @GetMapping("/personal-library")
     public String getPersonalLibrary(HttpServletResponse response, Model model) {
-        CardBrowserViewModelImpl cardBrowserViewModel = new CardBrowserViewModelImpl();
 
-        model.addAttribute("personalLibrary", cardBrowserViewModel);
+        model.addAttribute("personalLibrary", new CardBrowserViewModelImpl());
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
 
