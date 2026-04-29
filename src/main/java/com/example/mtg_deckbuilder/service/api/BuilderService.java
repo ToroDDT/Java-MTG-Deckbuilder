@@ -5,5 +5,5 @@ import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import java.util.UUID;
 
 public interface BuilderService {
-    BuilderViewModel getBuilderView(UUID userId);
+    BuilderViewModel getBuilderView(String deckId);
 }

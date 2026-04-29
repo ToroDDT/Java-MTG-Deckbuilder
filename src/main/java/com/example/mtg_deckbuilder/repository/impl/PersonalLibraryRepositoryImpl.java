@@ -258,7 +258,6 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
                 .filter(card -> card.getCard().getPrices().getUsd() != null)
                 .mapToDouble(card -> card.getCard().getPrices().getUsd())
                 .sum();
-        System.out.println(totalValue);
 
         var colorCounts = cards.stream()
                 .collect(Collectors.groupingBy(ColorIdentity::fromString,  Collectors.counting()));

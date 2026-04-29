@@ -28,6 +28,7 @@
 
   </style>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="preconnect" href="https://cards.scryfall.io">
   <link rel="preload" href="https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1" as="font" type="font/woff2" crossorigin>
@@ -39,19 +40,17 @@
 <header class="cb-nav">
   <div class="cb-nav-inner">
     <a href="/" class="cb-logo">MTG Deckbuilder</a>
-
-    <button class="cb-hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-
     <nav class="cb-nav-menu" id="navMenu">
       <ul class="cb-nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/build">Build</a></li>
-        <li><a href="/owned">Owned Library</a></li>
-        <li><a href="/cards" class="active">All Cards</a></li>
-        <li><a href="/commanders">Commanders</a></li>
-        <li><a href="/decks">Finished Decks</a></li>
+        <li>
+          <a href="/"><i class="fa-solid fa-house"></i> Home</a>
+        </li>
+        <li>
+          <a href="/decks"><i class="fas fa-book"></i> Decks</a>
+        </li>
+        <li>
+          <a href="/personal-library"><i class="fa-solid fa-id-badge"></i> Owned Library</a>
+        </li>
       </ul>
       <a href="/build" class="cb-nav-btn">Build Deck</a>
     </nav>
@@ -114,7 +113,7 @@
 
         <input type="hidden" id="page" name="page" value="0" />
 
-       <div class="cb-filter-section">
+        <div class="cb-filter-section">
           <label for="searchInput" class="cb-filter-label">Search</label>
           <div class="cb-search-wrap">
             <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -204,7 +203,7 @@
         </div>
 
         <div class="cb-btn-row">
-          <button class="cb-btn-apply" id="clearBtn">Clear</button>
+          <button class="cb-btn-apply" id="clearBtn" onclick="">Clear</button>
         </div>
 
       </form>

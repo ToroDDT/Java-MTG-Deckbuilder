@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const clearBtn = document.getElementById("clearBtn");
+    clearBtn.addEventListener("click", () => {
+        window.location.reload();
+    })
     let isPagingRequest = false;
     const searchForm = document.getElementById("librarySearchForm");
 

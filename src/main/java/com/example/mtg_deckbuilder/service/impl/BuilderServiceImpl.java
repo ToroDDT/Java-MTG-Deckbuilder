@@ -7,6 +7,7 @@ import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -19,26 +20,36 @@ public class BuilderServiceImpl implements BuilderService {
     }
 
     @Override
-    public BuilderViewModel getBuilderView(UUID userId) {
-        List<OwnedCard> cards = builderRepository.getAllCardsForUser(userId);
+    public BuilderViewModel getBuilderView(String deckId ) {
+        var cards = builderRepository.getAllCardsForUser(deckId);
 
-        List<OwnedCard> creatures = cards.stream()
+         var creatures = cards.stream()
                 .filter(card -> containsType(card, "Creature"))
                 .toList();
-        List<OwnedCard> spells = cards.stream()
+         var instants = cards.stream()
                 .filter(card -> containsType(card, "Instant"))
                 .toList();
-        List<OwnedCard> sorceries = cards.stream()
+         var sorceries = cards.stream()
                 .filter(card -> containsType(card, "Sorcery"))
                 .toList();
+         var enchantments = cards.stream()
+                .filter(card -> containsType(card, "Enchantment"))
+                .toList();
+         var lands = cards.stream()
+                .filter(card -> containsType(card, "Land"))
+                .toList();
+         var artifacts = cards.stream()
+                .filter(card -> containsType(card, "Artifact"))
+                .toList();
 
-        return new BuilderViewModel(creatures, spells, sorceries);
+
+        return new BuilderViewModel(creatures, instants, enchantments, artifacts, lands, sorceries, deckId);
     }
 
-    private boolean containsType(OwnedCard card, String type) {
-        if (card.getCard() == null || card.getCard().getTypeLine() == null) {
+    private boolean containsType(Map<String, String> card, String type) {
+        if (card == null || card.get("type_line") == null) {
             return false;
         }
-        return card.getCard().getTypeLine().contains(type);
+        return card.get("type_line").contains(type);
     }
 }

@@ -18,7 +18,8 @@ public class BuilderController {
 
     @GetMapping("/builder")
     public String builder(@AuthenticationPrincipal CustomUserDetails user, Model model) {
-        model.addAttribute("builderView", builderService.getBuilderView(user.getId()));
+        var deckId = "23c76af6-46d6-4cc0-907c-5cccdffa362d";
+        model.addAttribute("builderView", builderService.getBuilderView(deckId));
         return "builder";
     }
 }
