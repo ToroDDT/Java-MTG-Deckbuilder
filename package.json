@@ -24,6 +24,7 @@
     "@tailwindcss/cli": "^4.2.2",
     "acorn": "^8.16.0",
     "buffer-from": "^1.1.2",
+    "chart.js": "^4.5.1",
     "commander": "^2.20.3",
     "source-map": "^0.6.1",
     "source-map-support": "^0.5.21",

@@ -8,13 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/builder.css}"/>
+    <script th:src="@{/js/chart.js}"></script>
 </head>
 <body class="">
 
 <!-- TopAppBar -->
 <nav class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(25,27,35,0.06)] flex justify-between items-center px-8 h-16 max-w-full mx-auto antialiased">
     <div class="flex items-center gap-12">
-        <span class="text-xl font-black tracking-tighter bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">Digital Archivist</span>
+        <span class="text-xl font-black tracking-tighter bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">BaseCamp Builder</span>
         <div class="hidden md:flex items-center gap-8">
             <a class="text-slate-500 hover:text-blue-600 transition-colors" href="#">Browse</a>
             <a class="text-blue-700 font-bold border-b-2 border-blue-600 pb-1" href="#">Decks</a>
@@ -47,8 +48,8 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="flex gap-8 items-start">
                     <div class="w-48 h-64 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(25,27,35,0.12)] shrink-0 border-4 border-white">
-                        <img alt="Galadriel, Light of Valinor" class="w-full h-full object-cover"
-                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJpCHpz04-1_0yZAkVimxDuwTfomyAZDkmExqHugfzDUF_SNnB-dBmBvpIXbF9dj2SlZkMwvV6GMrWDW5INbFclai1G6TMiWB3V76lXKb1qk5XokIcCyEfwcxeR2XYmFSG-SF4_szSoX87v3mUlCdfN0GL5ujhTsmZ5FGSqs9IYnNfyNsdtSW64fGEHa7r21gtwmh2fkJihcfmFpkGq7FHKwzfKso4y08hxIeYpq49A1RdC0i8rS-h--wEjFjeZ4wkd2PnQ7GCWDU"/>
+                        <img alt="The Necrobloom" class="w-full h-full object-cover"
+                             src="https://cards.scryfall.io/border_crop/front/8/f/8fcf68cf-0dac-4b29-90d5-c18c685182e6.jpg?1717012767"/>
                     </div>
                     <div class="pt-4">
                         <div class="flex items-center gap-3 mb-2">
@@ -59,7 +60,7 @@
                                 <div class="w-4 h-4 rounded-full bg-white border border-black/10 shadow-sm"></div>
                             </span>
                         </div>
-                        <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none">Galadriel, Light of Valinor</h1>
+                        <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none">The Necrobloom</h1>
                         <div class="flex gap-6 text-on-surface-variant font-medium">
                             <div class="flex flex-col">
                                 <span class="text-[10px] uppercase tracking-wider text-slate-400">Archivist</span>
@@ -221,16 +222,8 @@
                     </div>
 
                 </div>
-
                 <!-- Asymmetric Visual: Featured Mechanic -->
                 <div class="bg-surface-container-low rounded-3xl p-8 flex flex-col md:flex-row items-center gap-10">
-                    <div class="flex-1">
-                        <span class="text-primary font-black uppercase text-xs tracking-widest mb-2 block">Curation Strategy</span>
-                        <h3 class="text-3xl font-black text-on-background mb-4">The Convergence of Light</h3>
-                        <p class="text-on-surface-variant leading-relaxed text-sm max-w-md">
-                            This deck maximizes Galadriel's utility by cycling between card selection, massive mana production, and creature enhancement. Our archival data suggests a 45% increase in efficiency when landing a permanent before turn 4.
-                        </p>
-                    </div>
                     <div class="w-64 h-40 bg-white rounded-2xl shadow-xl p-4 relative overflow-hidden flex items-center justify-center">
                         <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 opacity-50"></div>
                         <div class="z-10 text-center">
@@ -248,29 +241,8 @@
                 <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
                     <h4 class="text-sm font-black text-on-background uppercase tracking-wider mb-8">Mana Curve</h4>
                     <div class="flex items-end justify-between h-48 gap-2">
-                        <div class="flex-1 flex flex-col items-center gap-2">
-                            <div class="w-full bg-surface-container-high rounded-t-lg h-[20%] transition-all hover:bg-primary-container"></div>
-                            <span class="text-[10px] font-bold text-slate-400">1</span>
-                        </div>
-                        <div class="flex-1 flex flex-col items-center gap-2">
-                            <div class="w-full bg-primary rounded-t-lg h-[85%] transition-all"></div>
-                            <span class="text-[10px] font-bold text-slate-400">2</span>
-                        </div>
-                        <div class="flex-1 flex flex-col items-center gap-2">
-                            <div class="w-full bg-primary-container rounded-t-lg h-[65%] transition-all"></div>
-                            <span class="text-[10px] font-bold text-slate-400">3</span>
-                        </div>
-                        <div class="flex-1 flex flex-col items-center gap-2">
-                            <div class="w-full bg-surface-container-high rounded-t-lg h-[45%] transition-all hover:bg-primary-container"></div>
-                            <span class="text-[10px] font-bold text-slate-400">4</span>
-                        </div>
-                        <div class="flex-1 flex flex-col items-center gap-2">
-                            <div class="w-full bg-surface-container-high rounded-t-lg h-[30%] transition-all hover:bg-primary-container"></div>
-                            <span class="text-[10px] font-bold text-slate-400">5</span>
-                        </div>
-                        <div class="flex-1 flex flex-col items-center gap-2">
-                            <div class="w-full bg-surface-container-high rounded-t-lg h-[15%] transition-all hover:bg-primary-container"></div>
-                            <span class="text-[10px] font-bold text-slate-400">6+</span>
+                        <div>
+                            <canvas id="myChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -382,5 +354,26 @@
         <span class="text-[10px] font-bold">Profile</span>
     </button>
 </div>
+<script th:inline="javascript">
+    const ctx = document.getElementById('myChart');
 
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: /*[[${manaCurveLabels}]]*/ [],
+            datasets: [{
+                label: 'Number of cards',
+                data: /*[[${manaCurveData}]]*/ [],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 </body></html>
