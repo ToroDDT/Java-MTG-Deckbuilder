@@ -65,6 +65,12 @@ a { color: inherit; }
     box-shadow: var(--shadow-sm);
 }
 
+.grad-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #0f172a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 .cb-nav-inner {
     max-width: 1400px;
     margin: 0 auto;
