@@ -60,7 +60,7 @@
                                 <div class="w-4 h-4 rounded-full bg-white border border-black/10 shadow-sm"></div>
                             </span>
                         </div>
-                        <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none">The Necrobloom</h1>
+                        <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none" th:text="${builderView.deckName}">The Necrobloom</h1>
                         <div class="flex gap-6 text-on-surface-variant font-medium">
                             <div class="flex flex-col">
                                 <span class="text-[10px] uppercase tracking-wider text-slate-400">Archivist</span>
@@ -356,21 +356,72 @@
 </div>
 <script th:inline="javascript">
     const ctx = document.getElementById('myChart');
+    const manaCurveData = /*[[${manaCurveData}]]*/ [];
 
     new Chart(ctx, {
         type: 'bar',
         data: {
             labels: /*[[${manaCurveLabels}]]*/ [],
-            datasets: [{
-                label: 'Number of cards',
-                data: /*[[${manaCurveData}]]*/ [],
-                borderWidth: 1
-            }]
+            datasets: [
+                {
+                    label: 'Cards',
+                    data: manaCurveData,
+                    type: 'bar',
+                    order: 2,
+                    backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                    borderColor: 'rgba(37, 99, 235, 0.8)',
+                    borderWidth: 1.5,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    hoverBackgroundColor: 'rgba(37, 99, 235, 0.25)'
+                },
+                {
+                    label: 'Distribution',
+                    data: manaCurveData.map(v => v * 1.72),
+                    type: 'line',
+                    order: 1,
+                    borderColor: 'rgba(99, 153, 34, 0.85)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    fill: false,
+                    tension: 0.45
+                }
+            ]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    borderColor: 'rgba(0,0,0,0.08)',
+                    borderWidth: 1,
+                    titleColor: '#0f172a',
+                    bodyColor: '#64748b',
+                    titleFont: { family: 'Inter, sans-serif', size: 11, weight: '700' },
+                    bodyFont: { family: 'Inter, sans-serif', size: 11 },
+                    padding: 10,
+                    cornerRadius: 10,
+                    displayColors: false,
+                    callbacks: {
+                        title: (items) => 'CMC ' + items[0].label,
+                        label: (item) => item.raw + ' cards'
+                    }
+                }
+            },
             scales: {
+                x: {
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: { color: '#94a3b8', font: { family: 'Inter, sans-serif', size: 11, weight: '600' } }
+                },
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.04)' },
+                    border: { display: false },
+                    ticks: { color: '#94a3b8', font: { family: 'Inter, sans-serif', size: 11 }, stepSize: 5, maxTicksLimit: 5 }
                 }
             }
         }

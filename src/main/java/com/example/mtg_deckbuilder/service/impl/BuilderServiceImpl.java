@@ -6,9 +6,13 @@ import com.example.mtg_deckbuilder.service.api.BuilderService;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Service
 public class BuilderServiceImpl implements BuilderService {
@@ -22,28 +26,41 @@ public class BuilderServiceImpl implements BuilderService {
     @Override
     public BuilderViewModel getBuilderView(String deckId ) {
         var cards = builderRepository.getAllCardsForUser(deckId);
+        var deckName = cards.getLast().get("deck_name");
 
-         var creatures = cards.stream()
+        var creatures = cards.stream()
                 .filter(card -> containsType(card, "Creature"))
                 .toList();
-         var instants = cards.stream()
+        var instants = cards.stream()
                 .filter(card -> containsType(card, "Instant"))
                 .toList();
-         var sorceries = cards.stream()
+        var sorceries = cards.stream()
                 .filter(card -> containsType(card, "Sorcery"))
                 .toList();
-         var enchantments = cards.stream()
+        var enchantments = cards.stream()
                 .filter(card -> containsType(card, "Enchantment"))
                 .toList();
-         var lands = cards.stream()
+        var lands = cards.stream()
                 .filter(card -> containsType(card, "Land"))
                 .toList();
-         var artifacts = cards.stream()
+        var artifacts = cards.stream()
                 .filter(card -> containsType(card, "Artifact"))
                 .toList();
+        Map<Integer, Long> manaCurve = cards.stream()
+        .filter(card -> card.get("cmc") != null)
+        .collect(Collectors.groupingBy(
+                card -> (int) Double.parseDouble(card.get("cmc")),
+                Collectors.counting()
+        ));       List<Long> manaCurveData = Stream.concat(
+                IntStream.rangeClosed(0, manaCurve.size())
+                        .mapToObj(i -> manaCurve.getOrDefault(i, 0L)),
+                Stream.of(manaCurve.entrySet().stream()
+                        .filter(e -> e.getKey() >= manaCurve.size())
+                        .mapToLong(Map.Entry::getValue)
+                        .sum())
+        ).collect(Collectors.toList());
 
-
-        return new BuilderViewModel(creatures, instants, enchantments, artifacts, lands, sorceries, deckId);
+        return new BuilderViewModel(deckName, creatures, manaCurveData, instants, enchantments, artifacts, lands, sorceries, deckId);
     }
 
     private boolean containsType(Map<String, String> card, String type) {

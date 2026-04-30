@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public record BuilderViewModel(
+        String deckName,
          List<Map<String, String>>creatures,
+         List<Long> manaCurveData,
          List<Map<String, String>>instants,
          List<Map<String, String>> enchantments,
          List<Map<String, String>> artifacts,
