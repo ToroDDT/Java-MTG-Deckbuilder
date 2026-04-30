@@ -49,7 +49,7 @@
                 <div class="flex gap-8 items-start">
                     <div class="w-48 h-64 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(25,27,35,0.12)] shrink-0 border-4 border-white">
                         <img alt="The Necrobloom" class="w-full h-full object-cover"
-                             src="https://cards.scryfall.io/border_crop/front/8/f/8fcf68cf-0dac-4b29-90d5-c18c685182e6.jpg?1717012767"/>
+                             src="https://cards.scryfall.io/border_crop/front/d/0/d0787e1f-0b75-44ab-a8fd-90358906a787.jpg?1562831894"/>
                     </div>
                     <div class="pt-4">
                         <div class="flex items-center gap-3 mb-2">
@@ -63,8 +63,8 @@
                         <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none" th:text="${builderView.deckName}">The Necrobloom</h1>
                         <div class="flex gap-6 text-on-surface-variant font-medium">
                             <div class="flex flex-col">
-                                <span class="text-[10px] uppercase tracking-wider text-slate-400">Archivist</span>
-                                <span>Ethereal_Curation</span>
+                                <span class="text-[10px] uppercase tracking-wider text-slate-400">Owner</span>
+                                <span th:text="${userName}">Owner</span>
                             </div>
                             <div class="flex flex-col border-l border-outline-variant pl-6">
                                 <span class="text-[10px] uppercase tracking-wider text-slate-400">Win Rate</span>
@@ -72,7 +72,7 @@
                             </div>
                             <div class="flex flex-col border-l border-outline-variant pl-6">
                                 <span class="text-[10px] uppercase tracking-wider text-slate-400">Value</span>
-                                <span>$482.00</span>
+                                <span th:text="'$'+${builderView.totalValue}">$0.00</span>
                             </div>
                         </div>
                     </div>

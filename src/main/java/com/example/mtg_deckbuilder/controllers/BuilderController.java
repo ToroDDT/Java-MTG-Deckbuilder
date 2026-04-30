@@ -20,12 +20,14 @@ public class BuilderController {
 
     @GetMapping("/builder")
     public String builder(@AuthenticationPrincipal CustomUserDetails user, Model model) {
+        var userName = user.getUsername();
         var deckId = "23c76af6-46d6-4cc0-907c-5cccdffa362d";
 
         var view = builderService.getBuilderView(deckId);
         model.addAttribute("builderView", view);
         model.addAttribute("manaCurveLabels", List.of("0","1","2","3","4","5","6","7+"));
         model.addAttribute("manaCurveData", view.manaCurveData());
+        model.addAttribute("userName", userName);
         return "builder";
     }
 }

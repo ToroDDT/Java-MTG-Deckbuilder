@@ -46,12 +46,16 @@ public class BuilderServiceImpl implements BuilderService {
         var artifacts = cards.stream()
                 .filter(card -> containsType(card, "Artifact"))
                 .toList();
+        var total = cards.stream()
+                .filter(card -> card.get("prices") != null)
+                .mapToDouble(card -> (Double.parseDouble(card.get("prices"))))
+                .sum();
         Map<Integer, Long> manaCurve = cards.stream()
-        .filter(card -> card.get("cmc") != null)
-        .collect(Collectors.groupingBy(
-                card -> (int) Double.parseDouble(card.get("cmc")),
-                Collectors.counting()
-        ));       List<Long> manaCurveData = Stream.concat(
+                .filter(card -> card.get("cmc") != null)
+                .collect(Collectors.groupingBy(
+                        card -> (int) Double.parseDouble(card.get("cmc")),
+                        Collectors.counting()
+                ));       List<Long> manaCurveData = Stream.concat(
                 IntStream.rangeClosed(0, manaCurve.size())
                         .mapToObj(i -> manaCurve.getOrDefault(i, 0L)),
                 Stream.of(manaCurve.entrySet().stream()
@@ -60,7 +64,7 @@ public class BuilderServiceImpl implements BuilderService {
                         .sum())
         ).collect(Collectors.toList());
 
-        return new BuilderViewModel(deckName, creatures, manaCurveData, instants, enchantments, artifacts, lands, sorceries, deckId);
+        return new BuilderViewModel(total, deckName, creatures, manaCurveData, instants, enchantments, artifacts, lands, sorceries, deckId);
     }
 
     private boolean containsType(Map<String, String> card, String type) {

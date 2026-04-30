@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public record BuilderViewModel(
+        Double totalValue,
         String deckName,
          List<Map<String, String>>creatures,
          List<Long> manaCurveData,

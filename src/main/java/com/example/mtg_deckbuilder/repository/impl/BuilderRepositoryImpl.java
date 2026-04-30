@@ -2,7 +2,11 @@ package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
 import com.example.mtg_deckbuilder.model.OwnedCard;
+import com.example.mtg_deckbuilder.model.Prices;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -13,6 +17,7 @@ import java.util.*;
 public class BuilderRepositoryImpl implements BuilderRepository {
 
     private final JdbcClient jdbcClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public BuilderRepositoryImpl(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
@@ -30,13 +35,9 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         cards.id AS card_id,
         cards.name AS card_name,
         cards.type_line,
-        cards.toughness,
-        cards.power,
-        cards.artist,
         cards.cmc,
         cards.scryfall_uri,
         cards.color_identity,
-        cards.multiverse_ids,
         cards.image_uris,
         cards.prices,
 
@@ -66,6 +67,19 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                     row.put("type_line", rs.getString("type_line"));
                     row.put("cmc", rs.getString("cmc"));
                     row.put("deck_name", rs.getString("deck_name"));
+
+                    String pricesJson = rs.getString("prices");
+                    if (pricesJson != null) {
+                        try {
+                            Prices prices = objectMapper.readValue(pricesJson, Prices.class);
+                            String usd = prices.getUsd().toString();
+                            row.put("prices", usd != null ? usd : "0.00");
+                        } catch (JsonProcessingException e) {
+                            row.put("prices", "0.00");
+                        }
+                    } else {
+                        row.put("prices", "0.00");
+                    }
                     return row;
                 })
                 .list();
