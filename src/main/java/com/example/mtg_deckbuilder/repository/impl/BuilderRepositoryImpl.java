@@ -1,13 +1,9 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
-import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
-import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.Prices;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -67,6 +63,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                     row.put("type_line", rs.getString("type_line"));
                     row.put("cmc", rs.getString("cmc"));
                     row.put("deck_name", rs.getString("deck_name"));
+                    row.put("image", rs.getString("deck_image"));
 
                     String pricesJson = rs.getString("prices");
                     if (pricesJson != null) {

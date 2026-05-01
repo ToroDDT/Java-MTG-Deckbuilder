@@ -48,8 +48,9 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="flex gap-8 items-start">
                     <div class="w-48 h-64 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(25,27,35,0.12)] shrink-0 border-4 border-white">
-                        <img alt="The Necrobloom" class="w-full h-full object-cover"
-                             src="https://cards.scryfall.io/border_crop/front/d/0/d0787e1f-0b75-44ab-a8fd-90358906a787.jpg?1562831894"/>
+                        <img alt="The Commander" class="w-full h-full object-cover"
+                             th:src="@{${builderView.image}}"
+                        />
                     </div>
                     <div class="pt-4">
                         <div class="flex items-center gap-3 mb-2">
@@ -223,15 +224,105 @@
 
                 </div>
                 <!-- Asymmetric Visual: Featured Mechanic -->
-                <div class="bg-surface-container-low rounded-3xl p-8 flex flex-col md:flex-row items-center gap-10">
-                    <div class="w-64 h-40 bg-white rounded-2xl shadow-xl p-4 relative overflow-hidden flex items-center justify-center">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 opacity-50"></div>
-                        <div class="z-10 text-center">
-                            <div class="text-4xl font-black text-blue-600 mb-1">94.2</div>
-                            <div class="text-[10px] font-bold text-slate-400 tracking-tighter uppercase">Synergy Score</div>
-                        </div>
-                    </div>
+                <div class="bg-surface-container-low rounded-3xl p-8 flex flex-row gap-10">
+
+                    <main class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 ">
+
+                        <!-- Performance Score -->
+                        <section class="bg-white glass-card rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-semibold text-slate-800">Performance Score</h2>
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">OPTIMIZED</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-6">
+                                <span class="text-4xl font-bold text-blue-600">142.58</span>
+                                <span class="text-sm text-slate-400">/ 200 index</span>
+                            </div>
+                            <div class="relative w-full h-3 bg-slate-100 rounded-full overflow-hidden mb-4">
+                                <div class="absolute top-0 left-0 h-full bg-blue-500 w-[71%] rounded-full"></div>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Your deck is performing significantly above the average curve.
+                            </p>
+                        </section>
+
+                        <!-- Mana Curve -->
+                        <section class=" bg-white glass-card rounded-2xl shadow-sm overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-100">
+                                <h3 class="text-lg font-bold text-slate-800">Mana Curve (Spells)</h3>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-end justify-between h-32 gap-2 mb-6">
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-200 rounded-t-md h-[40%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">1</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-400 rounded-t-md h-[90%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">2</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-600 rounded-t-md h-[100%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">3</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-500 rounded-t-md h-[60%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">4</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-300 rounded-t-md h-[30%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">5</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-100 rounded-t-md h-[15%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">6+</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Avg. Spell Cost</span>
+                                        <span class="font-bold">2.84 CMC</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Total Spells</span>
+                                        <span class="font-bold">63 Cards</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Stats -->
+                        <section class="bg-white grid grid-cols-2 gap-4">
+                            <div class="glass-card rounded-2xl p-4 text-center space-y-1">
+                                <div class="text-2xl font-bold">36</div>
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Lands</div>
+                            </div>
+                            <div class="glass-card rounded-2xl p-4 text-center space-y-1">
+                                <div class="text-2xl font-bold">11</div>
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Mana Rocks</div>
+                            </div>
+
+                            <div class="glass-card rounded-2xl p-4 col-span-2 flex items-center justify-between border-rose-100 bg-rose-50/30">
+                                <div>
+                                    <div class="font-bold text-slate-800">Card Draw</div>
+                                    <div class="text-xs text-rose-600 font-medium">Attention Required</div>
+                                </div>
+                                <span class="text-3xl font-bold text-rose-600">0</span>
+                            </div>
+                        </section>
+
+                        <!-- Suggestion (full width) -->
+                        <section class="bg-blue-600 rounded-2xl p-6 text-white col-span-1 md:col-span-2">
+                            <h4 class="font-bold mb-1">Boost Consistency</h4>
+                            <p class="text-sm text-blue-100">
+                                Add 8–10 sources of card advantage to improve mid-game stability.
+                            </p>
+                        </section>
+
+                    </main>
+
                 </div>
+
             </div>
 
             <!-- Right Column: Statistics (4/12) -->
@@ -427,4 +518,5 @@
         }
     });
 </script>
-</body></html>
+</body>
+</html>

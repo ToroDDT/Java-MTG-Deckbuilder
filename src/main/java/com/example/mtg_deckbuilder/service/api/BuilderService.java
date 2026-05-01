@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface BuilderService {
     BuilderViewModel getBuilderView(String deckId);
+    String optimizeDecksAgainstOpponent();
+    String optimizeDeck();
 }

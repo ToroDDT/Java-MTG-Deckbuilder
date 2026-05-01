@@ -17,7 +17,8 @@ public enum ColorIdentity {
     SIMIC("G,U"),
     GOLGARI("B,G"),
     Orzhov("B,W"),
-    ABZAN("B,G,W");
+    ABZAN("B,G,W"),
+    SELESNYA("G,W");
 
     private final String colorIdentity;
 

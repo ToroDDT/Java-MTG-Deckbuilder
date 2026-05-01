@@ -1,12 +1,12 @@
 package com.example.mtg_deckbuilder.model;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public enum CardType {
     ALL("All"),
     SORCERY("Sorcery"),
+    ARTIFACT("Artifact"),
     INSTANT("Instant"),
     CREATURE("Creature"),
     ENCHANTMENT("Enchantment"),

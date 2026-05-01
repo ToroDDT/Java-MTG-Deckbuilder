@@ -1,15 +1,14 @@
 package com.example.mtg_deckbuilder.service.impl;
 
-import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
+import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -27,6 +26,7 @@ public class BuilderServiceImpl implements BuilderService {
     public BuilderViewModel getBuilderView(String deckId ) {
         var cards = builderRepository.getAllCardsForUser(deckId);
         var deckName = cards.getLast().get("deck_name");
+        var deckImage = cards.getLast().get("image");
 
         var creatures = cards.stream()
                 .filter(card -> containsType(card, "Creature"))
@@ -64,7 +64,47 @@ public class BuilderServiceImpl implements BuilderService {
                         .sum())
         ).collect(Collectors.toList());
 
-        return new BuilderViewModel(total, deckName, creatures, manaCurveData, instants, enchantments, artifacts, lands, sorceries, deckId);
+        return new BuilderViewModel(deckImage, total, deckName, creatures, manaCurveData, instants, enchantments, artifacts, lands, sorceries, deckId);
+    }
+
+    @Override
+    public String optimizeDecksAgainstOpponent() {
+        Map<String, Integer> oppDeck = new HashMap<>();
+
+        oppDeck.put("1 CMC", 10);
+        oppDeck.put("2 CMC", 15);
+        oppDeck.put("3 CMC", 12);
+        oppDeck.put("4 CMC", 8);
+        oppDeck.put("5 CMC", 5);
+        oppDeck.put("6 CMC", 2);
+        oppDeck.put("Rock", 10);
+        oppDeck.put("Draw", 0);
+        oppDeck.put("Land", 36);
+        oppDeck.put("Sol Ring", 1);
+        DeckOptimizerV2 optimizer = new DeckOptimizerV2.Builder()
+                .initial1Cmc(10)
+                .initial2Cmc(15)
+                .initial3Cmc(12)
+                .initial4Cmc(8)
+                .initial5Cmc(5)
+                .initial6Cmc(2)
+                .initialRock(10)
+                .initialDraw(0)
+                .initialLand(36)
+                .commanderCost(4)
+                .manaRockCost(2)
+                .beatOtherMode(false)
+                .oppCommander(5)
+                .oppDecklist(oppDeck)
+                .build();
+
+        optimizer.run();
+        return "";
+    }
+
+    @Override
+    public String optimizeDeck() {
+        return "";
     }
 
     private boolean containsType(Map<String, String> card, String type) {
