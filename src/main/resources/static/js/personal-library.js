@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // This script adds csrf token to htmx requests headers
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        if (token && header) {
+            event.detail.headers[header] = token;
+        }
+    });
+
+
     const clearBtn = document.getElementById("clearBtn");
     clearBtn.addEventListener("click", () => {
         window.location.reload();

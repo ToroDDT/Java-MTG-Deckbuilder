@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MTG Deckbuilder — Card Browser</title>
 
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
   <link rel="preconnect" href="https://rsms.me/">
@@ -79,7 +82,7 @@
             th:hx-get="@{/personal-library/search}"
             id="librarySearchForm"
             hx-sync="this:replace"
-            hx-trigger="input delay:200ms, submit"
+            hx-trigger="input delay:200ms, submit, refreshLibrary from:body"
             hx-target="#personal-cards"
             th:object="${filters}">
 

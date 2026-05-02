@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -115,5 +116,18 @@ public class PersonalLibraryController {
     @ResponseBody
     public String changeCardLocation(@RequestParam String deck, @RequestParam String cardId, @RequestParam String personalCardId,  @AuthenticationPrincipal CustomUserDetails user) {
         return deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId)));
+    }
+
+    @PostMapping("/delete-card")
+    @ResponseBody
+    public String deleteCard(@RequestParam String personalCardId,
+                             HttpServletResponse response,
+                             @AuthenticationPrincipal CustomUserDetails user) {
+
+        personalLibraryService.delete(UUID.fromString(personalCardId), user);
+
+        response.addHeader("HX-Trigger", "refreshLibrary");
+
+        return "";
     }
 }
