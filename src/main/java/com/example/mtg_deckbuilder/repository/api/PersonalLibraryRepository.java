@@ -10,10 +10,17 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface PersonalLibraryRepository {
-    List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters);
-    List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId);
-    void addCardToPersonalLibrary(OwnedCard ownedCard);
-    Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user, List<UUID> cardIds);
-    PersonalLibraryStats getStatsOfPersonalLibrary (CustomUserDetails user);
-    List<String> updateTagsOnCard(String tag, UUID personalCardId, CustomUserDetails user);
+  List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters);
+
+  List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId);
+
+  void addCardToPersonalLibrary(OwnedCard ownedCard);
+
+  Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user, List<UUID> cardIds);
+
+  PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user);
+
+  List<String> updateTagsOnCard(String tag, UUID personalCardId, CustomUserDetails user);
+
+  void delete(CustomUserDetails user, String cardId);
 }

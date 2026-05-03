@@ -101,6 +101,7 @@ public class PersonalLibraryController {
     }
 
     @GetMapping(value = "/update-tags", headers = "hx-request=true")
+    @ResponseBody
     public String addTag(
             @RequestParam String tag,
             @RequestParam String personalCardId,

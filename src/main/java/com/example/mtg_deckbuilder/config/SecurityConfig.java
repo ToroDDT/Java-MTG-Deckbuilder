@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,9 +15,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/index", "/", "/register", "/login", "/css/**", "/js/**").permitAll() // Public paths
+                .requestMatchers("/index", "/", "/register", "/login", "/css/**", "/js/**",  "/swagger-ui/**",
+                        "/v3/api-docs/**").permitAll() // Public paths
                 .anyRequest().authenticated() // Everything else requires login
             )
+                .httpBasic(Customizer.withDefaults())
             .formLogin(form -> form
                 .loginPage("/login")               // Points to your custom GET controller
                 .loginProcessingUrl("/login")      // The POST URL Spring Security handles automatically

@@ -13,14 +13,25 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface PersonalLibraryService {
-    void addCard(OwnedCard ownedCard, UUID userId);
-    List<OwnedCard> getCards(UUID userId);
-    List<OwnedCard> getCards(UUID userId, LibraryFilters personalLibraryFilters);
-    Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId);
-    LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user);
-    LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);
-    Map<UUID, List<String>> getDeckLocationsOfCards (CustomUserDetails user);
-    PersonalLibraryStats getStatsOfPersonalLibrary (CustomUserDetails user);
-    List<Card> getCardQuery(String query);
-    List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user);
+  void addCard(OwnedCard ownedCard, UUID userId);
+
+  List<OwnedCard> getCards(UUID userId);
+
+  List<OwnedCard> getCards(UUID userId, LibraryFilters personalLibraryFilters);
+
+  Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId);
+
+  LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user);
+
+  LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);
+
+  Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user);
+
+  PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user);
+
+  List<Card> getCardQuery(String query);
+
+  List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user);
+
+  void delete(CustomUserDetails user, String cardId);
 }
