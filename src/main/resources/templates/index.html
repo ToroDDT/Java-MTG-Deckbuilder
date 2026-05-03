@@ -1,314 +1,110 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
+<html class="light" lang="en">
+<head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>The Digital Archivist | Professional MTG Deckbuilding</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "secondary": "#495e8a",
-                        "surface-container-low": "#f2f3fd",
-                        "on-background": "#191b23",
-                        "on-secondary-container": "#405682",
-                        "error": "#ba1a1a",
-                        "surface": "#f9f9ff",
-                        "primary-fixed-dim": "#adc6ff",
-                        "surface-bright": "#f9f9ff",
-                        "inverse-primary": "#adc6ff",
-                        "secondary-fixed-dim": "#b1c6f9",
-                        "outline-variant": "#c2c6d6",
-                        "on-primary-fixed-variant": "#004395",
-                        "surface-container-highest": "#e1e2ec",
-                        "secondary-fixed": "#d8e2ff",
-                        "inverse-surface": "#2e3038",
-                        "background": "#f9f9ff",
-                        "on-tertiary-container": "#fffbff",
-                        "surface-dim": "#d8d9e3",
-                        "on-surface-variant": "#424754",
-                        "on-primary": "#ffffff",
-                        "on-tertiary-fixed": "#311400",
-                        "surface-variant": "#e1e2ec",
-                        "tertiary-fixed-dim": "#ffb786",
-                        "primary": "#0058be",
-                        "inverse-on-surface": "#eff0fa",
-                        "on-tertiary": "#ffffff",
-                        "on-secondary-fixed": "#001a42",
-                        "tertiary-fixed": "#ffdcc6",
-                        "on-secondary": "#ffffff",
-                        "secondary-container": "#b6ccff",
-                        "primary-fixed": "#d8e2ff",
-                        "on-primary-fixed": "#001a42",
-                        "on-tertiary-fixed-variant": "#723600",
-                        "surface-tint": "#005ac2",
-                        "error-container": "#ffdad6",
-                        "on-primary-container": "#fefcff",
-                        "outline": "#727785",
-                        "surface-container-lowest": "#ffffff",
-                        "primary-container": "#2170e4",
-                        "on-secondary-fixed-variant": "#304671",
-                        "tertiary": "#924700",
-                        "tertiary-container": "#b75b00",
-                        "surface-container-high": "#e6e7f2",
-                        "on-error": "#ffffff",
-                        "on-surface": "#191b23",
-                        "surface-container": "#ecedf7",
-                        "on-error-container": "#93000a"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "fontFamily": {
-                        "headline": ["Inter"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
-                    }
-                },
-            },
-        }
-    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f9f9ff; }
-        .glass-nav { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        body { font-family: 'Inter', sans-serif; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .text-gradient { background: linear-gradient(135deg, #0058be 0%, #2170e4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="text-on-surface selection:bg-primary/10">
-<!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-[#f9f9ff]/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(25,27,35,0.06)] h-16 flex justify-between items-center px-8 max-w-full mx-auto">
-    <div class="text-xl font-black italic tracking-tighter text-[#0058be]">MTG Deckbuilder</div>
-    <div class="hidden md:flex items-center gap-8">
-        <a class="text-slate-500 font-medium hover:text-[#0058be] font-inter body-md tracking-tight transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] hover:opacity-80 active:scale-95" href="/decks">Decks</a>
-        <a class="text-slate-500 font-medium hover:text-[#0058be] font-inter body-md tracking-tight transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] hover:opacity-80 active:scale-95" href="/personal-library">Personal Cards</a>
-        <a class="text-slate-500 font-medium hover:text-[#0058be] font-inter body-md tracking-tight transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] hover:opacity-80 active:scale-95" href="/personal-library/combos">Combos</a>
-    </div>
-    <div class="flex items-center gap-4">
-        <div class="relative hidden sm:block">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
-            <input class="bg-surface-container-low border-none rounded-full py-1.5 pl-9 pr-4 text-sm w-48 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search cards..." type="text"/>
+
+<body class="bg-[#f9f9ff] text-[#191b23] ">
+
+<main>
+    <section class="relative min-h-[870px] flex flex-col items-center justify-center px-6 text-center overflow-hidden bg-[#f9f9ff]">
+        <div class="fixed top-8 left-8 z-50 select-none">
+            <a href="/" class="group flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform duration-300">
+                    <span class="material-symbols-outlined text-white text-xl">auto_stories</span>
+                </div>
+
+                <span class="text-2xl font-black tracking-tighter bg-gradient-to-r from-blue-500 via-[#2170e4] to-blue-400 bg-clip-text text-transparent transition-all duration-300 group-hover:opacity-80">
+            Farewell
+        </span>
+            </a>
         </div>
-        <button class="material-symbols-outlined text-slate-500 hover:text-primary transition-colors">person</button>
-    </div>
-</nav>
-<main class="pt-16">
-    <!-- Hero Section -->
-    <section class="relative min-h-[870px] flex flex-col items-center justify-center px-6 text-center overflow-hidden bg-surface">
         <div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
-            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/10 blur-[120px] rounded-full"></div>
+            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-gradient-to-br from-[#0058be] to-[#2170e4] blur-[120px] rounded-full opacity-50"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-gradient-to-tr from-[#495e8a] to-[#b6ccff] blur-[120px] rounded-full opacity-50"></div>
         </div>
+
         <div class="relative z-10 max-w-4xl mx-auto">
-            <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-on-background mb-6 leading-none">
-                Build better <span class="text-gradient">decks.</span>
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-[#191b23] mb-6 leading-none">
+                Build better
+                <span class="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+    decks.
+</span>
             </h1>
-            <p class="text-xl md:text-2xl text-on-surface-variant font-light mb-12 max-w-2xl mx-auto leading-relaxed">
-                The most advanced deckbuilding platform for Magic: The Gathering. Professional tools, real-time analytics, and editorial inspiration.
+            <p class="text-xl md:text-2xl text-[#424754] font-light mb-12 max-w-2xl mx-auto leading-relaxed">
+                A deckbuilding platform that seeks to make the deckbuilding process for commander a more engaging and streamlined experience.
             </p>
-        </div>
-    </section>
-    <!-- Feature Section -->
-    <section class="py-24 bg-surface-container-low px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                <div class="max-w-xl">
-                    <span class="label-sm font-bold tracking-[0.2em] text-primary uppercase block mb-4">Core Ecosystem</span>
-                    <h2 class="text-4xl md:text-5xl font-black tracking-tight text-on-background">Pro Deckbuilding Tools</h2>
-                </div>
-                <p class="text-on-surface-variant text-lg max-w-sm">Data-driven insights to optimize your win rate across every format.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Feature Card 1 -->
-                <div class="bg-surface-container-lowest p-10 rounded-xl shadow-[0_20px_40px_rgba(25,27,35,0.06)] group hover:-translate-y-2 transition-transform duration-300">
-                    <div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary transition-colors">
-                        <span class="material-symbols-outlined text-primary text-3xl group-hover:text-white">bar_chart</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-on-background mb-4">Mana Curve Analysis</h3>
-                    <p class="text-on-surface-variant leading-relaxed">Visualizing the backbone of your deck with detailed land-count suggestions and color balance heatmaps.</p>
-                </div>
-                <!-- Feature Card 2 -->
-                <div class="bg-surface-container-lowest p-10 rounded-xl shadow-[0_20px_40px_rgba(25,27,35,0.06)] group hover:-translate-y-2 transition-transform duration-300">
-                    <div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary transition-colors">
-                        <span class="material-symbols-outlined text-primary text-3xl group-hover:text-white">functions</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-on-background mb-4">Probability Calculator</h3>
-                    <p class="text-on-surface-variant leading-relaxed">Hypergeometric distribution tools to calculate the exact odds of hitting your key combos by turn four.</p>
-                </div>
-                <!-- Feature Card 3 -->
-                <div class="bg-surface-container-lowest p-10 rounded-xl shadow-[0_20px_40px_rgba(25,27,35,0.06)] group hover:-translate-y-2 transition-transform duration-300">
-                    <div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary transition-colors">
-                        <span class="material-symbols-outlined text-primary text-3xl group-hover:text-white">payments</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-on-background mb-4">Price Tracking</h3>
-                    <p class="text-on-surface-variant leading-relaxed">Real-time market data integration to find the cheapest versions of your required singles across top vendors.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Visuals Section (Featured Decks) -->
-    <section class="py-24 bg-surface px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-center mb-16">
-                <h2 class="text-4xl font-black tracking-tight">Featured Decks</h2>
-                <a class="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-all" href="#">
-                    Explore Gallery <span class="material-symbols-outlined">arrow_forward</span>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/decks" class="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-bold rounded-full transition-all hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:scale-105 active:scale-95">
+        <span class="flex items-center gap-2">
+            Get Started Building
+            <span class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+        </span>
+                </a>
+                <a href="https://github.com/ToroDDT/Java-MTG-Deckbuilder" target="_blank" class="flex items-center gap-2 px-8 py-4 bg-[#e6e7f2] text-[#191b23] font-semibold rounded-full border border-[#c2c6d6] hover:bg-gradient-to-r hover:from-[#ecedf7] hover:to-[#e1e2ec] transition-all active:scale-95">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    View on GitHub
                 </a>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Deck 1 -->
-                <div class="group relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-[0_20px_40px_rgba(25,27,35,0.06)]">
-                    <div class="aspect-[3/4] relative overflow-hidden">
-                        <img alt="Arcane Mastery" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" data-alt="Abstract mystical fantasy landscape with swirling arcane energy in shades of blue and purple neon highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa44KOyQn3a13bXzC7U4sk5HyPZAxazBj9tATSyjYqkf1Vgf83Ks08B-MlUJTrhm7aNetMICQ1m2oOKYbdiNOic6cRF2-4DmyBIhwoBHEHa-SApVUok6884ACgFePET9VtpTL4Vls3XKECA6xWBZ-dfz8O9aYBifiCSH_sVlexM7xvVQ7zTDi1RYmCMIMGHATrnt-sLcEUS0DTIacnMLLu7qCiEm3hz9Sw3Xm-2EErvrVPyY010DXLGVEfA2qpERsweMUrfsnRwJ8"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex gap-1 mb-3">
-                            <div class="w-4 h-4 bg-blue-500 rounded-full border border-white/20"></div>
-                            <div class="w-4 h-4 bg-white rounded-full border border-slate-200"></div>
-                        </div>
-                        <h4 class="font-bold text-lg mb-1">Azorius Control</h4>
-                        <div class="flex justify-between items-center text-sm text-slate-500">
-                            <span>Pioneer</span>
-                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">visibility</span> 1.2k</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Deck 2 -->
-                <div class="group relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-[0_20px_40px_rgba(25,27,35,0.06)]">
-                    <div class="aspect-[3/4] relative overflow-hidden">
-                        <img alt="Hellspark Fury" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" data-alt="Dark volcanic landscape with flowing lava and jagged black obsidian rocks at night under a red moon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMRvb0hC8styt1_J3dYPKGTQp2oXgeZIF5gWIYtOB9uwq3l8gx5q3azzNhn-7b9wEb1ZDMLNaIr_tfVt-uVoi_Tth4WIzvrLUocvqtG95m_66pqjM3EaKZB1YKjhmwtqkjTU3Bhga28JPsNBOgREz91Ddr3WSXipuUHNGi8Gw_W9w2cDsG-LKgJaXk25I-PTiikjIg02d4F1yLx5dpJvdwidQ0EGFapav-oxRiuWw04gA2uMWu52x0vfLF6-7e_KCuLkAIgC0HsAk"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex gap-1 mb-3">
-                            <div class="w-4 h-4 bg-red-500 rounded-full border border-white/20"></div>
-                        </div>
-                        <h4 class="font-bold text-lg mb-1">Mono Red Burn</h4>
-                        <div class="flex justify-between items-center text-sm text-slate-500">
-                            <span>Standard</span>
-                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">visibility</span> 892</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Deck 3 -->
-                <div class="group relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-[0_20px_40px_rgba(25,27,35,0.06)]">
-                    <div class="aspect-[3/4] relative overflow-hidden">
-                        <img alt="Verdant Growth" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" data-alt="Ancient lush forest with giant glowing mushrooms and magical fireflies illuminating a hidden path" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9HHwvAesuuTkLI5p4rWlg-Z80Fz-vs_UXNo-zHXz64gnf3Z-IXlctmiY5pMgXF4imbT_C5-0opxj0aJDPz4FtaIJm95CyFeA1_6dw8gnVdL8kEtz59qUK_vPxiL22P9mO5rGMk6mBLOmgH3r2WvWFulcIU-qhaXqXLdcP7B7jrmtMIw2En6zjbp0EE0pL-GhHtZLua9VHiPfK1hLeTs2DCJBkx_xGGsK-MZXI8MyROh8tKaR5K5LKYihjno8HoHKrwb9FTONI1aA"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex gap-1 mb-3">
-                            <div class="w-4 h-4 bg-green-500 rounded-full border border-white/20"></div>
-                            <div class="w-4 h-4 bg-black rounded-full border border-white/20"></div>
-                            <div class="w-4 h-4 bg-red-500 rounded-full border border-white/20"></div>
-                        </div>
-                        <h4 class="font-bold text-lg mb-1">Jund Midrange</h4>
-                        <div class="flex justify-between items-center text-sm text-slate-500">
-                            <span>Modern</span>
-                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">visibility</span> 2.5k</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Deck 4 -->
-                <div class="group relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-[0_20px_40px_rgba(25,27,35,0.06)]">
-                    <div class="aspect-[3/4] relative overflow-hidden">
-                        <img alt="Cosmic Balance" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" data-alt="Ethereal cosmic galaxy with swirling nebulae in teal and gold against a deep space backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArA7NDu40OVTPBVQbI9QLpbCcphObgS_vkyPaGkYJCz4f2FDxeW9mCF8-CMu6bi5F3spVFC983f547gU4zgrdHrGBrpDP2--JBqmM4MxPoE_NHwu7xzPE3zLFTtLWb7vIHV_Nq8dcqKuXLdWEzn1W5GtCwKvZ4ko7Q07zeSS1vDYG9rUiG8l-i90UIVQCF88chyguMjfd4Kaq_PXbLyEuCwTvF8skLcwqH8VF2CkvXXl9Z1CJf7U0lJTAKvzKXHh8h-7rgsPQzfLA"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex gap-1 mb-3">
-                            <div class="w-4 h-4 bg-blue-500 rounded-full border border-white/20"></div>
-                            <div class="w-4 h-4 bg-green-500 rounded-full border border-white/20"></div>
-                            <div class="w-4 h-4 bg-red-500 rounded-full border border-white/20"></div>
-                        </div>
-                        <h4 class="font-bold text-lg mb-1">Temur Prowess</h4>
-                        <div class="flex justify-between items-center text-sm text-slate-500">
-                            <span>Commander</span>
-                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">visibility</span> 1.1k</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
-    <!-- Magic Lore/Info Section (Latest Sets) -->
-    <section class="py-24 bg-surface-container px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <span class="label-sm font-bold tracking-[0.2em] text-on-surface-variant uppercase block mb-4">Set Archives</span>
-                <h2 class="text-4xl font-black tracking-tight">Latest Releases</h2>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col items-center justify-center text-center hover:bg-white transition-colors cursor-default">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                        <span class="material-symbols-outlined text-primary text-3xl">search_insights</span>
+
+    <section class="py-24 bg-[#f2f3fd] px-8">
+        <section class="py-24 bg-[#f2f3fd] px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-12 mb-16">
+
+                    <div class="max-w-xl">
+                        <h2 class="text-4xl md:text-6xl font-black tracking-tight text-[#191b23] mb-6">
+                            Your Magic The Gathering Cards All in One Place
+                        </h2>
+                        <p class="text-lg text-[#424754] mb-8">
+                            Brew with your favorite cards with ease, a platform that offers tools to search, catalog, and organize all your MTG cards.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="bg-[#0058be] text-white px-8 py-3 rounded-lg font-bold hover:bg-[#004494] transition-colors">
+                                Get Started
+                            </button>
+                        </div>
                     </div>
-                    <h5 class="font-bold text-sm tracking-tight text-on-background">Murders at Karlov Manor</h5>
-                    <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest">MKM • Feb 2024</p>
-                </div>
-                <div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col items-center justify-center text-center hover:bg-white transition-colors cursor-default">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                        <span class="material-symbols-outlined text-primary text-3xl">explore</span>
+
+                    <div class="w-full md:w-1/2">
+                        <div class="rounded-2xl shadow-2xl overflow-hidden bg-gray-900">
+
+                            <!-- Browser top bar -->
+                            <div class="flex items-center gap-2 px-4 py-2 bg-gray-800">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+
+                            <!-- Image -->
+                            <img
+                                    src="/browser.png"
+                                    alt="Deckbuilding Dashboard"
+                                    class="w-full object-cover transform hover:scale-105 transition-transform duration-500"
+                            />
+
+                        </div>
                     </div>
-                    <h5 class="font-bold text-sm tracking-tight text-on-background">Lost Caverns of Ixalan</h5>
-                    <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest">LCI • Nov 2023</p>
                 </div>
-                <div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col items-center justify-center text-center hover:bg-white transition-colors cursor-default">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                        <span class="material-symbols-outlined text-primary text-3xl">castle</span>
-                    </div>
-                    <h5 class="font-bold text-sm tracking-tight text-on-background">Wilds of Eldraine</h5>
-                    <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest">WOE • Sep 2023</p>
-                </div>
-                <div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col items-center justify-center text-center hover:bg-white transition-colors cursor-default">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                        <span class="material-symbols-outlined text-primary text-3xl">science</span>
-                    </div>
-                    <h5 class="font-bold text-sm tracking-tight text-on-background">Phyrexia: All Will Be One</h5>
-                    <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest">ONE • Feb 2023</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Newsletter / CTA -->
-    <section class="py-24 px-8">
-        <div class="max-w-5xl mx-auto bg-primary text-white rounded-3xl p-12 md:p-20 relative overflow-hidden flex flex-col items-center text-center">
-            <div class="absolute inset-0 opacity-10">
-                <img alt="Background pattern" class="w-full h-full object-cover" data-alt="Subtle geometric network pattern with thin glowing lines connecting nodes on a dark blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDv9eBdQKLOUfquV6H-3iyaZP7X0NupKaW0U3mYtU6rMz3Ss58YOHV9g14Z8k4Ijop6P2I_SadXrH7F06HUzs4Hjshz--oUnkPRUIvV_Mbvbcyyr5MTOOYvgaTOrOWHzL4PEAm3acxyuI_Q2KKOsTsSGunVI37PH9pR9yc3Ao0fs3bsPKYu_-eOCsCUFu7IA5Ez-9JBysnuH7OqqBXIQZqE21JW0HeqgpdwJsqKJxNWvNAGoAM-YgEOx8lBgWFTAVpiO6sbu316vo"/>
-            </div>
-            <div class="relative z-10">
-                <h2 class="text-4xl md:text-5xl font-black mb-6 tracking-tight">Ready to master the meta?</h2>
-                <p class="text-white/80 text-lg mb-10 max-w-xl mx-auto">Join 50,000+ brewers and get weekly decklist breakdowns and price alerts delivered to your inbox.</p>
-                <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto">
-                    <input class="flex-grow h-14 rounded-xl bg-white/10 border-white/20 text-white placeholder:text-white/50 px-6 focus:ring-white/30 focus:bg-white/20 transition-all" placeholder="Email address" type="email"/>
-                    <button class="h-14 px-8 bg-white text-primary font-bold rounded-xl hover:bg-primary-fixed-dim transition-colors">Subscribe</button>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 </div>
             </div>
-        </div>
+        </section>
     </section>
 </main>
-<!-- Footer -->
-<footer class="w-full py-12 px-8 bg-[#ecedf7] flex flex-col md:flex-row justify-between items-center gap-6">
-    <div class="flex flex-col items-center md:items-start gap-2">
-        <div class="text-lg font-bold text-slate-900">The Digital Archivist</div>
-        <p class="text-slate-500 text-xs label-sm tracking-widest uppercase text-center md:text-left max-w-md">© 2024 The Digital Archivist. Magic: The Gathering is TM and copyright Wizards of the Coast.</p>
-    </div>
-    <div class="flex gap-8">
-        <a class="font-inter text-xs label-sm tracking-widest uppercase text-slate-500 hover:text-[#0058be] transition-colors" href="#">Legal</a>
-        <a class="font-inter text-xs label-sm tracking-widest uppercase text-slate-500 hover:text-[#0058be] transition-colors" href="#">Privacy</a>
-        <a class="font-inter text-xs label-sm tracking-widest uppercase text-slate-500 hover:text-[#0058be] transition-colors" href="#">Twitter</a>
-        <a class="font-inter text-xs label-sm tracking-widest uppercase text-slate-500 hover:text-[#0058be] transition-colors" href="#">Discord</a>
-        <a class="font-inter text-xs label-sm tracking-widest uppercase text-slate-500 hover:text-[#0058be] transition-colors" href="#">Support</a>
-    </div>
-</footer>
-</body></html>
+
+</body>
+</html>
