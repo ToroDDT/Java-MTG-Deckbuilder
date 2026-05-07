@@ -16,7 +16,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/index", "/", "/register", "/login", "/css/**", "/js/**",  "/swagger-ui/**",
-                        "/v3/api-docs/**", "/images/**",
+                        "/v3/api-docs/**", "/static/**",
                         "/img/**").permitAll() // Public paths
                 .anyRequest().authenticated() // Everything else requires login
             )
