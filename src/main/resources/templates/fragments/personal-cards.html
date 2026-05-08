@@ -94,7 +94,19 @@
 
                 <div th:id="'cb-card-tags-' + ${card.getId()}" class="cb-card-tags">
                     <th:block th:each="tag, tagStat : ${card.tags}">
-                        <span class="cb-tag" th:text="${tag}" th:if="${tagStat.index} < 4"></span>
+                        <span class="cb-tag"
+                              th:if="${tagStat.index < 4}">
+                            <span th:text="${tag}"></span>
+                            <button class="cb-tag-remove"
+                                    th:attr="hx-post='/remove-tag?tag=' + ${tag} + '&personalCardId=' + ${card.id}"
+                                    hx-trigger="click"
+                                    hx-target="closest .cb-card-tags"
+                                    hx-swap="outerHTML">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </span>
                     </th:block>
                     <span class="cb-tag"
                           th:if="${#lists.size(card.tags)} > 4"
