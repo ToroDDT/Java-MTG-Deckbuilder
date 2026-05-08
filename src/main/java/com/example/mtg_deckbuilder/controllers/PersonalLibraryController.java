@@ -102,7 +102,6 @@ public class PersonalLibraryController {
     }
 
     @GetMapping(value = "/update-tags", headers = "hx-request=true")
-    @ResponseBody
     public String addTag(
             @RequestParam String tag,
             @RequestParam String personalCardId,
@@ -110,6 +109,18 @@ public class PersonalLibraryController {
             Model model) {
 
         List<String> tags = personalLibraryService.updateCardTags(tag, personalCardId, user);
+        model.addAttribute("card", new CardTagsViewModel(personalCardId, tags));
+        return "fragments/tags :: tags";
+    }
+
+    @PostMapping(value = "/remove-tag", headers = "hx-request=true")
+    public String removeTag(
+            @RequestParam String tag,
+            @RequestParam String personalCardId,
+            @AuthenticationPrincipal CustomUserDetails user,
+            Model model) {
+
+        List<String> tags = personalLibraryService.removeCardTag(tag, personalCardId, user);
         model.addAttribute("card", new CardTagsViewModel(personalCardId, tags));
         return "fragments/tags :: tags";
     }

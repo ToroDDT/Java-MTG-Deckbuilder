@@ -22,5 +22,7 @@ public interface PersonalLibraryRepository {
 
   List<String> updateTagsOnCard(String tag, UUID personalCardId, CustomUserDetails user);
 
+  List<String> deleteTagFromCard(String tag, UUID personalCardId, CustomUserDetails user);
+
   void delete(CustomUserDetails user, String cardId);
 }

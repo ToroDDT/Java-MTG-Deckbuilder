@@ -41,6 +41,11 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   }
 
   @Override
+  public List<String> removeCardTag(String tag, String personalCardId, CustomUserDetails user) {
+    return personalLibraryRepository.deleteTagFromCard(tag, UUID.fromString(personalCardId), user);
+  }
+
+  @Override
   public List<Card> getCardQuery(String query) {
     return query.isEmpty()
         ? List.of()
