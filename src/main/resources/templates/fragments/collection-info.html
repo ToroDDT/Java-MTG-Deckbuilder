@@ -10,9 +10,12 @@
   <!-- Spacer so page content isn't hidden behind the bar -->
   <div class="h-20"></div>
 
-  <div id="stickyStatsBar"
-       class="fixed bottom-0 left-0 right-0 z-[500] border-t border-[#e2e8f8] rounded-md"
-       style="background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 -4px 28px rgba(37,99,235,0.10);">
+<div id="stickyStatsBar"
+     hx-get="/personal-library/info"
+     hx-trigger="refreshStats from:body"
+     hx-swap="outerHTML"
+     class="fixed bottom-0 left-0 right-0 z-[500] border-t border-[#e2e8f8] rounded-md"
+     style="background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 -4px 28px rgba(37,99,235,0.10);">
 
     <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 flex items-center gap-3 md:gap-4">
 

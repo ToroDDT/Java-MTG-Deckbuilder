@@ -125,7 +125,7 @@ public class PersonalLibraryController {
                              @AuthenticationPrincipal CustomUserDetails user) {
 
         personalLibraryService.delete(user, personalCardId);
-        response.addHeader("HX-Trigger", "refreshLibrary");
+        response.addHeader("HX-Trigger", "refreshStats");
 
         return "";
     }

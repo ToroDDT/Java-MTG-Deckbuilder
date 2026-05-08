@@ -39,6 +39,8 @@
                     <button
                             th:attr="hx-post='/delete-card?personalCardId=' + ${card.getId()}"
                             hx-trigger="click"
+                            hx-target="closest .cb-card"
+                            hx-swap="outerHTML swap:150ms"
                             class="flex items-center justify-center w-6 h-6 bg-white border border-blue-200 rounded-md text-blue-600 hover:bg-blue-50 hover:border-blue-600 transition-colors duration-200 active:scale-90 group focus:outline-none focus:ring-2 focus:ring-blue-400"
                     >
                         <svg

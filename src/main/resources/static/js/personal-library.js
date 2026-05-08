@@ -48,11 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.body.addEventListener("htmx:afterSwap", function(evt) {
         const target = evt.detail.target;
-        if (!target || target.id !== "personal-cards") {
+        if (!target) {
             return;
         }
-
-        updateVisibleCardCounts();
+        if (target.id === "personal-cards" || target.classList.contains("cb-card")) {
+            updateVisibleCardCounts();
+        }
     });
 
     document.body.addEventListener("click", function(evt) {
@@ -95,17 +96,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('htmx:afterSwap', (evt) => {
         const target = evt.detail.target;
-        if (!target || target.id !== "personal-cards") {
+        if (!target) {
             return;
         }
 
-        const prevButton = document.getElementById('prevBtn');
-        if (prevButton) {
-            const currentPage = parseInt(document.getElementById('page')?.value ?? '0', 10) || 0;
-            prevButton.disabled = currentPage === 0;
+        if (target.id === "personal-cards") {
+            const prevButton = document.getElementById('prevBtn');
+            if (prevButton) {
+                const currentPage = parseInt(document.getElementById('page')?.value ?? '0', 10) || 0;
+                prevButton.disabled = currentPage === 0;
+            }
         }
 
-        updateVisibleCardCounts();
+        if (target.id === "personal-cards" || target.classList.contains("cb-card")) {
+            updateVisibleCardCounts();
+        }
     });
 
 
