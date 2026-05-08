@@ -10,7 +10,7 @@
 ![hyde_banner](Source/assets/hyde_banner.png)
 
 <div align="center">
-  <h1 style="background: linear-gradient(135deg, #2563eb 0%, #6366f1 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 3rem; font-weight: 900;">Farewell</h1>
+  <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=50&pause=1000&color=2563EB&center=true&vCenter=true&width=500&height=100&lines=Farewell" alt="Farewell" />
   <p>Modern MTG Deck Builder & Collection Manager</p>
 </div>
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
