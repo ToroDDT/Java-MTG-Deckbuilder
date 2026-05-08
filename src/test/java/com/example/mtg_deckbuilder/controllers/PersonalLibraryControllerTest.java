@@ -164,6 +164,23 @@ class PersonalLibraryControllerTest {
     }
 
     @Test
+    void cardLocationWithBlankDeckRemovesAssignment() throws Exception {
+        UUID cardId = UUID.randomUUID();
+        UUID personalCardId = UUID.randomUUID();
+
+        mockMvc.perform(get("/card/location")
+                        .with(authenticationToken())
+                        .header("HX-Request", "true")
+                        .param("deck", "")
+                        .param("cardId", cardId.toString())
+                        .param("personalCardId", personalCardId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string("None"));
+
+        verify(deckService).removePersonalLibraryCardFromDeck(any(CustomUserDetails.class), eq(personalCardId));
+    }
+
+    @Test
     void personalLibraryInfoReturnsStatsFragment() throws Exception {
         when(personalLibraryService.getStatsOfPersonalLibrary(any(CustomUserDetails.class)))
                 .thenReturn(new PersonalLibraryStats(42.0, Map.of(ColorIdentity.COLORLESS, 2L), 2, 21.0));

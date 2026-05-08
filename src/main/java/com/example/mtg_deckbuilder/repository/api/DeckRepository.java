@@ -6,6 +6,7 @@ import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface DeckRepository {
     void createNewDeckEntry(NewDeck newDeck);
@@ -15,4 +16,6 @@ public interface DeckRepository {
     List<String> getDeckNames(CustomUserDetails user);
 
     void addCard(CardEntry request);
+
+    void removeDeckEntryByPersonalLibraryCardId(CustomUserDetails user, UUID personalLibraryCardId);
 }

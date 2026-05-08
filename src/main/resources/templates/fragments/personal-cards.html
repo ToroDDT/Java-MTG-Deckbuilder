@@ -79,15 +79,18 @@
         </span>
 
                 <div class="flex">
-                    <label class="cb-card-type" for="deck">Add to a Deck:</label>
-                    <select class="cb-card-type" name="deck" id="deck"
+                    <label class="cb-card-type" th:for="'deck-select-' + ${card.getId()}">Add to a Deck:</label>
+                    <select class="cb-card-type" name="deck"
+                            th:id="'deck-select-' + ${card.getId()}"
                             th:attr="hx-get='/card/location?cardId=' + ${card.getCard().getId()} + '&personalCardId=' + ${card.getId()},
                  hx-target='#located-in-' + ${card.getId()}"
                             hx-trigger="change"
                             hx-include="this">
-                        <option th:each="deck : ${libraryView.deckNames}"
-                                th:value="${deck}"
-                                th:text="${deck}">Default Text</option>
+                        <option value="">None</option>
+                        <option th:each="deckName : ${libraryView.deckNames}"
+                                th:value="${deckName}"
+                                th:text="${deckName}"
+                                th:selected="${card.deckLocations != null && !#lists.isEmpty(card.deckLocations) && #lists.contains(card.deckLocations, deckName)}">Deck</option>
                     </select>
                 </div>
                 <div class="cb-card-type" th:text="${card.getCard().getTypeLine()}">Type</div>

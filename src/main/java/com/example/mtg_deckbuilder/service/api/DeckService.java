@@ -17,4 +17,6 @@ public interface DeckService {
     List<Deck> getDecks(CustomUserDetails user);
     Map<?, ?> getDecks(CustomUserDetails user , DeckSearchCriteria deckSearchCriteria);
     List<String> getDeckNames(CustomUserDetails user);
+
+    void removePersonalLibraryCardFromDeck(CustomUserDetails user, UUID personalLibraryCardId);
 }

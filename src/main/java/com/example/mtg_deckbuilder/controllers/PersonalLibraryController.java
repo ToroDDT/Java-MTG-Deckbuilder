@@ -126,8 +126,18 @@ public class PersonalLibraryController {
 
     @GetMapping(value = "/card/location", headers = "hx-request=true")
     @ResponseBody
-    public String changeCardLocation(@RequestParam String deck, @RequestParam String cardId, @RequestParam String personalCardId,  @AuthenticationPrincipal CustomUserDetails user) {
-        return deckService.addCard(user, HtmlUtils.htmlEscape(deck),UUID.fromString( HtmlUtils.htmlEscape(cardId)), UUID.fromString(HtmlUtils.htmlEscape(personalCardId)));
+    public String changeCardLocation(
+            @RequestParam(required = false) String deck,
+            @RequestParam String cardId,
+            @RequestParam String personalCardId,
+            @AuthenticationPrincipal CustomUserDetails user) {
+        UUID resolvedCardId = UUID.fromString(HtmlUtils.htmlEscape(cardId));
+        UUID resolvedPersonalCardId = UUID.fromString(HtmlUtils.htmlEscape(personalCardId));
+        if (deck == null || deck.isBlank()) {
+            deckService.removePersonalLibraryCardFromDeck(user, resolvedPersonalCardId);
+            return "None";
+        }
+        return deckService.addCard(user, HtmlUtils.htmlEscape(deck.trim()), resolvedCardId, resolvedPersonalCardId);
     }
 
     @PostMapping("/delete-card")
