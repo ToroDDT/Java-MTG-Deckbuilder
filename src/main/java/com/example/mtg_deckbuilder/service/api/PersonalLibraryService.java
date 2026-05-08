@@ -17,6 +17,8 @@ public interface PersonalLibraryService {
 
   List<OwnedCard> getCards(UUID userId);
 
+  List<OwnedCard> getCardsPaginated(UUID userId);
+
   List<OwnedCard> getCards(UUID userId, LibraryFilters personalLibraryFilters);
 
   Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId);

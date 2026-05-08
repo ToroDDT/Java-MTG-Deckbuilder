@@ -14,6 +14,8 @@ public interface PersonalLibraryRepository {
 
   List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId);
 
+  List<OwnedCard> getAllPersonalLibraryCardsForUserPaginated(UUID userId);
+
   void addCardToPersonalLibrary(OwnedCard ownedCard);
 
   Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user, List<UUID> cardIds);

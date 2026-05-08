@@ -126,7 +126,7 @@ class PersonalLibraryServiceImplTest {
         OwnedCard second = ownedCard("Arcane Signet", 1.5, secondOwnedId);
         second.setDateAdded(LocalDate.of(2026, 4, 2));
 
-        when(personalLibraryRepository.getAllPersonalLibraryCardsForUser(user.getId()))
+        when(personalLibraryRepository.getAllPersonalLibraryCardsForUserPaginated(user.getId()))
                 .thenReturn(List.of(first, second));
         when(personalLibraryRepository.getDeckLocationsOfCards(user, List.of(firstOwnedId, secondOwnedId)))
                 .thenReturn(Map.of(
