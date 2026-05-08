@@ -92,7 +92,8 @@ class PersonalLibraryControllerTest {
         mockMvc.perform(get("/personal-library/search")
                         .with(authenticationToken())
                         .header("HX-Request", "true")
-                        .param("cardName", "Sol"))
+                        .param("cardName", "Sol")
+                        .param("tagSearch", "ramp, recursion"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("fragments/personal-cards :: personal-cards"))
                 .andExpect(model().attributeExists("libraryView"));

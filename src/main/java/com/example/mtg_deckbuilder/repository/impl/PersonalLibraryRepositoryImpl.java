@@ -174,6 +174,17 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             ? ""
             : "AND cards.color_identity @> ?::text[] AND ?::text[] @> cards.color_identity ";
 
+    var tagTokens = personalLibraryFilters.tagSearchTokens();
+    boolean hasTagSearch = !tagTokens.isEmpty();
+    String tagFilter = tagTokens.stream()
+            .map(token -> """
+            AND EXISTS (
+              SELECT 1
+              FROM unnest(COALESCE(personal_collection_library.tags, ARRAY[]::text[])) AS tag_row(tag_value)
+              WHERE tag_value ILIKE ?
+            )\s""")
+            .collect(Collectors.joining());
+
     String sql = """
          SELECT\s
              personal_collection_library.id AS personal_library_id,
@@ -200,12 +211,13 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
          %s
          %s
          %s
+         %s
          AND cards.cmc BETWEEN ? AND ?
          ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC 
          %s
         \s""";
 
-    sql = String.format(sql, nameFilter, typeFilter, colorFilter, limitClause);
+    sql = String.format(sql, nameFilter, typeFilter, colorFilter, tagFilter, limitClause);
 
     List<Object> args = new ArrayList<>();
     args.add(userId);
@@ -221,6 +233,9 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
       String[] colorsArray = personalLibraryFilters.getSelectedColors().toArray(new String[0]);
       args.add(colorsArray);
       args.add(colorsArray);
+    }
+    for (String token : tagTokens) {
+      args.add("%" + token + "%");
     }
 
     args.add(personalLibraryFilters.getMinCMC());
