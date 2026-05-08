@@ -100,6 +100,19 @@ class PersonalLibraryServiceImplTest {
     }
 
     @Test
+    void removeCardTagDelegatesUsingPersonalCardId() {
+        UUID personalCardId = UUID.randomUUID();
+        CustomUserDetails user = testUser();
+        when(personalLibraryRepository.deleteTagFromCard("Ramp", personalCardId, user))
+                .thenReturn(List.of("Staple"));
+
+        List<String> tags = personalLibraryService.removeCardTag("Ramp", personalCardId.toString(), user);
+
+        assertEquals(List.of("Staple"), tags);
+        verify(personalLibraryRepository).deleteTagFromCard("Ramp", personalCardId, user);
+    }
+
+    @Test
     void getCardsSortsByPriceDescending() {
         LibraryFilters filters = new LibraryFilters();
         filters.setSortBy(SortOptions.PRICE_DESC);

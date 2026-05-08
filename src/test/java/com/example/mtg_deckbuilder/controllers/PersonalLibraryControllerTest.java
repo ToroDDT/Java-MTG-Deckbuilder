@@ -129,6 +129,23 @@ class PersonalLibraryControllerTest {
     }
 
     @Test
+    void removeTagReturnsTagsFragment() throws Exception {
+        UUID personalCardId = UUID.randomUUID();
+        when(personalLibraryService.removeCardTag(eq("Ramp"), eq(personalCardId.toString()), any(CustomUserDetails.class)))
+                .thenReturn(List.of("Staple"));
+
+        mockMvc.perform(post("/remove-tag")
+                        .with(authenticationToken())
+                        .with(csrf())
+                        .header("HX-Request", "true")
+                        .param("tag", "Ramp")
+                        .param("personalCardId", personalCardId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("fragments/tags :: tags"))
+                .andExpect(model().attributeExists("card"));
+    }
+
+    @Test
     void cardLocationReturnsDeckNameBody() throws Exception {
         UUID cardId = UUID.randomUUID();
         UUID personalCardId = UUID.randomUUID();

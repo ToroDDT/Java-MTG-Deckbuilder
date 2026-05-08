@@ -70,6 +70,7 @@
                            th:attr="hx-get='/update-tags?personalCardId=' + ${card.getId()},
                            hx-target='#cb-card-tags-' + ${card.getId()}"
                            hx-trigger="keydown[key=='Enter']"
+                           hx-on:htmx:after-request="if(event.detail.successful) this.value = ''"
                            hx-include="this"/>
                 </div>
                 <span class="cb-card-type">Located in:
