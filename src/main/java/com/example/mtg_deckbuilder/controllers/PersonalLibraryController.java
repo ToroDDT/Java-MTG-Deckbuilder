@@ -112,6 +112,18 @@ public class PersonalLibraryController {
         return "fragments/tags :: tags";
     }
 
+    @PostMapping(value = "/remove-tag", headers = "hx-request=true")
+    public String removeTag(
+            @RequestParam String tag,
+            @RequestParam String personalCardId,
+            @AuthenticationPrincipal CustomUserDetails user,
+            Model model) {
+
+        List<String> tags = personalLibraryService.removeCardTag(tag, personalCardId, user);
+        model.addAttribute("card", new CardTagsViewModel(personalCardId, tags));
+        return "fragments/tags :: tags";
+    }
+
     @GetMapping(value = "/card/location", headers = "hx-request=true")
     @ResponseBody
     public String changeCardLocation(@RequestParam String deck, @RequestParam String cardId, @RequestParam String personalCardId,  @AuthenticationPrincipal CustomUserDetails user) {

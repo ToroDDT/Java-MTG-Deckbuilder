@@ -75,6 +75,17 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
   }
 
   @Override
+  public List<String> deleteTagFromCard(String tag, UUID personalCardId, CustomUserDetails user) {
+    String sql = """
+        UPDATE personal_collection_library
+        SET tags = array_remove(tags, ?)
+        WHERE id = ? AND user_id = ?
+        """;
+    jdbcTemplate.update(sql, tag, personalCardId, user.getId());
+    return getUpdatedCardTags(personalCardId, user);
+  }
+
+  @Override
   public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId) {
     String sql = """
          SELECT\s

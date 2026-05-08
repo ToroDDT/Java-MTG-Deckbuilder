@@ -35,5 +35,7 @@ public interface PersonalLibraryService {
 
   List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user);
 
+  List<String> removeCardTag(String tag, String personalCardId, CustomUserDetails user);
+
   void delete(CustomUserDetails user, String cardId);
 }
