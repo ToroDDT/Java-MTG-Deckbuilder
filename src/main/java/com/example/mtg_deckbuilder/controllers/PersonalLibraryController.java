@@ -87,7 +87,6 @@ public class PersonalLibraryController {
                                            @AuthenticationPrincipal CustomUserDetails user,
                                            @RequestHeader(value = "HX-Request", required = false) String hxRequest,
                                            Model model) {
-
         personalLibraryService.addCard(ownedCard, user.getId());
 
         if (hxRequest != null) {

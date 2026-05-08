@@ -83,6 +83,19 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   }
 
   @Override
+  public List<OwnedCard> getCardsPaginated(UUID userId) {
+    return personalLibraryRepository
+        .getAllPersonalLibraryCardsForUserPaginated(userId)
+        .stream()
+        .peek(ownedCard -> {
+          if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
+            ownedCard.setTags(List.of());
+          }
+        })
+        .toList();
+  }
+
+  @Override
   public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
 
     SortOptions sortBy = personalLibraryFilters.getSortBy();
@@ -110,13 +123,13 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
 
   @Override
   public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId) {
-    var cardsFuture = CompletableFuture.supplyAsync(() -> this.getCards(userId.getId()));
+    var cardsFuture = CompletableFuture.supplyAsync(() -> this.getCardsPaginated(userId.getId()));
 
     var deckNamesFuture = CompletableFuture.supplyAsync(() -> getDeckNames(userId));
 
     var cards = cardsFuture.join();
     hydrateDeckLocations(userId, cards);
-    var lastCard = cards.getLast().getDateAdded();
+    var lastCard = cards.isEmpty() ? null : cards.getLast().getDateAdded();
 
     var deckNames = deckNamesFuture.join();
     // Calculate total value

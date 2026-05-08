@@ -86,6 +86,37 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
 
   @Override
   public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId) {
+    String sql = """
+         SELECT\s
+             personal_collection_library.id AS personal_library_id,
+             personal_collection_library.user_id,
+             personal_collection_library.date_added,
+             personal_collection_library.updated_at,
+             personal_collection_library.tags,
+             cards.id AS card_id,
+             cards.name,
+             cards.type_line,
+             cards.toughness,
+             cards.power,
+             cards.artist,
+             cards.cmc,
+             cards.scryfall_uri,
+             cards.color_identity,
+             cards.multiverse_ids,
+             cards.image_uris,
+             cards.prices
+         FROM cards
+         INNER JOIN personal_collection_library\s
+             ON personal_collection_library.card_id = cards.id
+         WHERE personal_collection_library.user_id = ?
+         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC \s
+        \s""";
+
+    return jdbcTemplate.query(sql, ownedCardRowMapper, userId);
+  }
+
+  @Override
+  public List<OwnedCard> getAllPersonalLibraryCardsForUserPaginated(UUID userId) {
     var pageSize = 12;
 
     String sql = """
@@ -275,7 +306,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
          INNER JOIN personal_collection_library\s
              ON personal_collection_library.card_id = cards.id
          WHERE personal_collection_library.user_id = ?
-         ORDER BY personal_collection_library.date_added , personal_collection_library.id\s
+         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC \s
         \s""";
 
     List<OwnedCard> cards = jdbcTemplate.query(sql, ownedCardRowMapper, user.getId());
