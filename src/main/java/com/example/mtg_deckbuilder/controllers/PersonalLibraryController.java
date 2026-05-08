@@ -138,7 +138,6 @@ public class PersonalLibraryController {
 
         personalLibraryService.delete(user, personalCardId);
         response.addHeader("HX-Trigger", "refreshStats");
-
         return "";
     }
 }

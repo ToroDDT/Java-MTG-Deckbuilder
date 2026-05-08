@@ -39,7 +39,6 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             .param("userId", user.getId())
             .update();
   }
-
   private List<String> getUpdatedCardTags(UUID personalCardId, CustomUserDetails user) {
     String sql = """
         SELECT tags
@@ -202,7 +201,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
          %s
          %s
          AND cards.cmc BETWEEN ? AND ?
-         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC
+         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC 
          %s
         \s""";
 
