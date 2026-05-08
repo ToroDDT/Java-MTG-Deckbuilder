@@ -32,7 +32,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
 
   @Override
   public void delete(CustomUserDetails user, String cardId) {
-    System.out.println("deleting card " + cardId);
+    personalLibraryRepository.delete(user, cardId);
   }
 
   @Override

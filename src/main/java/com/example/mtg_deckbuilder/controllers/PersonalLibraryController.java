@@ -83,7 +83,7 @@ public class PersonalLibraryController {
 
 
     @PostMapping("/personal-library/add")
-    public String addCardToPersonalLibrary(@ModelAttribute("ownedCard") OwnedCard ownedCard,
+    public String addCardToPersonalLibrary(@ModelAttribute("ownedCard") OwnedCard ownedCard, HttpServletResponse response,
                                            @AuthenticationPrincipal CustomUserDetails user,
                                            @RequestHeader(value = "HX-Request", required = false) String hxRequest,
                                            Model model) {
@@ -91,6 +91,7 @@ public class PersonalLibraryController {
         personalLibraryService.addCard(ownedCard, user.getId());
 
         if (hxRequest != null) {
+            response.addHeader("HX-Trigger", "refreshLibrary");
             model.addAttribute("query", "");
             model.addAttribute("cards", java.util.List.of());
             model.addAttribute("message", ownedCard.getName() + " added to your library.");
@@ -125,9 +126,8 @@ public class PersonalLibraryController {
                              HttpServletResponse response,
                              @AuthenticationPrincipal CustomUserDetails user) {
 
-
+        personalLibraryService.delete(user, personalCardId);
         response.addHeader("HX-Trigger", "refreshLibrary");
-
         return "";
     }
 }
