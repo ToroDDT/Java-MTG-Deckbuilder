@@ -11,12 +11,16 @@ import { minify } from "terser";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const staticDir = path.join(rootDir, "src/main/resources/static");
+const nodeModulesDir = path.join(rootDir, "node_modules");
 
 const args = new Set(process.argv.slice(2));
 const cssOnly = args.has("--css");
 const jsOnly = args.has("--js");
 
 const cssBundles = {
+  "css/tailwind.min.css": [
+    "css/main.css",
+  ],
   "css/site.min.css": [
     "css/main.css",
     "css/style.css",
@@ -31,13 +35,16 @@ const cssBundles = {
     "css/decks.css",
   ],
   "css/builder.min.css": [
+    "css/main.css",
     "css/builder.css",
     "css/personal-library.css",
   ],
   "css/combos.min.css": [
+    "css/main.css",
     "css/combos.css",
   ],
   "css/login.min.css": [
+    "css/main.css",
     "css/login.css",
   ],
   "css/dashboard.min.css": [
@@ -55,15 +62,16 @@ const jsBundles = {
     "js/combos.js",
     "js/personal-library.js",
   ],
-  "js/builder-tailwind-config.min.js": [
-    "js/builder-tailwind-config.js",
-  ],
   "js/deck-builder.min.js": [
     "js/deck-builder.js",
   ],
   "js/chart.min.js": [
     "js/chart.js",
   ],
+};
+
+const vendorAssets = {
+  "js/htmx.min.js": "htmx.org/dist/htmx.min.js",
 };
 
 async function readStaticFile(file) {
@@ -118,6 +126,12 @@ async function buildJsBundle(output, inputs) {
   return result.code.length;
 }
 
+async function copyVendorAsset(output, input) {
+  const source = await fs.readFile(path.join(nodeModulesDir, input), "utf8");
+  await writeStaticFile(output, source);
+  return source.length;
+}
+
 async function main() {
   if (!jsOnly) {
     for (const [output, inputs] of Object.entries(cssBundles)) {
@@ -127,6 +141,11 @@ async function main() {
   }
 
   if (!cssOnly) {
+    for (const [output, input] of Object.entries(vendorAssets)) {
+      const bytes = await copyVendorAsset(output, input);
+      console.log(`js  ${output} ${bytes} bytes`);
+    }
+
     for (const [output, inputs] of Object.entries(jsBundles)) {
       const bytes = await buildJsBundle(output, inputs);
       console.log(`js  ${output} ${bytes} bytes`);
