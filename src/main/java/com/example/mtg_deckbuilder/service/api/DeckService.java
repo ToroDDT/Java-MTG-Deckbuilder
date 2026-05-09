@@ -19,4 +19,6 @@ public interface DeckService {
     List<String> getDeckNames(CustomUserDetails user);
 
     void removePersonalLibraryCardFromDeck(CustomUserDetails user, UUID personalLibraryCardId);
+
+    void removeDeckEntry(CustomUserDetails user, UUID deckId, UUID deckEntryId);
 }

@@ -18,4 +18,6 @@ public interface DeckRepository {
     void addCard(CardEntry request);
 
     void removeDeckEntryByPersonalLibraryCardId(CustomUserDetails user, UUID personalLibraryCardId);
+
+    void removeDeckEntry(CustomUserDetails user, UUID deckId, UUID deckEntryId);
 }

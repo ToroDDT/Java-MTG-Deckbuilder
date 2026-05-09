@@ -179,7 +179,6 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
         .build();
   }
 
-  @Override
   public Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user) {
     var cards = personalLibraryRepository.getAllPersonalLibraryCardsForUser(user.getId())
         .stream()

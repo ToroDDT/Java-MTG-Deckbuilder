@@ -69,6 +69,11 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
+    public void removeDeckEntry(CustomUserDetails user, UUID deckId, UUID deckEntryId) {
+        deckRepository.removeDeckEntry(user, deckId, deckEntryId);
+    }
+
+    @Override
     public Map<Deck, List<String>> getDecks(CustomUserDetails user, DeckSearchCriteria deckSearchCriteria) {
         Map<Deck, List<String>> finalDecks = new LinkedHashMap<>();
 

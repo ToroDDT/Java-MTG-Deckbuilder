@@ -100,7 +100,7 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Avg CMC: 3.2</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.creatures}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
@@ -120,7 +120,7 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Interaction</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.instants}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
@@ -140,7 +140,7 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.sorceries}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
@@ -160,7 +160,7 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.enchantments}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
@@ -180,7 +180,7 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.artifacts}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
@@ -200,7 +200,7 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Core Foundation</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.lands}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
@@ -436,6 +436,38 @@
 </div>
 
 <script>
+    document.addEventListener('click', function (event) {
+        var toggle = event.target.closest('.builder-card-actions-toggle');
+        var insideActions = event.target.closest('.builder-card-actions-drop');
+        var openDrops = document.querySelectorAll('.builder-card-actions-drop');
+
+        if (insideActions) {
+            return;
+        }
+
+        if (toggle) {
+            var drop = toggle.nextElementSibling;
+            var isOpen = drop && drop.innerHTML.trim().length > 0;
+
+            openDrops.forEach(function (openDrop) {
+                if (openDrop !== drop) {
+                    openDrop.innerHTML = '';
+                }
+            });
+
+            if (isOpen) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                drop.innerHTML = '';
+            }
+            return;
+        }
+
+        openDrops.forEach(function (drop) {
+            drop.innerHTML = '';
+        });
+    }, true);
+
     document.addEventListener('htmx:configRequest', function (event) {
         var csrfMeta = document.querySelector('meta[name="_csrf"]');
         var hdrMeta = document.querySelector('meta[name="_csrf_header"]');

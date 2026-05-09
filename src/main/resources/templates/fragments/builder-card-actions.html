@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="actionsPanel">
+    <div class="w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+        <div class="border-b border-slate-100 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+            Delete
+        </div>
+        <button type="button"
+                class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+                th:attr="hx-post=@{/builder/deck/{d}/deck-entry/{e}/delete(d=${deckId},e=${deckEntryId})}"
+                hx-trigger="click"
+                hx-target="closest .builder-deck-card-row"
+                hx-swap="outerHTML">
+            <span class="material-symbols-outlined text-[17px] leading-none">delete</span>
+            <span>Delete card</span>
+        </button>
+    </div>
+</th:block>
+
+</body>
+</html>

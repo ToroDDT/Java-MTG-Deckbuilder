@@ -116,4 +116,21 @@ public class DeckRepositoryImpl implements DeckRepository {
                 .param("personalLibraryCardId", personalLibraryCardId)
                 .update();
     }
+
+    @Override
+    public void removeDeckEntry(CustomUserDetails user, UUID deckId, UUID deckEntryId) {
+        String sql = """
+                DELETE FROM deck_card_entries AS dce
+                USING decks AS d
+                WHERE dce.deck_id = d.id
+                  AND d.user_id = :userId
+                  AND d.id = :deckId
+                  AND dce.id = :deckEntryId
+                """;
+        jdbcClient.sql(sql)
+                .param("userId", user.getId())
+                .param("deckId", deckId)
+                .param("deckEntryId", deckEntryId)
+                .update();
+    }
 }
