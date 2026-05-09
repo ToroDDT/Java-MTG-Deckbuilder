@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class BuilderController {
@@ -19,10 +20,8 @@ public class BuilderController {
         this.builderService = builderService;
     }
 
-    // 1. Add {id} to the mapping path
     @GetMapping("/builder/deck/{id}")
     public String getDeck(@AuthenticationPrincipal CustomUserDetails user, Model model, @PathVariable("id") String deckId) {
-        System.out.println(deckId);
         var userName = user.getUsername();
         var view = builderService.getBuilderView(deckId);
 
@@ -32,5 +31,17 @@ public class BuilderController {
         model.addAttribute("userName", userName);
 
         return "builder";
+    }
+
+    @GetMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/hover", headers = "HX-Request=true")
+    public String deckEntryHover(
+            @AuthenticationPrincipal CustomUserDetails user,
+            Model model,
+            @PathVariable("deckId") String deckIdStr,
+            @PathVariable("deckCardEntryId") String deckCardEntryIdStr) {
+        var hoverOpt = builderService.getDeckEntryHover(
+                user, UUID.fromString(deckIdStr), UUID.fromString(deckCardEntryIdStr));
+        model.addAttribute("hover", hoverOpt.orElse(null));
+        return "fragments/builder-card-hover :: hoverPanel";
     }
 }

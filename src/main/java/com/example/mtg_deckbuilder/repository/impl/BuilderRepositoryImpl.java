@@ -1,12 +1,17 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
+import com.example.mtg_deckbuilder.model.ImageUris;
 import com.example.mtg_deckbuilder.model.Prices;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
+import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 @Repository
@@ -20,15 +25,78 @@ public class BuilderRepositoryImpl implements BuilderRepository {
     }
 
     @Override
+    public Optional<BuilderCardHoverView> findDeckEntryHover(UUID userId, UUID deckId, UUID deckCardEntryId) {
+        String sql = """
+                SELECT\s
+                  cards.name AS card_name,\s
+                  cards.image_uris,\s
+                  pcl.tags\s
+                FROM deck_card_entries dce\s
+                INNER JOIN decks d ON d.id = dce.deck_id AND d.user_id = :userId AND d.id = :deckId\s
+                INNER JOIN cards ON cards.id = dce.card_id\s
+                LEFT JOIN personal_collection_library pcl ON pcl.id = dce.personal_library_card_id\s
+                WHERE dce.id = :dceId\s
+                """;
+        return jdbcClient.sql(sql)
+                .param("userId", userId)
+                .param("deckId", deckId)
+                .param("dceId", deckCardEntryId)
+                .query(this::mapHoverRow)
+                .optional();
+    }
+
+    private BuilderCardHoverView mapHoverRow(ResultSet rs, int rowNum) throws SQLException {
+        String name = rs.getString("card_name");
+        String imageUrl = largeImageUrlFrom(rs.getString("image_uris"));
+        List<String> tags = tagsFromRs(rs.getArray("tags"));
+        return new BuilderCardHoverView(name, imageUrl, tags);
+    }
+
+    private static List<String> tagsFromRs(Array sqlArray) throws SQLException {
+        if (sqlArray == null) {
+            return List.of();
+        }
+        try {
+            String[] raw = (String[]) sqlArray.getArray();
+            if (raw == null || raw.length == 0) {
+                return List.of();
+            }
+            return List.copyOf(Arrays.asList(raw));
+        } finally {
+            sqlArray.free();
+        }
+    }
+
+    private String largeImageUrlFrom(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            ImageUris u = objectMapper.readValue(raw, ImageUris.class);
+            if (u.getLarge() != null && !u.getLarge().isBlank()) {
+                return u.getLarge();
+            }
+            if (u.getNormal() != null && !u.getNormal().isBlank()) {
+                return u.getNormal();
+            }
+            if (u.getPng() != null && !u.getPng().isBlank()) {
+                return u.getPng();
+            }
+            return u.getBorderCrop();
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
+    @Override
     public List<Map<String, String>> getAllCardsForUser(String deckId) {
         String sql = """
     SELECT 
-        deck_card_entries.id AS dce_id,
-        deck_card_entries.deck_id,
+        deck_card_entries.id AS deck_entry_id,
+
         deck_card_entries.card_id,
         deck_card_entries.personal_library_card_id,
 
-        cards.id AS card_id,
         cards.name AS card_name,
         cards.type_line,
         cards.cmc,
@@ -58,6 +126,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                 .param(UUID.fromString(deckId))
                 .query((rs, rowNum) -> {
                     Map<String, String> row = new HashMap<>();
+                    row.put("deck_entry_id", rs.getObject("deck_entry_id", UUID.class).toString());
                     row.put("name", rs.getString("card_name"));
                     row.put("color_identity", rs.getString("color_identity"));
                     row.put("type_line", rs.getString("type_line"));

@@ -1,14 +1,18 @@
 package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
 import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
+import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -20,6 +24,11 @@ public class BuilderServiceImpl implements BuilderService {
 
     public BuilderServiceImpl(BuilderRepository builderRepository) {
         this.builderRepository = builderRepository;
+    }
+
+    @Override
+    public Optional<BuilderCardHoverView> getDeckEntryHover(CustomUserDetails user, UUID deckId, UUID deckCardEntryId) {
+        return builderRepository.findDeckEntryHover(user.getId(), deckId, deckCardEntryId);
     }
 
     @Override

@@ -3,12 +3,15 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Deckbuilder| Dashboard </title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script th:src="@{/js/builder-tailwind-config.js}"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/builder.css}"/>
     <link rel="stylesheet" th:href="@{/css/personal-library.css}"/>
+    <script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
     <script th:src="@{/js/chart.js}"></script>
 </head>
 <body class="">
@@ -97,12 +100,11 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Avg CMC: 3.2</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.creatures}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
-                                    <span class="text-sm font-medium group-hover:text-blue-700 transition-colors"
-                                          th:text="${card['name']}">Card Name</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
                                 </div>
                             </div>
                             <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.creatures)}">No creatures found.</div>
@@ -118,12 +120,11 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Interaction</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.instants}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
-                                    <span class="text-sm font-medium group-hover:text-blue-700 transition-colors"
-                                          th:text="${card['name']}">Card Name</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
                                 </div>
                             </div>
                             <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.instants)}">No instants found.</div>
@@ -139,12 +140,11 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.sorceries}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
-                                    <span class="text-sm font-medium group-hover:text-blue-700 transition-colors"
-                                          th:text="${card['name']}">Card Name</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
                                 </div>
                             </div>
                             <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.sorceries)}">No sorceries found.</div>
@@ -160,12 +160,11 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.enchantments}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
-                                    <span class="text-sm font-medium group-hover:text-blue-700 transition-colors"
-                                          th:text="${card['name']}">Card Name</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
                                 </div>
                             </div>
                             <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.enchantments)}">No enchantments found.</div>
@@ -181,12 +180,11 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.artifacts}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
-                                    <span class="text-sm font-medium group-hover:text-blue-700 transition-colors"
-                                          th:text="${card['name']}">Card Name</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
                                 </div>
                             </div>
                             <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.artifacts)}">No artifacts found.</div>
@@ -202,12 +200,11 @@
                             <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Core Foundation</span>
                         </div>
                         <div class="space-y-2">
-                            <div class="group flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                            <div class="flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
                                  th:each="card : ${builderView.lands}">
                                 <div class="flex items-center gap-4">
                                     <span class="text-sm font-bold text-slate-400">1</span>
-                                    <span class="text-sm font-medium group-hover:text-blue-700 transition-colors"
-                                          th:text="${card['name']}">Card Name</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
                                 </div>
                             </div>
                             <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.lands)}">No lands found.</div>
@@ -437,6 +434,20 @@
         <span class="text-[10px] font-bold">Profile</span>
     </button>
 </div>
+
+<script>
+    document.addEventListener('htmx:configRequest', function (event) {
+        var csrfMeta = document.querySelector('meta[name="_csrf"]');
+        var hdrMeta = document.querySelector('meta[name="_csrf_header"]');
+        if (csrfMeta && hdrMeta) {
+            var t = csrfMeta.getAttribute('content');
+            var h = hdrMeta.getAttribute('content');
+            if (t && h) {
+                event.detail.headers[h] = t;
+            }
+        }
+    });
+</script>
 <script th:inline="javascript">
     const ctx = document.getElementById('myChart');
     const manaCurveData = /*[[${manaCurveData}]]*/ [];
