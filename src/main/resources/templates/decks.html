@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <title>Deck Browser - MTG Deckbuilder</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/decks.css}">
+    <link rel="stylesheet" th:href="@{/css/decks.min.css}">
     <!-- HTML in your document's head -->
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
@@ -84,7 +83,7 @@
     </main>
     <div th:replace="fragments/footer.html :: footer"></div>
 
-<script th:src="@{/js/decks.js}" defer></script>
+<script th:src="@{/js/decks.min.js}" defer></script>
 <script src='https://unpkg.com/htmx.org/dist/htmx.min.js'></script>
 </body>
 </html>

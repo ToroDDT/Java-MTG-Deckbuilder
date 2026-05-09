@@ -1,110 +1,117 @@
-    document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
-    document.querySelector('nav').classList.toggle('active');
-});
+function toggleWhite(element) {
+    toggleColorFilter(element, "color-W", "btn-filter-white-selected");
+}
 
-    const modal = document.getElementById('newDeckModal');
-    const openBtn = document.getElementById('openNewDeckModalBtn');
-    const closeBtn = document.getElementById('closeNewDeckModalBtn');
-    const cancelBtn = document.getElementById('cancelNewDeckBtn');
+function toggleRed(element) {
+    toggleColorFilter(element, "color-R", "btn-filter-red-selected");
+}
+
+function toggleBlue(element) {
+    toggleColorFilter(element, "color-U", "btn-filter-blue-selected");
+}
+
+function toggleBlack(element) {
+    toggleColorFilter(element, "color-B", "btn-filter-black-selected");
+}
+
+function toggleGreen(element) {
+    toggleColorFilter(element, "color-G", "btn-filter-green-selected");
+}
+
+function toggleColorFilter(element, activeClass, selectedClass) {
+    if (!element) {
+        return;
+    }
+
+    if (element.classList.contains(activeClass)) {
+        element.classList.remove(activeClass);
+        element.classList.add("btn-filter");
+    } else {
+        element.classList.toggle(selectedClass);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const menuToggle = document.querySelector(".mobile-menu-toggle");
+    const nav = document.querySelector("nav");
+
+    if (menuToggle && nav) {
+        menuToggle.addEventListener("click", function() {
+            nav.classList.toggle("active");
+        });
+    }
+
+    const modal = document.getElementById("newDeckModal");
+    const openBtn = document.getElementById("openNewDeckModalBtn");
+    const closeBtn = document.getElementById("closeNewDeckModalBtn");
+    const cancelBtn = document.getElementById("cancelNewDeckBtn");
 
     function openNewDeckModal() {
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    const nameInput = document.getElementById('deckName');
-    if (nameInput) nameInput.focus();
-}
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+
+        const nameInput = document.getElementById("deckName");
+        if (nameInput) {
+            nameInput.focus();
+        }
+    }
 
     function closeNewDeckModal() {
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-}
+        if (!modal) {
+            return;
+        }
 
-    openBtn.addEventListener('click', openNewDeckModal);
-    closeBtn.addEventListener('click', closeNewDeckModal);
-    cancelBtn.addEventListener('click', closeNewDeckModal);
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+    }
 
-    modal.addEventListener('click', (e) => {
-    if (e.target === modal) closeNewDeckModal();
-});
+    if (openBtn) {
+        openBtn.addEventListener("click", openNewDeckModal);
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener("click", closeNewDeckModal);
+    }
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", closeNewDeckModal);
+    }
+    if (modal) {
+        modal.addEventListener("click", function(e) {
+            if (e.target === modal) {
+                closeNewDeckModal();
+            }
+        });
+    }
 
-    document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeNewDeckModal();
-});
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape" && modal && modal.classList.contains("is-open")) {
+            closeNewDeckModal();
+        }
+    });
 
-    // Existing Deck List mode toggles
-    const modeSelect = document.getElementById('existingDeckListMode');
-    const panelPaste = document.getElementById('existingListPaste');
-    const panelFile = document.getElementById('file');
-    const panelUrl = document.getElementById('existingListUrl');
+    const modeSelect = document.getElementById("existingDeckListMode");
+    const panelPaste = document.getElementById("existingListPaste");
+    const panelFile = document.getElementById("file");
+    const panelUrl = document.getElementById("existingListUrl");
 
     function syncExistingListPanels() {
-    const mode = modeSelect.value;
-    panelPaste.hidden = mode !== 'PASTE';
-    panelFile.hidden = mode !== 'FILE';
-    panelUrl.hidden = mode !== 'URL';
-}
+        if (!modeSelect || !panelPaste || !panelFile || !panelUrl) {
+            return;
+        }
 
-    function toggleWhite(element){
-        console.log(element.classList);
-       if (element.classList.contains("color-W")){
-            element.classList.remove("color-W");
-            element.classList.add("btn-filter");
-           console.log(element.classList);
-        }
-        else{
-            element.classList.toggle("btn-filter-white-selected");
-        }
+        const mode = modeSelect.value;
+        panelPaste.hidden = mode !== "PASTE";
+        panelFile.hidden = mode !== "FILE";
+        panelUrl.hidden = mode !== "URL";
     }
 
-    function toggleRed(element){
-        console.log(element.classList);
-        if (element.classList.contains("color-R")){
-            element.classList.remove("color-R");
-            element.classList.add("btn-filter");
-            console.log(element.classList);
-        }
-        else{
-            element.classList.toggle("btn-filter-red-selected");
-        }
+    if (modeSelect) {
+        modeSelect.addEventListener("change", syncExistingListPanels);
+        syncExistingListPanels();
     }
-
-    function toggleBlue(element){
-        console.log(element.classList);
-        if (element.classList.contains("color-U")){
-            element.classList.remove("color-U");
-            element.classList.add("btn-filter");
-            console.log(element.classList);
-        }
-        else{
-            element.classList.toggle("btn-filter-blue-selected");
-        }
-    }
-
-    function toggleBlack(element){
-        console.log(element.classList);
-        if (element.classList.contains("color-B")){
-            element.classList.remove("color-B");
-            element.classList.add("btn-filter");
-            console.log(element.classList);
-        }
-        else{
-            element.classList.toggle("btn-filter-black-selected");
-        }
-    }
-
-    function toggleGreen(element){
-        console.log(element.classList);
-        if (element.classList.contains("color-G")){
-            element.classList.remove("color-G");
-            element.classList.add("btn-filter");
-            console.log(element.classList);
-        }
-        else{
-            element.classList.toggle("btn-filter-green-selected");
-        }
-    }
-
-    modeSelect.addEventListener('change', syncExistingListPanels);
-    syncExistingListPanels();
+});

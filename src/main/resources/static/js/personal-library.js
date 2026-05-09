@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // This script adds csrf token to htmx requests headers
     document.body.addEventListener('htmx:configRequest', (event) => {
-        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const tokenMeta = document.querySelector('meta[name="_csrf"]');
+        const headerMeta = document.querySelector('meta[name="_csrf_header"]');
+        const token = tokenMeta && tokenMeta.getAttribute('content');
+        const header = headerMeta && headerMeta.getAttribute('content');
         if (token && header) {
             event.detail.headers[header] = token;
         }
@@ -10,9 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     const clearBtn = document.getElementById("clearBtn");
-    clearBtn.addEventListener("click", () => {
-        window.location.reload();
-    })
+    if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+            window.location.reload();
+        });
+    }
     let isPagingRequest = false;
     const searchForm = document.getElementById("librarySearchForm");
 
@@ -65,12 +69,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (evt.target.id === "prevBtn") {
             isPagingRequest = true;
             pageInput.value = String(Math.max((parseInt(pageInput.value, 10) || 0) - 1, 0));
-            htmx.trigger("#librarySearchForm", "submit");
+            if (window.htmx) {
+                htmx.trigger("#librarySearchForm", "submit");
+            }
         }
         if (evt.target.id === "nextBtn") {
             isPagingRequest = true;
             pageInput.value = String((parseInt(pageInput.value, 10) || 0) + 1);
-            htmx.trigger("#librarySearchForm", "submit");
+            if (window.htmx) {
+                htmx.trigger("#librarySearchForm", "submit");
+            }
         }
     });
     document.body.addEventListener("htmx:configRequest", function(evt) {
@@ -119,25 +127,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const cmcMinVal = document.getElementById('cmcMinVal');
     const cmcMaxVal = document.getElementById('cmcMaxVal');
 
-    // set initial positions
-    cmcMin.value = 0;
-    cmcMax.value = 16;
-    cmcMinVal.textContent = '0';
-    cmcMaxVal.textContent = '∞';
+    if (cmcMin && cmcMax && cmcMinVal && cmcMaxVal) {
+        cmcMin.value = 0;
+        cmcMax.value = 16;
+        cmcMinVal.textContent = '0';
+        cmcMaxVal.textContent = '∞';
 
-    cmcMin.addEventListener('input', () => {
-        if (parseInt(cmcMin.value) > parseInt(cmcMax.value)) {
-            cmcMin.value = cmcMax.value;
-        }
-        cmcMinVal.textContent = cmcMin.value;
-    });
+        cmcMin.addEventListener('input', () => {
+            if (parseInt(cmcMin.value) > parseInt(cmcMax.value)) {
+                cmcMin.value = cmcMax.value;
+            }
+            cmcMinVal.textContent = cmcMin.value;
+        });
 
-    cmcMax.addEventListener('input', () => {
-        if (parseInt(cmcMax.value) < parseInt(cmcMin.value)) {
-            cmcMax.value = cmcMin.value;
-        }
-        cmcMaxVal.textContent = parseInt(cmcMax.value) === 16 ? '∞' : cmcMax.value;
-    });
+        cmcMax.addEventListener('input', () => {
+            if (parseInt(cmcMax.value) < parseInt(cmcMin.value)) {
+                cmcMax.value = cmcMin.value;
+            }
+            cmcMaxVal.textContent = parseInt(cmcMax.value) === 16 ? '∞' : cmcMax.value;
+        });
+    }
 
     document.querySelectorAll('.pip').forEach(btn => {
         btn.addEventListener('click', () => toggle(btn));
