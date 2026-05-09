@@ -3,11 +3,17 @@
 <body>
 
 <th:block th:fragment="hoverPanel">
-    <div th:if="${hover == null}" class="rounded-2xl border border-zinc-700 bg-zinc-950 p-4 text-xs text-zinc-500 shadow-2xl">
+    <!-- Empty State -->
+    <div th:if="${hover == null}"
+         class="rounded-2xl border border-zinc-700 bg-zinc-950 p-4 text-xs text-zinc-500 shadow-2xl">
         Preview unavailable.
     </div>
+
+    <!-- Hover Panel Content -->
     <div th:if="${hover != null}"
-         class="builder-card-hover-panel flex max-w-lg gap-4 overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-950 p-3 shadow-2xl">
+         class="builder-card-hover-panel flex max-w-lg gap-4 overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-800 p-3 shadow-2xl">
+
+        <!-- Left Side: Card Image -->
         <div class="h-[280px] w-[200px] shrink-0 overflow-hidden rounded-xl bg-zinc-900">
             <img th:if="${hover.imageUrl() != null}"
                  loading="lazy"
@@ -15,12 +21,41 @@
                  th:src="${hover.imageUrl()}"
                  class="h-full w-full object-cover"/>
         </div>
-        <div class="flex min-w-[10rem] max-w-[12rem] flex-col gap-2">
-            <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Tags</div>
-            <ul class="m-0 max-h-72 list-none space-y-1.5 overflow-y-auto p-0 text-sm leading-snug text-zinc-200">
-                <li th:if="${#lists.isEmpty(hover.tags())}" class="text-zinc-500 italic">No tags</li>
-                <li th:each="tag : ${hover.tags()}" th:text="${tag}">Tag</li>
-            </ul>
+
+        <!-- Right Side: Details -->
+        <!-- Removed justify-between, added gap-6 to move items closer to the top -->
+        <div class="flex min-w-[10rem] max-w-[12rem] flex-col gap-6 py-1">
+
+            <!-- Price (Right Aligned) -->
+            <div class="flex flex-col items-end">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Price</div>
+                <div class="mt-1 text-lg font-black leading-none text-zinc-100" th:text="${hover.price()}">$0.00</div>
+            </div>
+
+            <!-- Tags (Clean, Legible, No Background) -->
+            <div>
+                <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Tags</div>
+                <div class="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                    <!-- Placeholder if no tags -->
+                    <span th:if="${#lists.isEmpty(hover.tags())}" class="text-xs italic text-zinc-600">No tags</span>
+
+                    <!-- Individual Tags -->
+                    <th:block th:each="tag, tagStat : ${hover.tags()}">
+                        <span class="text-xl font-bold text-white"
+                              th:if="${tagStat.index < 4}"
+                              th:text="${tag}">
+                            Tag
+                        </span>
+                    </th:block>
+
+                    <!-- Overflow Count -->
+                    <span class="text-xs font-bold text-zinc-500"
+                          th:if="${#lists.size(hover.tags()) > 4}"
+                          th:text="'+' + (${#lists.size(hover.tags())} - 4)">
+                    </span>
+                </div>
+            </div>
+
         </div>
     </div>
 </th:block>

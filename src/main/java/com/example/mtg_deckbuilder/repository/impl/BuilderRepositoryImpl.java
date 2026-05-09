@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,6 +32,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                 SELECT\s
                   cards.name AS card_name,\s
                   cards.image_uris,\s
+                  cards.prices,\s
                   pcl.tags\s
                 FROM deck_card_entries dce\s
                 INNER JOIN decks d ON d.id = dce.deck_id AND d.user_id = :userId AND d.id = :deckId\s
@@ -48,8 +51,31 @@ public class BuilderRepositoryImpl implements BuilderRepository {
     private BuilderCardHoverView mapHoverRow(ResultSet rs, int rowNum) throws SQLException {
         String name = rs.getString("card_name");
         String imageUrl = largeImageUrlFrom(rs.getString("image_uris"));
+        String price = usdPriceFrom(rs.getString("prices"));
         List<String> tags = tagsFromRs(rs.getArray("tags"));
-        return new BuilderCardHoverView(name, imageUrl, tags);
+        return new BuilderCardHoverView(name, imageUrl, price, tags);
+    }
+
+    private String usdPriceFrom(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return "$0.00";
+        }
+        try {
+            Prices prices = objectMapper.readValue(raw, Prices.class);
+            Double usd = prices.getUsd();
+            if (usd == null || usd <= 0) {
+                usd = prices.getUsdFoil();
+            }
+            if (usd == null || usd <= 0) {
+                usd = prices.getUsdEtched();
+            }
+            if (usd == null || usd < 0) {
+                return "$0.00";
+            }
+            return "$" + BigDecimal.valueOf(usd).setScale(2, RoundingMode.HALF_UP);
+        } catch (JsonProcessingException e) {
+            return "$0.00";
+        }
     }
 
     private static List<String> tagsFromRs(Array sqlArray) throws SQLException {
