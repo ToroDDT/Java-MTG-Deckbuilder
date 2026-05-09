@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="builderDeckRowCardName(card, deckId)">
+    <span class="group relative inline-block text-left">
+        <span class="cursor-default border-b border-dotted border-transparent text-sm font-medium text-on-surface transition-colors hover:border-blue-400 hover:text-blue-700"
+              th:text="${card['name']}"
+              th:attr="hx-get=@{/builder/deck/{d}/deck-entry/{e}/hover(d=${deckId},e=${card['deck_entry_id']})},
+                       hx-trigger='mouseenter delay:120ms throttle:750ms',
+                       hx-target='next .builder-card-hover-drop',
+                       hx-swap='innerHTML'">
+            Card Name
+        </span>
+        <div class="builder-card-hover-drop pointer-events-none invisible absolute left-0 top-full z-[200] pt-2 opacity-0 transition-[opacity] duration-150 ease-out group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100"></div>
+    </span>
+</th:block>
+</body>
+</html>
