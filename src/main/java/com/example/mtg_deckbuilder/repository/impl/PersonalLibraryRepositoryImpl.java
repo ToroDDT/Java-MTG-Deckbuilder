@@ -6,6 +6,7 @@ import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import lombok.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -29,7 +30,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
   }
 
 
-  public void delete(CustomUserDetails user, String personalCardId) {
+  public void delete(@NonNull CustomUserDetails user, @NonNull String personalCardId) {
     String sql = """
         DELETE FROM personal_collection_library
         WHERE id = :personalCardId AND user_id = :userId
@@ -44,7 +45,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
       throw new CardDoesNotExistException("Card could not be found in library:" + personalCardId);
     }
   }
-  private List<String> getUpdatedCardTags(UUID personalCardId, CustomUserDetails user) {
+  private List<String> getUpdatedCardTags(@NonNull UUID personalCardId, @NonNull CustomUserDetails user) {
     String sql = """
         SELECT tags
         FROM personal_collection_library

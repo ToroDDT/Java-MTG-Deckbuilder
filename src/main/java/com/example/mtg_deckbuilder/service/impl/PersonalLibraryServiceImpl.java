@@ -122,19 +122,20 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   }
 
   @Override
-  public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId) {
-    var cardsFuture = CompletableFuture.supplyAsync(() -> this.getCardsPaginated(userId.getId()));
+  public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user) {
 
-    var deckNamesFuture = CompletableFuture.supplyAsync(() -> getDeckNames(userId));
+    var cardsFuture = CompletableFuture.supplyAsync(() -> this.getCardsPaginated(user.getId()));
+
+    var deckNamesFuture = CompletableFuture.supplyAsync(() -> getDeckNames(user));
 
     var cards = cardsFuture.join();
-    hydrateDeckLocations(userId, cards);
+    hydrateDeckLocations(user, cards);
     var lastCard = cards.isEmpty() ? null : cards.getLast().getDateAdded();
 
     var deckNames = deckNamesFuture.join();
     // Calculate total value
     var total = getTotalValue(cards);
-    var colorCounts = getColorCount(userId);
+    var colorCounts = getColorCount(user);
 
     // Use the Builder to assemble the object
     return LibraryViewModelImpl.builder()

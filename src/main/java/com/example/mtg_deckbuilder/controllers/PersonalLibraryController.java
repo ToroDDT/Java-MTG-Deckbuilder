@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.controllers;
 
+import com.example.mtg_deckbuilder.advice.Sanitize;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -53,14 +54,17 @@ public class PersonalLibraryController {
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
 
         model.addAttribute("libraryView", libraryView);
+
         return "fragments/personal-cards :: personal-cards";
     }
 
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
-    public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
+    public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") @Sanitize LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
+
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
 
         model.addAttribute("libraryView", libraryView);
+
         return "fragments/personal-cards :: personal-cards";
     }
 
