@@ -73,7 +73,7 @@ public class DeckController {
 
         deckServiceImpl.addDeck(newDeck);
 
-        return "redirect:/collection";
+        return "redirect:/decks";
     }
 
 
