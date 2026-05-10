@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
+import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
 import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
@@ -34,10 +35,14 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         WHERE id = :personalCardId AND user_id = :userId
         """;
 
-    jdbcClient.sql(sql)
+    var rowsChanged = jdbcClient.sql(sql)
             .param("personalCardId", UUID.fromString(personalCardId))
             .param("userId", user.getId())
             .update();
+
+    if (rowsChanged == 0) {
+      throw new CardDoesNotExistException("Card could not be found in library:" + personalCardId);
+    }
   }
   private List<String> getUpdatedCardTags(UUID personalCardId, CustomUserDetails user) {
     String sql = """
@@ -175,7 +180,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             : "AND cards.color_identity @> ?::text[] AND ?::text[] @> cards.color_identity ";
 
     var tagTokens = personalLibraryFilters.tagSearchTokens();
-    boolean hasTagSearch = !tagTokens.isEmpty();
+
     String tagFilter = tagTokens.stream()
             .map(token -> """
             AND EXISTS (
@@ -213,7 +218,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
          %s
          %s
          AND cards.cmc BETWEEN ? AND ?
-         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC 
+         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC\s
          %s
         \s""";
 
