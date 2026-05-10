@@ -22,20 +22,18 @@ public class DeckServiceImpl implements DeckService {
 
     private final DeckRepository deckRepository;
     private final UserDecksCache userDecksCache;
-    private final CardService cardService;
 
 
     @Autowired
-    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache, CardService cardService) {
+    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache) {
         this.deckRepository = deckRepository;
         this.userDecksCache = userDecksCache;
-        this.cardService = cardService;
     }
 
 
     @Override
     public void addDeck(NewDeck newDeck) {
-
+        deckRepository.createNewDeckEntry(newDeck);
     }
 
     @Override
