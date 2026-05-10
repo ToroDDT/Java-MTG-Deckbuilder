@@ -24,7 +24,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   private final DeckService deckServiceImpl;
 
   public PersonalLibraryServiceImpl(PersonalLibraryRepositoryImpl personalLibraryRepository,
-      CardService cardServiceImpl, DeckServiceImpl deckServiceImpl) {
+                                    CardService cardServiceImpl, DeckServiceImpl deckServiceImpl) {
     this.personalLibraryRepository = personalLibraryRepository;
     this.cardServiceImpl = cardServiceImpl;
     this.deckServiceImpl = deckServiceImpl;
@@ -48,8 +48,8 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   @Override
   public List<Card> getCardQuery(String query) {
     return query.isEmpty()
-        ? List.of()
-        : cardServiceImpl.findByNameContaining(query).stream().limit(8).toList();
+            ? List.of()
+            : cardServiceImpl.findByNameContaining(query).stream().limit(8).toList();
   }
 
   @Override
@@ -61,8 +61,6 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
       ownedCard.setTags(List.of());
       ownedCard.setImage(card.get().getImage());
       ownedCard.setUserId(user);
-      ownedCard.setUpdatedAt(LocalDate.now());
-      ownedCard.setDateAdded(LocalDate.now());
       personalLibraryRepository.addCardToPersonalLibrary(ownedCard);
     } else {
       throw new CardDoesNotExistException(ownedCard.getName());
@@ -72,53 +70,41 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   @Override
   public List<OwnedCard> getCards(UUID userId) {
     return personalLibraryRepository
-        .getAllPersonalLibraryCardsForUser(userId)
-        .stream()
-        .peek(ownedCard -> {
-          if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
-            ownedCard.setTags(List.of());
-          }
-        })
-        .toList();
+            .getAllPersonalLibraryCardsForUser(userId)
+            .stream()
+            .peek(ownedCard -> {
+              if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
+                ownedCard.setTags(List.of());
+              }
+            })
+            .toList();
   }
 
   @Override
   public List<OwnedCard> getCardsPaginated(UUID userId) {
     return personalLibraryRepository
-        .getAllPersonalLibraryCardsForUserPaginated(userId)
-        .stream()
-        .peek(ownedCard -> {
-          if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
-            ownedCard.setTags(List.of());
-          }
-        })
-        .toList();
+            .getAllPersonalLibraryCardsForUserPaginated(userId)
+            .stream()
+            .peek(ownedCard -> {
+              if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
+                ownedCard.setTags(List.of());
+              }
+            })
+            .toList();
   }
 
   @Override
   public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
 
-    SortOptions sortBy = personalLibraryFilters.getSortBy();
-
-    return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters).stream()
-        .peek(ownedCard -> {
-          if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
-            ownedCard.setTags(List.of());
-          }
-        })
-        .sorted(switch (sortBy) {
-          case PRICE_ASC -> Comparator.comparing(
-              (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
-              Comparator.nullsLast(Comparator.naturalOrder()));
-          case PRICE_DESC -> Comparator.comparing(
-              (OwnedCard ownedCard) -> ownedCard.getCard().getPrices().getUsd(),
-              Comparator.nullsLast(Comparator.reverseOrder()));
-          case CMC_ASC -> Comparator.comparing(ownedCard -> ownedCard.getCard().getCmc());
-          case CMC_DESC -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getCmc()).reversed();
-          case NAME_DESC -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getName()).reversed();
-          default -> Comparator.comparing((OwnedCard ownedCard) -> ownedCard.getCard().getName());
-        })
-        .toList();
+    return personalLibraryRepository
+            .getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters)
+            .stream()
+            .peek(ownedCard -> {
+              if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
+                ownedCard.setTags(List.of());
+              }
+            })
+            .toList();
   }
 
   @Override
@@ -139,19 +125,19 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
 
     // Use the Builder to assemble the object
     return LibraryViewModelImpl.builder()
-        .cards(cards)
-        .dateAdded(lastCard)
-        .deckNames(deckNames)
-        .totalCards(cards.size())
-        .totalValue(total)
-        .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
-        .colorIdentityAmounts(colorCounts)
-        .build();
+            .cards(cards)
+            .dateAdded(lastCard)
+            .deckNames(deckNames)
+            .totalCards(cards.size())
+            .totalValue(total)
+            .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
+            .colorIdentityAmounts(colorCounts)
+            .build();
   }
 
   @Override
   public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId,
-      LibraryFilters personalLibraryFilters) {
+                                                            LibraryFilters personalLibraryFilters) {
     var cardsFuture = CompletableFuture.supplyAsync(() -> this.getCards(userId.getId(), personalLibraryFilters));
 
     var deckNamesFuture = CompletableFuture.supplyAsync(() -> getDeckNames(userId));
@@ -165,26 +151,26 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     boolean hasSearchFilter = personalLibraryFilters.hasSearchFilter();
 
     var lastCard = cards.isEmpty() ? null
-        : hasSearchFilter ? null // frontend uses page+1 itself
+            : hasSearchFilter ? null // frontend uses page+1 itself
             : cards.getLast().getDateAdded();
 
     // Use the Builder to assemble the object
     return LibraryViewModelImpl.builder()
-        .cards(cards)
-        .dateAdded(lastCard)
-        .deckNames(deckNames)
-        .totalCards(cards.size())
-        .totalValue(total)
-        .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
-        .colorIdentityAmounts(colorCounts)
-        .build();
+            .cards(cards)
+            .dateAdded(lastCard)
+            .deckNames(deckNames)
+            .totalCards(cards.size())
+            .totalValue(total)
+            .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
+            .colorIdentityAmounts(colorCounts)
+            .build();
   }
 
   public Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user) {
     var cards = personalLibraryRepository.getAllPersonalLibraryCardsForUser(user.getId())
-        .stream()
-        .map(OwnedCard::getId)
-        .toList();
+            .stream()
+            .map(OwnedCard::getId)
+            .toList();
     return personalLibraryRepository.getDeckLocationsOfCards(user, cards);
   }
 
@@ -194,11 +180,11 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     }
 
     Map<UUID, List<String>> deckLocations = personalLibraryRepository.getDeckLocationsOfCards(
-        user,
-        cards.stream().map(OwnedCard::getId).toList());
+            user,
+            cards.stream().map(OwnedCard::getId).toList());
 
     cards.forEach(card -> card.setDeckLocations(
-        deckLocations.getOrDefault(card.getId(), List.of())));
+            deckLocations.getOrDefault(card.getId(), List.of())));
   }
 
   @Override
@@ -209,29 +195,29 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   private Double getTotalValue(List<OwnedCard> cards) {
     // Calculate total value
     return cards.stream()
-        .filter(c -> c.getCard() != null && c.getCard().getPrices().getUsd() != null)
-        .mapToDouble(c -> c.getCard().getPrices().getUsd())
-        .sum();
+            .filter(c -> c.getCard() != null && c.getCard().getPrices().getUsd() != null)
+            .mapToDouble(c -> c.getCard().getPrices().getUsd())
+            .sum();
   }
 
   @Override
   public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId) {
     return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId)
-        .stream()
-        .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
+            .stream()
+            .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
   }
 
   public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId, LibraryFilters personalLibraryFilters) {
     return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId, personalLibraryFilters)
-        .stream()
-        .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
+            .stream()
+            .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
   }
 
   private Map<String, Long> getColorCount(CustomUserDetails userId) {
     // Format color counts
     Map<String, Long> colorCounts = new HashMap<>();
     getAmountOfEachColorIdentity(userId.getId())
-        .forEach((key, value) -> colorCounts.put(key.name(), value));
+            .forEach((key, value) -> colorCounts.put(key.name(), value));
     return colorCounts;
   }
 
@@ -239,7 +225,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
     // Format color counts
     Map<String, Long> colorCounts = new HashMap<>();
     getAmountOfEachColorIdentity(userId.getId(), personalLibraryFilters)
-        .forEach((key, value) -> colorCounts.put(key.name(), value));
+            .forEach((key, value) -> colorCounts.put(key.name(), value));
     return colorCounts;
   }
 
