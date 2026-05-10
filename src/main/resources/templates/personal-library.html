@@ -12,7 +12,8 @@
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="preconnect" href="https://cards.scryfall.io">
   <link rel="preload" href="https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" th:href="@{/css/library.min.css}">
+  <link rel="preload" th:href="@{/css/library.min.css}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" th:href="@{/css/library.min.css}"></noscript>
 </head>
 <body>
 
