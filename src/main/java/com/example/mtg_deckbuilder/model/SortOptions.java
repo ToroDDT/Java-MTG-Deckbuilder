@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum SortOptions {
 
+    RECENT("Most Recent"),
     PRICE_ASC("Price (Low-High) "),
     PRICE_DESC("Price (High-Low)"),
     CMC_ASC("CMC (Low-High)"),
