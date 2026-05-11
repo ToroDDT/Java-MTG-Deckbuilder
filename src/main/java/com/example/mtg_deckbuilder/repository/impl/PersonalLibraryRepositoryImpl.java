@@ -173,6 +173,12 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(
 
   String limitClause = "LIMIT ? OFFSET ?";
 
+String oracleTextFilter =
+    (personalLibraryFilters.getOracleTextSearch() == null
+        || personalLibraryFilters.getOracleTextSearch().isEmpty())
+        ? ""
+        : "AND to_tsvector('english', cards.oracle_text) @@ plainto_tsquery('english', ?) ";
+
   String nameFilter =
       (personalLibraryFilters.getCardName() == null
           || personalLibraryFilters.getCardName().isEmpty())
@@ -280,7 +286,7 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(
       %s
       %s
       %s
-
+      %s
       AND cards.cmc BETWEEN ? AND ?
 
       %s
@@ -293,6 +299,7 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(
       nameFilter,
       typeFilter,
       colorFilter,
+          oracleTextFilter,
       tagFilter,
       orderByClause,
       limitClause
@@ -301,6 +308,11 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(
   List<Object> args = new ArrayList<>();
 
   args.add(userId);
+  if (personalLibraryFilters.getOracleTextSearch() != null
+          && !personalLibraryFilters.getOracleTextSearch().isEmpty()) {
+
+    args.add("%" + personalLibraryFilters.getOracleTextSearch() + "%");
+  }
 
   if (personalLibraryFilters.getCardName() != null
       && !personalLibraryFilters.getCardName().isEmpty()) {

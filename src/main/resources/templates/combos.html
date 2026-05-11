@@ -6,121 +6,85 @@
     <title>Combos Section</title>
     <script th:src="@{/js/htmx.min.js}" defer></script>
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/combos.min.css}"/>
+    <style>
+    </style>
 </head>
-<body class="min-h-screen text-[#0f172a]">
+<body>
 
-<div class="w-full px-4 pb-24 pt-10 flex flex-col items-center">
+<!-- Main content -->
+<div class="page-body" id="personal-cards" th:fragment="combos-section">
 
-    <p class="text-[11px] font-bold tracking-[0.2em] uppercase mb-10 text-[#64748b]">Your Hand</p>
+    <div class="combo-grid">
 
-    <div id="personal-cards"
-         th:fragment="combos-section"
-         class="flex flex-col w-full max-w-6xl rounded-lg overflow-hidden border border-[#e2e8f0] shadow-sm bg-white h-[20vh]h" >
+        <!-- Repeat for each combo -->
+        <div class="combo-card" th:each="cardList, comboStat : ${cardCombos.images}">
 
-        <main class="px-6 md:px-12 py-16">
-
-            <div class="max-w-4xl mx-auto mb-16">
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div>
-                        <span class="text-xs font-bold tracking-[0.2em] text-[#3b82f6] uppercase mb-3 block">Curation Feed</span>
-                        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-[#0f172a] leading-none mb-4">Available Combos</h1>
-                        <p class="text-[#64748b] max-w-xl text-lg leading-relaxed">Discover Card Combos</p>
-                    </div>
-                    <div class="flex flex-col items-start md:items-end gap-2">
-                        <div class="bg-[#f1f5f9] text-[#0f172a] px-5 py-2.5 rounded-md flex items-center gap-2 border border-[#e2e8f0]">
-                            <span class="material-symbols-outlined text-sm text-[#3b82f6]">database</span>
-                            <span class="text-sm font-semibold">1,248 Records Found</span>
-                        </div>
-                        <div class="text-[10px] uppercase tracking-wider text-[#94a3b8] px-1 font-bold">Last updated: 4 hours ago</div>
-                    </div>
+            <!-- Mana color identity row -->
+            <div class="combo-card-header">
+                <!-- These pips represent color identity — swap classes (mana-G, mana-U, mana-R, mana-B, mana-W) per combo -->
+                <div class="mana-pip mana-G" title="Green">
+                    <!-- Tree icon approximation -->
+                    <svg class="mana-symbol" viewBox="0 0 16 16" fill="white"><path d="M8 1 L11 7 H9 L12 12 H10 L13 15 H3 L6 12 H4 L7 7 H5 Z"/></svg>
+                </div>
+                <div class="mana-pip mana-U" title="Blue">
+                    <svg class="mana-symbol" viewBox="0 0 16 16" fill="white"><path d="M8 2 C4 2 2 6 2 10 C2 14 5 15 8 15 C11 15 14 14 14 10 C14 6 12 2 8 2Z"/></svg>
+                </div>
+                <div class="mana-pip mana-R" title="Red">
+                    <svg class="mana-symbol" viewBox="0 0 16 16" fill="white"><path d="M8 1 L14 6 L12 8 L14 14 L8 11 L2 14 L4 8 L2 6 Z"/></svg>
                 </div>
             </div>
 
-            <!-- Combo list -->
-            <div class="max-w-4xl mx-auto flex flex-col gap-12 h-[75vh] overflow-y-auto pr-2">
-
-                <div class="group" th:each="cardList, comboStat : ${cardCombos.images}">
-
-                    <!-- Index label -->
-                    <div class="flex items-center gap-4 mb-5">
-                        <div class="w-1.5 h-8 bg-[#3b82f6] rounded-full"></div>
-                        <span class="text-[#94a3b8] text-sm font-medium"
-                              th:text="'Combo #' + ${comboStat.index + 1}">Combo #1</span>
-                    </div>
-
-                    <!-- Combo card -->
-                    <div class="bg-[#f8fafc] rounded-xl relative transition-all duration-300 border border-[#e2e8f0] hover:border-[#3b82f6]/30">
-                        <div class="p-6 lg:p-8">
-
-                            <div class="float-right ml-6 mb-4 flex flex-row flex-wrap gap-3 justify-end"
-                                 style="max-width: 60%;">
-                                <div th:each="img : ${cardList}" class="flex-shrink-0">
-                                    <div class="w-32 aspect-[2.5/3.5] bg-[#f1f5f9] rounded-lg overflow-hidden border border-[#e2e8f0] shadow-sm hover:scale-[1.03] transition-transform duration-300">
-                                        <img th:src="${img}"
-                                             alt="Card art"
-                                             class="w-full h-full object-cover"
-                                             loading="lazy"
-                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"/>
-                                        <div class="w-full h-full hidden items-center justify-center bg-[#f1f5f9] text-2xl text-[#94a3b8]">🃏</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h4 class="text-[10px] font-black tracking-widest text-[#3b82f6] uppercase mb-4">Mechanism</h4>
-
-                            <div class="text-[#475569] text-xs leading-relaxed"
-                                 th:with="desc=${cardCombos.description[comboStat.index]},
-                                           steps=${#strings.arraySplit(desc, '.')}">
-                                <p th:each="step, stepStat : ${steps}"
-                                   th:if="${!#strings.isEmpty(#strings.trim(step))}"
-                                   class="mb-4">
-                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#3b82f6]/10 text-[#3b82f6] text-[10px] font-black mr-2"
-                                          th:text="${stepStat.index + 1}">1</span>
-                                    <span th:text="${#strings.trim(step) + '.'}">Step text.</span>
-                                </p>
-                            </div>
-
-                            <!-- Tags — clearfix so they sit below floated cards -->
-                            <div class="clear-both mt-4 flex gap-2 flex-wrap">
-                                <span class="bg-[#f1f5f9] text-[#64748b] border border-[#e2e8f0] px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">Graveyard</span>
-                                <span class="bg-[#f1f5f9] text-[#64748b] border border-[#e2e8f0] px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">Aura</span>
-                            </div>
-
-                        </div>
-                    </div>
-
+            <!-- Card names + effects -->
+            <div class="combo-card-body">
+                <div class="combo-card-names" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+                    <img th:each="img : ${cardList}"
+                         th:src="${img}"
+                         alt="Card"
+                         class="combo-card-img"
+                         onerror="this.style.display='none'"/>
+                    <div class="combo-card-prereq">+1 other prerequisite</div>
                 </div>
-                <!-- /combo row -->
 
+                <hr class="combo-divider"/>
+
+                <ul class="combo-effects"
+                    th:with="desc=${cardCombos.description[comboStat.index]},
+                              steps=${#strings.arraySplit(desc, '.')}">
+                    <li th:each="step : ${steps}"
+                        th:if="${!#strings.isEmpty(#strings.trim(step))}"
+                        th:text="${#strings.trim(step) + '.'}">
+                        Infinite combat phases.
+                    </li>
+                </ul>
             </div>
-            <!-- /combo list -->
 
-        </main>
+            <!-- Footer: deck count -->
+            <div class="combo-card-footer">
+                — decks (EDHREC)
+            </div>
+        </div>
+        <!-- /combo-card -->
+
     </div>
-    <!-- /combos-section -->
+    <!-- /combo grid -->
 
 </div>
 
-<!-- Floating Action Button -->
-<button class="fixed bottom-8 right-8 bg-[#3b82f6] text-white h-14 w-14 rounded-lg shadow-lg flex items-center justify-center hover:bg-[#2563eb] active:scale-95 transition-all duration-200 group z-50">
-    <span class="material-symbols-outlined text-2xl">add</span>
-    <span class="absolute right-16 bg-[#0f172a] text-white px-4 py-2 rounded-md text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
-        Register New Combo
-    </span>
+<button class="fab">
+    <span class="material-symbols-outlined" style="font-family:'Material Symbols Outlined';font-size:22px;font-style:normal;">add</span>
+    <span class="fab-tooltip">Register New Combo</span>
 </button>
 
-<!-- Info Toast -->
-<div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md border border-[#e2e8f0] px-6 py-3 rounded-lg shadow-xl flex items-center gap-4 z-50">
-    <div class="flex -space-x-1.5">
-        <div class="w-5 h-5 rounded-md bg-[#3b82f6] border border-white"></div>
-        <div class="w-5 h-5 rounded-md bg-[#64748b] border border-white"></div>
-        <div class="w-5 h-5 rounded-md bg-[#0f172a] border border-white"></div>
+<div class="toast">
+    <div class="toast-pips">
+        <div class="toast-pip" style="background:#3b82f6;"></div>
+        <div class="toast-pip" style="background:#504840;"></div>
+        <div class="toast-pip" style="background:#111;border-color:#333;"></div>
     </div>
-    <span class="text-xs font-semibold text-[#64748b]">Archivist Mode: <span class="text-[#0f172a] font-bold">Collaborative Curation</span></span>
+    <span class="toast-text">Archivist Mode: <strong>Collaborative Curation</strong></span>
 </div>
-
 
 </body>
 </html>

@@ -80,7 +80,7 @@
             th:hx-get="@{/personal-library/search}"
             id="librarySearchForm"
             hx-sync="this:replace"
-            hx-trigger="input delay:200ms, submit, refreshLibrary from:body"
+            hx-trigger="input delay:300ms, submit, refreshLibrary from:body"
             hx-target="#personal-cards"
             th:object="${filters}">
 
@@ -102,6 +102,9 @@
             <input hx-trigger="change" th:field="*{cardName}" class="cb-search-input" id="searchInput" type="text" placeholder="Search cards..." autocomplete="off" />
           </div>
         </div>
+
+        <div class="cb-filter-section">
+
 
         <div class="cb-filter-section">
           <label for="tagSearchInput" class="cb-filter-label">Tags</label>
@@ -148,6 +151,15 @@
           </div>
 
         </div>
+          <label for="searchOracleText" class="cb-filter-label">Oracle Text</label>
+          <div class="cb-search-wrap">
+            <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input hx-trigger="change" th:field="*{oracleTextSearch}" class="cb-search-input" id="searchOracleText" type="text" placeholder="Search oracle text..." autocomplete="off" />
+          </div>
+        </div>
+
 
         <div class="cb-filter-section">
           <label for="typeFilter" class="cb-filter-label">Type</label>

@@ -20,6 +20,7 @@ public class LibraryFilters {
     private String dateAdded;
     private Integer page = 0;
     private String tagSearch;
+    private String oracleTextSearch;
 
     public LibraryFilters() {
 
@@ -37,11 +38,11 @@ public class LibraryFilters {
 
    public boolean hasSearchFilter() {
     boolean hasTagSearch = !tagSearchTokens().isEmpty();
-    return (cardName != null && !cardName.isEmpty()) ||
+    return (oracleTextSearch != null && !oracleTextSearch.isEmpty() || cardName != null && !cardName.isEmpty()) ||
             (cardType != null && !cardType.isEmpty() && !"All".equalsIgnoreCase(cardType)) || // "All" not "All Types"
             (selectedColors != null && !selectedColors.isEmpty()) ||
             (minCMC != null && minCMC > 0) ||
-            (maxCMC != null && maxCMC < 16) // 16 is your actual default max
+            (maxCMC != null && maxCMC < 16)
             || hasTagSearch;
  }
 }
