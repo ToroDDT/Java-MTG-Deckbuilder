@@ -17,7 +17,6 @@ public enum ColorIdentity {
     MARDU("B,R,W"),
     SIMIC("G,U"),
     GOLGARI("B,G"),
-    BOROS("R,W"),
     Orzhov("B,W"),
     ABZAN("B,G,W"),
     BANT("G,U,W"),

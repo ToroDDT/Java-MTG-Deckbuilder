@@ -5,10 +5,8 @@ import com.example.mtg_deckbuilder.dto.ComboVariant;
 import com.example.mtg_deckbuilder.dto.Combos;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
-import com.example.mtg_deckbuilder.repository.api.ComboRespository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.ComboService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
@@ -31,33 +29,14 @@ public class ComboServiceImpl implements ComboService {
     private static final String SEARCH_COMBO_URL= "https://backend.commanderspellbook.com/variants/?format=json&q=card%3D%22Thassa%27s+Oracle%22";
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final PersonalLibraryServiceImpl personalLibraryService;
-    private final ComboRespository comboRespository;
     private static final Set<String> EXCLUDED_CARD_NAMES = Set.of(
             "Moritte of the Frost",
             "Stella Lee, Wild Card"
     );
 
     @Autowired
-    public ComboServiceImpl(PersonalLibraryServiceImpl personalLibraryService, ComboRespository comboRespository) {
+    public ComboServiceImpl(PersonalLibraryServiceImpl personalLibraryService ) {
         this.personalLibraryService = personalLibraryService;
-        this.comboRespository = comboRespository;
-    }
-
-    @Override
-    public CardCombos findCombos(CustomUserDetails userId) throws Exception {
-        var cards = personalLibraryService.getCards(userId.getId());
-        var searchedCombos = searchCombos(cards);
-        return buildIncludedCombos(searchedCombos);
-    }
-
-    @Override
-    public void saveCombos(CustomUserDetails user, CardCombos cardCombos) throws JsonProcessingException {
-        comboRespository.saveCombos(user, cardCombos);
-    }
-
-    @Override
-    public CardCombos getCombos(CustomUserDetails user) {
-        return comboRespository.getCombos(user);
     }
 
     @Override
