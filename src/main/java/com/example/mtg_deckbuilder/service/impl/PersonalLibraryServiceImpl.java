@@ -8,8 +8,10 @@ import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
+import com.example.mtg_deckbuilder.subscribers.LibraryUpdatedEvent;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,17 +24,20 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   private final PersonalLibraryRepository personalLibraryRepository;
   private final CardService cardServiceImpl;
   private final DeckService deckServiceImpl;
+  private final ApplicationEventPublisher publisher;
 
   public PersonalLibraryServiceImpl(PersonalLibraryRepositoryImpl personalLibraryRepository,
-                                    CardService cardServiceImpl, DeckServiceImpl deckServiceImpl) {
+                                    CardService cardServiceImpl, DeckServiceImpl deckServiceImpl, ApplicationEventPublisher publisher) {
     this.personalLibraryRepository = personalLibraryRepository;
     this.cardServiceImpl = cardServiceImpl;
     this.deckServiceImpl = deckServiceImpl;
+    this.publisher = publisher;
   }
 
   @Override
   public void delete(CustomUserDetails user, String cardId) {
     personalLibraryRepository.delete(user, cardId);
+    publisher.publishEvent(new LibraryUpdatedEvent(this, user));
   }
 
   @Override
@@ -53,15 +58,16 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   }
 
   @Override
-  public void addCard(OwnedCard ownedCard, UUID user) throws CardDoesNotExistException {
+  public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoesNotExistException {
     var card = cardServiceImpl.findByName(ownedCard.getName());
     if (card.isPresent()) {
       ownedCard.setId(card.get().getId());
       ownedCard.setCardId(card.get().getId());
       ownedCard.setTags(List.of());
       ownedCard.setImage(card.get().getImage());
-      ownedCard.setUserId(user);
+      ownedCard.setUserId(user.getId());
       personalLibraryRepository.addCardToPersonalLibrary(ownedCard);
+      publisher.publishEvent(new LibraryUpdatedEvent(this, user));
     } else {
       throw new CardDoesNotExistException(ownedCard.getName());
     }

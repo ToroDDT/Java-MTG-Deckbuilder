@@ -56,6 +56,21 @@ public class CombosServiceImplV2 implements ComboService {
         return buildAllAvailableCombos(searchedCombos);
     }
 
+    @Override
+    public CardCombos findCombos(CustomUserDetails userId) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void saveCombos(CustomUserDetails user, CardCombos cardCombos) {
+
+    }
+
+    @Override
+    public CardCombos getCombos(CustomUserDetails user) {
+        return null;
+    }
+
     private CardCombos buildAllAvailableCombos(Combos searchedCombos) {
         List<ComboVariant> allVariants = new ArrayList<>();
         if (searchedCombos.getResults().getIncluded() != null) {
