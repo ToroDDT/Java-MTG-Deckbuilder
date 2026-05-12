@@ -1,9 +1,9 @@
 package com.example.mtg_deckbuilder.service.api;
 
-import com.example.mtg_deckbuilder.model.Card;
 import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
+import com.example.mtg_deckbuilder.model.cards.ScryfallCardObject;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
@@ -80,7 +80,7 @@ public interface PersonalLibraryService {
 
   PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user);
 
-  List<Card> getCardQuery(String query);
+  List<ScryfallCardObject> getCardQuery(String query);
 
   List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user);
 

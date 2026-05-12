@@ -2,6 +2,7 @@ package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
 import com.example.mtg_deckbuilder.model.*;
+import com.example.mtg_deckbuilder.model.cards.ScryfallCardObject;
 import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -46,7 +47,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   }
 
   @Override
-  public List<Card> getCardQuery(String query) {
+  public List<ScryfallCardObject> getCardQuery(String query) {
     return query.isEmpty()
             ? List.of()
             : cardServiceImpl.findByNameContaining(query).stream().limit(8).toList();

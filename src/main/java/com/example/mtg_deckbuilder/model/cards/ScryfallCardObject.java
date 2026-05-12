@@ -1,17 +1,23 @@
-package com.example.mtg_deckbuilder.model;
+package com.example.mtg_deckbuilder.model.cards;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.example.mtg_deckbuilder.model.Prices;
+import lombok.*;
+import org.jooq.Record;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.jooq.generated.Tables.CARDS;
 
-
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor // Added for flexibility
 @Getter
-public class Card {
+@Setter
+public class ScryfallCardObject {
     private UUID id;
     private String image;
     private String oracleId;
@@ -106,7 +112,40 @@ public class Card {
     private String relatedUris;
     private String preview;
 
-    // Default Constructor
-    public Card() {}
+    /**
+     * Helper function to map a jOOQ Record to this POJO.
+     */
+    public static ScryfallCardObject mapFromRecord(Record record) {
+        return ScryfallCardObject.builder()
+                .id(record.get(CARDS.ID))
+                .name(record.get(CARDS.NAME))
+                .typeLine(record.get(CARDS.TYPE_LINE))
+                .toughness(record.get(CARDS.TOUGHNESS))
+                .power(record.get(CARDS.POWER))
+                .artist(record.get(CARDS.ARTIST))
+                .cmc(record.get(CARDS.CMC)) // Handled by custom builder
+                .scryfallUri(record.get(CARDS.SCRYFALL_URI))
+                .colorIdentity(record.get(CARDS.COLOR_IDENTITY, String[].class)) // Handled by custom builder
+                .multiverseIds(record.get(CARDS.MULTIVERSE_IDS, Integer[].class))
+                .build();
+    }
 
+    public static class ScryfallCardObjectBuilder {
+
+        // Helper to convert String[] from jOOQ to List<String> for the model
+        public ScryfallCardObjectBuilder colorIdentity(String[] colors) {
+            this.colorIdentity = Optional.ofNullable(colors)
+                    .map(List::of)
+                    .orElseGet(List::of);
+            return this;
+        }
+
+        // Helper to convert BigDecimal from jOOQ to Integer for the model
+        public ScryfallCardObjectBuilder cmc(BigDecimal cmc) {
+            this.cmc = Optional.ofNullable(cmc)
+                    .map(BigDecimal::intValue)
+                    .orElse(0);
+            return this;
+        }
+    }
 }
