@@ -23,7 +23,7 @@ public interface PersonalLibraryService {
    *               will be added; must not be null.
    * @throws NullPointerException if {@code ownedCard} or {@code userId} is null.
    */
-  void addCard(OwnedCard ownedCard, CustomUserDetails user);
+  void addCard(OwnedCard ownedCard, UUID userId);
 
 /**
    * Retrieves all cards currently stored in the user's personal library.
