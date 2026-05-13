@@ -50,7 +50,7 @@ class PersonalLibraryServiceImplTest {
 
     @Test
     void addCardPopulatesOwnedCardAndPersistsIt() {
-        UUID userId = UUID.randomUUID();
+        CustomUserDetails userId = any(CustomUserDetails.class);
         UUID cardId = UUID.randomUUID();
         OwnedCard ownedCard = new OwnedCard();
         ownedCard.setName("Sol Ring");
@@ -83,7 +83,7 @@ class PersonalLibraryServiceImplTest {
         when(cardServiceImpl.findByName("Missing Card")).thenReturn(Optional.empty());
 
         assertThrows(CardDoesNotExistException.class,
-                () -> personalLibraryService.addCard(ownedCard, UUID.randomUUID()));
+                () -> personalLibraryService.addCard(ownedCard, any(CustomUserDetails.class)));
     }
 
     @Test

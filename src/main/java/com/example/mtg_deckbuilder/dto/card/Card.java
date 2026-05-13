@@ -122,8 +122,9 @@ public class Card {
 
 
     public Card extractFields(ResultSet rs) throws SQLException {
+        String idColumn = hasColumn(rs) ? "card_id" : "id";
         return Card.builder()
-                .id(rs.getObject("card_id", UUID.class))
+                .id(rs.getObject(idColumn, UUID.class))
                 .name(rs.getString("name"))
                 .typeLine(rs.getString("type_line"))
                 .toughness(rs.getString("toughness"))
@@ -136,17 +137,17 @@ public class Card {
                 .prices(extractCardPrices(rs))
                 .build();
     }
-    // Helper method to check column existence
-    private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
+    private static boolean hasColumn(ResultSet rs) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         int columns = rsmd.getColumnCount();
         for (int x = 1; x <= columns; x++) {
-            if (columnName.equalsIgnoreCase(rsmd.getColumnName(x))) {
+            if ("card_id".equalsIgnoreCase(rsmd.getColumnName(x))) {
                 return true;
             }
         }
         return false;
     }
+
 
     private String extractArtCrop(ResultSet rs) throws SQLException {
         String raw = rs.getString("image_uris");
@@ -154,7 +155,6 @@ public class Card {
         try {
             return objectMapper.readValue(raw, ImageUris.class).getBorderCrop();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }

@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @Controller
 public class CombosController {
     private final ComboServiceImpl comboServiceImpl;
+
     public CombosController(ComboServiceImpl comboServiceImpl) {
         this.comboServiceImpl = comboServiceImpl;
     }
+
     @GetMapping("/personal-library/combos")
     public String combos(Model model) {
         ComboViewModelImpl cardBrowserViewModel = new ComboViewModelImpl();
