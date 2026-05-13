@@ -17,36 +17,36 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public @NonNull UserDetails loadUserByUsername (@NonNull String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException("username input was empty");
-        }
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-        return new CustomUserDetails(
-                user.get().username(),
-                user.get().password(),
-                authorities,
-                user.get().id()
+    public @NonNull UserDetails loadUserByUsername(
+            @NonNull String username
+    ) throws UsernameNotFoundException {
 
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        List<GrantedAuthority> authorities = List.of(
+                new SimpleGrantedAuthority("ROLE_USER")
         );
-    }
-    public void saveUser(@NotNull UserRegistrationDto userRegistrationDto) throws InvalidRegistrationFormException {
-        if (userRegistrationDto.getUsername().isBlank() || userRegistrationDto.getPassword().isBlank() || userRegistrationDto.getEmail().isBlank()){
-            throw new InvalidRegistrationFormException("Missing required fields, some form fields are empty.");
-        }
-        userRepository.saveUser(userRegistrationDto);
+
+        return new CustomUserDetails(
+                user.username(),
+                user.password(),
+                authorities,
+                user.id()
+        );
     }
 }

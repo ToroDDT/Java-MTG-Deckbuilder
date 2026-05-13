@@ -35,4 +35,5 @@ public class UserRepositoryImpl implements UserRepository {
         .param("password", passwordEncoder.encode(dto.getPassword())) // Hashes the password
         .update(); // Use .update() for INSERT/UPDATE/DELETE
     }
+
 }
