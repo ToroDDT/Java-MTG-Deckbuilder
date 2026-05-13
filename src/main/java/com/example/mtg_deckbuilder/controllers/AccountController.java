@@ -1,5 +1,5 @@
 package com.example.mtg_deckbuilder.controllers;
-import com.example.mtg_deckbuilder.dto.UserRegistrationDto;
+import com.example.mtg_deckbuilder.dto.combo.UserRegistrationDto;
 import com.example.mtg_deckbuilder.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

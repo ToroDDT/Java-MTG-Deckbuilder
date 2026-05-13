@@ -1,13 +1,12 @@
 package com.example.mtg_deckbuilder.service.impl;
 
-import com.example.mtg_deckbuilder.dto.CardCombos;
-import com.example.mtg_deckbuilder.dto.ComboVariant;
-import com.example.mtg_deckbuilder.dto.Combos;
+import com.example.mtg_deckbuilder.dto.combo.CardCombos;
+import com.example.mtg_deckbuilder.dto.combo.ComboVariant;
+import com.example.mtg_deckbuilder.dto.combo.Combos;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.ComboService;
-import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;

@@ -1,7 +1,7 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
-import com.example.mtg_deckbuilder.model.ImageUris;
-import com.example.mtg_deckbuilder.model.Prices;
+import com.example.mtg_deckbuilder.dto.card.ImageUris;
+import com.example.mtg_deckbuilder.dto.card.Prices;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.repository.api;
 
-import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.dto.card.Card;
 
 import java.util.List;
 import java.util.Optional;

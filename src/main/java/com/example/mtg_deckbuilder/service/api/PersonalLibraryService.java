@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.service.api;
 
-import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;

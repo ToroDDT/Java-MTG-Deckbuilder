@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
 import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl;
@@ -12,7 +13,6 @@ import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;

@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
-import com.example.mtg_deckbuilder.dto.UserRegistrationDto;
+import com.example.mtg_deckbuilder.dto.combo.UserRegistrationDto;
 import com.example.mtg_deckbuilder.model.User;
 import com.example.mtg_deckbuilder.repository.api.UserRepository;
 import org.springframework.jdbc.core.simple.JdbcClient;

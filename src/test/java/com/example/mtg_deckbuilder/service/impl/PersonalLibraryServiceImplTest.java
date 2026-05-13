@@ -1,10 +1,10 @@
 package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
-import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
-import com.example.mtg_deckbuilder.model.Prices;
+import com.example.mtg_deckbuilder.dto.card.Prices;
 import com.example.mtg_deckbuilder.model.SortOptions;
 import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -55,7 +55,7 @@ class PersonalLibraryServiceImplTest {
         OwnedCard ownedCard = new OwnedCard();
         ownedCard.setName("Sol Ring");
 
-        Card foundCard = new Card();
+        var foundCard = Card.builder().build();
         foundCard.setId(cardId);
         foundCard.setImage("image-url");
 
@@ -168,7 +168,7 @@ class PersonalLibraryServiceImplTest {
     }
 
     private static OwnedCard ownedCard(String name, double price, UUID ownedId) {
-        Card card = new Card();
+        var card = Card.builder().build();
         card.setId(UUID.randomUUID());
         card.setName(name);
         card.setCmc(2);

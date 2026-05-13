@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
-import com.example.mtg_deckbuilder.model.*;
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.repository.impl.CardRepositoryImpl;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
