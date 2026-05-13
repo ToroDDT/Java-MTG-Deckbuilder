@@ -31,7 +31,8 @@ public class CombosController {
     public  String getCombos(@ModelAttribute("personalLibraryFilters") LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
 
         ComboViewModelImpl cardBrowserViewModel = new ComboViewModelImpl();
-        var combosList = comboServiceImpl.findCombos(user, personalLibraryFilters);
+
+        var combosList = comboServiceImpl.getCombos(user);
 
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());

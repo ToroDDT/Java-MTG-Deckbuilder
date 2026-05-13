@@ -7,6 +7,7 @@ import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.ComboService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
@@ -53,6 +54,21 @@ public class CombosServiceImplV2 implements ComboService {
         }
 
         return buildAllAvailableCombos(searchedCombos);
+    }
+
+    @Override
+    public CardCombos findCombos(CustomUserDetails userId) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void saveCombos(CustomUserDetails user, CardCombos cardCombos) throws JsonProcessingException {
+
+    }
+
+    @Override
+    public CardCombos getCombos(CustomUserDetails user) {
+        return null;
     }
 
     private CardCombos buildAllAvailableCombos(Combos searchedCombos) {
