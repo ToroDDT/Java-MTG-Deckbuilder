@@ -13,19 +13,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface PersonalLibraryService {
-/**
-   * Adds a card to the personal library of the specified user.
-   *
-   * @param ownedCard the card to be added, including its associated details;
-   *                  must not be null. OwnedCard represents a card the user
-   *                  currently owns, not a card in a deck being built.
-   * @param userId the unique identifier of the user to whose library the card
-   *               will be added; must not be null.
-   * @throws NullPointerException if {@code ownedCard} or {@code userId} is null.
-   */
-  void addCard(OwnedCard ownedCard, UUID userId);
 
-/**
+    /**
    * Retrieves all cards currently stored in the user's personal library.
    *
    * @param userId the unique identifier of the user whose library is being retrieved;
@@ -61,7 +50,7 @@ public interface PersonalLibraryService {
    */
   List<OwnedCard> getCards(UUID userId, LibraryFilters personalLibraryFilters);
 
-
+  void addCard(OwnedCard ownedCard, CustomUserDetails user);
   /**
    * Retrieves the count of cards grouped by each {@code ColorIdentity}
    * from the personal library of a specific user.
