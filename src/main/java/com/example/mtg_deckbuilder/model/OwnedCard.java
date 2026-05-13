@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.model;
 
 import com.example.mtg_deckbuilder.dto.card.Card;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,6 +44,15 @@ public class OwnedCard {
     private Card card;
 
     public OwnedCard() {}
+    public static OwnedCard from(Card card, CustomUserDetails user) {
+        return OwnedCard.builder()
+                .id(card.getId())
+                .cardId(card.getId())
+                .userId(user.getId())
+                .image(card.getImage())
+                .tags(new ArrayList<>()) // Default empty list
+                .build();
+    }
 
     public OwnedCard mapRows(ResultSet rs) throws SQLException {
 

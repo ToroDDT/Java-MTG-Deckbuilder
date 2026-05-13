@@ -37,17 +37,17 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   @Override
   public void delete(CustomUserDetails user, String cardId) {
     publisher.publishEvent(new LibraryUpdatedEvent(this, user));
-    personalLibraryRepository.delete(user, cardId);
+    personalLibraryRepository.deleteCard(user, cardId);
   }
 
   @Override
   public List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user) {
-    return personalLibraryRepository.updateTagsOnCard(tag, UUID.fromString(personalCardId), user);
+    return personalLibraryRepository.saveTags(tag, UUID.fromString(personalCardId), user);
   }
 
   @Override
   public List<String> removeCardTag(String tag, String personalCardId, CustomUserDetails user) {
-    return personalLibraryRepository.deleteTagFromCard(tag, UUID.fromString(personalCardId), user);
+    return personalLibraryRepository.deleteTag(tag, UUID.fromString(personalCardId), user);
   }
 
   @Override
@@ -57,26 +57,24 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
             : cardServiceImpl.findByNameContaining(query).stream().limit(8).toList();
   }
 
-  @Override
-  public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoesNotExistException {
-    var card = cardServiceImpl.findByName(ownedCard.getName());
-    if (card.isPresent()) {
-      ownedCard.setId(card.get().getId());
-      ownedCard.setCardId(card.get().getId());
-      ownedCard.setTags(List.of());
-      ownedCard.setImage(card.get().getImage());
-      ownedCard.setUserId(user.getId());
-      publisher.publishEvent(new LibraryUpdatedEvent(this, user));
-      personalLibraryRepository.addCardToPersonalLibrary(ownedCard);
-    } else {
-      throw new CardDoesNotExistException(ownedCard.getName());
-    }
-  }
-
+@Override
+public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoesNotExistException {
+    cardServiceImpl.findByName(ownedCard.getName())
+        .map(card -> OwnedCard.from(card, user))
+        .ifPresentOrElse(
+            cardToAdd -> {
+                personalLibraryRepository.saveCard(cardToAdd);
+                publisher.publishEvent(new LibraryUpdatedEvent(this, user));
+            },
+            () -> {
+                throw new CardDoesNotExistException(ownedCard.getName());
+            }
+        );
+}
   @Override
   public List<OwnedCard> getCards(UUID userId) {
     return personalLibraryRepository
-            .getAllPersonalLibraryCardsForUser(userId)
+            .findCards(userId)
             .stream()
             .peek(ownedCard -> {
               if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
@@ -89,7 +87,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   @Override
   public List<OwnedCard> getCardsPaginated(UUID userId) {
     return personalLibraryRepository
-            .getAllPersonalLibraryCardsForUserPaginated(userId)
+            .findCardsPaginated(userId)
             .stream()
             .peek(ownedCard -> {
               if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
@@ -103,7 +101,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
 
     return personalLibraryRepository
-            .getAllPersonalLibraryCardsForUser(userid, personalLibraryFilters)
+            .findCards(userid, personalLibraryFilters)
             .stream()
             .peek(ownedCard -> {
               if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
@@ -173,11 +171,11 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   }
 
   public Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user) {
-    var cards = personalLibraryRepository.getAllPersonalLibraryCardsForUser(user.getId())
+    var cards = personalLibraryRepository.findCards(user.getId())
             .stream()
             .map(OwnedCard::getId)
             .toList();
-    return personalLibraryRepository.getDeckLocationsOfCards(user, cards);
+    return personalLibraryRepository.findLocations(user, cards);
   }
 
   private void hydrateDeckLocations(CustomUserDetails user, List<OwnedCard> cards) {
@@ -185,7 +183,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
       return;
     }
 
-    Map<UUID, List<String>> deckLocations = personalLibraryRepository.getDeckLocationsOfCards(
+    Map<UUID, List<String>> deckLocations = personalLibraryRepository.findLocations(
             user,
             cards.stream().map(OwnedCard::getId).toList());
 
@@ -195,7 +193,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
 
   @Override
   public PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user) {
-    return personalLibraryRepository.getStatsOfPersonalLibrary(user);
+    return personalLibraryRepository.getInfo(user);
   }
 
   private Double getTotalValue(List<OwnedCard> cards) {
@@ -208,13 +206,13 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
 
   @Override
   public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId) {
-    return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId)
+    return personalLibraryRepository.findCards(userId)
             .stream()
             .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
   }
 
   public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId, LibraryFilters personalLibraryFilters) {
-    return personalLibraryRepository.getAllPersonalLibraryCardsForUser(userId, personalLibraryFilters)
+    return personalLibraryRepository.findCards(userId, personalLibraryFilters)
             .stream()
             .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
   }

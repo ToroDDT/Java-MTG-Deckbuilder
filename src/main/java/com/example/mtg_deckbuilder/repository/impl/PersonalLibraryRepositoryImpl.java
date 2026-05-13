@@ -30,7 +30,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
   }
 
 
-  public void delete(@NonNull CustomUserDetails user, @NonNull String personalCardId) {
+  public void deleteCard(@NonNull CustomUserDetails user, @NonNull String personalCardId) {
     String sql = """
         DELETE FROM personal_collection_library
         WHERE id = :personalCardId AND user_id = :userId
@@ -69,7 +69,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
   }
 
   @Override
-  public List<String> updateTagsOnCard(String tag, UUID personalCardId, CustomUserDetails user) {
+  public List<String> saveTags(String tag, UUID personalCardId, CustomUserDetails user) {
     String sql = """
         UPDATE personal_collection_library
         SET tags = array_append(COALESCE(tags, ARRAY[]::text[]), ?)
@@ -80,7 +80,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
   }
 
   @Override
-  public List<String> deleteTagFromCard(String tag, UUID personalCardId, CustomUserDetails user) {
+  public List<String> deleteTag(String tag, UUID personalCardId, CustomUserDetails user) {
     String sql = """
         UPDATE personal_collection_library
         SET tags = array_remove(tags, ?)
@@ -91,7 +91,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
   }
 
   @Override
-  public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId) {
+  public List<OwnedCard> findCards(UUID userId) {
     String sql = """
          SELECT\s
              personal_collection_library.id AS personal_library_id,
@@ -122,7 +122,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
   }
 
   @Override
-  public List<OwnedCard> getAllPersonalLibraryCardsForUserPaginated(UUID userId) {
+  public List<OwnedCard> findCardsPaginated(UUID userId) {
     var pageSize = 12;
 
     String sql = """
@@ -160,7 +160,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
   }
 
 @Override
-public List<OwnedCard> getAllPersonalLibraryCardsForUser(
+public List<OwnedCard> findCards(
     UUID userId,
     LibraryFilters personalLibraryFilters
 ) {
@@ -348,7 +348,7 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(
 }
 
   @Override
-  public void addCardToPersonalLibrary(OwnedCard ownedCard) {
+  public void saveCard(OwnedCard ownedCard) {
     String sql = """
         INSERT INTO personal_collection_library (user_id, card_id, image)
         VALUES (:userId, :cardId, :image)
@@ -365,7 +365,7 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(
             .update();
   }
   @Override
-  public Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user, List<UUID> cardIds) {
+  public Map<UUID, List<String>> findLocations(CustomUserDetails user, List<UUID> cardIds) {
     if (cardIds == null || cardIds.isEmpty()) {
       return Map.of();
     }
@@ -396,7 +396,7 @@ public List<OwnedCard> getAllPersonalLibraryCardsForUser(
   }
 
   @Override
-  public PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user) {
+  public PersonalLibraryStats getInfo(CustomUserDetails user) {
     String sql = """
          SELECT\s
              personal_collection_library.id AS personal_library_id,

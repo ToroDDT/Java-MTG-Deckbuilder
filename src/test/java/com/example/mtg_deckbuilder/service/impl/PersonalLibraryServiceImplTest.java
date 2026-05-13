@@ -64,7 +64,7 @@ class PersonalLibraryServiceImplTest {
         personalLibraryService.addCard(ownedCard, userId);
 
         ArgumentCaptor<OwnedCard> captor = ArgumentCaptor.forClass(OwnedCard.class);
-        verify(personalLibraryRepository).addCardToPersonalLibrary(captor.capture());
+        verify(personalLibraryRepository).saveCard(captor.capture());
 
         OwnedCard savedCard = captor.getValue();
         assertEquals(cardId, savedCard.getId());
@@ -90,26 +90,26 @@ class PersonalLibraryServiceImplTest {
     void updateCardTagsDelegatesUsingPersonalCardId() {
         UUID personalCardId = UUID.randomUUID();
         CustomUserDetails user = testUser();
-        when(personalLibraryRepository.updateTagsOnCard("Ramp", personalCardId, user))
+        when(personalLibraryRepository.saveTags("Ramp", personalCardId, user))
                 .thenReturn(List.of("Ramp"));
 
         List<String> tags = personalLibraryService.updateCardTags("Ramp", personalCardId.toString(), user);
 
         assertEquals(List.of("Ramp"), tags);
-        verify(personalLibraryRepository).updateTagsOnCard("Ramp", personalCardId, user);
+        verify(personalLibraryRepository).saveTags("Ramp", personalCardId, user);
     }
 
     @Test
     void removeCardTagDelegatesUsingPersonalCardId() {
         UUID personalCardId = UUID.randomUUID();
         CustomUserDetails user = testUser();
-        when(personalLibraryRepository.deleteTagFromCard("Ramp", personalCardId, user))
+        when(personalLibraryRepository.deleteTag("Ramp", personalCardId, user))
                 .thenReturn(List.of("Staple"));
 
         List<String> tags = personalLibraryService.removeCardTag("Ramp", personalCardId.toString(), user);
 
         assertEquals(List.of("Staple"), tags);
-        verify(personalLibraryRepository).deleteTagFromCard("Ramp", personalCardId, user);
+        verify(personalLibraryRepository).deleteTag("Ramp", personalCardId, user);
     }
 
     @Test
@@ -120,7 +120,7 @@ class PersonalLibraryServiceImplTest {
         OwnedCard cheaper = ownedCard("Arcane Signet", 1.0, UUID.randomUUID());
         OwnedCard pricier = ownedCard("Mana Crypt", 10.0, UUID.randomUUID());
 
-        when(personalLibraryRepository.getAllPersonalLibraryCardsForUser(any(UUID.class), eq(filters)))
+        when(personalLibraryRepository.findCards(any(UUID.class), eq(filters)))
                 .thenReturn(List.of(cheaper, pricier));
 
         List<OwnedCard> result = personalLibraryService.getCards(UUID.randomUUID(), filters);
@@ -139,9 +139,9 @@ class PersonalLibraryServiceImplTest {
         OwnedCard second = ownedCard("Arcane Signet", 1.5, secondOwnedId);
         second.setDateAdded(LocalDate.of(2026, 4, 2));
 
-        when(personalLibraryRepository.getAllPersonalLibraryCardsForUserPaginated(user.getId()))
+        when(personalLibraryRepository.findCardsPaginated(user.getId()))
                 .thenReturn(List.of(first, second));
-        when(personalLibraryRepository.getDeckLocationsOfCards(user, List.of(firstOwnedId, secondOwnedId)))
+        when(personalLibraryRepository.findLocations(user, List.of(firstOwnedId, secondOwnedId)))
                 .thenReturn(Map.of(
                         firstOwnedId, List.of("Artifacts"),
                         secondOwnedId, List.of("Budget")
