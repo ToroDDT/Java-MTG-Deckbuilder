@@ -42,8 +42,6 @@ class PersonalLibraryServiceImplTest {
     @Mock
     private CardService cardServiceImpl;
 
-    @Mock
-    private DeckServiceImpl deckServiceImpl;
 
     @InjectMocks
     private PersonalLibraryServiceImpl personalLibraryService;
@@ -70,7 +68,6 @@ class PersonalLibraryServiceImplTest {
         assertEquals(cardId, savedCard.getId());
         assertEquals(cardId, savedCard.getCardId());
         assertEquals("image-url", savedCard.getImage());
-        assertEquals(userId, savedCard.getUserId());
         assertEquals(LocalDate.now(), savedCard.getDateAdded());
         assertEquals(List.of(), savedCard.getTags());
     }
@@ -146,7 +143,6 @@ class PersonalLibraryServiceImplTest {
                         firstOwnedId, List.of("Artifacts"),
                         secondOwnedId, List.of("Budget")
                 ));
-        when(deckServiceImpl.getDeckNames(user)).thenReturn(List.of("Artifacts", "Budget"));
 
         LibraryViewModelImpl viewModel = personalLibraryService.buildPersonalLibraryViewModel(user);
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+
 @Component
 public class ComboRefreshListener {
     private  final ComboServiceImpl comboService;
@@ -19,10 +20,6 @@ public class ComboRefreshListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onLibraryUpdated(LibraryUpdatedEvent event) throws Exception {
-        var combosList = comboService.findCombos(
-            event.getUser()
-        );
-        comboService.saveCombos(event.getUser(), combosList);
-        // cache it, push via websocket, etc.
+        comboService.updateCombos(event.getUser());
     }
 }

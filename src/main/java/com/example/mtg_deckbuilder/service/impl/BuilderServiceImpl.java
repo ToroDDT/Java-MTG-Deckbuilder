@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
+import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
@@ -29,6 +30,12 @@ public class BuilderServiceImpl implements BuilderService {
     @Override
     public Optional<BuilderCardHoverView> getDeckEntryHover(CustomUserDetails user, UUID deckId, UUID deckCardEntryId) {
         return builderRepository.findDeckEntryHover(user.getId(), deckId, deckCardEntryId);
+    }
+
+
+    @Override
+    public List<OwnedCard>getCardsFromDeck(UUID deckId) {
+        return builderRepository.getAllCardsFromDeck(deckId);
     }
 
     @Override

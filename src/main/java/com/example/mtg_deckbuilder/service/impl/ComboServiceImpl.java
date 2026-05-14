@@ -3,12 +3,15 @@ package com.example.mtg_deckbuilder.service.impl;
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
 import com.example.mtg_deckbuilder.dto.combo.ComboVariant;
 import com.example.mtg_deckbuilder.dto.combo.Combos;
-import com.example.mtg_deckbuilder.model.LibraryFilters;
+import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.ComboRepository;
 import com.example.mtg_deckbuilder.repository.impl.ComboRepositoryImpl;
+import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.api.BuilderService;
 import com.example.mtg_deckbuilder.service.api.ComboService;
+import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,18 +21,18 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
 public class ComboServiceImpl implements ComboService {
 
+    private final Executor apiExecutor = Executors.newFixedThreadPool(10); // Adjust based on API rate limits
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final String BASE_URL = "https://backend.commanderspellbook.com/find-my-combos/";
-    private static final String SEARCH_COMBO_URL= "https://backend.commanderspellbook.com/variants/?format=json&q=card%3D%22Thassa%27s+Oracle%22";
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final PersonalLibraryServiceImpl personalLibraryService;
     private final ComboRepository comboRespository;
@@ -37,34 +40,59 @@ public class ComboServiceImpl implements ComboService {
             "Moritte of the Frost",
             "Stella Lee, Wild Card"
     );
+    private final DeckService deckService;
+    private final BuilderService builderService;
 
     @Autowired
-    public ComboServiceImpl(PersonalLibraryServiceImpl personalLibraryService, ComboRepositoryImpl comboRespository ) {
+    public ComboServiceImpl(PersonalLibraryServiceImpl personalLibraryService, ComboRepositoryImpl comboRespository, DeckService deckService, BuilderService builderService) {
         this.personalLibraryService = personalLibraryService;
         this.comboRespository = comboRespository;
+        this.deckService = deckService;
+        this.builderService = builderService;
     }
 
-    @Override
-    public CardCombos findCombos(CustomUserDetails userId, LibraryFilters libraryFilters) throws Exception {
-        var cards = personalLibraryService.getCards(userId.getId());
+  // Define a dedicated thread pool for API calls (usually in a config class)
 
-        if (libraryFilters.getCardName() == null) {
-            var searchedCombos = searchCombos(cards);
-            return buildIncludedCombos(searchedCombos);
+@Override
+public void updateCombos(CustomUserDetails user) {
+    var allCards = personalLibraryService.getCards(user.getId());
+    List<Deck> decks= deckService.getDeckIds(user);
+    System.out.println("Amount of Decks " + decks.size());
+
+    // 1. Create the Library Task
+    CompletableFuture<Void> libraryTask = CompletableFuture.runAsync(() -> {
+        try {
+            var searchedCombos = searchCombos(allCards);
+            saveCombos(user, buildIncludedCombos(searchedCombos, "library"));
+        } catch (Exception e) {
+            System.out.println("Error processing library: " + e.getMessage());
         }
-        else {
-            var searchedCombos = searchCombos(libraryFilters.getCardName());
-            return buildAlmostIncludedCombos(searchedCombos);
+    }, apiExecutor);
+
+    // 2. Create the Deck Tasks
+    List<CompletableFuture<Void>> deckTasks = decks.stream()
+        .map(deck -> CompletableFuture.runAsync(() -> {
+            try {
+                var cards = builderService.getCardsFromDeck(deck.id());
+                var combos = searchCombos(cards);
+                System.out.println("Deck name: " + deck.name());
+                System.out.println("Deck combos: " + combos.getResults().getIncluded());
+                var comboIncluded = buildIncludedCombos(combos, deck.name());
+                saveCombos(user, comboIncluded);
+            } catch (Exception e) {
+                System.out.println("FAILED DECK: " + deck.name());
+                e.printStackTrace();
         }
-    }
+        }, apiExecutor))
+        .toList();
 
-    @Override
-    public CardCombos findCombos(CustomUserDetails userId) throws Exception {
-        var cards = personalLibraryService.getCards(userId.getId());
-        var searchedCombos = searchCombos(cards);
-        return buildIncludedCombos(searchedCombos);
-    }
+    // 3. Combine everything into one list
+    List<CompletableFuture<Void>> allTasks = new ArrayList<>(deckTasks);
+    allTasks.add(libraryTask);
 
+    // 4. Wait for EVERYTHING to finish
+    CompletableFuture.allOf(allTasks.toArray(new CompletableFuture[0])).join();
+}
     @Override
     public void saveCombos(CustomUserDetails user, CardCombos cardCombos) throws JsonProcessingException {
         comboRespository.saveCombos(user, cardCombos);
@@ -75,7 +103,7 @@ public class ComboServiceImpl implements ComboService {
         return comboRespository.getCombos(user);
     }
 
-    private CardCombos buildIncludedCombos(Combos searchedCombos) {
+    private CardCombos buildIncludedCombos(Combos searchedCombos, String location) {
         List<ComboVariant> filteredVariants = searchedCombos
                 .getResults()
                 .getIncluded()
@@ -88,9 +116,37 @@ public class ComboServiceImpl implements ComboService {
                 )
                 .toList();
 
-        return getCardCombos(filteredVariants);
+        return getCardCombos(filteredVariants, location);
     }
 
+
+    static CardCombos getCardCombos(List<ComboVariant> filteredVariants, String location) {
+        return CardCombos.builder()
+                .cardCombinations(filteredVariants
+                        .stream()
+                        .map(comboVariant -> comboVariant
+                                .getUses()
+                                .stream()
+                                .filter(cardUse -> cardUse.getCard() != null)
+                                .map(cardUse -> cardUse.getCard().getName())
+                                .toList())
+                        .toList())
+                .description(filteredVariants
+                        .stream()
+                        .map(ComboVariant::getDescription)
+                        .toList())
+                .location(location)
+                .images(filteredVariants
+                        .stream()
+                        .map(comboVariant -> comboVariant
+                                .getUses()
+                                .stream()
+                                .filter(cardUse -> cardUse.getCard() != null)
+                                .map(cardUse -> cardUse.getCard().getImageUriFrontNormal())
+                                .toList())
+                        .toList())
+                .build();
+    }
     static CardCombos getCardCombos(List<ComboVariant> filteredVariants) {
         return CardCombos.builder()
                 .cardCombinations(filteredVariants
@@ -117,6 +173,7 @@ public class ComboServiceImpl implements ComboService {
                         .toList())
                 .build();
     }
+
 
     private CardCombos buildAlmostIncludedCombos(Combos searchedCombos) {
         List<ComboVariant> variants = searchedCombos.getResults().getAlmostIncludedByAddingColors()

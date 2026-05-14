@@ -131,7 +131,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
     return LibraryViewModelImpl.builder()
             .cards(cards)
             .dateAdded(lastCard)
-            .deckNames(deckNames)
+            .deckNames(deckNames.stream().map(Deck::name).toList())
             .totalCards(cards.size())
             .totalValue(total)
             .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
@@ -162,7 +162,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
     return LibraryViewModelImpl.builder()
             .cards(cards)
             .dateAdded(lastCard)
-            .deckNames(deckNames)
+            .deckNames(deckNames.stream().map(Deck::name).toList())
             .totalCards(cards.size())
             .totalValue(total)
             .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
@@ -233,7 +233,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
     return colorCounts;
   }
 
-  private List<String> getDeckNames(CustomUserDetails userId) {
-    return deckServiceImpl.getDeckNames(userId);
+  private List<Deck> getDeckNames(CustomUserDetails userId) {
+    return deckServiceImpl.getDeckIds(userId);
   }
 }

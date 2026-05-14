@@ -1,7 +1,9 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.dto.card.ImageUris;
 import com.example.mtg_deckbuilder.dto.card.Prices;
+import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -117,7 +119,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
     @Override
     public List<Map<String, String>> getAllCardsForUser(String deckId) {
         String sql = """
-    SELECT 
+    SELECT\s
         deck_card_entries.id AS deck_entry_id,
 
         deck_card_entries.card_id,
@@ -145,7 +147,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
 
     WHERE deck_card_entries.deck_id = ?
     ORDER BY cards.name
-    """;
+   \s""";
 
 
         return jdbcClient.sql(sql)
@@ -176,4 +178,56 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                 })
                 .list();
     }
-}
+
+
+    @Override
+    public List<OwnedCard> getAllCardsFromDeck(UUID deckId) {
+        String sql = """
+    SELECT\s
+        deck_card_entries.id AS deck_entry_id,
+
+        deck_card_entries.card_id,
+        deck_card_entries.personal_library_card_id,
+
+        cards.name AS card_name,
+        cards.type_line,
+        cards.cmc,
+        cards.scryfall_uri,
+        cards.color_identity,
+        cards.image_uris,
+        cards.prices,
+
+        decks.name AS deck_name,
+        decks.commander,
+        decks.image AS deck_image
+
+    FROM cards
+
+    INNER JOIN deck_card_entries
+        ON deck_card_entries.card_id = cards.id
+
+    INNER JOIN decks
+        ON deck_card_entries.deck_id = decks.id
+
+    WHERE deck_card_entries.deck_id = ?
+    ORDER BY cards.name
+   \s""";
+
+       return jdbcClient.sql(sql)
+    .param(deckId)
+    .query((rs, rowNum) ->
+        OwnedCard.builder()
+            .card(
+                Card.builder()
+                    .id(rs.getObject("card_id", UUID.class))
+                    .name(rs.getString("card_name"))
+                    .typeLine(rs.getString("type_line"))
+                    .scryfallUri(rs.getString("scryfall_uri"))
+                    .build()
+            )
+            .build()
+    )
+    .list();
+    }
+
+ }

@@ -25,17 +25,33 @@ public class ComboRepositoryImpl implements ComboRepository{
         this.objectMapper = objectMapper;
         this.jdbcTemplate = jdbcTemplate;
     }
-    @Override
-    public void saveCombos(CustomUserDetails ownerId, CardCombos cardCombos) throws JsonProcessingException {
-        String sql = "INSERT INTO combos (combo_owner, description, card_combinations, images) " +
-                "VALUES (?::uuid, ?::text[], ?::jsonb, ?::jsonb)";
+   @Override
+public void saveCombos(CustomUserDetails owner, CardCombos cardCombos) throws JsonProcessingException {
+    // 1. Define the SQL with the UPSERT (ON CONFLICT) logic
+    String sql = "INSERT INTO combos (combo_owner, location, description, card_combinations, images) " +
+                 "VALUES (?::uuid, ?, ?::text[], ?::jsonb, ?::jsonb) " +
+                 "ON CONFLICT (combo_owner, location) " +
+                 "DO UPDATE SET " +
+                 "description = EXCLUDED.description, " +
+                 "card_combinations = EXCLUDED.card_combinations, " +
+                 "images = EXCLUDED.images";
 
-        String[] descArray = cardCombos.getDescription().toArray(new String[0]);
-        String cardJson = objectMapper.writeValueAsString(cardCombos.getCardCombinations());
-        String imageJson = objectMapper.writeValueAsString(cardCombos.getImages());
+    // 2. Prepare the data
+    String ownerUuid = owner.getId().toString();
+    String deckLocation = cardCombos.getLocation(); // This maps to the 'location' column
+    String[] descArray = cardCombos.getDescription().toArray(new String[0]);
+    String cardJson = objectMapper.writeValueAsString(cardCombos.getCardCombinations());
+    String imageJson = objectMapper.writeValueAsString(cardCombos.getImages());
 
-        jdbcTemplate.update(sql, ownerId.getId().toString(), descArray, cardJson, imageJson);
-    }
+    // 3. Execute with EXACT parameter order
+    jdbcTemplate.update(sql,
+        ownerUuid,    // 1. combo_owner (?::uuid)
+        deckLocation, // 2. location (?)
+        descArray,    // 3. description (?::text[])
+        cardJson,     // 4. card_combinations (?::jsonb)
+        imageJson     // 5. images (?::jsonb)
+    );
+}
     @Override
     public CardCombos getCombos(CustomUserDetails owner) {
         String sql = "SELECT * FROM combos WHERE combo_owner = ?::uuid";
@@ -51,17 +67,19 @@ public class ComboRepositoryImpl implements ComboRepository{
             String cardJson = rs.getString("card_combinations");
             String imageJson = rs.getString("images");
 
-            List<List<String>> cards = null;
+            List<List<String>> cards;
             try {
                 cards = objectMapper.readValue(cardJson,
-                        new TypeReference<List<List<String>>>() {});
+                        new TypeReference<>() {
+                        });
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-            List<List<String>> images = null;
+            List<List<String>> images;
             try {
                 images = objectMapper.readValue(imageJson,
-                        new TypeReference<List<List<String>>>() {});
+                        new TypeReference<>() {
+                        });
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }

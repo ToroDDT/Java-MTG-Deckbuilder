@@ -14,9 +14,8 @@ public interface DeckService {
     void addDeck(NewDeck newDeck);
     void addCard(CardEntry card);
     String addCard(CustomUserDetails user, String deck, UUID cardId, UUID personalLibraryCardId);
-    List<Deck> getDecks(CustomUserDetails user);
     Map<?, ?> getDecks(CustomUserDetails user , DeckSearchCriteria deckSearchCriteria);
-    List<String> getDeckNames(CustomUserDetails user);
+    List<Deck> getDeckIds(CustomUserDetails user);
 
     void removePersonalLibraryCardFromDeck(CustomUserDetails user, UUID personalLibraryCardId);
 
