@@ -8,7 +8,8 @@
 <aside class="cb-sidebar" th:fragment="combo-explorer(personalLibrary, filters, ownedCard)">
   <form th:action="@{/personal-library/combos-list}"
         th:hx-get="@{/personal-library/combos-list}"
-        hx-target="#personal-cards"
+        hx-target="#combos-list"
+        hx-swap="innerHTML"
         th:object="${filters}"
         hx-trigger="input delay:500ms, change">
 
@@ -21,6 +22,16 @@
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         <input th:field="*{cardName}" class="cb-search-input" id="searchInput" type="text" placeholder="Search cards..." autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="cb-filter-section">
+      <label for="effectSearchInput" class="cb-filter-label">Effect Text</label>
+      <div class="cb-search-wrap">
+        <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input th:field="*{oracleTextSearch}" class="cb-search-input" id="effectSearchInput" type="text" placeholder="Search effects..." autocomplete="off" />
       </div>
     </div>
 

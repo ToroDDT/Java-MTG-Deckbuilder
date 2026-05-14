@@ -3,6 +3,7 @@ package com.example.mtg_deckbuilder.service.impl;
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
 import com.example.mtg_deckbuilder.dto.combo.ComboVariant;
 import com.example.mtg_deckbuilder.dto.combo.Combos;
+import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.ComboRepository;
@@ -101,6 +102,192 @@ public void updateCombos(CustomUserDetails user) {
     @Override
     public CardCombos getCombos(CustomUserDetails user) {
         return comboRespository.getCombos(user);
+    }
+
+    @Override
+    public CardCombos getCombos(CustomUserDetails user, LibraryFilters filters) {
+        CardCombos combos = comboRespository.getCombos(user);
+        if (filters == null || !filters.hasSearchFilter()) {
+            return combos;
+        }
+
+        Map<String, com.example.mtg_deckbuilder.dto.card.Card> cardsByName = personalLibraryService
+                .getCards(user.getId())
+                .stream()
+                .filter(ownedCard -> ownedCard.getCard() != null && ownedCard.getCard().getName() != null)
+                .collect(Collectors.toMap(
+                        ownedCard -> normalize(ownedCard.getCard().getName()),
+                        OwnedCard::getCard,
+                        (first, ignored) -> first
+                ));
+
+        return filterCombos(combos, filters, cardsByName);
+    }
+
+    static CardCombos filterCombos(
+            CardCombos combos,
+            LibraryFilters filters,
+            Map<String, com.example.mtg_deckbuilder.dto.card.Card> cardsByName
+    ) {
+        if (combos == null || combos.getCardCombinations() == null) {
+            return emptyCombos();
+        }
+
+        List<List<String>> filteredCards = new ArrayList<>();
+        List<String> filteredDescriptions = new ArrayList<>();
+        List<List<String>> filteredImages = new ArrayList<>();
+
+        List<String> descriptions = combos.getDescription() == null ? List.of() : combos.getDescription();
+        List<List<String>> images = combos.getImages() == null ? List.of() : combos.getImages();
+
+        for (int i = 0; i < combos.getCardCombinations().size(); i++) {
+            List<String> cardNames = combos.getCardCombinations().get(i);
+            String description = i < descriptions.size() ? descriptions.get(i) : "";
+            List<String> comboImages = i < images.size() ? images.get(i) : List.of();
+
+            if (matchesComboFilters(cardNames, description, filters, cardsByName)) {
+                filteredCards.add(cardNames);
+                filteredDescriptions.add(description);
+                filteredImages.add(comboImages);
+            }
+        }
+
+        return CardCombos.builder()
+                .cardCombinations(filteredCards)
+                .description(filteredDescriptions)
+                .images(filteredImages)
+                .location(combos.getLocation())
+                .build();
+    }
+
+    private static boolean matchesComboFilters(
+            List<String> cardNames,
+            String description,
+            LibraryFilters filters,
+            Map<String, com.example.mtg_deckbuilder.dto.card.Card> cardsByName
+    ) {
+        List<String> safeCardNames = cardNames == null ? List.of() : cardNames;
+        List<com.example.mtg_deckbuilder.dto.card.Card> comboCards = safeCardNames.stream()
+                .map(name -> cardsByName.get(normalize(name)))
+                .filter(Objects::nonNull)
+                .toList();
+
+        if (!matchesTextSearch(safeCardNames, description, filters)) {
+            return false;
+        }
+
+        if (!matchesCardType(comboCards, filters.getCardType())) {
+            return false;
+        }
+
+        if (!matchesSelectedColors(comboCards, filters.getSelectedColors())) {
+            return false;
+        }
+
+        return matchesCmc(comboCards, filters);
+    }
+
+    private static boolean matchesTextSearch(List<String> cardNames, String description, LibraryFilters filters) {
+        String normalizedDescription = normalize(description);
+        String combinedCardNames = cardNames.stream()
+                .map(ComboServiceImpl::normalize)
+                .collect(Collectors.joining(" "));
+
+        if (!matchesTokenizedSearch(combinedCardNames, normalizedDescription, filters.getCardName())) {
+            return false;
+        }
+
+        return matchesTokenizedSearch(normalizedDescription, "", filters.getOracleTextSearch());
+    }
+
+    private static boolean matchesTokenizedSearch(String primaryText, String secondaryText, String rawQuery) {
+        List<String> tokens = tokenize(rawQuery);
+        if (tokens.isEmpty()) {
+            return true;
+        }
+
+        return tokens.stream()
+                .allMatch(token -> primaryText.contains(token) || secondaryText.contains(token));
+    }
+
+    private static List<String> tokenize(String value) {
+        String normalized = normalize(value);
+        if (normalized.isEmpty()) {
+            return List.of();
+        }
+
+        return Arrays.stream(normalized.split("\\s+"))
+                .filter(token -> !token.isBlank())
+                .toList();
+    }
+
+    private static boolean matchesCardType(
+            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards,
+            String cardType
+    ) {
+        if (cardType == null || cardType.isBlank() || "ALL".equalsIgnoreCase(cardType)) {
+            return true;
+        }
+
+        String normalizedCardType = normalize(cardType);
+        return comboCards.stream()
+                .map(com.example.mtg_deckbuilder.dto.card.Card::getTypeLine)
+                .filter(Objects::nonNull)
+                .map(ComboServiceImpl::normalize)
+                .anyMatch(typeLine -> typeLine.contains(normalizedCardType));
+    }
+
+    private static boolean matchesSelectedColors(
+            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards,
+            List<String> selectedColors
+    ) {
+        if (selectedColors == null || selectedColors.isEmpty()) {
+            return true;
+        }
+
+        Set<String> comboColors = comboCards.stream()
+                .map(com.example.mtg_deckbuilder.dto.card.Card::getColorIdentity)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .map(String::toUpperCase)
+                .collect(Collectors.toSet());
+
+        Set<String> normalizedSelectedColors = selectedColors.stream()
+                .map(String::toUpperCase)
+                .collect(Collectors.toSet());
+
+        return comboColors.containsAll(normalizedSelectedColors);
+    }
+
+    private static boolean matchesCmc(
+            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards,
+            LibraryFilters filters
+    ) {
+        Integer minCmc = filters.getMinCMC();
+        Integer maxCmc = filters.getMaxCMC();
+        boolean hasMin = minCmc != null && minCmc > 0;
+        boolean hasMax = maxCmc != null && maxCmc < 16;
+
+        if (!hasMin && !hasMax) {
+            return true;
+        }
+
+        return comboCards.stream()
+                .map(com.example.mtg_deckbuilder.dto.card.Card::getCmc)
+                .filter(Objects::nonNull)
+                .anyMatch(cmc -> (!hasMin || cmc >= minCmc) && (!hasMax || cmc <= maxCmc));
+    }
+
+    private static CardCombos emptyCombos() {
+        return CardCombos.builder()
+                .cardCombinations(List.of())
+                .description(List.of())
+                .images(List.of())
+                .build();
+    }
+
+    private static String normalize(String value) {
+        return value == null ? "" : value.trim().toLowerCase(Locale.ROOT);
     }
 
     private CardCombos buildIncludedCombos(Combos searchedCombos, String location) {
@@ -235,4 +422,3 @@ public void updateCombos(CustomUserDetails user) {
         return getCombos(objectMapper, BASE_URL, client, mainBoard);
     }
 }
-
