@@ -21,12 +21,13 @@ public class CombosController {
     }
 
     @GetMapping("/personal-library/combos")
-    public String combos(Model model) {
+    public String combos(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         ComboViewModelImpl cardBrowserViewModel = new ComboViewModelImpl();
 
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
+        model.addAttribute("locationOptions", comboServiceImpl.getLocations(user));
         return "combo-browser";
     }
 
@@ -39,6 +40,7 @@ public class CombosController {
         model.addAttribute("personalLibrary", cardBrowserViewModel);
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", personalLibraryFilters);
+        model.addAttribute("locationOptions", comboServiceImpl.getLocations(user));
         model.addAttribute("cardCombos", combosList );
         return "combos :: combos-section";
 

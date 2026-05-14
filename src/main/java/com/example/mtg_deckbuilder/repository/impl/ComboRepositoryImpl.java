@@ -59,13 +59,15 @@ public void saveCombos(CustomUserDetails owner, CardCombos cardCombos) throws Js
         List<List<String>> allCards = new ArrayList<>();
         List<String> allDesc = new ArrayList<>();
         List<List<String>> allImages = new ArrayList<>();
+        List<String> allLocations = new ArrayList<>();
 
         jdbcTemplate.query(sql, rs -> {
             Array descArray = rs.getArray("description");
-            allDesc.addAll(Arrays.asList((String[]) descArray.getArray()));
+            String[] descriptions = (String[]) descArray.getArray();
 
             String cardJson = rs.getString("card_combinations");
             String imageJson = rs.getString("images");
+            String location = rs.getString("location");
 
             List<List<String>> cards;
             try {
@@ -84,8 +86,12 @@ public void saveCombos(CustomUserDetails owner, CardCombos cardCombos) throws Js
                 throw new RuntimeException(e);
             }
 
+            allDesc.addAll(Arrays.asList(descriptions));
             allCards.addAll(cards);
             allImages.addAll(images);
+            for (int i = 0; i < cards.size(); i++) {
+                allLocations.add(location);
+            }
 
         }, owner.getId().toString());
 
@@ -93,7 +99,26 @@ public void saveCombos(CustomUserDetails owner, CardCombos cardCombos) throws Js
                 .description(allDesc)
                 .cardCombinations(allCards)
                 .images(allImages)
+                .locations(allLocations)
                 .build();
+    }
+
+    @Override
+    public List<String> getLocations(CustomUserDetails owner) {
+        String sql = """
+                SELECT location
+                FROM combos
+                WHERE combo_owner = ?::uuid
+                  AND location IS NOT NULL
+                  AND btrim(location) <> ''
+                ORDER BY location
+                """;
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> rs.getString("location"),
+                owner.getId().toString()
+        );
     }
 
 }

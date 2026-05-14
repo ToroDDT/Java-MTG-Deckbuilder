@@ -86,6 +86,17 @@
       </select>
     </div>
 
+    <div class="cb-filter-section">
+      <label for="locationFilter" class="cb-filter-label">Location</label>
+      <select hx-trigger="change" th:field="*{location}" class="cb-select" id="locationFilter">
+        <option th:value="All">All Locations</option>
+        <option th:each="locationOption : ${locationOptions}"
+                th:value="${locationOption}"
+                th:text="${locationOption}">
+        </option>
+      </select>
+    </div>
+
     <!-- CMC Range -->
     <div class="cb-filter-section">
       <span class="cb-filter-label">CMC Range</span>
@@ -99,6 +110,20 @@
           <label for="cmcMax" class="cb-range-lbl">Max</label>
           <input hx-trigger="change" th:field="*{maxCMC}" type="range" class="cb-range-input" id="cmcMax" min="0" max="16" value="16" />
           <span class="cb-range-val" id="cmcMaxVal">∞</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cb-filter-section">
+      <span class="cb-filter-label">Card Price (USD)</span>
+      <div class="cb-range-group">
+        <div class="cb-search-wrap">
+          <span class="cb-search-icon">$</span>
+          <input th:field="*{minPrice}" class="cb-search-input" id="priceMin" type="number" min="0" step="0.01" placeholder="Minimum price" autocomplete="off" />
+        </div>
+        <div class="cb-search-wrap">
+          <span class="cb-search-icon">$</span>
+          <input th:field="*{maxPrice}" class="cb-search-input" id="priceMax" type="number" min="0" step="0.01" placeholder="Maximum price" autocomplete="off" />
         </div>
       </div>
     </div>

@@ -105,9 +105,21 @@ public void updateCombos(CustomUserDetails user) {
     }
 
     @Override
+    public List<String> getLocations(CustomUserDetails user) {
+        return comboRespository.getLocations(user);
+    }
+
+    @Override
     public CardCombos getCombos(CustomUserDetails user, LibraryFilters filters) {
         CardCombos combos = comboRespository.getCombos(user);
-        if (filters == null || !filters.hasSearchFilter()) {
+        if (filters == null) {
+            return combos;
+        }
+
+        boolean hasFilterCriteria = filters.hasSearchFilter();
+        boolean hasSort = filters.getSortBy() != null
+                && filters.getSortBy() != com.example.mtg_deckbuilder.model.SortOptions.RECENT;
+        if (!hasFilterCriteria && !hasSort) {
             return combos;
         }
 
@@ -133,45 +145,54 @@ public void updateCombos(CustomUserDetails user) {
             return emptyCombos();
         }
 
-        List<List<String>> filteredCards = new ArrayList<>();
-        List<String> filteredDescriptions = new ArrayList<>();
-        List<List<String>> filteredImages = new ArrayList<>();
+        List<FilteredCombo> filteredCombos = new ArrayList<>();
 
         List<String> descriptions = combos.getDescription() == null ? List.of() : combos.getDescription();
         List<List<String>> images = combos.getImages() == null ? List.of() : combos.getImages();
+        List<String> locations = combos.getLocations() == null ? List.of() : combos.getLocations();
 
         for (int i = 0; i < combos.getCardCombinations().size(); i++) {
             List<String> cardNames = combos.getCardCombinations().get(i);
             String description = i < descriptions.size() ? descriptions.get(i) : "";
             List<String> comboImages = i < images.size() ? images.get(i) : List.of();
+            String location = i < locations.size() ? locations.get(i) : combos.getLocation();
+            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards = comboCards(cardNames, cardsByName);
 
-            if (matchesComboFilters(cardNames, description, filters, cardsByName)) {
-                filteredCards.add(cardNames);
-                filteredDescriptions.add(description);
-                filteredImages.add(comboImages);
+            if (matchesComboFilters(cardNames, description, location, filters, comboCards)) {
+                filteredCombos.add(new FilteredCombo(cardNames, description, comboImages, location, comboCards));
             }
         }
 
+        sortCombos(filteredCombos, filters.getSortBy());
+
         return CardCombos.builder()
-                .cardCombinations(filteredCards)
-                .description(filteredDescriptions)
-                .images(filteredImages)
+                .cardCombinations(filteredCombos.stream().map(FilteredCombo::cardNames).toList())
+                .description(filteredCombos.stream().map(FilteredCombo::description).toList())
+                .images(filteredCombos.stream().map(FilteredCombo::images).toList())
+                .locations(filteredCombos.stream().map(FilteredCombo::location).toList())
                 .location(combos.getLocation())
                 .build();
+    }
+
+    private static List<com.example.mtg_deckbuilder.dto.card.Card> comboCards(
+            List<String> cardNames,
+            Map<String, com.example.mtg_deckbuilder.dto.card.Card> cardsByName
+    ) {
+        List<String> safeCardNames = cardNames == null ? List.of() : cardNames;
+        return safeCardNames.stream()
+                .map(name -> cardsByName.get(normalize(name)))
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     private static boolean matchesComboFilters(
             List<String> cardNames,
             String description,
+            String location,
             LibraryFilters filters,
-            Map<String, com.example.mtg_deckbuilder.dto.card.Card> cardsByName
+            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards
     ) {
         List<String> safeCardNames = cardNames == null ? List.of() : cardNames;
-        List<com.example.mtg_deckbuilder.dto.card.Card> comboCards = safeCardNames.stream()
-                .map(name -> cardsByName.get(normalize(name)))
-                .filter(Objects::nonNull)
-                .toList();
-
         if (!matchesTextSearch(safeCardNames, description, filters)) {
             return false;
         }
@@ -184,7 +205,24 @@ public void updateCombos(CustomUserDetails user) {
             return false;
         }
 
-        return matchesCmc(comboCards, filters);
+        if (!matchesLocation(location, filters.getLocation())) {
+            return false;
+        }
+
+        if (!matchesCmc(comboCards, filters)) {
+            return false;
+        }
+
+        return matchesPrice(comboCards, filters);
+    }
+
+    private static boolean matchesLocation(String comboLocation, String requestedLocation) {
+        String normalizedRequestedLocation = normalize(requestedLocation);
+        if (normalizedRequestedLocation.isEmpty() || "all".equals(normalizedRequestedLocation)) {
+            return true;
+        }
+
+        return normalize(comboLocation).equals(normalizedRequestedLocation);
     }
 
     private static boolean matchesTextSearch(List<String> cardNames, String description, LibraryFilters filters) {
@@ -272,10 +310,94 @@ public void updateCombos(CustomUserDetails user) {
             return true;
         }
 
+        boolean matchesMin = comboCards.stream()
+                .map(com.example.mtg_deckbuilder.dto.card.Card::getCmc)
+                .filter(Objects::nonNull)
+                .anyMatch(cmc -> !hasMin || cmc >= minCmc);
+
+        if (!matchesMin) {
+            return false;
+        }
+
+        return !hasMax || totalCmc(comboCards) <= maxCmc;
+    }
+
+    private static boolean matchesPrice(
+            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards,
+            LibraryFilters filters
+    ) {
+        Double minPrice = filters.getMinPrice();
+        Double maxPrice = filters.getMaxPrice();
+        boolean hasMin = minPrice != null && minPrice > 0;
+        boolean hasMax = maxPrice != null && maxPrice > 0;
+
+        if (!hasMin && !hasMax) {
+            return true;
+        }
+
+        return comboCards.stream()
+                .map(ComboServiceImpl::usdPrice)
+                .filter(Objects::nonNull)
+                .anyMatch(price -> (!hasMin || price >= minPrice) && (!hasMax || price <= maxPrice));
+    }
+
+    private static Double usdPrice(com.example.mtg_deckbuilder.dto.card.Card card) {
+        if (card == null || card.getPrices() == null) {
+            return null;
+        }
+        return card.getPrices().getUsd();
+    }
+
+    private static void sortCombos(List<FilteredCombo> filteredCombos, com.example.mtg_deckbuilder.model.SortOptions sortBy) {
+        if (sortBy == null || sortBy == com.example.mtg_deckbuilder.model.SortOptions.RECENT) {
+            return;
+        }
+
+        Comparator<FilteredCombo> comparator = switch (sortBy) {
+            case PRICE_ASC -> Comparator.comparingDouble(ComboServiceImpl::totalPrice);
+            case PRICE_DESC -> Comparator.comparingDouble(ComboServiceImpl::totalPrice).reversed();
+            case CMC_ASC -> Comparator.comparingInt(combo -> totalCmc(combo));
+            case CMC_DESC -> Comparator.comparingInt((FilteredCombo combo) -> totalCmc(combo)).reversed();
+            case NAME_ASC -> Comparator.comparing(combo -> normalize(combo.primaryName()));
+            case NAME_DESC -> Comparator.comparing((FilteredCombo combo) -> normalize(combo.primaryName())).reversed();
+            case RECENT -> null;
+        };
+
+        if (comparator != null) {
+            filteredCombos.sort(comparator);
+        }
+    }
+
+    private static double totalPrice(FilteredCombo combo) {
+        return combo.comboCards().stream()
+                .map(ComboServiceImpl::usdPrice)
+                .filter(Objects::nonNull)
+                .mapToDouble(Double::doubleValue)
+                .sum();
+    }
+
+    private static int totalCmc(FilteredCombo combo) {
+        return totalCmc(combo.comboCards());
+    }
+
+    private static int totalCmc(List<com.example.mtg_deckbuilder.dto.card.Card> comboCards) {
         return comboCards.stream()
                 .map(com.example.mtg_deckbuilder.dto.card.Card::getCmc)
                 .filter(Objects::nonNull)
-                .anyMatch(cmc -> (!hasMin || cmc >= minCmc) && (!hasMax || cmc <= maxCmc));
+                .mapToInt(Integer::intValue)
+                .sum();
+    }
+
+    private record FilteredCombo(
+            List<String> cardNames,
+            String description,
+            List<String> images,
+            String location,
+            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards
+    ) {
+        private String primaryName() {
+            return cardNames.isEmpty() ? "" : cardNames.getFirst();
+        }
     }
 
     private static CardCombos emptyCombos() {

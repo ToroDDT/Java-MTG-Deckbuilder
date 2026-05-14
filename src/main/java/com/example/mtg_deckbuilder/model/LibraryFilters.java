@@ -15,6 +15,9 @@ public class LibraryFilters {
     private String cardType;
     private Integer minCMC;
     private Integer maxCMC;
+    private Double minPrice;
+    private Double maxPrice;
+    private String location;
     private SortOptions sortBy;
     private String operator;
     private String dateAdded;
@@ -43,6 +46,9 @@ public class LibraryFilters {
             (selectedColors != null && !selectedColors.isEmpty()) ||
             (minCMC != null && minCMC > 0) ||
             (maxCMC != null && maxCMC < 16)
+            || (minPrice != null && minPrice > 0)
+            || (maxPrice != null && maxPrice > 0)
+            || (location != null && !location.isBlank() && !"All".equalsIgnoreCase(location))
             || hasTagSearch;
  }
 }
