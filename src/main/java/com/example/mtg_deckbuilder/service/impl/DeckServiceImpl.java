@@ -91,10 +91,7 @@ public class DeckServiceImpl implements DeckService {
                 .forEach(i -> finalDecks.put(decks.get(i), colorIdentityForEachDeck.get(i)));
         return finalDecks;
     }
-    @Override
-    public List<Deck> getDecks(CustomUserDetails user) {
-        return deckRepository.getDecks(user);
-    }
+
 
     @Override
     public List<Deck> getDeckIds(CustomUserDetails user) {

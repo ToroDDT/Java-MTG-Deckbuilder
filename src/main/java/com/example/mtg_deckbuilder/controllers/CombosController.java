@@ -40,5 +40,7 @@ public class CombosController {
         model.addAttribute("filters", new LibraryFilters());
         model.addAttribute("cardCombos", combosList );
         return "combos :: combos-section";
+
     }
+
 }
