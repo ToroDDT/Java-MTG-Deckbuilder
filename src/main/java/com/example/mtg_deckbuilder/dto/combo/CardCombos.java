@@ -15,5 +15,5 @@ public class CardCombos {
     private List<List<String>> images;
     private List<String> locations;
     private String location;
-
+    private List<String> results;
 }

@@ -14,6 +14,7 @@ public enum ColorIdentity {
     COLORLESS(""),
     Azorius("U,W"),
     RAKDOS("B,R"),
+    GRUUL("G,R"),
     MARDU("B,R,W"),
     BOROS("R,W"),
     SIMIC("G,U"),

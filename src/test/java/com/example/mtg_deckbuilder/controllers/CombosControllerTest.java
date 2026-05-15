@@ -47,6 +47,7 @@ class CombosControllerTest {
                         .cardCombinations(List.of())
                         .description(List.of())
                         .images(List.of())
+                        .results(List.of())
                         .build());
 
         mockMvc.perform(get("/personal-library/combos-list")

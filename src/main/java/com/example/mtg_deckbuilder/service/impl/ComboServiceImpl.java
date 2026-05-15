@@ -1,13 +1,11 @@
 package com.example.mtg_deckbuilder.service.impl;
 
-import com.example.mtg_deckbuilder.dto.combo.CardCombos;
-import com.example.mtg_deckbuilder.dto.combo.CardUse;
-import com.example.mtg_deckbuilder.dto.combo.ComboVariant;
-import com.example.mtg_deckbuilder.dto.combo.Combos;
-import com.example.mtg_deckbuilder.dto.combo.TemplateRequirement;
+import com.example.mtg_deckbuilder.dto.card.Card;
+import com.example.mtg_deckbuilder.dto.combo.*;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.OwnedCard;
+import com.example.mtg_deckbuilder.model.SortOptions;
 import com.example.mtg_deckbuilder.repository.api.ComboRepository;
 import com.example.mtg_deckbuilder.repository.impl.ComboRepositoryImpl;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -155,12 +153,12 @@ public void updateCombos(CustomUserDetails user) {
 
         boolean hasFilterCriteria = filters.hasSearchFilter();
         boolean hasSort = filters.getSortBy() != null
-                && filters.getSortBy() != com.example.mtg_deckbuilder.model.SortOptions.RECENT;
+                && filters.getSortBy() != SortOptions.RECENT;
         if (!hasFilterCriteria && !hasSort) {
             return combos;
         }
 
-        Map<String, com.example.mtg_deckbuilder.dto.card.Card> cardsByName = personalLibraryService
+        Map<String, Card> cardsByName = personalLibraryService
                 .getCards(user.getId())
                 .stream()
                 .filter(ownedCard -> ownedCard.getCard() != null && ownedCard.getCard().getName() != null)
@@ -176,7 +174,7 @@ public void updateCombos(CustomUserDetails user) {
     static CardCombos filterCombos(
             CardCombos combos,
             LibraryFilters filters,
-            Map<String, com.example.mtg_deckbuilder.dto.card.Card> cardsByName
+            Map<String, Card> cardsByName
     ) {
         if (combos == null || combos.getCardCombinations() == null) {
             return emptyCombos();
@@ -187,16 +185,18 @@ public void updateCombos(CustomUserDetails user) {
         List<String> descriptions = combos.getDescription() == null ? List.of() : combos.getDescription();
         List<List<String>> images = combos.getImages() == null ? List.of() : combos.getImages();
         List<String> locations = combos.getLocations() == null ? List.of() : combos.getLocations();
+        List<String> results = combos.getResults() == null ? List.of() : combos.getResults();
 
         for (int i = 0; i < combos.getCardCombinations().size(); i++) {
             List<String> cardNames = combos.getCardCombinations().get(i);
             String description = i < descriptions.size() ? descriptions.get(i) : "";
             List<String> comboImages = i < images.size() ? images.get(i) : List.of();
             String location = i < locations.size() ? locations.get(i) : combos.getLocation();
+            String result = i < results.size() ? results.get(i) : "";
             List<com.example.mtg_deckbuilder.dto.card.Card> comboCards = comboCards(cardNames, cardsByName);
 
             if (matchesComboFilters(cardNames, description, location, filters, comboCards)) {
-                filteredCombos.add(new FilteredCombo(cardNames, description, comboImages, location, comboCards));
+                filteredCombos.add(new FilteredCombo(cardNames, description, comboImages, location, result, comboCards));
             }
         }
 
@@ -207,6 +207,7 @@ public void updateCombos(CustomUserDetails user) {
                 .description(filteredCombos.stream().map(FilteredCombo::description).toList())
                 .images(filteredCombos.stream().map(FilteredCombo::images).toList())
                 .locations(filteredCombos.stream().map(FilteredCombo::location).toList())
+                .results(filteredCombos.stream().map(FilteredCombo::results).toList())
                 .location(combos.getLocation())
                 .build();
     }
@@ -483,6 +484,17 @@ public void updateCombos(CustomUserDetails user) {
         );
     }
 
+    private static String resultSummary(ComboVariant variant) {
+        if (variant.getProduces() == null || variant.getProduces().isEmpty()) {
+            return "";
+        }
+
+        return variant.getProduces().stream()
+                .filter(featureProduced -> featureProduced.getFeature() != null && featureProduced.getFeature().getName() != null)
+                .map(featureProduced -> formatProducedFeature(featureProduced.getQuantity(), featureProduced.getFeature().getName()))
+                .collect(Collectors.joining(" "));
+    }
+
     private static List<String> identityColors(String identity) {
         String normalized = defaultText(identity);
         if (normalized.isEmpty()) {
@@ -639,6 +651,7 @@ public void updateCombos(CustomUserDetails user) {
             String description,
             List<String> images,
             String location,
+            String results,
             List<com.example.mtg_deckbuilder.dto.card.Card> comboCards
     ) {
         private String primaryName() {
@@ -651,6 +664,7 @@ public void updateCombos(CustomUserDetails user) {
                 .cardCombinations(List.of())
                 .description(List.of())
                 .images(List.of())
+                .results(List.of())
                 .build();
     }
 
@@ -691,6 +705,10 @@ public void updateCombos(CustomUserDetails user) {
                         .map(ComboVariant::getDescription)
                         .toList())
                 .location(location)
+                .results(filteredVariants
+                        .stream()
+                        .map(ComboServiceImpl::resultSummary)
+                        .toList())
                 .images(filteredVariants
                         .stream()
                         .map(comboVariant -> comboVariant
@@ -716,6 +734,10 @@ public void updateCombos(CustomUserDetails user) {
                 .description(filteredVariants
                         .stream()
                         .map(ComboVariant::getDescription)
+                        .toList())
+                .results(filteredVariants
+                        .stream()
+                        .map(ComboServiceImpl::resultSummary)
                         .toList())
                 .images(filteredVariants
                         .stream()

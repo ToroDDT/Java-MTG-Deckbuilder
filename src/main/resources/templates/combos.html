@@ -74,8 +74,8 @@
                 <hr class="combo-divider"/>
 
                 <ul class="combo-effects"
-                    th:with="desc=${cardCombos.description[comboStat.index]},
-                              steps=${#strings.arraySplit(desc, '.')}">
+                    th:with="resultText=${cardCombos.results != null and comboStat.index < #lists.size(cardCombos.results) ? cardCombos.results[comboStat.index] : ''},
+                              steps=${#strings.arraySplit(resultText, '.')}">
                     <li th:each="step : ${steps}"
                         th:if="${!#strings.isEmpty(#strings.trim(step))}"
                         th:text="${#strings.trim(step) + '.'}">

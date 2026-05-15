@@ -123,6 +123,10 @@ class ComboServiceImplTest {
                         List.of("altar.jpg", "plunderer.jpg")
                 ))
                 .locations(List.of("library", "Artifacts Deck"))
+                .results(List.of(
+                        "Infinite damage.",
+                        "Infinite treasure tokens."
+                ))
                 .build();
     }
 
