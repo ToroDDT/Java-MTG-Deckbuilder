@@ -4,8 +4,10 @@ import com.example.mtg_deckbuilder.dto.combo.CardCombos;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.mtg_deckbuilder.views.ComboDetailViewModel;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ComboService {
@@ -14,4 +16,5 @@ public interface ComboService {
     CardCombos getCombos(CustomUserDetails user);
     CardCombos getCombos(CustomUserDetails user, LibraryFilters filters);
     List<String> getLocations(CustomUserDetails user);
+    Optional<ComboDetailViewModel> getComboDetail(CustomUserDetails user, String location, String cardsKey, String description) throws Exception;
 }

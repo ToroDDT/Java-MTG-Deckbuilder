@@ -155,6 +155,11 @@ body {
     overflow: visible;
 }
 
+.combo-card-link {
+    color: inherit;
+    text-decoration: none;
+}
+
 
 .combo-card-header {
     display: flex;

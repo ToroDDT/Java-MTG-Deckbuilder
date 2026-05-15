@@ -1,8 +1,10 @@
 package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
+import com.example.mtg_deckbuilder.dto.combo.CardUse;
 import com.example.mtg_deckbuilder.dto.combo.ComboVariant;
 import com.example.mtg_deckbuilder.dto.combo.Combos;
+import com.example.mtg_deckbuilder.dto.combo.TemplateRequirement;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.OwnedCard;
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
+import com.example.mtg_deckbuilder.views.ComboDetailViewModel;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -106,6 +109,41 @@ public void updateCombos(CustomUserDetails user) {
     @Override
     public List<String> getLocations(CustomUserDetails user) {
         return comboRespository.getLocations(user);
+    }
+
+    @Override
+    public Optional<ComboDetailViewModel> getComboDetail(
+            CustomUserDetails user,
+            String location,
+            String cardsKey,
+            String description
+    ) throws Exception {
+        List<OwnedCard> sourceCards = getCardsForLocation(user, location);
+        if (sourceCards.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<String> selectedCardNames = splitCardsKey(cardsKey);
+        if (selectedCardNames.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<ComboVariant> variants = searchCombos(sourceCards)
+                .getResults()
+                .getIncluded()
+                .stream()
+                .filter(comboVariant -> comboVariant.getUses() != null)
+                .filter(comboVariant -> comboVariant
+                        .getUses()
+                        .stream()
+                        .filter(cardUse -> cardUse.getCard() != null)
+                        .noneMatch(cardUse -> EXCLUDED_CARD_NAMES.contains(cardUse.getCard().getName())))
+                .toList();
+
+        return variants.stream()
+                .filter(variant -> matchesVariantSelection(variant, selectedCardNames, description))
+                .findFirst()
+                .map(variant -> toDetailViewModel(variant, location));
     }
 
     @Override
@@ -258,6 +296,24 @@ public void updateCombos(CustomUserDetails user) {
                 .toList();
     }
 
+    private static boolean matchesVariantSelection(
+            ComboVariant variant,
+            List<String> selectedCardNames,
+            String description
+    ) {
+        List<String> variantCardNames = variant.getUses() == null ? List.of() : variant.getUses().stream()
+                .filter(cardUse -> cardUse.getCard() != null)
+                .map(cardUse -> normalize(cardUse.getCard().getName()))
+                .toList();
+
+        List<String> normalizedSelectedNames = selectedCardNames.stream()
+                .map(ComboServiceImpl::normalize)
+                .toList();
+
+        return variantCardNames.equals(normalizedSelectedNames)
+                && normalize(variant.getDescription()).equals(normalize(description));
+    }
+
     private static boolean matchesCardType(
             List<com.example.mtg_deckbuilder.dto.card.Card> comboCards,
             String cardType
@@ -345,6 +401,197 @@ public void updateCombos(CustomUserDetails user) {
             return null;
         }
         return card.getPrices().getUsd();
+    }
+
+    private List<OwnedCard> getCardsForLocation(CustomUserDetails user, String location) {
+        if (normalize(location).isEmpty() || "library".equals(normalize(location))) {
+            return personalLibraryService.getCards(user.getId());
+        }
+
+        return deckService.getDeckIds(user).stream()
+                .filter(deck -> normalize(deck.name()).equals(normalize(location)))
+                .findFirst()
+                .map(deck -> builderService.getCardsFromDeck(deck.id()))
+                .orElse(List.of());
+    }
+
+    private static List<String> splitCardsKey(String cardsKey) {
+        String normalized = cardsKey == null ? "" : cardsKey.trim();
+        if (normalized.isEmpty()) {
+            return List.of();
+        }
+
+        return Arrays.stream(normalized.split("\\|\\|"))
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .toList();
+    }
+
+    private static ComboDetailViewModel toDetailViewModel(ComboVariant variant, String location) {
+        List<CardUse> uses = variant.getUses() == null ? List.of() : variant.getUses();
+        List<String> cardNames = uses.stream()
+                .filter(cardUse -> cardUse.getCard() != null)
+                .map(cardUse -> cardUse.getCard().getName())
+                .toList();
+        List<String> cardImageUrls = uses.stream()
+                .filter(cardUse -> cardUse.getCard() != null)
+                .map(cardUse -> Optional.ofNullable(cardUse.getCard().getImageUriFrontLarge())
+                        .orElse(cardUse.getCard().getImageUriFrontNormal()))
+                .filter(Objects::nonNull)
+                .toList();
+        List<String> heroImageUrls = uses.stream()
+                .filter(cardUse -> cardUse.getCard() != null)
+                .map(cardUse -> Optional.ofNullable(cardUse.getCard().getImageUriFrontArtCrop())
+                        .orElse(cardUse.getCard().getImageUriFrontNormal()))
+                .filter(Objects::nonNull)
+                .limit(2)
+                .toList();
+
+        String title = variant.getName() != null && !variant.getName().isBlank()
+                ? variant.getName()
+                : String.join(" | ", cardNames);
+
+        List<String> initialStateLines = new ArrayList<>();
+        uses.forEach(cardUse -> initialStateLines.addAll(cardUseStateLines(cardUse)));
+        List<TemplateRequirement> requirements = variant.getRequires() == null ? List.of() : variant.getRequires();
+        requirements.forEach(requirement -> initialStateLines.addAll(templateStateLines(requirement)));
+
+        List<String> stepLines = splitIntoSentences(variant.getDescription());
+        List<String> resultLines = variant.getProduces() == null ? List.of() : variant.getProduces().stream()
+                .filter(featureProduced -> featureProduced.getFeature() != null && featureProduced.getFeature().getName() != null)
+                .map(featureProduced -> formatProducedFeature(featureProduced.getQuantity(), featureProduced.getFeature().getName()))
+                .toList();
+
+        return new ComboDetailViewModel(
+                title,
+                location,
+                Optional.ofNullable(variant.getIdentity()).orElse(""),
+                identityColors(variant.getIdentity()),
+                variant.isSpoiler(),
+                cardNames,
+                cardImageUrls,
+                heroImageUrls,
+                initialStateLines,
+                defaultText(variant.getNotablePrerequisites()),
+                defaultText(variant.getManaNeeded()),
+                stepLines,
+                defaultText(variant.getNotes()),
+                resultLines,
+                variant.getPrices() == null ? null : variant.getPrices().getTcgplayer(),
+                variant.getPrices() == null ? null : variant.getPrices().getCardkingdom(),
+                legalityRows(variant)
+        );
+    }
+
+    private static List<String> identityColors(String identity) {
+        String normalized = defaultText(identity);
+        if (normalized.isEmpty()) {
+            return List.of();
+        }
+
+        return normalized.chars()
+                .mapToObj(character -> String.valueOf((char) character))
+                .toList();
+    }
+
+    private static List<String> cardUseStateLines(CardUse cardUse) {
+        if (cardUse.getCard() == null || cardUse.getCard().getName() == null) {
+            return List.of();
+        }
+
+        List<String> lines = new ArrayList<>();
+        List<String> zones = cardUse.getZoneLocations() == null || cardUse.getZoneLocations().isEmpty()
+                ? List.of("battlefield")
+                : cardUse.getZoneLocations();
+
+        for (String zone : zones) {
+            StringBuilder line = new StringBuilder(cardUse.getCard().getName())
+                    .append(" in ")
+                    .append(humanizeZone(zone));
+
+            String state = switch (normalize(zone)) {
+                case "battlefield" -> cardUse.getBattlefieldCardState();
+                case "graveyard" -> cardUse.getGraveyardCardState();
+                case "library" -> cardUse.getLibraryCardState();
+                case "exile" -> cardUse.getExileCardState();
+                default -> null;
+            };
+
+            if (cardUse.isMustBeCommander()) {
+                line.append(" as your commander");
+            }
+
+            if (state != null && !state.isBlank()) {
+                line.append(" (").append(state.trim()).append(")");
+            }
+
+            line.append(".");
+            lines.add(line.toString());
+        }
+
+        return lines;
+    }
+
+    private static List<String> templateStateLines(TemplateRequirement requirement) {
+        if (requirement.getTemplate() == null || requirement.getTemplate().getName() == null) {
+            return List.of();
+        }
+
+        List<String> zones = requirement.getZoneLocations() == null || requirement.getZoneLocations().isEmpty()
+                ? List.of("battlefield")
+                : requirement.getZoneLocations();
+
+        return zones.stream()
+                .map(zone -> requirement.getQuantity() + " " + requirement.getTemplate().getName() + " in " + humanizeZone(zone) + ".")
+                .toList();
+    }
+
+    private static String humanizeZone(String zone) {
+        String normalizedZone = normalize(zone);
+        return switch (normalizedZone) {
+            case "battlefield" -> "the battlefield";
+            case "graveyard" -> "the graveyard";
+            case "library" -> "the library";
+            case "exile" -> "exile";
+            case "hand" -> "hand";
+            case "commandzone", "command zone" -> "the command zone";
+            default -> zone == null ? "the battlefield" : zone;
+        };
+    }
+
+    private static List<String> splitIntoSentences(String text) {
+        String normalized = defaultText(text);
+        if (normalized.isBlank()) {
+            return List.of();
+        }
+
+        return Arrays.stream(normalized.split("\\.\\s+"))
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .map(line -> line.endsWith(".") ? line : line + ".")
+                .toList();
+    }
+
+    private static String formatProducedFeature(int quantity, String featureName) {
+        return quantity > 1 ? quantity + "x " + featureName : featureName;
+    }
+
+    private static String defaultText(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private static List<ComboDetailViewModel.LegalityRow> legalityRows(ComboVariant variant) {
+        if (variant.getLegalities() == null) {
+            return List.of();
+        }
+
+        return List.of(
+                new ComboDetailViewModel.LegalityRow("Commander", variant.getLegalities().isCommander()),
+                new ComboDetailViewModel.LegalityRow("Pauper Commander", variant.getLegalities().isPauperCommander()),
+                new ComboDetailViewModel.LegalityRow("Pauper Commander in 99", variant.getLegalities().isPauperCommanderMain()),
+                new ComboDetailViewModel.LegalityRow("Oathbreaker", variant.getLegalities().isOathbreaker()),
+                new ComboDetailViewModel.LegalityRow("PreDH", variant.getLegalities().isPredh())
+        );
     }
 
     private static void sortCombos(List<FilteredCombo> filteredCombos, com.example.mtg_deckbuilder.model.SortOptions sortBy) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class CombosController {
@@ -44,6 +45,23 @@ public class CombosController {
         model.addAttribute("cardCombos", combosList );
         return "combos :: combos-section";
 
+    }
+
+    @GetMapping("/personal-library/combos/detail")
+    public String comboDetail(
+            @RequestParam String location,
+            @RequestParam String cards,
+            @RequestParam String description,
+            Model model,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) throws Exception {
+        var detail = comboServiceImpl.getComboDetail(user, location, cards, description);
+        if (detail.isEmpty()) {
+            return "redirect:/personal-library/combos";
+        }
+
+        model.addAttribute("comboDetail", detail.get());
+        return "combo-detail";
     }
 
 }
