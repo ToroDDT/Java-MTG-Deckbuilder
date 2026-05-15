@@ -43,18 +43,26 @@
 
             <!-- Card names + effects -->
             <div class="combo-card-body">
-                <div class="combo-card-names" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-                    <img th:each="img : ${cardList}"
-                         th:src="${img}"
-                         alt="Card"
-                         class="combo-card-img"
-                         onerror="this.style.display='none'"/>
-                </div>
                 <div class="combo-card-names">
-                    <span class="combo-card-name"
-                          th:each="cardName : ${cardCombos.cardCombinations[comboStat.index]}"
-                          th:text="${cardName}">
-                        Card Name
+                    <span class="combo-card-name-group"
+                          th:each="cardName, nameStat : ${cardCombos.cardCombinations[comboStat.index]}"
+                          th:with="img=${nameStat.index < #lists.size(cardList) ? cardList[nameStat.index] : null}">
+                        <span class="combo-card-name"
+                              th:text="${cardName}">
+                            Card Name
+                        </span>
+                        <span class="combo-card-hover-drop">
+                            <span class="combo-card-hover-panel" th:if="${img != null}">
+                                <img th:src="${img}"
+                                     th:alt="${cardName}"
+                                     class="combo-card-hover-img"
+                                     loading="lazy"
+                                     onerror="this.closest('.combo-card-hover-panel').style.display='none'"/>
+                            </span>
+                            <span class="combo-card-hover-panel combo-card-hover-empty" th:if="${img == null}">
+                                Preview unavailable.
+                            </span>
+                        </span>
                     </span>
                 </div>
 

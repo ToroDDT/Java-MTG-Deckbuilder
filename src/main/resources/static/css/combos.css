@@ -32,15 +32,6 @@ body {
 .hero {
     background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(59,130,246,0.04) 0%, transparent 70%);
 }
-.combo-card-img {
-    width: 100%;
-    max-width: 140px;
-    aspect-ratio: 2.5 / 3.5;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid var(--border-card);
-}
-
 .hero-art {
     width: 120px;
     height: 120px;
@@ -160,6 +151,8 @@ body {
     flex-direction: column;
     transition: background 0.2s, border-color 0.2s;
     cursor: pointer;
+    position: relative;
+    overflow: visible;
 }
 
 
@@ -200,6 +193,9 @@ body {
 
 .combo-card-names {
     margin-bottom: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .combo-card-name {
@@ -210,7 +206,62 @@ body {
     line-height: 1.4;            /* Increased slightly for better breathing room */
     letter-spacing: -0.01em;     /* Inter looks best with a tiny bit of tightening */
     display: inline-block;
-    margin-right: 6px;
+    cursor: default;
+    border-bottom: 1px dotted transparent;
+    transition: color 0.15s ease-out, border-color 0.15s ease-out;
+}
+
+.combo-card-name-group {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.combo-card-name-group:hover .combo-card-name {
+    color: #2563eb;
+    border-color: #93c5fd;
+}
+
+.combo-card-hover-drop {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 200;
+    padding-top: 10px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease-out;
+}
+
+.combo-card-name-group:hover .combo-card-hover-drop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.combo-card-hover-panel {
+    display: block;
+    width: 220px;
+    overflow: hidden;
+    border-radius: 18px;
+    border: 1px solid #3f3f46;
+    background: #27272a;
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.3);
+}
+
+.combo-card-hover-img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.combo-card-hover-empty {
+    width: auto;
+    padding: 12px 14px;
+    color: #cbd5e1;
+    font-size: 12px;
+    white-space: nowrap;
 }
 
 .cb-empty-state {
