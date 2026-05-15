@@ -38,11 +38,13 @@ public class CombosController {
         ComboViewModelImpl cardBrowserViewModel = new ComboViewModelImpl();
         var combosList = comboServiceImpl.getCombos(user, personalLibraryFilters);
 
-        model.addAttribute("personalLibrary", cardBrowserViewModel);
-        model.addAttribute("ownedCard", new OwnedCard());
-        model.addAttribute("filters", personalLibraryFilters);
-        model.addAttribute("locationOptions", comboServiceImpl.getLocations(user));
-        model.addAttribute("cardCombos", combosList );
+        model.addAttribute("personalLibrary", cardBrowserViewModel)
+                .addAttribute("OwnedCard", new OwnedCard())
+                .addAttribute("LocationOptions", comboServiceImpl.getLocations(user))
+                .addAttribute("locationOptions", comboServiceImpl.getLocations(user))
+                .addAttribute("cardCombos", combosList )
+                .addAttribute("filters", personalLibraryFilters);
+
         return "combos :: combos-section";
 
     }
