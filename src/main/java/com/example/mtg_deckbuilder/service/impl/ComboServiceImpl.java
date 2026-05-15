@@ -8,7 +8,6 @@ import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.ComboRepository;
 import com.example.mtg_deckbuilder.repository.impl.ComboRepositoryImpl;
-import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
 import com.example.mtg_deckbuilder.service.api.ComboService;
@@ -499,10 +498,10 @@ public void updateCombos(CustomUserDetails user) {
     }
 
     public static Combos searchCombos(List<OwnedCard> cards) throws Exception {
-        return getCombos(cards, objectMapper, BASE_URL, client);
+        return getCombos(cards);
     }
 
-    static Combos getCombos(List<OwnedCard> cards, ObjectMapper objectMapper, String baseUrl, HttpClient client) throws java.io.IOException, InterruptedException {
+    static Combos getCombos(List<OwnedCard> cards) throws java.io.IOException, InterruptedException {
         List<Map<String, Object>> mainBoard = cards.stream()
                 .map(card -> {
                     Map<String, Object> entry = new HashMap<>();
@@ -512,7 +511,7 @@ public void updateCombos(CustomUserDetails user) {
                 })
                 .collect(Collectors.toList());
 
-        return getCombos(objectMapper, baseUrl, client, mainBoard);
+        return getCombos(ComboServiceImpl.objectMapper, ComboServiceImpl.BASE_URL, ComboServiceImpl.client, mainBoard);
     }
 
     static Combos getCombos(ObjectMapper objectMapper, String baseUrl, HttpClient client, List<Map<String, Object>> mainBoard) throws java.io.IOException, InterruptedException {
