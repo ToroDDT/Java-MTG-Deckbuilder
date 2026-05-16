@@ -90,75 +90,102 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
     return getUpdatedCardTags(personalCardId, user);
   }
 
-  @Override
-  public List<OwnedCard> findCards(UUID userId) {
+@Override
+public List<OwnedCard> findCards(UUID userId) {
+
     String sql = """
-         SELECT\s
-             personal_collection_library.id AS personal_library_id,
-             personal_collection_library.user_id,
-             personal_collection_library.date_added,
-             personal_collection_library.updated_at,
-             personal_collection_library.tags,
-             cards.id AS card_id,
-             cards.name,
-             cards.type_line,
-             cards.toughness,
-             cards.power,
-             cards.artist,
-             cards.cmc,
-             cards.scryfall_uri,
-             cards.color_identity,
-             cards.multiverse_ids,
-             cards.image_uris,
-             cards.prices
-         FROM cards
-         INNER JOIN personal_collection_library\s
-             ON personal_collection_library.card_id = cards.id
-         WHERE personal_collection_library.user_id = ?
-         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC \s
-         LIMIT 10
-        \s""";
+        SELECT
+            pcl.id AS personal_library_id,
+            pcl.user_id,
+            pcl.date_added,
+            pcl.updated_at,
+            pcl.tags,
+
+            c.id AS card_id,
+            c.name,
+            c.type_line,
+            c.toughness,
+            c.power,
+            c.artist,
+            c.cmc,
+            c.scryfall_uri,
+            c.color_identity,
+
+            c.image_uris->>'border_crop' AS image,
+
+            c.prices->>'usd' AS usd,
+            c.prices->>'usd_foil' AS usd_foil,
+            c.prices->>'eur_foil' AS eur_foil,
+            c.prices->>'tix' AS tix
+
+        FROM personal_collection_library pcl
+
+        JOIN cards c
+            ON c.id = pcl.card_id
+
+        WHERE pcl.user_id = ?
+
+        ORDER BY
+            pcl.date_added DESC,
+            pcl.id DESC
+
+        LIMIT 10
+        """;
 
     return jdbcTemplate.query(sql, rowMapper, userId);
-  }
+}
 
-  @Override
-  public List<OwnedCard> findCardsPaginated(UUID userId) {
-    var pageSize = 12;
+ @Override
+public List<OwnedCard> findCardsPaginated(UUID userId) {
+
+    int pageSize = 12;
 
     String sql = """
-         SELECT\s
-             personal_collection_library.id AS personal_library_id,
-             personal_collection_library.user_id,
-             personal_collection_library.date_added,
-             personal_collection_library.updated_at,
-             personal_collection_library.tags,
-             cards.id AS card_id,
-             cards.name,
-             cards.type_line,
-             cards.toughness,
-             cards.power,
-             cards.artist,
-             cards.cmc,
-             cards.scryfall_uri,
-             cards.color_identity,
-             cards.multiverse_ids,
-             cards.image_uris,
-             cards.prices
-         FROM cards
-         INNER JOIN personal_collection_library\s
-             ON personal_collection_library.card_id = cards.id
-         WHERE personal_collection_library.user_id = ?
-         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC \s
-         LIMIT ?
-        \s""";
+        SELECT
+            pcl.id AS personal_library_id,
+            pcl.user_id,
+            pcl.date_added,
+            pcl.updated_at,
+            pcl.tags,
 
-    List<Object> args = new ArrayList<>();
-    args.add(userId);
-    args.add(pageSize);
+            c.id AS card_id,
+            c.name,
+            c.type_line,
+            c.toughness,
+            c.power,
+            c.artist,
+            c.cmc,
+            c.scryfall_uri,
+            c.color_identity,
 
-    return jdbcTemplate.query(sql, rowMapper, args.toArray());
-  }
+            c.image_uris->>'border_crop' AS image,
+
+            c.prices->>'usd' AS usd,
+            c.prices->>'usd_foil' AS usd_foil,
+            c.prices->>'eur_foil' AS eur_foil,
+            c.prices->>'tix' AS tix
+
+        FROM personal_collection_library pcl
+
+        JOIN cards c
+            ON c.id = pcl.card_id
+
+        WHERE pcl.user_id = ?
+
+        ORDER BY
+            pcl.date_added DESC,
+            pcl.id DESC
+
+        LIMIT ?
+        """;
+
+    return jdbcTemplate.query(
+            sql,
+            rowMapper,
+            userId,
+            pageSize
+    );
+}
 
 @Override
 public List<OwnedCard> findCards(
