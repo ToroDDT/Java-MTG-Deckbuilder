@@ -10,21 +10,21 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface PersonalLibraryRepository {
-  List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters personalLibraryFilters);
+  List<OwnedCard> findCards(UUID userId, LibraryFilters personalLibraryFilters);
 
-  List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId);
+  List<OwnedCard> findCards(UUID userId);
 
-  List<OwnedCard> getAllPersonalLibraryCardsForUserPaginated(UUID userId);
+  List<OwnedCard> findCardsPaginated (UUID userId);
 
-  void addCardToPersonalLibrary(OwnedCard ownedCard);
+  void saveCard(OwnedCard ownedCard);
 
-  Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user, List<UUID> cardIds);
+  Map<UUID, List<String>> findLocations(CustomUserDetails user, List<UUID> cardIds);
 
-  PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user);
+  PersonalLibraryStats getInfo(CustomUserDetails user);
 
-  List<String> updateTagsOnCard(String tag, UUID personalCardId, CustomUserDetails user);
+  List<String> saveTags (String tag, UUID personalCardId, CustomUserDetails user);
 
-  List<String> deleteTagFromCard(String tag, UUID personalCardId, CustomUserDetails user);
+  List<String> deleteTag (String tag, UUID personalCardId, CustomUserDetails user);
 
-  void delete(CustomUserDetails user, String cardId);
+  void deleteCard (CustomUserDetails user, String cardId);
 }

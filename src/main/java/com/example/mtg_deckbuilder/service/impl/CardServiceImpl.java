@@ -1,7 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
-import com.example.mtg_deckbuilder.model.*;
-import com.example.mtg_deckbuilder.model.cards.ScryfallCardObject;
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.repository.impl.CardRepositoryImpl;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +27,12 @@ public class CardServiceImpl implements CardService {
   }
 
   @Override
-  public Optional<ScryfallCardObject> findByName(String name){
+  public Optional<Card> findByName(String name){
     return scryfallRepository.findByName(name);
   }
 
   @Override
-  public List<ScryfallCardObject> findByNameContaining(String name) {
+  public List<Card> findByNameContaining(String name) {
     return scryfallRepository.findByCardsBySubstring(name);
   }
 

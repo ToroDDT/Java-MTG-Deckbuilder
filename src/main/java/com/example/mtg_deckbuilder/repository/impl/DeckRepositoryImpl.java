@@ -69,15 +69,18 @@ public class DeckRepositoryImpl implements DeckRepository {
     }
     //
     @Override
-    public List<String> getDeckNames(CustomUserDetails user) {
+    public List<Deck> getDeckIds(CustomUserDetails user) {
         String sql = """
-        SELECT name FROM decks
+        SELECT id, name FROM decks
         WHERE user_id = :userId
         """;
 
         return jdbcClient.sql(sql)
                 .param("userId", user.getId())
-                .query(String.class)
+                .query((rs, rowNum) -> Deck.builder()
+                        .name(rs.getString("name"))
+                        .id(rs.getObject("id", UUID.class))
+                        .build())
                 .list();
     }
 

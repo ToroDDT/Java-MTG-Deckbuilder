@@ -1,317 +1,476 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
+import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
 import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
 import lombok.NonNull;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.SortField;
-import org.jooq.impl.DSL;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.example.jooq.generated.Tables.*;
 
 @Repository
 public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository {
 
-  private final DSLContext dslContext;
+  private final JdbcClient jdbcClient;
+  private final JdbcTemplate jdbcTemplate;
+  private final OwnedCardRowMapper rowMapper;
 
-  public PersonalLibraryRepositoryImpl(DSLContext dslContext) {
-    this.dslContext = dslContext;
+  public PersonalLibraryRepositoryImpl(OwnedCardRowMapper rowMapper, JdbcClient jdbcClient,
+                                       JdbcTemplate jdbcTemplate) {
+    this.jdbcClient = jdbcClient;
+    this.jdbcTemplate = jdbcTemplate;
+    this.rowMapper = rowMapper;
   }
 
-@Override
-  public void delete(@NonNull CustomUserDetails user, @NonNull String personalCardId) {
-      int rowsChanged = dslContext.deleteFrom(PERSONAL_COLLECTION_LIBRARY)
-              .where(PERSONAL_COLLECTION_LIBRARY.ID.eq(UUID.fromString(personalCardId)))
-              .and(PERSONAL_COLLECTION_LIBRARY.USER_ID.eq(user.getId()))
-              .execute();
 
-      if (rowsChanged == 0) {
-          throw new CardDoesNotExistException("Card could not be found in library: " + personalCardId);
-      }
+  public void deleteCard(@NonNull CustomUserDetails user, @NonNull String personalCardId) {
+    String sql = """
+        DELETE FROM personal_collection_library
+        WHERE id = :personalCardId AND user_id = :userId
+        """;
+
+    var rowsChanged = jdbcClient.sql(sql)
+            .param("personalCardId", UUID.fromString(personalCardId))
+            .param("userId", user.getId())
+            .update();
+
+    if (rowsChanged == 0) {
+      throw new CardDoesNotExistException("Card could not be found in library:" + personalCardId);
+    }
   }
-
   private List<String> getUpdatedCardTags(@NonNull UUID personalCardId, @NonNull CustomUserDetails user) {
-      String[] tags = dslContext.select(PERSONAL_COLLECTION_LIBRARY.TAGS)
-              .from(PERSONAL_COLLECTION_LIBRARY)
-              .where(PERSONAL_COLLECTION_LIBRARY.ID.eq(personalCardId))
-              .and(PERSONAL_COLLECTION_LIBRARY.USER_ID.eq(user.getId()))
-              .fetchOne(PERSONAL_COLLECTION_LIBRARY.TAGS);
+    String sql = """
+        SELECT tags
+        FROM personal_collection_library
+        WHERE id = :personalCardId AND user_id = :userId
+        """;
 
-      return tags == null ? List.of() : Arrays.asList(tags);
+    return jdbcClient.sql(sql)
+            .param("personalCardId", personalCardId)
+            .param("userId", user.getId())
+            .query((rs, rowNum) -> {
+              var sqlArray = rs.getArray("tags");
+              if (sqlArray == null) {
+                return new String[0];
+              }
+              return (String[]) sqlArray.getArray();
+            })
+            .list()
+            .stream()
+            .flatMap(Arrays::stream)
+            .toList();
   }
 
   @Override
-  public List<String> updateTagsOnCard(String tag, UUID personalCardId, CustomUserDetails user) {
-      // Postgres array_append using DSL.field, combined with RETURNING
-      String[] updatedTags = dslContext.update(PERSONAL_COLLECTION_LIBRARY)
-              .set(PERSONAL_COLLECTION_LIBRARY.TAGS, DSL.field(
-                      "array_append(COALESCE({0}, ARRAY[]::text[]), {1})",
-                      String[].class,
-                      PERSONAL_COLLECTION_LIBRARY.TAGS,
-                      tag
-              ))
-              .where(PERSONAL_COLLECTION_LIBRARY.ID.eq(personalCardId))
-              .and(PERSONAL_COLLECTION_LIBRARY.USER_ID.eq(user.getId()))
-              .returningResult(PERSONAL_COLLECTION_LIBRARY.TAGS)
-              .fetchOneInto(String[].class);
-
-      return updatedTags == null ? List.of() : Arrays.asList(updatedTags);
+  public List<String> saveTags(String tag, UUID personalCardId, CustomUserDetails user) {
+    String sql = """
+        UPDATE personal_collection_library
+        SET tags = array_append(COALESCE(tags, ARRAY[]::text[]), ?)
+        WHERE id = ? AND user_id = ?
+        """;
+    jdbcTemplate.update(sql, tag, personalCardId, user.getId());
+    return getUpdatedCardTags(personalCardId, user);
   }
 
   @Override
-  public List<String> deleteTagFromCard(String tag, UUID personalCardId, CustomUserDetails user) {
-      // Postgres array_remove using DSL.field, combined with RETURNING
-      String[] updatedTags = dslContext.update(PERSONAL_COLLECTION_LIBRARY)
-              .set(PERSONAL_COLLECTION_LIBRARY.TAGS, DSL.field(
-                      "array_remove({0}, {1})",
-                      String[].class,
-                      PERSONAL_COLLECTION_LIBRARY.TAGS,
-                      tag
-              ))
-              .where(PERSONAL_COLLECTION_LIBRARY.ID.eq(personalCardId))
-              .and(PERSONAL_COLLECTION_LIBRARY.USER_ID.eq(user.getId()))
-              .returningResult(PERSONAL_COLLECTION_LIBRARY.TAGS)
-              .fetchOneInto(String[].class);
-
-      return updatedTags == null ? List.of() : Arrays.asList(updatedTags);
+  public List<String> deleteTag(String tag, UUID personalCardId, CustomUserDetails user) {
+    String sql = """
+        UPDATE personal_collection_library
+        SET tags = array_remove(tags, ?)
+        WHERE id = ? AND user_id = ?
+        """;
+    jdbcTemplate.update(sql, tag, personalCardId, user.getId());
+    return getUpdatedCardTags(personalCardId, user);
   }
 
-  @Override
-  public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId) {
-    return dslContext.select(
-                    PERSONAL_COLLECTION_LIBRARY.ID.as("personal_library_id"),
-                    PERSONAL_COLLECTION_LIBRARY.CARD_ID.as("card_id"),
-                    PERSONAL_COLLECTION_LIBRARY.DATE_ADDED,
-                    PERSONAL_COLLECTION_LIBRARY.TAGS,
+@Override
+public List<OwnedCard> findCards(UUID userId) {
 
-                    CARDS.ID,
-                    CARDS.NAME,
-                    CARDS.TYPE_LINE,
-                    CARDS.TOUGHNESS,
-                    CARDS.POWER,
-                    CARDS.ARTIST,
-                    CARDS.CMC,
-                    CARDS.SCRYFALL_URI,
-                    CARDS.COLOR_IDENTITY,
-                    CARDS.MULTIVERSE_IDS,
-                    CARDS.IMAGE_URIS,
-                    CARDS.PRICES
-            )
-            .from(CARDS)
-            .join(PERSONAL_COLLECTION_LIBRARY)
-            .on(PERSONAL_COLLECTION_LIBRARY.CARD_ID.eq(CARDS.ID))
-            .where(PERSONAL_COLLECTION_LIBRARY.USER_ID.eq(userId))
-            .orderBy(
-                    PERSONAL_COLLECTION_LIBRARY.DATE_ADDED.desc(),
-                    PERSONAL_COLLECTION_LIBRARY.ID.desc()
-            )
-            .fetch(OwnedCard::mapFromRecord);
-  }
+    String sql = """
+        SELECT
+            pcl.id AS personal_library_id,
+            pcl.user_id,
+            pcl.date_added,
+            pcl.updated_at,
+            pcl.tags,
 
- @Override
-public List<OwnedCard> getAllPersonalLibraryCardsForUserPaginated(UUID userId) {
+            c.id AS card_id,
+            c.name,
+            c.type_line,
+            c.toughness,
+            c.power,
+            c.artist,
+            c.cmc,
+            c.scryfall_uri,
+            c.color_identity,
 
-    var pageSize = 12;
+            c.image_uris->>'border_crop' AS image,
 
-    return dslContext
-        .select(
-            PERSONAL_COLLECTION_LIBRARY.ID.as("personal_library_id"),
-            PERSONAL_COLLECTION_LIBRARY.USER_ID,
-            PERSONAL_COLLECTION_LIBRARY.DATE_ADDED,
-            PERSONAL_COLLECTION_LIBRARY.UPDATED_AT,
-            PERSONAL_COLLECTION_LIBRARY.TAGS,
+            c.prices->>'usd' AS usd,
+            c.prices->>'usd_foil' AS usd_foil,
+            c.prices->>'eur_foil' AS eur_foil,
+            c.prices->>'tix' AS tix
 
-            CARDS.ID,
-            CARDS.NAME,
-            CARDS.TYPE_LINE,
-            CARDS.TOUGHNESS,
-            CARDS.POWER,
-            CARDS.ARTIST,
-            CARDS.CMC,
-            CARDS.SCRYFALL_URI,
-            CARDS.COLOR_IDENTITY,
-            CARDS.MULTIVERSE_IDS,
-            CARDS.IMAGE_URIS,
-            CARDS.PRICES
-        )
-        .from(CARDS)
-        .join(PERSONAL_COLLECTION_LIBRARY)
-        .on(PERSONAL_COLLECTION_LIBRARY.CARD_ID.eq(CARDS.ID))
-        .where(PERSONAL_COLLECTION_LIBRARY.USER_ID.eq(userId))
-        .orderBy(
-            PERSONAL_COLLECTION_LIBRARY.DATE_ADDED.desc(),
-            PERSONAL_COLLECTION_LIBRARY.ID.desc()
-        )
-        .limit(pageSize)
-        .fetch(OwnedCard::mapFromRecord);
+        FROM personal_collection_library pcl
+
+        JOIN cards c
+            ON c.id = pcl.card_id
+
+        WHERE pcl.user_id = ?
+
+        ORDER BY
+            pcl.date_added DESC,
+            pcl.id DESC
+
+        LIMIT 10
+        """;
+
+    return jdbcTemplate.query(sql, rowMapper, userId);
 }
 
-  @Override
-public List<OwnedCard> getAllPersonalLibraryCardsForUser(UUID userId, LibraryFilters filters) {
-    var pageSize = 12;
-    int page = (filters.getPage() != null) ? Math.max(filters.getPage(), 0) : 0;
+ @Override
+public List<OwnedCard> findCardsPaginated(UUID userId) {
 
-    // 1. Start with the base condition (User ID and CMC range)
-Condition condition = PERSONAL_COLLECTION_LIBRARY.USER_ID.eq(userId)
-        .and(CARDS.CMC.between(
-            BigDecimal.valueOf(filters.getMinCMC()),
-            BigDecimal.valueOf(filters.getMaxCMC())
-        ));
-    // 2. Dynamically append filters
-    if (filters.getOracleTextSearch() != null && !filters.getOracleTextSearch().isEmpty()) {
-        // Using Postgres Full Text Search via jOOQ plain SQL template
-        condition = condition.and("to_tsvector('english', {0}) @@ plainto_tsquery('english', {1})",
-                                  CARDS.ORACLE_TEXT, filters.getOracleTextSearch());
-    }
+    int pageSize = 12;
 
-    if (filters.getCardName() != null && !filters.getCardName().isEmpty()) {
-        condition = condition.and(CARDS.NAME.containsIgnoreCase(filters.getCardName()));
-    }
+    String sql = """
+        SELECT
+            pcl.id AS personal_library_id,
+            pcl.user_id,
+            pcl.date_added,
+            pcl.updated_at,
+            pcl.tags,
 
-    if (filters.getCardType() != null && !"ALL".equalsIgnoreCase(filters.getCardType())) {
-        String type = CardType.fromString(filters.getCardType()).getType();
-        condition = condition.and(CARDS.TYPE_LINE.containsIgnoreCase(type));
-    }
+            c.id AS card_id,
+            c.name,
+            c.type_line,
+            c.toughness,
+            c.power,
+            c.artist,
+            c.cmc,
+            c.scryfall_uri,
+            c.color_identity,
 
-    if (filters.getSelectedColors() != null && !filters.getSelectedColors().isEmpty()) {
-        String[] colors = filters.getSelectedColors().toArray(new String[0]);
-        // Postgres Array contains (@>) logic
-        condition = condition.and("{0} @> {1}::text[]", CARDS.COLOR_IDENTITY, colors)
-                             .and("{1}::text[] @> {0}", CARDS.COLOR_IDENTITY, colors);
-    }
+            c.image_uris->>'border_crop' AS image,
 
-    // 3. Handle Tag Tokens (Postgres unnest logic)
-    for (String token : filters.tagSearchTokens()) {
-        condition = condition.and(DSL.exists(
-            DSL.selectOne()
-               .from(DSL.unnest(DSL.coalesce(PERSONAL_COLLECTION_LIBRARY.TAGS, DSL.array())).as("tag_row", "tag_value"))
-               .where(DSL.field("tag_value").containsIgnoreCase(token))
-        ));
-    }
+            c.prices->>'usd' AS usd,
+            c.prices->>'usd_foil' AS usd_foil,
+            c.prices->>'eur_foil' AS eur_foil,
+            c.prices->>'tix' AS tix
 
-    // 4. Handle Sorting
-    SortField<?> sortOrder = switch (filters.getSortBy()) {
-        case PRICE_ASC -> DSL.field("{0}->>'usd'", Double.class, CARDS.PRICES).asc().nullsLast();
-        case PRICE_DESC -> DSL.field("{0}->>'usd'", Double.class, CARDS.PRICES).desc().nullsLast();
-        case CMC_ASC    -> CARDS.CMC.asc().nullsLast();
-        case CMC_DESC   -> CARDS.CMC.desc().nullsLast();
-        case NAME_DESC  -> CARDS.NAME.desc();
-        default         -> PERSONAL_COLLECTION_LIBRARY.DATE_ADDED.desc();
-    };
+        FROM personal_collection_library pcl
 
-    // 5. Execute and Map
-    return dslContext.select(
-                PERSONAL_COLLECTION_LIBRARY.ID.as("personal_library_id"),
-                PERSONAL_COLLECTION_LIBRARY.USER_ID,
-                PERSONAL_COLLECTION_LIBRARY.DATE_ADDED,
-                PERSONAL_COLLECTION_LIBRARY.TAGS,
-                CARDS.ID,
-                CARDS.NAME,
-                CARDS.TYPE_LINE,
-                CARDS.TOUGHNESS,
-                CARDS.POWER,
-                CARDS.ARTIST,
-                CARDS.CMC,
-                CARDS.SCRYFALL_URI,
-                CARDS.COLOR_IDENTITY
-            )
-            .from(CARDS)
-            .join(PERSONAL_COLLECTION_LIBRARY).on(PERSONAL_COLLECTION_LIBRARY.CARD_ID.eq(CARDS.ID))
-            .where(condition)
-            .orderBy(sortOrder, PERSONAL_COLLECTION_LIBRARY.ID.desc())
-            .limit(pageSize)
-            .offset(page * pageSize)
-            .fetch(OwnedCard::mapFromRecord);
+        JOIN cards c
+            ON c.id = pcl.card_id
+
+        WHERE pcl.user_id = ?
+
+        ORDER BY
+            pcl.date_added DESC,
+            pcl.id DESC
+
+        LIMIT ?
+        """;
+
+    return jdbcTemplate.query(
+            sql,
+            rowMapper,
+            userId,
+            pageSize
+    );
 }
 
 @Override
-public void addCardToPersonalLibrary(OwnedCard ownedCard) {
-    dslContext.insertInto(PERSONAL_COLLECTION_LIBRARY)
-            .set(PERSONAL_COLLECTION_LIBRARY.USER_ID, ownedCard.getUserId())
-            .set(PERSONAL_COLLECTION_LIBRARY.CARD_ID, ownedCard.getCardId())
-            .set(PERSONAL_COLLECTION_LIBRARY.IMAGE, ownedCard.getImage())
-            .execute();
-}
+public List<OwnedCard> findCards(
+    UUID userId,
+    LibraryFilters personalLibraryFilters
+) {
 
- @Override
-public Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user, List<UUID> cardIds) {
-    if (cardIds == null || cardIds.isEmpty()) {
-        return Map.of();
+    int pageSize = 12;
+
+    int page = personalLibraryFilters.getPage() != null
+        ? Math.max(personalLibraryFilters.getPage(), 0)
+        : 0;
+
+    StringBuilder sql = new StringBuilder("""
+        SELECT
+            personal_collection_library.id AS personal_library_id,
+            personal_collection_library.user_id,
+            personal_collection_library.date_added,
+            personal_collection_library.updated_at,
+            personal_collection_library.tags,
+
+            cards.id AS card_id,
+            cards.name,
+            cards.type_line,
+            cards.toughness,
+            cards.power,
+            cards.artist,
+            cards.cmc,
+            cards.scryfall_uri,
+            cards.color_identity,
+
+            cards.image_uris->>'border_crop' AS image,
+
+            cards.prices->>'usd' AS usd,
+            cards.prices->>'usd_foil' AS usd_foil,
+            cards.prices->>'eur_foil' AS eur_foil,
+            cards.prices->>'tix' AS tix
+
+        FROM cards
+
+        INNER JOIN personal_collection_library
+            ON personal_collection_library.card_id = cards.id
+
+        WHERE personal_collection_library.user_id = :userId
+        """);
+
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("userId", userId);
+
+    // Oracle text search
+    if (personalLibraryFilters.getOracleTextSearch() != null
+        && !personalLibraryFilters.getOracleTextSearch().isEmpty()) {
+
+        sql.append("""
+            AND to_tsvector('english', cards.oracle_text)
+                @@ plainto_tsquery('english', :oracleText)
+            """);
+
+        params.addValue(
+            "oracleText",
+            personalLibraryFilters.getOracleTextSearch()
+        );
     }
 
-    // fetchGroups is the jOOQ equivalent of the Java Collectors.groupingBy logic
-    return dslContext.select(
-                DECK_CARD_ENTRIES.PERSONAL_LIBRARY_CARD_ID,
-                DECKS.NAME
-            )
-            .from(DECK_CARD_ENTRIES)
-            .join(DECKS).on(DECKS.ID.eq(DECK_CARD_ENTRIES.DECK_ID))
-            .where(DECKS.USER_ID.eq(user.getId()))
-            .and(DECK_CARD_ENTRIES.PERSONAL_LIBRARY_CARD_ID.in(cardIds))
-            .orderBy(DECK_CARD_ENTRIES.PERSONAL_LIBRARY_CARD_ID, DECKS.NAME)
-            .fetchGroups(
-                record -> record.get(DECK_CARD_ENTRIES.PERSONAL_LIBRARY_CARD_ID),
-                record -> record.get(DECKS.NAME)
-            );
+    // Card name
+    if (personalLibraryFilters.getCardName() != null
+        && !personalLibraryFilters.getCardName().isEmpty()) {
+
+        sql.append("""
+            AND cards.name ILIKE :cardName
+            """);
+
+        params.addValue(
+            "cardName",
+            personalLibraryFilters.getCardName() + "%"
+        );
+    }
+
+    // Card type
+    if (personalLibraryFilters.getCardType() != null
+        && !personalLibraryFilters.getCardType().isEmpty()
+        && !"ALL".equalsIgnoreCase(personalLibraryFilters.getCardType())) {
+
+        sql.append("""
+            AND cards.type_line ILIKE :cardType
+            """);
+
+        params.addValue(
+            "cardType",
+            "%" + CardType
+                .fromString(personalLibraryFilters.getCardType())
+                .getType() + "%"
+        );
+    }
+
+    // Colors
+    if (personalLibraryFilters.getSelectedColors() != null
+        && !personalLibraryFilters.getSelectedColors().isEmpty()) {
+
+        sql.append("""
+            AND cards.color_identity @> :colors::text[]
+            AND :colors::text[] @> cards.color_identity
+            """);
+
+        params.addValue(
+            "colors",
+            personalLibraryFilters
+                .getSelectedColors()
+                .toArray(new String[0])
+        );
+    }
+
+    // Tags
+    var tagTokens = personalLibraryFilters.tagSearchTokens();
+
+    for (int i = 0; i < tagTokens.size(); i++) {
+
+        String paramName = "tag" + i;
+
+        sql.append("""
+            AND EXISTS (
+                SELECT 1
+                FROM unnest(
+                    COALESCE(
+                        personal_collection_library.tags,
+                        ARRAY[]::text[]
+                    )
+                ) AS tag_row(tag_value)
+                WHERE tag_value ILIKE :
+            """).append(paramName).append(") ");
+
+        params.addValue(
+            paramName,
+            "%" + tagTokens.get(i) + "%"
+        );
+    }
+
+    // CMC range
+    sql.append("""
+        AND cards.cmc BETWEEN :minCmc AND :maxCmc
+        """);
+
+    params.addValue("minCmc", personalLibraryFilters.getMinCMC());
+    params.addValue("maxCmc", personalLibraryFilters.getMaxCMC());
+
+    // Sorting
+    switch (personalLibraryFilters.getSortBy()) {
+
+        case PRICE_ASC -> sql.append("""
+            ORDER BY
+                NULLIF(cards.prices->>'usd', '')::numeric ASC NULLS LAST
+            """);
+
+        case PRICE_DESC -> sql.append("""
+            ORDER BY
+                NULLIF(cards.prices->>'usd', '')::numeric DESC NULLS LAST
+            """);
+
+        case CMC_ASC -> sql.append("""
+            ORDER BY cards.cmc ASC NULLS LAST
+            """);
+
+        case CMC_DESC -> sql.append("""
+            ORDER BY cards.cmc DESC NULLS LAST
+            """);
+
+        case NAME_DESC -> sql.append("""
+            ORDER BY cards.name DESC
+            """);
+
+        default -> sql.append("""
+            ORDER BY
+                personal_collection_library.date_added DESC,
+                personal_collection_library.id DESC
+            """);
+    }
+
+    // Pagination
+    sql.append("""
+        LIMIT :limit
+        OFFSET :offset
+        """);
+
+    params.addValue("limit", pageSize);
+    params.addValue("offset", page * pageSize);
+
+    return jdbcClient
+        .sql(sql.toString())
+        .params(params.getValues())
+        .query(rowMapper)
+        .list();
 }
 
- @Override
-public PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user) {
-    UUID userId = user.getId();
+  @Override
+  public void saveCard(OwnedCard ownedCard) {
+    String sql = """
+        INSERT INTO personal_collection_library (user_id, card_id, image)
+        VALUES (:userId, :cardId, :image)
+        """;
 
-    // 1. Fetch the cards using our new mapper
-    List<OwnedCard> cards = dslContext.select(
-                PERSONAL_COLLECTION_LIBRARY.ID.as("personal_library_id"),
-                PERSONAL_COLLECTION_LIBRARY.USER_ID,
-                PERSONAL_COLLECTION_LIBRARY.DATE_ADDED,
-                PERSONAL_COLLECTION_LIBRARY.TAGS,
-                CARDS.ID,
-                CARDS.NAME,
-                CARDS.TYPE_LINE,
-                CARDS.ARTIST,
-                CARDS.CMC,
-                CARDS.COLOR_IDENTITY,
-                CARDS.IMAGE_URIS,
-                CARDS.PRICES
-            )
-            .from(CARDS)
-            .join(PERSONAL_COLLECTION_LIBRARY)
-                .on(PERSONAL_COLLECTION_LIBRARY.CARD_ID.eq(CARDS.ID))
-            .where(PERSONAL_COLLECTION_LIBRARY.USER_ID.eq(userId))
-            .orderBy(PERSONAL_COLLECTION_LIBRARY.DATE_ADDED.desc(), PERSONAL_COLLECTION_LIBRARY.ID.desc())
-            .fetch(OwnedCard::mapFromRecord);
+    MapSqlParameterSource params = new MapSqlParameterSource();
+    params.addValue("userId", ownedCard.getUserId());
+    params.addValue("cardId", ownedCard.getCardId());
+    params.addValue("image", ownedCard.getImage());
 
-    // 2. Calculate the total value (Handling the JSONB prices column)
+
+    jdbcClient.sql(sql)
+            .paramSource(params)
+            .update();
+  }
+  @Override
+  public Map<UUID, List<String>> findLocations(CustomUserDetails user, List<UUID> cardIds) {
+    if (cardIds == null || cardIds.isEmpty()) {
+      return Map.of();
+    }
+
+    String sql = """
+        SELECT dce.personal_library_card_id, deck.name
+        FROM deck_card_entries dce
+        JOIN decks deck ON deck.id = dce.deck_id
+        WHERE deck.user_id = :userId
+        AND dce.personal_library_card_id IN (:cardIds)
+        ORDER BY dce.personal_library_card_id, deck.name;
+          \s""";
+
+    MapSqlParameterSource params = new MapSqlParameterSource();
+    params.addValue("userId", user.getId());
+    params.addValue("cardIds", cardIds);
+
+    return jdbcClient.sql(sql)
+            .paramSource(params)
+            .query((rs, rowNum) -> Map.entry(
+                    rs.getObject("personal_library_card_id", UUID.class),
+                    rs.getString("name")))
+            .list()
+            .stream()
+            .collect(Collectors.groupingBy(
+                    Map.Entry::getKey,
+                    Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+  }
+
+  @Override
+  public PersonalLibraryStats getInfo(CustomUserDetails user) {
+    String sql = """
+         SELECT\s
+             personal_collection_library.id AS personal_library_id,
+             personal_collection_library.user_id,
+             personal_collection_library.date_added,
+             personal_collection_library.updated_at,
+             personal_collection_library.tags,
+             cards.id AS card_id,
+             cards.name,
+             cards.type_line,
+             cards.toughness,
+             cards.power,
+             cards.artist,
+             cards.cmc,
+             cards.scryfall_uri,
+             cards.color_identity,
+             cards.image_uris->>'border_crop' AS image,
+             cards.prices->>'usd' AS usd,
+             cards.prices->>'usd_foil' AS usd_foil,
+             cards.prices->>'eur_foil' AS eur_foil,
+             cards.prices->>'tix' AS tix
+         FROM cards
+         INNER JOIN personal_collection_library\s
+             ON personal_collection_library.card_id = cards.id
+         WHERE personal_collection_library.user_id = ?
+         ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC \s
+        \s""";
+
+    List<OwnedCard> cards = jdbcTemplate.query(sql, rowMapper, user.getId());
+
     double totalValue = cards.stream()
-            .filter(c -> c.getCard() != null && c.getCard().getPrices() != null)
-            .mapToDouble(c -> {
-                Double price = c.getCard().getPrices().getUsd();
-                return price != null ? price : 0.0;
-            })
+            .filter(card -> card.getCard() != null && card.getCard().getPrices() != null)
+            .filter(card -> card.getCard().getPrices().getUsd() != null)
+            .mapToDouble(card -> card.getCard().getPrices().getUsd())
             .sum();
 
-    // 3. Aggregate Color Counts
     var colorCounts = cards.stream()
-            .collect(Collectors.groupingBy(
-                    ColorIdentity::fromString,
-                Collectors.counting()
-            ));
-
-    // 4. Final Stats
-    int totalCards = cards.size();
-    double avgPrice = totalCards == 0 ? 0.0 : totalValue / totalCards;
+            .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
+    var totalCards = cards.size();
+    var avgPrice = totalCards == 0 ? 0.0 : totalValue / totalCards;
 
     return new PersonalLibraryStats(totalValue, colorCounts, totalCards, avgPrice);
-}
+  }
+
 }

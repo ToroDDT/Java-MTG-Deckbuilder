@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Combo Detail</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/combo-detail.css}">
+</head>
+<body class="combo-detail-page">
+<header class="detail-nav">
+    <a href="/personal-library/combos" class="detail-back">Back to Combos</a>
+</header>
+
+<main class="detail-shell" th:if="${comboDetail != null}">
+    <section class="detail-hero">
+        <div class="detail-hero-bg detail-hero-left"
+             th:if="${#lists.size(comboDetail.heroImageUrls()) > 0}"
+             th:style="'background-image:url(' + ${comboDetail.heroImageUrls()[0]} + ');'"></div>
+        <div class="detail-hero-bg detail-hero-right"
+             th:if="${#lists.size(comboDetail.heroImageUrls()) > 1}"
+             th:style="'background-image:url(' + ${comboDetail.heroImageUrls()[1]} + ');'"></div>
+        <div class="detail-hero-overlay"></div>
+
+        <div class="detail-hero-content">
+            <div class="detail-location" th:text="${comboDetail.location()}">Library</div>
+            <h1 class="detail-title" th:text="${comboDetail.title()}">Combo Title</h1>
+
+            <div class="detail-card-strip">
+                <img th:each="imageUrl, imageStat : ${comboDetail.cardImageUrls()}"
+                     th:if="${imageStat.index < 3}"
+                     th:src="${imageUrl}"
+                     th:alt="${comboDetail.cardNames()[imageStat.index]}"
+                     class="detail-card-image"
+                     loading="lazy"/>
+            </div>
+        </div>
+    </section>
+
+    <section class="detail-body">
+        <div class="detail-main">
+            <section class="detail-section" th:if="${!#lists.isEmpty(comboDetail.initialStateLines())}">
+                <h2>Initial Card State</h2>
+                <ul class="detail-bullets">
+                    <li th:each="line : ${comboDetail.initialStateLines()}" th:text="${line}">Card state</li>
+                </ul>
+            </section>
+
+            <section class="detail-section" th:if="${!#strings.isEmpty(comboDetail.notablePrerequisites())}">
+                <h2>Notable Prerequisites</h2>
+                <p th:text="${comboDetail.notablePrerequisites()}">Prerequisites</p>
+            </section>
+
+            <section class="detail-section" th:if="${!#strings.isEmpty(comboDetail.manaNeeded())}">
+                <h2>Mana Needed</h2>
+                <p th:text="${comboDetail.manaNeeded()}">Mana needed</p>
+            </section>
+
+            <section class="detail-section" th:if="${!#lists.isEmpty(comboDetail.stepLines())}">
+                <h2>Steps</h2>
+                <ol class="detail-steps">
+                    <li th:each="step : ${comboDetail.stepLines()}" th:text="${step}">Step</li>
+                </ol>
+            </section>
+
+            <section class="detail-section" th:if="${!#strings.isEmpty(comboDetail.notes())}">
+                <h2>Notes</h2>
+                <p th:text="${comboDetail.notes()}">Notes</p>
+            </section>
+
+            <section class="detail-section" th:if="${!#lists.isEmpty(comboDetail.resultLines())}">
+                <h2>Results</h2>
+                <ul class="detail-bullets">
+                    <li th:each="result : ${comboDetail.resultLines()}" th:text="${result}">Result</li>
+                </ul>
+            </section>
+        </div>
+
+        <aside class="detail-sidebar">
+            <div class="detail-identity" th:if="${!#lists.isEmpty(comboDetail.identityColors())}">
+                <span th:each="color : ${comboDetail.identityColors()}"
+                      th:text="${color}"
+                      th:class="'identity-pip identity-' + ${color}">
+                    G
+                </span>
+            </div>
+
+            <div class="detail-warning" th:if="${comboDetail.spoiler()}">
+                Combo contains unreleased or spoiler information.
+            </div>
+
+            <div class="detail-price-grid" th:if="${comboDetail.tcgplayerPrice() != null or comboDetail.cardkingdomPrice() != null}">
+                <div class="detail-price-card" th:if="${comboDetail.tcgplayerPrice() != null}">
+                    <span class="detail-price-label">TCGplayer</span>
+                    <span class="detail-price-value" th:text="${comboDetail.tcgplayerPrice()}">$0.00</span>
+                </div>
+                <div class="detail-price-card" th:if="${comboDetail.cardkingdomPrice() != null}">
+                    <span class="detail-price-label">Card Kingdom</span>
+                    <span class="detail-price-value" th:text="${comboDetail.cardkingdomPrice()}">$0.00</span>
+                </div>
+            </div>
+
+            <div class="detail-meta-card">
+                <div class="detail-meta-label">Color Identity</div>
+                <div class="detail-meta-value" th:text="${comboDetail.identity()}">GUR</div>
+            </div>
+
+            <div class="detail-meta-card">
+                <div class="detail-meta-label">Location</div>
+                <div class="detail-meta-value" th:text="${comboDetail.location()}">Library</div>
+            </div>
+
+            <div class="detail-legality" th:if="${!#lists.isEmpty(comboDetail.legalities())}">
+                <div class="detail-legality-title">Legality</div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Format</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="row : ${comboDetail.legalities()}">
+                        <td th:text="${row.legal() ? 'Yes' : 'No'}"
+                            th:class="${row.legal()} ? 'legal-yes' : 'legal-no'">Yes</td>
+                        <td th:text="${row.format()}">Commander</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </aside>
+    </section>
+</main>
+</body>
+</html>

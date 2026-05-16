@@ -7,7 +7,6 @@ import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
@@ -92,14 +91,11 @@ public class DeckServiceImpl implements DeckService {
                 .forEach(i -> finalDecks.put(decks.get(i), colorIdentityForEachDeck.get(i)));
         return finalDecks;
     }
-    @Override
-    public List<Deck> getDecks(CustomUserDetails user) {
-        return deckRepository.getDecks(user);
-    }
+
 
     @Override
-    public List<String> getDeckNames(CustomUserDetails user) {
-        return deckRepository.getDeckNames(user);
+    public List<Deck> getDeckIds(CustomUserDetails user) {
+        return deckRepository.getDeckIds(user);
     }
 
 }

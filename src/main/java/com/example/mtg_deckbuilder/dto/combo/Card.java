@@ -1,4 +1,4 @@
-package com.example.mtg_deckbuilder.dto;
+package com.example.mtg_deckbuilder.dto.combo;
 
 import java.util.List;
 

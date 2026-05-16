@@ -1,9 +1,13 @@
 package com.example.mtg_deckbuilder.controllers;
-import com.example.mtg_deckbuilder.dto.UserRegistrationDto;
+import com.example.mtg_deckbuilder.dto.combo.UserRegistrationDto;
+import com.example.mtg_deckbuilder.exceptions.UserAlreadyExistsException;
+import com.example.mtg_deckbuilder.service.impl.RegistrationServiceImpl;
 import com.example.mtg_deckbuilder.service.impl.UserDetailsServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,43 +17,47 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AccountController {
 
     private final UserDetailsServiceImpl userService;
+    private final RegistrationServiceImpl registrationService;
 
     @Autowired
-    public AccountController(UserDetailsServiceImpl userService) {
+    public AccountController(UserDetailsServiceImpl userService, RegistrationServiceImpl registrationService) {
         this.userService = userService;
+        this.registrationService = registrationService;
     }
 
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new UserRegistrationDto());
-        return "register"; // matches the name of your HTML file (register.html)
-    }
-
-    @PostMapping("/register")
-    public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto,
-                                      RedirectAttributes redirectAttributes) {
-        if (!registrationDto.getPassword().equals(registrationDto.getConfirmPassword())) {
-            redirectAttributes.addFlashAttribute("error", "Passwords do not match!");
-            return "redirect:/register";
-        }
-
-        try {
-            userService.saveUser(registrationDto);
-        }
-        catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/register";
-        }
-
-        return "redirect:/login";
-    }
     @GetMapping("/login")
     public String showLoginPage() {
         return "login";
     }
 
-    @GetMapping("/create-account")
-    public String showCreateAccount() {
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("user", new UserRegistrationDto());
         return "register";
     }
+
+    @PostMapping("/register")
+    public String registerUserAccount(@Valid @ModelAttribute("user") UserRegistrationDto registrationDto, BindingResult result, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "register";
+        }
+
+        try {
+            registrationService.registerUser(registrationDto);
+
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Account created successfully!"
+            );
+
+            return "redirect:/login";
+
+        } catch (UserAlreadyExistsException e) {
+
+            result.rejectValue("email", "error.user", e.getMessage());
+
+            return "register";
+        }
+    }
+
 }

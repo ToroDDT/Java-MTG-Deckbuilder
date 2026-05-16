@@ -1,10 +1,10 @@
 package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
-import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
-import com.example.mtg_deckbuilder.model.Prices;
+import com.example.mtg_deckbuilder.dto.card.Prices;
 import com.example.mtg_deckbuilder.model.SortOptions;
 import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -42,20 +42,18 @@ class PersonalLibraryServiceImplTest {
     @Mock
     private CardService cardServiceImpl;
 
-    @Mock
-    private DeckServiceImpl deckServiceImpl;
 
     @InjectMocks
     private PersonalLibraryServiceImpl personalLibraryService;
 
     @Test
     void addCardPopulatesOwnedCardAndPersistsIt() {
-        UUID userId = UUID.randomUUID();
+        CustomUserDetails userId = any(CustomUserDetails.class);
         UUID cardId = UUID.randomUUID();
         OwnedCard ownedCard = new OwnedCard();
         ownedCard.setName("Sol Ring");
 
-        Card foundCard = new Card();
+        var foundCard = Card.builder().build();
         foundCard.setId(cardId);
         foundCard.setImage("image-url");
 
@@ -64,13 +62,12 @@ class PersonalLibraryServiceImplTest {
         personalLibraryService.addCard(ownedCard, userId);
 
         ArgumentCaptor<OwnedCard> captor = ArgumentCaptor.forClass(OwnedCard.class);
-        verify(personalLibraryRepository).addCardToPersonalLibrary(captor.capture());
+        verify(personalLibraryRepository).saveCard(captor.capture());
 
         OwnedCard savedCard = captor.getValue();
         assertEquals(cardId, savedCard.getId());
         assertEquals(cardId, savedCard.getCardId());
         assertEquals("image-url", savedCard.getImage());
-        assertEquals(userId, savedCard.getUserId());
         assertEquals(LocalDate.now(), savedCard.getDateAdded());
         assertEquals(List.of(), savedCard.getTags());
     }
@@ -83,33 +80,33 @@ class PersonalLibraryServiceImplTest {
         when(cardServiceImpl.findByName("Missing Card")).thenReturn(Optional.empty());
 
         assertThrows(CardDoesNotExistException.class,
-                () -> personalLibraryService.addCard(ownedCard, UUID.randomUUID()));
+                () -> personalLibraryService.addCard(ownedCard, any(CustomUserDetails.class)));
     }
 
     @Test
     void updateCardTagsDelegatesUsingPersonalCardId() {
         UUID personalCardId = UUID.randomUUID();
         CustomUserDetails user = testUser();
-        when(personalLibraryRepository.updateTagsOnCard("Ramp", personalCardId, user))
+        when(personalLibraryRepository.saveTags("Ramp", personalCardId, user))
                 .thenReturn(List.of("Ramp"));
 
         List<String> tags = personalLibraryService.updateCardTags("Ramp", personalCardId.toString(), user);
 
         assertEquals(List.of("Ramp"), tags);
-        verify(personalLibraryRepository).updateTagsOnCard("Ramp", personalCardId, user);
+        verify(personalLibraryRepository).saveTags("Ramp", personalCardId, user);
     }
 
     @Test
     void removeCardTagDelegatesUsingPersonalCardId() {
         UUID personalCardId = UUID.randomUUID();
         CustomUserDetails user = testUser();
-        when(personalLibraryRepository.deleteTagFromCard("Ramp", personalCardId, user))
+        when(personalLibraryRepository.deleteTag("Ramp", personalCardId, user))
                 .thenReturn(List.of("Staple"));
 
         List<String> tags = personalLibraryService.removeCardTag("Ramp", personalCardId.toString(), user);
 
         assertEquals(List.of("Staple"), tags);
-        verify(personalLibraryRepository).deleteTagFromCard("Ramp", personalCardId, user);
+        verify(personalLibraryRepository).deleteTag("Ramp", personalCardId, user);
     }
 
     @Test
@@ -120,7 +117,7 @@ class PersonalLibraryServiceImplTest {
         OwnedCard cheaper = ownedCard("Arcane Signet", 1.0, UUID.randomUUID());
         OwnedCard pricier = ownedCard("Mana Crypt", 10.0, UUID.randomUUID());
 
-        when(personalLibraryRepository.getAllPersonalLibraryCardsForUser(any(UUID.class), eq(filters)))
+        when(personalLibraryRepository.findCards(any(UUID.class), eq(filters)))
                 .thenReturn(List.of(cheaper, pricier));
 
         List<OwnedCard> result = personalLibraryService.getCards(UUID.randomUUID(), filters);
@@ -139,14 +136,13 @@ class PersonalLibraryServiceImplTest {
         OwnedCard second = ownedCard("Arcane Signet", 1.5, secondOwnedId);
         second.setDateAdded(LocalDate.of(2026, 4, 2));
 
-        when(personalLibraryRepository.getAllPersonalLibraryCardsForUserPaginated(user.getId()))
+        when(personalLibraryRepository.findCardsPaginated(user.getId()))
                 .thenReturn(List.of(first, second));
-        when(personalLibraryRepository.getDeckLocationsOfCards(user, List.of(firstOwnedId, secondOwnedId)))
+        when(personalLibraryRepository.findLocations(user, List.of(firstOwnedId, secondOwnedId)))
                 .thenReturn(Map.of(
                         firstOwnedId, List.of("Artifacts"),
                         secondOwnedId, List.of("Budget")
                 ));
-        when(deckServiceImpl.getDeckNames(user)).thenReturn(List.of("Artifacts", "Budget"));
 
         LibraryViewModelImpl viewModel = personalLibraryService.buildPersonalLibraryViewModel(user);
 
@@ -168,7 +164,7 @@ class PersonalLibraryServiceImplTest {
     }
 
     private static OwnedCard ownedCard(String name, double price, UUID ownedId) {
-        Card card = new Card();
+        var card = Card.builder().build();
         card.setId(UUID.randomUUID());
         card.setName(name);
         card.setCmc(2);

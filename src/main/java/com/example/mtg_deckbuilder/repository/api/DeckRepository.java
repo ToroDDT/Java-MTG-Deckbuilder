@@ -13,7 +13,7 @@ public interface DeckRepository {
 
     List<Deck> getDecks(CustomUserDetails user);
 
-    List<String> getDeckNames(CustomUserDetails user);
+    List<Deck> getDeckIds (CustomUserDetails user);
 
     void addCard(CardEntry request);
 

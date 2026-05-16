@@ -1,12 +1,13 @@
-package com.example.mtg_deckbuilder.dto;
+package com.example.mtg_deckbuilder.dto.combo;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FeatureDto {
+public class TemplateDto {
     public int id;
     public String name;
-    public String status;
-    public boolean uncountable;
+    public String scryfallApi;
+    public String scryfallQuery;
 }

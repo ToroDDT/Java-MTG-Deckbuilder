@@ -16,10 +16,20 @@
 <!-- Main content -->
 <div class="page-body" id="personal-cards" th:fragment="combos-section">
 
+    <div class="cb-empty-state"
+         th:if="${cardCombos == null || cardCombos.cardCombinations == null || #lists.isEmpty(cardCombos.cardCombinations)}">
+        No combos match these filters.
+    </div>
+
     <div class="combo-grid">
 
         <!-- Repeat for each combo -->
-        <div class="combo-card" th:each="cardList, comboStat : ${cardCombos.images}">
+        <a class="combo-card combo-card-link"
+           th:each="cardList, comboStat : ${cardCombos.images}"
+           th:with="comboLocation=${cardCombos.locations != null and comboStat.index < #lists.size(cardCombos.locations) ? cardCombos.locations[comboStat.index] : 'library'},
+                    comboDescription=${cardCombos.description[comboStat.index]},
+                    comboCardsKey=${#strings.listJoin(cardCombos.cardCombinations[comboStat.index], '||')}"
+           th:href="@{/personal-library/combos/detail(location=${comboLocation}, cards=${comboCardsKey}, description=${comboDescription})}">
 
             <!-- Mana color identity row -->
             <div class="combo-card-header">
@@ -38,20 +48,34 @@
 
             <!-- Card names + effects -->
             <div class="combo-card-body">
-                <div class="combo-card-names" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-                    <img th:each="img : ${cardList}"
-                         th:src="${img}"
-                         alt="Card"
-                         class="combo-card-img"
-                         onerror="this.style.display='none'"/>
-                    <div class="combo-card-prereq">+1 other prerequisite</div>
+                <div class="combo-card-names">
+                    <span class="combo-card-name-group"
+                          th:each="cardName, nameStat : ${cardCombos.cardCombinations[comboStat.index]}"
+                          th:with="img=${nameStat.index < #lists.size(cardList) ? cardList[nameStat.index] : null}">
+                        <span class="combo-card-name"
+                              th:text="${cardName}">
+                            Card Name
+                        </span>
+                        <span class="combo-card-hover-drop">
+                            <span class="combo-card-hover-panel" th:if="${img != null}">
+                                <img th:src="${img}"
+                                     th:alt="${cardName}"
+                                     class="combo-card-hover-img"
+                                     loading="lazy"
+                                     onerror="this.closest('.combo-card-hover-panel').style.display='none'"/>
+                            </span>
+                            <span class="combo-card-hover-panel combo-card-hover-empty" th:if="${img == null}">
+                                Preview unavailable.
+                            </span>
+                        </span>
+                    </span>
                 </div>
 
                 <hr class="combo-divider"/>
 
                 <ul class="combo-effects"
-                    th:with="desc=${cardCombos.description[comboStat.index]},
-                              steps=${#strings.arraySplit(desc, '.')}">
+                    th:with="resultText=${cardCombos.results != null and comboStat.index < #lists.size(cardCombos.results) ? cardCombos.results[comboStat.index] : ''},
+                              steps=${#strings.arraySplit(resultText, '.')}">
                     <li th:each="step : ${steps}"
                         th:if="${!#strings.isEmpty(#strings.trim(step))}"
                         th:text="${#strings.trim(step) + '.'}">
@@ -64,7 +88,7 @@
             <div class="combo-card-footer">
                 — decks (EDHREC)
             </div>
-        </div>
+        </a>
         <!-- /combo-card -->
 
     </div>

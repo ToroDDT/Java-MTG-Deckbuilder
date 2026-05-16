@@ -110,7 +110,7 @@ class PersonalLibraryControllerTest {
                 .andExpect(view().name("card-query :: card-results"))
                 .andExpect(model().attribute("message", "Sol Ring added to your library."));
 
-        verify(personalLibraryService).addCard(any(OwnedCard.class), any(UUID.class));
+        verify(personalLibraryService).addCard(any(OwnedCard.class), any(CustomUserDetails.class));
     }
 
     @Test

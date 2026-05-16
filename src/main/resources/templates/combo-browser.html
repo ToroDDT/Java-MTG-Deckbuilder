@@ -12,387 +12,45 @@
           as="font"
           type="font/woff2"
           crossorigin>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
     <!-- Styles -->
     <link rel="stylesheet" th:href="@{/css/library.min.css}">
+    <link rel="stylesheet" th:href="@{/css/combos.css}">
 
     <!-- HTMX -->
     <script th:src="@{/js/htmx.min.js}" defer></script>
-    <style>
-       :root {
-    --bg-primary: #f8f9fa;
-    --bg-card: #ffffff;
-    --bg-card-hover: #f1f5f9;
-    --bg-card-footer: #f8f9fa;
-    --border-subtle: #e2e8f0;
-    --border-card: #e8edf2;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --text-muted: #94a3b8;
-    --accent-gold: #3b82f6;        /* swap gold → your app's blue */
-    --accent-gold-dim: rgba(59,130,246,0.1);
-    --mana-green: #4a7c3f;         /* keep mana colors — they're standard */
-    --mana-blue: #1a5276;
-    --mana-black: #2d2d2d;
-    --mana-red: #922b21;
-    --mana-white: #c8b89a;
-}
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-body { background: var(--bg-primary); }
-
-.hero {
-    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(59,130,246,0.04) 0%, transparent 70%);
-}
-        .combo-card-img {
-            width: 100%;
-            max-width: 140px;
-            aspect-ratio: 2.5 / 3.5;
-            object-fit: cover;
-            border-radius: 6px;
-            border: 1px solid var(--border-card);
-        }
-
-        .hero-art {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2d1b69 0%, #1a3a5c 40%, #3d1a1a 100%);
-            border: 2px solid #2a2a2a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            margin-bottom: 24px;
-            box-shadow: 0 0 40px rgba(200,168,75,0.1), 0 8px 32px rgba(0,0,0,0.6);
-            overflow: hidden;
-        }
-
-        .hero-art img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .hero-title {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(28px, 5vw, 52px);
-            font-weight: 900;
-            letter-spacing: 0.12em;
-            color: var(--text-primary);
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .hero-subtitle {
-            font-family: 'Crimson Pro', serif;
-            font-size: 18px;
-            font-style: italic;
-            color: var(--text-secondary);
-            margin-bottom: 28px;
-        }
-
-        /* ── Filter bar ── */
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .filter-label {
-            font-family: 'Cinzel', serif;
-            font-size: 11px;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-.filter-select {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    color: var(--text-primary);
-}
-
-.record-badge {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-}
-        .filter-select:focus { outline: 1px solid var(--accent-gold); }
-
-        .filter-divider {
-            color: var(--text-muted);
-            font-size: 18px;
-            line-height: 1;
-        }
-
-        .filter-check-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            cursor: pointer;
-        }
-
-        .next-btn {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-family: 'Cinzel', serif;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            color: var(--text-secondary);
-            background: none;
-            border: 1px solid #2a2a2a;
-            padding: 6px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: border-color 0.2s, color 0.2s;
-        }
-        .next-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
-
-        /* ── Main layout ── */
-        .page-body {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 40px 24px 80px;
-        }
-
-        /* ── Combo grid ── */
-        .combo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 2px;
-        }
-
-        /* ── Combo card ── */
-        .combo-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            display: flex;
-            flex-direction: column;
-            transition: background 0.2s, border-color 0.2s;
-            cursor: pointer;
-        }
-
-        .combo-card:hover {
-            background: var(--bg-card-hover);
-            border-color: #333;
-            z-index: 1;
-        }
-
-        .combo-card-header {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            padding: 14px 16px 10px;
-            border-bottom: 1px solid var(--border-card);
-        }
-
-        /* Mana pip */
-        .mana-pip {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            border: 1.5px solid rgba(255,255,255,0.1);
-            flex-shrink: 0;
-        }
-        .mana-G { background: var(--mana-green); }
-        .mana-U { background: var(--mana-blue); }
-        .mana-R { background: var(--mana-red); }
-        .mana-B { background: var(--mana-black); border-color: #444; }
-        .mana-W { background: #2a2a22; color: var(--mana-white); }
-
-        /* Mana SVG symbols */
-        .mana-symbol { width: 14px; height: 14px; }
-
-        .combo-card-body {
-            padding: 14px 16px;
-            flex: 1;
-        }
-
-        .combo-card-names {
-            margin-bottom: 10px;
-        }
-
-        .combo-card-name {
-            font-family: 'Crimson Pro', serif;
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-
-        .combo-card-prereq {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-style: italic;
-            margin-top: 2px;
-        }
-
-        .combo-divider {
-            border: none;
-            border-top: 1px solid var(--border-card);
-            margin: 10px 0;
-        }
-
-        .combo-effects {
-            list-style: none;
-        }
-
-        .combo-effects li {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            padding: 1px 0;
-        }
-
-        .combo-card-footer {
-            padding: 10px 16px;
-            background: var(--bg-card-footer);
-            border-top: 1px solid var(--border-card);
-            font-family: 'Cinzel', serif;
-            font-size: 11px;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
-            text-align: center;
-        }
-
-        /* ── Floating button ── */
-
-        .fab:active { transform: scale(0.95); }
-
-        .fab-tooltip {
-            position: absolute;
-            right: 60px;
-            background: #111;
-            color: var(--text-primary);
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-family: 'Cinzel', serif;
-            font-size: 10px;
-            letter-spacing: 0.08em;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            border: 1px solid var(--border-subtle);
-            transition: opacity 0.2s;
-        }
-        .fab:hover .fab-tooltip { opacity: 1; }
-
-        /* ── Bottom toast ── */
-.toast {
-    background: rgba(255,255,255,0.95);
-    border: 1px solid #e2e8f0;
-}
-
-.fab { background: #3b82f6; }   /* match your Build Deck button blue */
-.fab:hover { background: #2563eb; }       .toast-pips { display: flex; gap: -4px; }
-        .toast-pip {
-            width: 18px;
-            height: 18px;
-            border-radius: 3px;
-            margin-right: -5px;
-            border: 1px solid #111;
-        }
-
-        .toast-text {
-            font-family: 'Crimson Pro', serif;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        .toast-text strong { color: var(--text-primary); }
-
-        /* ── Responsive ── */
-        @media (max-width: 600px) {
-        .combo-grid { grid-template-columns: 1fr; }
-        .filter-bar { gap: 8px; }
-        }
-
-        /* ── Section header ── */
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .section-header-left {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .section-label {
-            font-family: 'Cinzel', serif;
-            font-size: 10px;
-            letter-spacing: 0.2em;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-        }
-
-        .section-title {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(18px, 3vw, 28px);
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-
-
-        .record-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent-gold);
-        }
-
-    </style>
 </head>
 
 <body>
-
 <header class="cb-nav">
-    <div class="cb-nav-inner">
-        <a href="/" class="cb-logo">MTG Deckbuilder</a>
-
-        <button class="cb-hamburger"
-                id="hamburger"
-                aria-label="Open menu"
-                aria-expanded="false">
-            <span></span><span></span><span></span>
-        </button>
-
-        <nav class="cb-nav-menu" id="navMenu">
-            <ul class="cb-nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/build">Build</a></li>
-                <li><a href="/owned">Owned Library</a></li>
-                <li><a href="/cards" class="active">All Cards</a></li>
-                <li><a href="/commanders">Commanders</a></li>
-                <li><a href="/decks">Finished Decks</a></li>
-            </ul>
-            <a href="/build" class="cb-nav-btn">Build Deck</a>
-        </nav>
-    </div>
+  <div class="cb-nav-inner">
+    <a href="/" class="cb-logo">MTG Deckbuilder</a>
+    <nav class="cb-nav-menu" id="navMenu">
+      <ul class="cb-nav-links">
+        <li>
+          <a href="/"><i class="fa-solid fa-house"></i> Home</a>
+        </li>
+          <li>
+              <a href="/personal-library/combos"><i class="fa-solid fa-id-badge"></i> Combos</a>
+          </li>
+          <li>
+          <a href="/decks"><i class="fas fa-book"></i> Decks</a>
+        </li>
+        <li>
+          <a href="/personal-library"><i class="fa-brands fa-wizards-of-the-coast"></i> Owned Library</a>
+        </li>
+      </ul>
+      <a href="/build" class="cb-nav-btn">Build Deck</a>
+    </nav>
+  </div>
 </header>
-
 <main class="cb-page">
 <!-- Page header -->
 <div class="cb-page-header">
     <div class="cb-page-header-bg"></div>
     <h1 class="cb-page-title">Combo Browser</h1>
     <p class="cb-page-sub">
-        Browse all cards with filters and search.
+        Browse saved combos by card names, effect text, card details, and colors.
     </p>
 </div>
 
@@ -400,7 +58,7 @@ body { background: var(--bg-primary); }
 <div class="cb-layout">
 
     <!-- Sidebar filters -->
-    <aside th:replace="combo-explorer :: combo-explorer(${personalLibrary}, ${filters}, ${ownedCard})">
+    <aside th:replace="~{combo-explorer :: combo-explorer(${personalLibrary}, ${filters}, ${ownedCard})}">
     </aside>
 
     <!-- Results (HTMX loads here) -->

@@ -1,8 +1,11 @@
 package com.example.mtg_deckbuilder.model;
 
+import lombok.Builder;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Builder
 public record Deck(UUID id,
                    String name,
                    String format,

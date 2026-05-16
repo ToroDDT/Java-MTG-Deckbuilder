@@ -1,71 +1,79 @@
 package com.example.mtg_deckbuilder.model;
 
-import com.example.mtg_deckbuilder.model.cards.ScryfallCardObject;
-import lombok.*;
-import org.jooq.Record; // Import jOOQ Record
+import com.example.mtg_deckbuilder.dto.card.Card;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.relational.core.mapping.Column;
+
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-
-import static com.example.jooq.generated.Tables.CARDS;
-import static com.example.jooq.generated.Tables.PERSONAL_COLLECTION_LIBRARY;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class OwnedCard {
     private UUID id;
+    @Column("user_id")
     private UUID userId;
+    @Column("card_id")
     private UUID cardId;
+    @Column("image_id")
     private String image;
+    @Column("date_added")
     private LocalDate dateAdded;
+    @Column("updated_at")
     private LocalDate updatedAt;
     private String name;
     private String type;
     private List<String> colors;
+    @Column
     private List<String> tags;
     private List<String> deckLocations = new ArrayList<>();
-    private ScryfallCardObject card;
+    private Card card;
 
     public OwnedCard() {}
-
-    public static OwnedCard mapFromRecord(Record record) {
-        var cardObject = ScryfallCardObject.builder()
-                .id(record.get(CARDS.ID))
-                .name(record.get(CARDS.NAME))
-                .colorIdentity(record.get(CARDS.COLOR_IDENTITY))
-                .cmc(record.get(CARDS.CMC))
-                .typeLine(record.get(CARDS.TYPE_LINE))
-                .artist(record.get(CARDS.ARTIST))
-                .build();
-
+    public static OwnedCard from(Card card, CustomUserDetails user) {
         return OwnedCard.builder()
-                .card(cardObject)
-                // Use the alias "personal_library_id" if you use .as() in your SQL,
-                // otherwise use PERSONAL_COLLECTION_LIBRARY.ID
-                .id(record.get("personal_library_id", UUID.class))
-                .cardId(record.get(PERSONAL_COLLECTION_LIBRARY.CARD_ID))
-                .dateAdded(record.get(PERSONAL_COLLECTION_LIBRARY.DATE_ADDED))
-                .tags(record.get(PERSONAL_COLLECTION_LIBRARY.TAGS))
+                .id(card.getId())
+                .cardId(card.getId())
+                .userId(user.getId())
+                .image(card.getImage())
+                .tags(new ArrayList<>()) // Default empty list
                 .build();
     }
 
-    public static class OwnedCardBuilder {
-        public OwnedCardBuilder tags(String[] tags) {
-            this.tags = Optional.ofNullable(tags).map(List::of).orElseGet(List::of);
-            return this;
-        }
+    public OwnedCard mapRows(ResultSet rs) throws SQLException {
 
-        public OwnedCardBuilder dateAdded(OffsetDateTime dateTime) {
-            this.dateAdded = Optional.ofNullable(dateTime)
-                    .map(dt -> dt.atZoneSameInstant(ZoneId.of("UTC")).toLocalDate())
-                    .orElse(null);
-            return this;
-        }
+        Array sqlArray = rs.getArray("tags");
+        List<String> tags = sqlArray == null
+                ? List.of()
+                : Arrays.asList((String[]) sqlArray.getArray());
+
+        UUID personalLibraryId = rs.getObject("personal_library_id", UUID.class);
+        UUID cardId = rs.getObject("card_id", UUID.class);
+        LocalDate dateAdded = rs.getObject("date_added", OffsetDateTime.class)
+                .atZoneSameInstant(ZoneId.of("UTC"))  // or your app's zone
+                .toLocalDate();
+        var card = Card.fromResultSet(rs);
+
+        return OwnedCard.builder()
+                .id(personalLibraryId)
+                .cardId(cardId)
+                .dateAdded(dateAdded)
+                .tags(tags)
+                .card(card)
+                .build();
     }
 }

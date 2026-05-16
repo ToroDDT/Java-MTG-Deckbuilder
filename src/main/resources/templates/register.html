@@ -3,7 +3,7 @@
 <head>
     <title>Create Account - MTG Deckbuilder</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <link th:href="@{/css/login.min.css}" rel="stylesheet">
 </head>
 <body>
@@ -11,73 +11,115 @@
 <div class="login-container">
     <div class="login-box">
         <div class="form-box">
-            <form th:action="@{/register}" method="post">
+
+            <form th:action="@{/register}"
+                  th:object="${user}"
+                  method="post">
+
                 <h2 class="login-title">Create your account</h2>
 
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        class="form-input"
-                        cardNameRepository="email"
-                        required
-                    />
-                </div>
-
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        class="form-input"
-                        cardNameRepository="username"
-                        required
-                    />
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        class="form-input"
-                        cardNameRepository="new-password"
-                        required
-                    />
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm password:</label>
-                    <input
-                        type="password"
-                        name="confirmPassword"
-                        id="confirmPassword"
-                        class="form-input"
-                        cardNameRepository="new-password"
-                        required
-                    />
-                </div>
-                <!--/*@thymesVar id="error" type=""*/-->
+                <!-- Global error message -->
                 <div th:if="${error}" class="error-message">
                     <p th:text="${error}"></p>
                 </div>
 
-                <div class="form-submit">
-                    <input type="submit" value="Create Account" class="btn-submit"/>
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email:</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        th:field="*{email}"
+                        class="form-input"
+                        autocomplete="email"
+                        required
+                    />
+
+                    <div th:if="${#fields.hasErrors('email')}"
+                         class="error-message">
+                        <p th:errors="*{email}"></p>
+                    </div>
                 </div>
 
-                <a th:href="@{/login}" class="forgot-link">Already have an account? Sign in</a>
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username">Username:</label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        th:field="*{username}"
+                        class="form-input"
+                        autocomplete="username"
+                        required
+                    />
+
+                    <div th:if="${#fields.hasErrors('username')}"
+                         class="error-message">
+                        <p th:errors="*{username}"></p>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">Password:</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        th:field="*{password}"
+                        class="form-input"
+                        autocomplete="new-password"
+                        required
+                    />
+
+                    <div th:if="${#fields.hasErrors('password')}"
+                         class="error-message">
+                        <p th:errors="*{password}"></p>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="confirmPassword">
+                        Confirm password:
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        th:field="*{confirmPassword}"
+                        class="form-input"
+                        autocomplete="new-password"
+                        required
+                    />
+
+                    <div th:if="${#fields.hasErrors('confirmPassword')}"
+                         class="error-message">
+                        <p th:errors="*{confirmPassword}"></p>
+                    </div>
+                </div>
+
+                <div class="form-submit">
+                    <button type="submit" class="btn-submit">
+                        Create Account
+                    </button>
+                </div>
+
+                <a th:href="@{/login}" class="forgot-link">
+                    Already have an account? Sign in
+                </a>
+
             </form>
         </div>
     </div>
 </div>
 
 <footer class="login-footer">
-    <p>By creating an account, you agree to the site terms.</p>
+    <p>
+        By creating an account, you agree to the site terms.
+    </p>
 </footer>
 
 </body>

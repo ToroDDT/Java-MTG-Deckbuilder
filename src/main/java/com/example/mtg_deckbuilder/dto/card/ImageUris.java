@@ -1,4 +1,4 @@
-package com.example.mtg_deckbuilder.model;
+package com.example.mtg_deckbuilder.dto.card;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

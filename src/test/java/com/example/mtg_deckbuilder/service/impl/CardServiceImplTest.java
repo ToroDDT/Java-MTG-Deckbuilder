@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
-import com.example.mtg_deckbuilder.model.Card;
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.repository.impl.CardRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,7 +75,7 @@ class CardServiceImplTest {
 
     @Test
     void findByNameReturnsCardWhenRepositoryFindsMatch() {
-        Card card = new Card();
+        Card card = Card.builder().build();
         card.setName("Sol Ring");
 
         Optional<Card> expected = Optional.of(card);
@@ -127,10 +127,10 @@ class CardServiceImplTest {
 
     @Test
     void findByNameContainingReturnsRepositoryResult() {
-        Card first = new Card();
+        Card first = Card.builder().build();
         first.setName("Sol Ring");
 
-        Card second = new Card();
+        Card second = Card.builder().build();
         second.setName("Sol Talisman");
 
         List<Card> expected = List.of(first, second);
