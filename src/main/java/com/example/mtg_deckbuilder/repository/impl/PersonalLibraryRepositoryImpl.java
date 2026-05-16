@@ -116,6 +116,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
              ON personal_collection_library.card_id = cards.id
          WHERE personal_collection_library.user_id = ?
          ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC \s
+         LIMIT 10
         \s""";
 
     return jdbcTemplate.query(sql, rowMapper, userId);

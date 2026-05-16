@@ -48,7 +48,7 @@ public class CardRepositoryImpl implements CardRepository {
   }
 
   public List<Card> findByCardsBySubstring(String name) {
-    String sql = "SELECT * FROM cards WHERE name ILIKE CONCAT('%', :name, '%')";
+    String sql = "SELECT * FROM cards WHERE name ILIKE CONCAT('%', :name, '%') LIMIT 10";
     return jdbcClient.sql(sql)
             .param("name", name)
             .query(scryfallCardRowMapper)
