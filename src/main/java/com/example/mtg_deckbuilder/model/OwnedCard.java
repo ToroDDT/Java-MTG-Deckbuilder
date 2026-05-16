@@ -66,7 +66,7 @@ public class OwnedCard {
         LocalDate dateAdded = rs.getObject("date_added", OffsetDateTime.class)
                 .atZoneSameInstant(ZoneId.of("UTC"))  // or your app's zone
                 .toLocalDate();
-        var card = Card.builder().build();
+        var card = Card.fromResultSet(rs);
 
         return OwnedCard.builder()
                 .id(personalLibraryId)

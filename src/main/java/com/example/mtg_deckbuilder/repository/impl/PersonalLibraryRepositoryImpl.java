@@ -216,9 +216,13 @@ public List<OwnedCard> findCards(
             cards.cmc,
             cards.scryfall_uri,
             cards.color_identity,
-            cards.multiverse_ids,
-            cards.image_uris,
-            cards.prices
+
+            cards.image_uris->>'border_crop' AS image,
+
+            cards.prices->>'usd' AS usd,
+            cards.prices->>'usd_foil' AS usd_foil,
+            cards.prices->>'eur_foil' AS eur_foil,
+            cards.prices->>'tix' AS tix
 
         FROM cards
 
@@ -441,9 +445,11 @@ public List<OwnedCard> findCards(
              cards.cmc,
              cards.scryfall_uri,
              cards.color_identity,
-             cards.multiverse_ids,
-             cards.image_uris,
-             cards.prices
+             cards.image_uris->>'border_crop' AS image,
+             cards.prices->>'usd' AS usd,
+             cards.prices->>'usd_foil' AS usd_foil,
+             cards.prices->>'eur_foil' AS eur_foil,
+             cards.prices->>'tix' AS tix
          FROM cards
          INNER JOIN personal_collection_library\s
              ON personal_collection_library.card_id = cards.id

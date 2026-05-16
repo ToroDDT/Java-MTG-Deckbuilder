@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.sql.Array;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -63,7 +64,7 @@ public class Card {
     public static Card fromResultSet(ResultSet rs) throws SQLException {
 
         return Card.builder()
-                .id(rs.getObject("card_id", UUID.class))
+                .id(extractId(rs))
                 .name(rs.getString("name"))
                 .typeLine(rs.getString("type_line"))
                 .toughness(rs.getString("toughness"))
@@ -72,21 +73,62 @@ public class Card {
                 .cmc(rs.getInt("cmc"))
                 .scryfallUri(rs.getString("scryfall_uri"))
 
-                // already extracted in SQL
-                .image(rs.getString("image"))
+                .image(extractImage(rs))
 
                 .colorIdentity(extractColorIdentity(rs))
 
-                .prices(
-                        Prices.builder()
-                                .usd(parseDouble(rs.getString("usd")))
-                                .usdFoil(parseDouble(rs.getString("usd_foil")))
-                                .eurFoil(parseDouble(rs.getString("eur_foil")))
-                                .tix(parseDouble(rs.getString("tix")))
-                                .build()
-                )
+                .prices(extractPrices(rs))
 
                 .build();
+    }
+
+    private static UUID extractId(ResultSet rs) throws SQLException {
+        String idColumn = hasColumn(rs, "card_id") ? "card_id" : "id";
+        return rs.getObject(idColumn, UUID.class);
+    }
+
+    private static String extractImage(ResultSet rs) throws SQLException {
+        if (hasColumn(rs, "image")) {
+            return rs.getString("image");
+        }
+
+        String raw = rs.getString("image_uris");
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+
+        try {
+            return OBJECT_MAPPER.readValue(raw, ImageUris.class).getBorderCrop();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static Prices extractPrices(ResultSet rs) throws SQLException {
+        if (hasColumn(rs, "usd")) {
+            return Prices.builder()
+                    .usd(parseDouble(rs.getString("usd")))
+                    .usdFoil(parseDouble(rs.getString("usd_foil")))
+                    .eurFoil(parseDouble(rs.getString("eur_foil")))
+                    .tix(parseDouble(rs.getString("tix")))
+                    .build();
+        }
+
+        String raw = rs.getString("prices");
+        if (raw == null || raw.isBlank()) {
+            return zeroPrices();
+        }
+
+        try {
+            Prices prices = OBJECT_MAPPER.readValue(raw, Prices.class);
+            if (prices.getUsd() == null) prices.setUsd(0.0);
+            if (prices.getUsdFoil() == null) prices.setUsdFoil(0.0);
+            if (prices.getEurFoil() == null) prices.setEurFoil(0.0);
+            if (prices.getTix() == null) prices.setTix(0.0);
+            return prices;
+        } catch (Exception e) {
+            return zeroPrices();
+        }
     }
 
     private static Double parseDouble(String value) {
@@ -116,5 +158,28 @@ public class Card {
         } finally {
             array.free();
         }
+    }
+
+    private static boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
+
+        for (int index = 1; index <= columnCount; index++) {
+            if (columnName.equalsIgnoreCase(metaData.getColumnLabel(index))
+                    || columnName.equalsIgnoreCase(metaData.getColumnName(index))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static Prices zeroPrices() {
+        return Prices.builder()
+                .usd(0.0)
+                .usdFoil(0.0)
+                .eurFoil(0.0)
+                .tix(0.0)
+                .build();
     }
 }

@@ -15,7 +15,6 @@ public class ScryfallCardRowMapper implements RowMapper<Card> {
 
     @Override
     public Card mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
-        return Card.builder()
-                .build();
+        return Card.fromResultSet(rs);
     }
 }
