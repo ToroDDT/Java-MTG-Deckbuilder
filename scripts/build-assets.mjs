@@ -18,6 +18,7 @@ const cssOnly = args.has("--css");
 const jsOnly = args.has("--js");
 
 const cssBundles = {
+  "css/nav-bar.min.css": ["css/nav-bar.css"],
   "css/tailwind.min.css": [
     "css/main.css",
   ],
