@@ -139,6 +139,120 @@ a {
 }
 
 /* ============================================================
+   Navigation
+   ============================================================ */
+
+.cb-nav {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+
+    height: var(--header-height);
+
+    background: rgba(255, 255, 255, 0.88);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border-bottom: 1px solid var(--border-color);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.cb-nav-inner {
+    max-width: 1400px;
+
+    height: 100%;
+
+    margin: 0 auto;
+
+    padding: 0 clamp(16px, 3vw, 24px);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+}
+
+.cb-logo {
+    font-family: var(--font-head);
+
+    font-weight: 700;
+
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    background: var(--grad-text);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    background-clip: text;
+}
+
+.cb-nav-links {
+    display: flex;
+    align-items: center;
+
+    gap: clamp(10px, 1.8vw, 20px);
+
+    list-style: none;
+}
+
+.cb-nav-links a {
+    font-family: var(--font-mono);
+
+    font-size: 0.78rem;
+    font-weight: 500;
+
+    color: var(--text-secondary);
+
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+.cb-nav-links a:hover,
+.cb-nav-links a.active {
+    color: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+.cb-nav-btn {
+    background: var(--grad);
+
+    color: white;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    padding: 8px 18px;
+
+    font-family: var(--font-head);
+
+    font-size: 0.84rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
+
+    transition:
+        opacity 0.2s,
+        transform 0.15s;
+}
+
+.cb-nav-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* ============================================================
    Page Header
    ============================================================ */
 
