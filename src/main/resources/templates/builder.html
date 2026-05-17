@@ -14,25 +14,8 @@
     <script th:src="@{/js/chart.min.js}"></script>
 </head>
 <body class="">
-<header class="cb-nav">
-    <div class="cb-nav-inner">
-        <a href="/" class="cb-logo">MTG Deckbuilder</a>
-        <nav class="cb-nav-menu" id="navMenu">
-            <ul class="cb-nav-links">
-                <li>
-                    <a href="/"><i class="fa-solid fa-house"></i> Home</a>
-                </li>
-                <li>
-                    <a href="/decks"><i class="fas fa-book"></i> Decks</a>
-                </li>
-                <li>
-                    <a href="/personal-library"><i class="fa-solid fa-id-badge"></i> Owned Library</a>
-                </li>
-            </ul>
-            <a href="/build" class="cb-nav-btn">Build Deck</a>
-        </nav>
-    </div>
-</header>
+
+<div th:replace="fragments/nav-bar.html :: nav"></div>
 
 <div class="flex min-h-screen">
     <main class="flex-1 pl-3 pr-8 py-8 bg-surface">

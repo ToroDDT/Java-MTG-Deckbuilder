@@ -1,26 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<header>
-  <div class="header-container">
-    <div class="logo"><a th:href="@{/}"><i class="fas fa-layer-group"></i> MTG DECKBUILDER</a></div>
-    <nav>
-      <button class="mobile-menu-toggle" aria-label="Toggle Menu">
-      </button>
-      <div class="nav-links">
-        <a href="/decks"><i class="fas fa-book"></i> Decks</a>
-        <a href="/personal-library"><i class="fas fa-clone"></i> Personal library</a>
-        <a href="/personal-library/combos"><i class="fa-solid fa-magnifying-glass"></i> Combos </a>
-      </div>
-      <div class="nav-user">
-        <a th:href="@{/dashboard}" class="btn-dashboard">Dashboard</a>
-      </div>
+<header class="cb-nav" th:fragment="nav">
+  <div class="cb-nav-inner">
+    <a href="/" class="cb-logo">MTG Deckbuilder</a>
+    <nav class="cb-nav-menu" id="navMenu" aria-label="Main">
+      <ul class="cb-nav-links">
+        <li>
+          <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> Home</a>
+        </li>
+        <li>
+          <a href="/personal-library/combos"><i class="fa-solid fa-id-badge" aria-hidden="true"></i> Combos</a>
+        </li>
+        <li>
+          <a href="/decks"><i class="fas fa-book" aria-hidden="true"></i> Decks</a>
+        </li>
+        <li>
+          <a href="/personal-library"><i class="fa-brands fa-wizards-of-the-coast" aria-hidden="true"></i> Owned Library</a>
+        </li>
+      </ul>
+      <a href="/build" class="cb-nav-btn">Build Deck</a>
     </nav>
   </div>
 </header>
-</body>
-</html>
