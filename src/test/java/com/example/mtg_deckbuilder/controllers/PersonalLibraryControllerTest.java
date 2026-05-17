@@ -5,6 +5,7 @@ import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.api.CardScannerClient;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
@@ -23,17 +24,20 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import org.springframework.mock.web.MockMultipartFile;
 
 @WebMvcTest(PersonalLibraryController.class)
 @Import(SecurityConfig.class)
@@ -47,6 +51,9 @@ class PersonalLibraryControllerTest {
 
     @MockitoBean
     private DeckService deckService;
+
+    @MockitoBean
+    private CardScannerClient cardScannerClient;
 
     @Test
     void getPersonalLibraryReturnsPageWithExpectedModel() throws Exception {
@@ -110,6 +117,25 @@ class PersonalLibraryControllerTest {
                 .andExpect(view().name("card-query :: card-results"))
                 .andExpect(model().attribute("message", "Sol Ring added to your library."));
 
+        verify(personalLibraryService).addCard(any(OwnedCard.class), any(CustomUserDetails.class));
+    }
+
+    @Test
+    void scanCardWithHtmxReturnsQueryFragmentMessage() throws Exception {
+        MockMultipartFile file = new MockMultipartFile("file", "thassa.png", "image/png", "image".getBytes());
+        when(cardScannerClient.scanCard(any(byte[].class), anyString(), anyString()))
+                .thenReturn("Thassa, Deep-Dwelling");
+
+        mockMvc.perform(multipart("/personal-library/scan")
+                        .file(file)
+                        .with(authenticationToken())
+                        .with(csrf())
+                        .header("HX-Request", "true"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("card-query :: card-results"))
+                .andExpect(model().attribute("message", "Thassa, Deep-Dwelling added to your library."));
+
+        verify(cardScannerClient).scanCard(any(byte[].class), eq("thassa.png"), eq("image/png"));
         verify(personalLibraryService).addCard(any(OwnedCard.class), any(CustomUserDetails.class));
     }
 

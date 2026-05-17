@@ -1,9 +1,11 @@
 package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.advice.Sanitize;
+import com.example.mtg_deckbuilder.exceptions.CardScanFailedException;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.api.CardScannerClient;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
@@ -17,9 +19,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
 
-import java.net.http.HttpResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -30,10 +33,14 @@ public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
     private final DeckService deckService;
+    private final CardScannerClient cardScannerClient;
 
-    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService,  DeckService deckService ) {
+    PersonalLibraryController(PersonalLibraryServiceImpl personalLibraryService,
+                              DeckService deckService,
+                              CardScannerClient cardScannerClient) {
         this.personalLibraryService = personalLibraryService;
         this.deckService = deckService;
+        this.cardScannerClient = cardScannerClient;
     }
 
     @GetMapping("/personal-library")
@@ -94,11 +101,38 @@ public class PersonalLibraryController {
         personalLibraryService.addCard(ownedCard, user);
 
         if (hxRequest != null) {
-            response.addHeader("HX-Trigger", "refreshLibrary");
-            model.addAttribute("query", "");
-            model.addAttribute("cards", java.util.List.of());
-            model.addAttribute("message", ownedCard.getName() + " added to your library.");
-            return "card-query :: card-results";
+            return buildCardQueryResponse(response, model, ownedCard.getName() + " added to your library.");
+        }
+
+        return "redirect:/personal-library";
+    }
+
+    @PostMapping("/personal-library/scan")
+    public String scanCardToPersonalLibrary(@RequestPart("file") MultipartFile file,
+                                            HttpServletResponse response,
+                                            @AuthenticationPrincipal CustomUserDetails user,
+                                            @RequestHeader(value = "HX-Request", required = false) String hxRequest,
+                                            Model model) throws IOException {
+        if (file.isEmpty()) {
+            return buildCardQueryResponse(response, model, "Select an image to scan.");
+        }
+
+        final String scannedName;
+        try {
+            scannedName = cardScannerClient.scanCard(
+                    file.getBytes(),
+                    file.getOriginalFilename(),
+                    file.getContentType());
+        } catch (CardScanFailedException ex) {
+            return buildCardQueryResponse(response, model, ex.getMessage());
+        }
+
+        OwnedCard ownedCard = new OwnedCard();
+        ownedCard.setName(scannedName);
+        personalLibraryService.addCard(ownedCard, user);
+
+        if (hxRequest != null) {
+            return buildCardQueryResponse(response, model, scannedName + " added to your library.");
         }
 
         return "redirect:/personal-library";
@@ -153,5 +187,13 @@ public class PersonalLibraryController {
         personalLibraryService.delete(user, personalCardId);
         response.addHeader("HX-Trigger", "refreshStats");
         return "";
+    }
+
+    private String buildCardQueryResponse(HttpServletResponse response, Model model, String message) {
+        response.addHeader("HX-Trigger", "refreshLibrary");
+        model.addAttribute("query", "");
+        model.addAttribute("cards", java.util.List.of());
+        model.addAttribute("message", message);
+        return "card-query :: card-results";
     }
 }

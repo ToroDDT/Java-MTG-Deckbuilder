@@ -76,6 +76,30 @@
         </div>
 
       </form>
+
+      <form th:action="@{/personal-library/scan}"
+            method="post"
+            enctype="multipart/form-data"
+            id="scanCardForm"
+            hx-post="/personal-library/scan"
+            hx-encoding="multipart/form-data"
+            hx-target="#card-query-results"
+            hx-swap="innerHTML">
+        <div class="cb-filter-section">
+          <label for="scan-file" class="cb-filter-label">Scan Card Image</label>
+          <input id="scan-file"
+                 name="file"
+                 type="file"
+                 accept="image/png,image/jpeg,image/jpg,image/webp"
+                 class="cb-search-input" />
+          <button type="submit"
+                  class="cb-btn-apply"
+                  style="margin-top: 0.75rem; width: 100%;">
+            Scan And Add
+          </button>
+        </div>
+      </form>
+
       <form th:action="@{/personal-library/search}"
             th:hx-get="@{/personal-library/search}"
             id="librarySearchForm"

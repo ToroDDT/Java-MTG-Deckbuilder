@@ -119,6 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.id === "personal-cards" || target.classList.contains("cb-card")) {
             updateVisibleCardCounts();
         }
+
+        if (target.id === "card-query-results") {
+            const scanInput = document.getElementById("scan-file");
+            if (scanInput) {
+                scanInput.value = "";
+            }
+        }
     });
 
 
