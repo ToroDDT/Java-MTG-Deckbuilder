@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -39,7 +40,8 @@ public List<String> getRandomizedCards(UUID deckId) {
     var cards = builderRepository.getAllCardsFromDeck(deckId);
     Collections.shuffle(cards);
     return cards.stream()
-            .map(OwnedCard::getName)
+            .map(OwnedCard::getCard)
+            .map(Card::getImage)
             .limit(7)
             .toList();
 }

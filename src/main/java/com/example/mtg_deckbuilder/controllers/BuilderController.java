@@ -94,10 +94,10 @@ public class BuilderController {
     public String deckEntryHover(
             @AuthenticationPrincipal CustomUserDetails user,
             Model model,
-            @PathVariable("deckId") String deckIdStr,
-            @PathVariable("deckCardEntryId") String deckCardEntryIdStr) {
+            @PathVariable("deckId") UUID deckIdStr,
+            @PathVariable("deckCardEntryId") UUID deckCardEntryIdStr) {
         var hoverOpt = builderService.getDeckEntryHover(
-                user, UUID.fromString(deckIdStr), UUID.fromString(deckCardEntryIdStr));
+                user, deckIdStr, deckCardEntryIdStr);
         model.addAttribute("hover", hoverOpt.orElse(null));
         return "fragments/builder-card-hover :: hoverPanel";
     }
@@ -117,9 +117,9 @@ public class BuilderController {
     public String deleteDeckEntry(
             @AuthenticationPrincipal CustomUserDetails user,
             HttpServletResponse response,
-            @PathVariable String deckId,
-            @PathVariable String deckCardEntryId) {
-        deckService.removeDeckEntry(user, UUID.fromString(deckId), UUID.fromString(deckCardEntryId));
+            @PathVariable UUID deckId,
+            @PathVariable UUID deckCardEntryId) {
+        deckService.removeDeckEntry(user, deckId, deckCardEntryId);
         response.addHeader("HX-Trigger", "refreshStats");
         return "";
     }
@@ -137,8 +137,12 @@ public class BuilderController {
         response.setHeader("HX-Trigger", "cardsUpdated");
     }
 
-    @GetMapping("/builder/randomize-cards")
-    public String getRandomizedCards(Model model, @RequestParam("deckId") UUID deckId) {
-        builderService.getRandomizedCards(deckId);
-    }
+@GetMapping("/builder/randomize-cards")
+public String getRandomizedCards(Model model, @RequestParam("deckId") UUID deckId) {
+    var imgs = builderService.getRandomizedCards(deckId);
+
+    model.addAttribute("cardImages", imgs);
+
+    return "randomized-cards :: randomized-hand";
+}
 }
