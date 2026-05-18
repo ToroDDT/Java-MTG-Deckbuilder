@@ -128,7 +128,49 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         ORDER BY
             pcl.date_added DESC,
             pcl.id DESC
+        """;
 
+        return jdbcTemplate.query(sql, rowMapper, userId);
+    }
+
+    @Override
+    public List<OwnedCard> findCardsForCombos(UUID userId) {
+
+        String sql = """
+        SELECT
+            pcl.id AS personal_library_id,
+            pcl.user_id,
+            pcl.date_added,
+            pcl.updated_at,
+            pcl.tags,
+
+            c.id AS card_id,
+            c.name,
+            c.type_line,
+            c.toughness,
+            c.power,
+            c.artist,
+            c.cmc,
+            c.scryfall_uri,
+            c.color_identity,
+
+            c.image_uris->>'border_crop' AS image,
+
+            c.prices->>'usd' AS usd,
+            c.prices->>'usd_foil' AS usd_foil,
+            c.prices->>'eur_foil' AS eur_foil,
+            c.prices->>'tix' AS tix
+
+        FROM personal_collection_library pcl
+
+        JOIN cards c
+            ON c.id = pcl.card_id
+
+        WHERE pcl.user_id = ?
+
+        ORDER BY
+            pcl.date_added DESC,
+            pcl.id DESC
         LIMIT 10
         """;
 
@@ -235,19 +277,23 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userId", userId);
 
-        // Oracle text search
+        // Oracle / rules text: English FTS drops many tokens; NULL oracle_text yields NULL tsvector.
+        // Use `simple` + substring match so queries like "flying", "draw", "destroy" reliably hit rules text.
         if (personalLibraryFilters.getOracleTextSearch() != null
                 && !personalLibraryFilters.getOracleTextSearch().isEmpty()) {
 
+            String oracleQuery = personalLibraryFilters.getOracleTextSearch().trim();
+
             sql.append("""
-            AND to_tsvector('english', cards.oracle_text)
-                @@ plainto_tsquery('english', :oracleText)
+            AND (
+                to_tsvector('simple', coalesce(cards.oracle_text, ''))
+                    @@ plainto_tsquery('simple', :oracleText)
+                OR position(:oracleTextSub in lower(coalesce(cards.oracle_text, ''))) > 0
+            )
             """);
 
-            params.addValue(
-                    "oracleText",
-                    personalLibraryFilters.getOracleTextSearch()
-            );
+            params.addValue("oracleText", oracleQuery);
+            params.addValue("oracleTextSub", oracleQuery.toLowerCase(Locale.ROOT));
         }
 
         // Card name
@@ -314,8 +360,9 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
                         ARRAY[]::text[]
                     )
                 ) AS tag_row(tag_value)
-                WHERE tag_value ILIKE :
-            """).append(paramName).append(") ");
+                WHERE tag_value ILIKE :%s
+            )\s
+           \s""".formatted(paramName));
 
             params.addValue(
                     paramName,

@@ -74,7 +74,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
   @Override
   public List<OwnedCard> getCards(UUID userId) {
     return personalLibraryRepository
-            .findCards(userId)
+            .findCardsForCombos(userId)
             .stream()
             .peek(ownedCard -> {
               if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
@@ -168,14 +168,6 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
             .avgPrice(cards.isEmpty() ? 0.0 : total / cards.size())
             .colorIdentityAmounts(colorCounts)
             .build();
-  }
-
-  public Map<UUID, List<String>> getDeckLocationsOfCards(CustomUserDetails user) {
-    var cards = personalLibraryRepository.findCards(user.getId())
-            .stream()
-            .map(OwnedCard::getId)
-            .toList();
-    return personalLibraryRepository.findLocations(user, cards);
   }
 
   private void hydrateDeckLocations(CustomUserDetails user, List<OwnedCard> cards) {

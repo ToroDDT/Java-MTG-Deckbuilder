@@ -16,6 +16,9 @@ public interface PersonalLibraryRepository {
 
   List<OwnedCard> findCards(UUID userId);
 
+  List<OwnedCard> findCardsForCombos(UUID userId);
+
+
   List<OwnedCard> findCardsPaginated (UUID userId);
 
   void saveCard(OwnedCard ownedCard);
