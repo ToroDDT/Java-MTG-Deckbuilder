@@ -74,15 +74,15 @@
                     <button class="btn-action btn-secondary" type="button">New Folder</button>
                 </div>
             </div>
-            <div th:replace="fragments/add-deck-modal.html:: add-deck-modal">...</div>
+            <div th:replace="~{fragments/add-deck-modal.html :: add-deck-modal}">...</div>
             <div th:if="${#lists.isEmpty(decks)}" class="empty-state">
                 <i class="fas fa-folder-open"></i>
                 <p>No decks found matching your filters.</p>
             </div>
-            <div th:replace="fragments/deck-search-results.html :: decks"></div>
+            <div th:replace="~{fragments/deck-search-results.html :: decks}"></div>
         </div>
     </main>
-    <div th:replace="fragments/footer.html :: footer"></div>
+    <div th:replace="~{fragments/footer.html :: footer}"></div>
 
 <script th:src="@{/js/decks.min.js}" defer></script>
 <script th:src="@{/js/htmx.min.js}" defer></script>

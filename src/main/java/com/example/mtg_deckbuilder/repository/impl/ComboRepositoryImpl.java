@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Array;
@@ -63,7 +64,7 @@ public class ComboRepositoryImpl implements ComboRepository{
         List<String> allLocations = new ArrayList<>();
         List<String> allResults = new ArrayList<>();
 
-        jdbcTemplate.query(sql, rs -> {
+        RowCallbackHandler comboRowHandler = rs -> {
             Array descArray = rs.getArray("description");
             String[] descriptions = (String[]) descArray.getArray();
 
@@ -84,7 +85,9 @@ public class ComboRepositoryImpl implements ComboRepository{
                 allResults.add(i < results.size() ? results.get(i) : "");
             }
 
-        }, owner.getId().toString());
+        };
+
+        jdbcTemplate.query(sql, comboRowHandler, owner.getId().toString());
 
         return CardCombos.builder()
                 .description(allDesc)
