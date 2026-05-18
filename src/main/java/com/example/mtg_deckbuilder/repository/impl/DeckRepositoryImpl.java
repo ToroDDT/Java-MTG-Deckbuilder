@@ -87,8 +87,8 @@ public class DeckRepositoryImpl implements DeckRepository {
     @Override
     public void addCard(CardEntry request) {
         String sql = """
-        INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id)
-        VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id)
+        INSERT INTO deck_card_entries (deck_id, card_id, is_sideboard, personal_library_card_id, owned)
+        VALUES (:deckId, :cardId, :isSideboard, :personal_library_card_id, :owned)
         ON CONFLICT (personal_library_card_id)
         DO UPDATE SET
             deck_id = EXCLUDED.deck_id,
@@ -99,6 +99,7 @@ public class DeckRepositoryImpl implements DeckRepository {
                 .addValue("deckId", request.deckId())
                 .addValue("cardId", request.cardId())
                 .addValue("isSideboard", request.isSideboard())
+                .addValue("owned", request.owned())
                 .addValue("personal_library_card_id", request.personalLibraryCardId());
         jdbcClient.sql(sql)
                 .paramSource(params)

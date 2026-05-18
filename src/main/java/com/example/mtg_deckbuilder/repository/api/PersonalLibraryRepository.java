@@ -12,6 +12,8 @@ import java.util.UUID;
 public interface PersonalLibraryRepository {
   List<OwnedCard> findCards(UUID userId, LibraryFilters personalLibraryFilters);
 
+  Boolean findCardExists(UUID userId, String cardId);
+
   List<OwnedCard> findCards(UUID userId);
 
   List<OwnedCard> findCardsPaginated (UUID userId);

@@ -12,9 +12,14 @@ import java.util.UUID;
 
 public interface DeckService {
     void addDeck(NewDeck newDeck);
+
     void addCard(CardEntry card);
+
     String addCard(CustomUserDetails user, String deck, UUID cardId, UUID personalLibraryCardId);
+    void addCard(CustomUserDetails user, String deck, String cardId);
+
     Map<?, ?> getDecks(CustomUserDetails user , DeckSearchCriteria deckSearchCriteria);
+
     List<Deck> getDeckIds(CustomUserDetails user);
 
     void removePersonalLibraryCardFromDeck(CustomUserDetails user, UUID personalLibraryCardId);

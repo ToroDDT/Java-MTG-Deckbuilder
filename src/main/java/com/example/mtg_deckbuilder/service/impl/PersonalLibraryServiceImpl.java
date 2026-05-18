@@ -25,13 +25,15 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   private final CardService cardServiceImpl;
   private final DeckService deckServiceImpl;
   private final ApplicationEventPublisher publisher;
+  private final PersonalLibraryService personalLibraryService;
 
   public PersonalLibraryServiceImpl(PersonalLibraryRepositoryImpl personalLibraryRepository,
-                                    CardService cardServiceImpl, DeckServiceImpl deckServiceImpl, ApplicationEventPublisher publisher) {
+                                    CardService cardServiceImpl, DeckServiceImpl deckServiceImpl, ApplicationEventPublisher publisher, PersonalLibraryService personalLibraryService) {
     this.personalLibraryRepository = personalLibraryRepository;
     this.cardServiceImpl = cardServiceImpl;
     this.deckServiceImpl = deckServiceImpl;
       this.publisher = publisher;
+    this.personalLibraryService = personalLibraryService;
   }
 
   @Override
@@ -194,6 +196,11 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
   @Override
   public PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user) {
     return personalLibraryRepository.getInfo(user);
+  }
+
+  @Override
+  public Boolean findCard(CustomUserDetails user, String cardId) {
+    return personalLibraryRepository.findCardExists(user.getId(),cardId);
   }
 
   private Double getTotalValue(List<OwnedCard> cards) {

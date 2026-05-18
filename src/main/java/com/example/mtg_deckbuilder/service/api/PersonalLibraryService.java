@@ -69,6 +69,8 @@ public interface PersonalLibraryService {
 
   PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user);
 
+  Boolean findCard(CustomUserDetails user,String cardId);
+
   List<Card> getCardQuery(String query);
 
   List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user);

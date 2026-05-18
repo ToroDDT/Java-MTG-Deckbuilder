@@ -18,82 +18,82 @@ import java.util.stream.Collectors;
 @Repository
 public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository {
 
-  private final JdbcClient jdbcClient;
-  private final JdbcTemplate jdbcTemplate;
-  private final OwnedCardRowMapper rowMapper;
+    private final JdbcClient jdbcClient;
+    private final JdbcTemplate jdbcTemplate;
+    private final OwnedCardRowMapper rowMapper;
 
-  public PersonalLibraryRepositoryImpl(OwnedCardRowMapper rowMapper, JdbcClient jdbcClient,
-                                       JdbcTemplate jdbcTemplate) {
-    this.jdbcClient = jdbcClient;
-    this.jdbcTemplate = jdbcTemplate;
-    this.rowMapper = rowMapper;
-  }
+    public PersonalLibraryRepositoryImpl(OwnedCardRowMapper rowMapper, JdbcClient jdbcClient,
+                                         JdbcTemplate jdbcTemplate) {
+        this.jdbcClient = jdbcClient;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+    }
 
 
-  public void deleteCard(@NonNull CustomUserDetails user, @NonNull String personalCardId) {
-    String sql = """
+    public void deleteCard(@NonNull CustomUserDetails user, @NonNull String personalCardId) {
+        String sql = """
         DELETE FROM personal_collection_library
         WHERE id = :personalCardId AND user_id = :userId
         """;
 
-    var rowsChanged = jdbcClient.sql(sql)
-            .param("personalCardId", UUID.fromString(personalCardId))
-            .param("userId", user.getId())
-            .update();
+        var rowsChanged = jdbcClient.sql(sql)
+                .param("personalCardId", UUID.fromString(personalCardId))
+                .param("userId", user.getId())
+                .update();
 
-    if (rowsChanged == 0) {
-      throw new CardDoesNotExistException("Card could not be found in library:" + personalCardId);
+        if (rowsChanged == 0) {
+            throw new CardDoesNotExistException("Card could not be found in library:" + personalCardId);
+        }
     }
-  }
-  private List<String> getUpdatedCardTags(@NonNull UUID personalCardId, @NonNull CustomUserDetails user) {
-    String sql = """
+    private List<String> getUpdatedCardTags(@NonNull UUID personalCardId, @NonNull CustomUserDetails user) {
+        String sql = """
         SELECT tags
         FROM personal_collection_library
         WHERE id = :personalCardId AND user_id = :userId
         """;
 
-    return jdbcClient.sql(sql)
-            .param("personalCardId", personalCardId)
-            .param("userId", user.getId())
-            .query((rs, rowNum) -> {
-              var sqlArray = rs.getArray("tags");
-              if (sqlArray == null) {
-                return new String[0];
-              }
-              return (String[]) sqlArray.getArray();
-            })
-            .list()
-            .stream()
-            .flatMap(Arrays::stream)
-            .toList();
-  }
+        return jdbcClient.sql(sql)
+                .param("personalCardId", personalCardId)
+                .param("userId", user.getId())
+                .query((rs, rowNum) -> {
+                    var sqlArray = rs.getArray("tags");
+                    if (sqlArray == null) {
+                        return new String[0];
+                    }
+                    return (String[]) sqlArray.getArray();
+                })
+                .list()
+                .stream()
+                .flatMap(Arrays::stream)
+                .toList();
+    }
 
-  @Override
-  public List<String> saveTags(String tag, UUID personalCardId, CustomUserDetails user) {
-    String sql = """
+    @Override
+    public List<String> saveTags(String tag, UUID personalCardId, CustomUserDetails user) {
+        String sql = """
         UPDATE personal_collection_library
         SET tags = array_append(COALESCE(tags, ARRAY[]::text[]), ?)
         WHERE id = ? AND user_id = ?
         """;
-    jdbcTemplate.update(sql, tag, personalCardId, user.getId());
-    return getUpdatedCardTags(personalCardId, user);
-  }
+        jdbcTemplate.update(sql, tag, personalCardId, user.getId());
+        return getUpdatedCardTags(personalCardId, user);
+    }
 
-  @Override
-  public List<String> deleteTag(String tag, UUID personalCardId, CustomUserDetails user) {
-    String sql = """
+    @Override
+    public List<String> deleteTag(String tag, UUID personalCardId, CustomUserDetails user) {
+        String sql = """
         UPDATE personal_collection_library
         SET tags = array_remove(tags, ?)
         WHERE id = ? AND user_id = ?
         """;
-    jdbcTemplate.update(sql, tag, personalCardId, user.getId());
-    return getUpdatedCardTags(personalCardId, user);
-  }
+        jdbcTemplate.update(sql, tag, personalCardId, user.getId());
+        return getUpdatedCardTags(personalCardId, user);
+    }
 
-@Override
-public List<OwnedCard> findCards(UUID userId) {
+    @Override
+    public List<OwnedCard> findCards(UUID userId) {
 
-    String sql = """
+        String sql = """
         SELECT
             pcl.id AS personal_library_id,
             pcl.user_id,
@@ -132,15 +132,15 @@ public List<OwnedCard> findCards(UUID userId) {
         LIMIT 10
         """;
 
-    return jdbcTemplate.query(sql, rowMapper, userId);
-}
+        return jdbcTemplate.query(sql, rowMapper, userId);
+    }
 
- @Override
-public List<OwnedCard> findCardsPaginated(UUID userId) {
+    @Override
+    public List<OwnedCard> findCardsPaginated(UUID userId) {
 
-    int pageSize = 12;
+        int pageSize = 12;
 
-    String sql = """
+        String sql = """
         SELECT
             pcl.id AS personal_library_id,
             pcl.user_id,
@@ -179,27 +179,27 @@ public List<OwnedCard> findCardsPaginated(UUID userId) {
         LIMIT ?
         """;
 
-    return jdbcTemplate.query(
-            sql,
-            rowMapper,
-            userId,
-            pageSize
-    );
-}
+        return jdbcTemplate.query(
+                sql,
+                rowMapper,
+                userId,
+                pageSize
+        );
+    }
 
-@Override
-public List<OwnedCard> findCards(
-    UUID userId,
-    LibraryFilters personalLibraryFilters
-) {
+    @Override
+    public List<OwnedCard> findCards(
+            UUID userId,
+            LibraryFilters personalLibraryFilters
+    ) {
 
-    int pageSize = 12;
+        int pageSize = 12;
 
-    int page = personalLibraryFilters.getPage() != null
-        ? Math.max(personalLibraryFilters.getPage(), 0)
-        : 0;
+        int page = personalLibraryFilters.getPage() != null
+                ? Math.max(personalLibraryFilters.getPage(), 0)
+                : 0;
 
-    StringBuilder sql = new StringBuilder("""
+        StringBuilder sql = new StringBuilder("""
         SELECT
             personal_collection_library.id AS personal_library_id,
             personal_collection_library.user_id,
@@ -232,80 +232,80 @@ public List<OwnedCard> findCards(
         WHERE personal_collection_library.user_id = :userId
         """);
 
-    MapSqlParameterSource params = new MapSqlParameterSource()
-        .addValue("userId", userId);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userId", userId);
 
-    // Oracle text search
-    if (personalLibraryFilters.getOracleTextSearch() != null
-        && !personalLibraryFilters.getOracleTextSearch().isEmpty()) {
+        // Oracle text search
+        if (personalLibraryFilters.getOracleTextSearch() != null
+                && !personalLibraryFilters.getOracleTextSearch().isEmpty()) {
 
-        sql.append("""
+            sql.append("""
             AND to_tsvector('english', cards.oracle_text)
                 @@ plainto_tsquery('english', :oracleText)
             """);
 
-        params.addValue(
-            "oracleText",
-            personalLibraryFilters.getOracleTextSearch()
-        );
-    }
+            params.addValue(
+                    "oracleText",
+                    personalLibraryFilters.getOracleTextSearch()
+            );
+        }
 
-    // Card name
-    if (personalLibraryFilters.getCardName() != null
-        && !personalLibraryFilters.getCardName().isEmpty()) {
+        // Card name
+        if (personalLibraryFilters.getCardName() != null
+                && !personalLibraryFilters.getCardName().isEmpty()) {
 
-        sql.append("""
+            sql.append("""
             AND cards.name ILIKE :cardName
             """);
 
-        params.addValue(
-            "cardName",
-            personalLibraryFilters.getCardName() + "%"
-        );
-    }
+            params.addValue(
+                    "cardName",
+                    personalLibraryFilters.getCardName() + "%"
+            );
+        }
 
-    // Card type
-    if (personalLibraryFilters.getCardType() != null
-        && !personalLibraryFilters.getCardType().isEmpty()
-        && !"ALL".equalsIgnoreCase(personalLibraryFilters.getCardType())) {
+        // Card type
+        if (personalLibraryFilters.getCardType() != null
+                && !personalLibraryFilters.getCardType().isEmpty()
+                && !"ALL".equalsIgnoreCase(personalLibraryFilters.getCardType())) {
 
-        sql.append("""
+            sql.append("""
             AND cards.type_line ILIKE :cardType
             """);
 
-        params.addValue(
-            "cardType",
-            "%" + CardType
-                .fromString(personalLibraryFilters.getCardType())
-                .getType() + "%"
-        );
-    }
+            params.addValue(
+                    "cardType",
+                    "%" + CardType
+                            .fromString(personalLibraryFilters.getCardType())
+                            .getType() + "%"
+            );
+        }
 
-    // Colors
-    if (personalLibraryFilters.getSelectedColors() != null
-        && !personalLibraryFilters.getSelectedColors().isEmpty()) {
+        // Colors
+        if (personalLibraryFilters.getSelectedColors() != null
+                && !personalLibraryFilters.getSelectedColors().isEmpty()) {
 
-        sql.append("""
+            sql.append("""
             AND cards.color_identity @> :colors::text[]
             AND :colors::text[] @> cards.color_identity
             """);
 
-        params.addValue(
-            "colors",
-            personalLibraryFilters
-                .getSelectedColors()
-                .toArray(new String[0])
-        );
-    }
+            params.addValue(
+                    "colors",
+                    personalLibraryFilters
+                            .getSelectedColors()
+                            .toArray(new String[0])
+            );
+        }
 
-    // Tags
-    var tagTokens = personalLibraryFilters.tagSearchTokens();
+        // Tags
+        var tagTokens = personalLibraryFilters.tagSearchTokens();
 
-    for (int i = 0; i < tagTokens.size(); i++) {
+        for (int i = 0; i < tagTokens.size(); i++) {
 
-        String paramName = "tag" + i;
+            String paramName = "tag" + i;
 
-        sql.append("""
+            sql.append("""
             AND EXISTS (
                 SELECT 1
                 FROM unnest(
@@ -317,92 +317,110 @@ public List<OwnedCard> findCards(
                 WHERE tag_value ILIKE :
             """).append(paramName).append(") ");
 
-        params.addValue(
-            paramName,
-            "%" + tagTokens.get(i) + "%"
-        );
-    }
+            params.addValue(
+                    paramName,
+                    "%" + tagTokens.get(i) + "%"
+            );
+        }
 
-    // CMC range
-    sql.append("""
+        // CMC range
+        sql.append("""
         AND cards.cmc BETWEEN :minCmc AND :maxCmc
         """);
 
-    params.addValue("minCmc", personalLibraryFilters.getMinCMC());
-    params.addValue("maxCmc", personalLibraryFilters.getMaxCMC());
+        params.addValue("minCmc", personalLibraryFilters.getMinCMC());
+        params.addValue("maxCmc", personalLibraryFilters.getMaxCMC());
 
-    // Sorting
-    switch (personalLibraryFilters.getSortBy()) {
+        // Sorting
+        switch (personalLibraryFilters.getSortBy()) {
 
-        case PRICE_ASC -> sql.append("""
+            case PRICE_ASC -> sql.append("""
             ORDER BY
                 NULLIF(cards.prices->>'usd', '')::numeric ASC NULLS LAST
             """);
 
-        case PRICE_DESC -> sql.append("""
+            case PRICE_DESC -> sql.append("""
             ORDER BY
                 NULLIF(cards.prices->>'usd', '')::numeric DESC NULLS LAST
             """);
 
-        case CMC_ASC -> sql.append("""
+            case CMC_ASC -> sql.append("""
             ORDER BY cards.cmc ASC NULLS LAST
             """);
 
-        case CMC_DESC -> sql.append("""
+            case CMC_DESC -> sql.append("""
             ORDER BY cards.cmc DESC NULLS LAST
             """);
 
-        case NAME_DESC -> sql.append("""
+            case NAME_DESC -> sql.append("""
             ORDER BY cards.name DESC
             """);
 
-        default -> sql.append("""
+            default -> sql.append("""
             ORDER BY
                 personal_collection_library.date_added DESC,
                 personal_collection_library.id DESC
             """);
-    }
+        }
 
-    // Pagination
-    sql.append("""
+        // Pagination
+        sql.append("""
         LIMIT :limit
         OFFSET :offset
         """);
 
-    params.addValue("limit", pageSize);
-    params.addValue("offset", page * pageSize);
+        params.addValue("limit", pageSize);
+        params.addValue("offset", page * pageSize);
 
-    return jdbcClient
-        .sql(sql.toString())
-        .params(params.getValues())
-        .query(rowMapper)
-        .list();
-}
+        return jdbcClient
+                .sql(sql.toString())
+                .params(params.getValues())
+                .query(rowMapper)
+                .list();
+    }
 
-  @Override
-  public void saveCard(OwnedCard ownedCard) {
-    String sql = """
+    @Override
+    public Boolean findCardExists(UUID userId, String cardId) {
+        String sql = """
+            SELECT EXISTS (
+                SELECT 1\s
+                FROM personal_collection_library\s
+                WHERE user_id = :userId AND card_id = :cardId
+            )
+           \s""";
+
+        return jdbcClient.sql(sql)
+                .param("userId", userId)
+                .param("cardId", UUID.fromString(cardId)) // Convert String to UUID safely
+                .query(Boolean.class)
+                .optional()
+                .orElse(false);
+    }
+
+    @Override
+    public void saveCard(OwnedCard ownedCard) {
+        String sql = """
         INSERT INTO personal_collection_library (user_id, card_id, image)
         VALUES (:userId, :cardId, :image)
         """;
 
-    MapSqlParameterSource params = new MapSqlParameterSource();
-    params.addValue("userId", ownedCard.getUserId());
-    params.addValue("cardId", ownedCard.getCardId());
-    params.addValue("image", ownedCard.getImage());
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", ownedCard.getUserId());
+        params.addValue("cardId", ownedCard.getCardId());
+        params.addValue("image", ownedCard.getImage());
 
 
-    jdbcClient.sql(sql)
-            .paramSource(params)
-            .update();
-  }
-  @Override
-  public Map<UUID, List<String>> findLocations(CustomUserDetails user, List<UUID> cardIds) {
-    if (cardIds == null || cardIds.isEmpty()) {
-      return Map.of();
+        jdbcClient.sql(sql)
+                .paramSource(params)
+                .update();
     }
+    @Override
+    public Map<UUID, List<String>> findLocations(CustomUserDetails user, List<UUID> cardIds) {
+        if (cardIds == null || cardIds.isEmpty()) {
+            return Map.of();
+        }
 
-    String sql = """
+        String sql = """
         SELECT dce.personal_library_card_id, deck.name
         FROM deck_card_entries dce
         JOIN decks deck ON deck.id = dce.deck_id
@@ -411,25 +429,25 @@ public List<OwnedCard> findCards(
         ORDER BY dce.personal_library_card_id, deck.name;
           \s""";
 
-    MapSqlParameterSource params = new MapSqlParameterSource();
-    params.addValue("userId", user.getId());
-    params.addValue("cardIds", cardIds);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", user.getId());
+        params.addValue("cardIds", cardIds);
 
-    return jdbcClient.sql(sql)
-            .paramSource(params)
-            .query((rs, rowNum) -> Map.entry(
-                    rs.getObject("personal_library_card_id", UUID.class),
-                    rs.getString("name")))
-            .list()
-            .stream()
-            .collect(Collectors.groupingBy(
-                    Map.Entry::getKey,
-                    Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
-  }
+        return jdbcClient.sql(sql)
+                .paramSource(params)
+                .query((rs, rowNum) -> Map.entry(
+                        rs.getObject("personal_library_card_id", UUID.class),
+                        rs.getString("name")))
+                .list()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+    }
 
-  @Override
-  public PersonalLibraryStats getInfo(CustomUserDetails user) {
-    String sql = """
+    @Override
+    public PersonalLibraryStats getInfo(CustomUserDetails user) {
+        String sql = """
          SELECT\s
              personal_collection_library.id AS personal_library_id,
              personal_collection_library.user_id,
@@ -457,20 +475,20 @@ public List<OwnedCard> findCards(
          ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC \s
         \s""";
 
-    List<OwnedCard> cards = jdbcTemplate.query(sql, rowMapper, user.getId());
+        List<OwnedCard> cards = jdbcTemplate.query(sql, rowMapper, user.getId());
 
-    double totalValue = cards.stream()
-            .filter(card -> card.getCard() != null && card.getCard().getPrices() != null)
-            .filter(card -> card.getCard().getPrices().getUsd() != null)
-            .mapToDouble(card -> card.getCard().getPrices().getUsd())
-            .sum();
+        double totalValue = cards.stream()
+                .filter(card -> card.getCard() != null && card.getCard().getPrices() != null)
+                .filter(card -> card.getCard().getPrices().getUsd() != null)
+                .mapToDouble(card -> card.getCard().getPrices().getUsd())
+                .sum();
 
-    var colorCounts = cards.stream()
-            .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
-    var totalCards = cards.size();
-    var avgPrice = totalCards == 0 ? 0.0 : totalValue / totalCards;
+        var colorCounts = cards.stream()
+                .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
+        var totalCards = cards.size();
+        var avgPrice = totalCards == 0 ? 0.0 : totalValue / totalCards;
 
-    return new PersonalLibraryStats(totalValue, colorCounts, totalCards, avgPrice);
-  }
+        return new PersonalLibraryStats(totalValue, colorCounts, totalCards, avgPrice);
+    }
 
 }

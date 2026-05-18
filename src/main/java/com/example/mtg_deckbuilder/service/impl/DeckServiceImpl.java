@@ -8,6 +8,7 @@ import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.DeckService;
+import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,14 @@ public class DeckServiceImpl implements DeckService {
 
     private final DeckRepository deckRepository;
     private final UserDecksCache userDecksCache;
+    private final PersonalLibraryService personalLibraryService;
 
 
     @Autowired
-    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache) {
+    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache, PersonalLibraryService personalLibraryService) {
         this.deckRepository = deckRepository;
         this.userDecksCache = userDecksCache;
+        this.personalLibraryService = personalLibraryService;
     }
 
 
@@ -52,12 +55,32 @@ public class DeckServiceImpl implements DeckService {
 
         for (Deck ownedDeck : decks) {
             if (Objects.equals(ownedDeck.name(), deck)) {
-                addCard(new CardEntry(ownedDeck.id(), user, cardId, false, personalLibraryCardId));
+                var card = CardEntry.builder()
+                        .deckId(ownedDeck.id())
+                        .userId(user)
+                        .cardId(cardId)
+                        .isSideboard(false)
+                        .personalLibraryCardId(personalLibraryCardId)
+                        .build();
+
+                addCard(card);
                 return ownedDeck.name();
             }
         }
 
         throw new DeckDoesNotExistException(deck);
+    }
+
+    @Override
+    public void addCard(CustomUserDetails user, String deck, String cardId) {
+        var owned = personalLibraryService.findCard(user, cardId) == true;
+        var card = CardEntry.builder()
+                .deckId(UUID.fromString(deck))
+                .cardId(UUID.fromString(cardId))
+                .owned((owned))
+                .userId(user)
+                .build();
+        deckRepository.addCard(card);
     }
 
     @Override
