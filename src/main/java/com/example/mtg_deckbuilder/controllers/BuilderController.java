@@ -144,6 +144,9 @@ public String getRandomizedCards(
 ) {
 
     var imgs = builderService.getRandomizedCards(deckId);
+    for (String img : imgs) {
+        System.out.println(img);
+    }
 
     model.addAttribute("cardImages", imgs);
 

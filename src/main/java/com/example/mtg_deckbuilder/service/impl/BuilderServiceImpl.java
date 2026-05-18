@@ -41,7 +41,7 @@ public List<String> getRandomizedCards(UUID deckId) {
     Collections.shuffle(cards);
     return cards.stream()
             .map(OwnedCard::getCard)
-            .map(Card::getImage)
+            .map(Card::getImageUris)
             .limit(7)
             .toList();
 }
