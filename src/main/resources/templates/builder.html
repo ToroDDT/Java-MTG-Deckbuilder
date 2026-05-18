@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
     <script th:src="@{/js/chart.min.js}"></script>
 </head>
-<body>
+<body class="">
 
 <div th:replace="fragments/nav-bar.html :: nav"></div>
 
@@ -103,15 +103,126 @@
 
             <!-- Left Column: Decklist (8/12) -->
             <div class="col-span-12 xl:col-span-8 space-y-12">
-                <<!-- HTMX Deck Type Layout -->
-                <div
-                        th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
-                        hx-trigger="load, cardsUpdated from:body"
-                        hx-swap="innerHTML">
+                <div style="columns: 3; column-gap: 3rem;">
 
-                    <!-- Optional loading state -->
-                    <div class="rounded-3xl bg-surface-container-low p-8 text-slate-400 font-medium">
-                        Loading deck layout...
+                    <!-- Creatures -->
+                    <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                Creatures <span class="text-slate-300 font-medium" th:text="${#lists.size(builderView.creatures)}">0</span>
+                            </h2>
+                            <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Avg CMC: 3.2</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                                 th:each="card : ${builderView.creatures}">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-bold text-slate-400">1</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+                                </div>
+                            </div>
+                            <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.creatures)}">No creatures found.</div>
+                        </div>
+                    </div>
+
+                    <!-- Instants -->
+                    <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                Instants <span class="text-slate-300 font-medium" th:text="${#lists.size(builderView.instants)}">0</span>
+                            </h2>
+                            <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Interaction</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                                 th:each="card : ${builderView.instants}">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-bold text-slate-400">1</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+                                </div>
+                            </div>
+                            <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.instants)}">No instants found.</div>
+                        </div>
+                    </div>
+
+                    <!-- Sorceries -->
+                    <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                Sorceries <span class="text-slate-300 font-medium" th:text="${#lists.size(builderView.sorceries)}">0</span>
+                            </h2>
+                            <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                                 th:each="card : ${builderView.sorceries}">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-bold text-slate-400">1</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+                                </div>
+                            </div>
+                            <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.sorceries)}">No sorceries found.</div>
+                        </div>
+                    </div>
+
+                    <!-- Enchantments -->
+                    <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                Enchantments <span class="text-slate-300 font-medium" th:text="${#lists.size(builderView.enchantments)}">0</span>
+                            </h2>
+                            <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                                 th:each="card : ${builderView.enchantments}">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-bold text-slate-400">1</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+                                </div>
+                            </div>
+                            <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.enchantments)}">No enchantments found.</div>
+                        </div>
+                    </div>
+
+                    <!-- Artifacts -->
+                    <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                Artifacts <span class="text-slate-300 font-medium" th:text="${#lists.size(builderView.artifacts)}">0</span>
+                            </h2>
+                            <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Value</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                                 th:each="card : ${builderView.artifacts}">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-bold text-slate-400">1</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+                                </div>
+                            </div>
+                            <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.artifacts)}">No artifacts found.</div>
+                        </div>
+                    </div>
+
+                    <!-- Lands -->
+                    <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <h2 class="text-xl font-black text-on-background flex items-center gap-2">
+                                Lands <span class="text-slate-300 font-medium" th:text="${#lists.size(builderView.lands)}">0</span>
+                            </h2>
+                            <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Core Foundation</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+                                 th:each="card : ${builderView.lands}">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-sm font-bold text-slate-400">1</span>
+                                    <th:block th:replace="~{fragments/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+                                </div>
+                            </div>
+                            <div class="text-sm text-slate-400" th:if="${#lists.isEmpty(builderView.lands)}">No lands found.</div>
+                        </div>
                     </div>
 
                 </div>
@@ -120,21 +231,89 @@
 
                     <main class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 ">
 
-                        <section class="bg-white grid grid-cols-2 gap-4">
+                        <!-- Performance Score -->
+                        <section class="bg-white glass-card rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-semibold text-slate-800">Performance Score</h2>
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">OPTIMIZED</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-6">
+                                <span class="text-4xl font-bold text-blue-600">142.58</span>
+                                <span class="text-sm text-slate-400">/ 200 index</span>
+                            </div>
+                            <div class="relative w-full h-3 bg-slate-100 rounded-full overflow-hidden mb-4">
+                                <div class="absolute top-0 left-0 h-full bg-blue-500 w-[71%] rounded-full"></div>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Your deck is performing significantly above the average curve.
+                            </p>
+                        </section>
 
-                            <div
-                                    id="randomized-hand-container"
-                                    th:attr="hx-get=@{/builder/randomize-cards(deckId=${builderView.deckId})}"
-                                    hx-trigger="load, cardsUpdated from:body"
-                                    hx-swap="innerHTML">
-
-                                <div class="p-4 text-slate-400">
-                                    Loading hand...
+                        <!-- Mana Curve -->
+                        <section class=" bg-white glass-card rounded-2xl shadow-sm overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-100">
+                                <h3 class="text-lg font-bold text-slate-800">Mana Curve (Spells)</h3>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-end justify-between h-32 gap-2 mb-6">
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-200 rounded-t-md h-[40%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">1</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-400 rounded-t-md h-[90%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">2</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-600 rounded-t-md h-[100%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">3</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-500 rounded-t-md h-[60%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">4</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-300 rounded-t-md h-[30%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">5</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-blue-100 rounded-t-md h-[15%]"></div>
+                                        <span class="text-[10px] font-bold text-slate-500">6+</span>
+                                    </div>
                                 </div>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Avg. Spell Cost</span>
+                                        <span class="font-bold">2.84 CMC</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Total Spells</span>
+                                        <span class="font-bold">63 Cards</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
 
+                        <!-- Stats -->
+                        <section class="bg-white grid grid-cols-2 gap-4">
+                            <div class="glass-card rounded-2xl p-4 text-center space-y-1">
+                                <div class="text-2xl font-bold">36</div>
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Lands</div>
+                            </div>
+                            <div class="glass-card rounded-2xl p-4 text-center space-y-1">
+                                <div class="text-2xl font-bold">11</div>
+                                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Mana Rocks</div>
                             </div>
 
+                            <div class="glass-card rounded-2xl p-4 col-span-2 flex items-center justify-between border-rose-100 bg-rose-50/30">
+                                <div>
+                                    <div class="font-bold text-slate-800">Card Draw</div>
+                                    <div class="text-xs text-rose-600 font-medium">Attention Required</div>
+                                </div>
+                                <span class="text-3xl font-bold text-rose-600">0</span>
+                            </div>
                         </section>
+
                         <!-- Suggestion (full width) -->
                         <section class="bg-blue-600 rounded-2xl p-6 text-white col-span-1 md:col-span-2">
                             <h4 class="font-bold mb-1">Boost Consistency</h4>
