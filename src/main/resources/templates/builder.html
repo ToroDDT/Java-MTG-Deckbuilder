@@ -56,13 +56,44 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex gap-3">
-                    <button class="px-6 py-3 rounded-xl font-bold bg-white text-on-surface shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
-                        <span class="material-symbols-outlined">share</span> Share
-                    </button>
-        <button class="group px-6 py-3 rounded-xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 text-white transition-all duration-300 hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:scale-105 active:scale-95 flex items-center gap-2">
-    <span class="material-symbols-outlined transition-transform group-hover:scale-110">edit</span> Build
-</button>
+                <div class="flex flex-col lg:flex-row lg:items-end gap-1">
+                    <form id="builderAddCardForm" class="flex-1 flex flex-col gap-2 min-w-0"
+                          th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
+                        <input type="hidden" name="_builderCardContext" value="true"/>
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400" for="builder-card-name">
+                            Search cards (add to library)
+                        </label>
+
+                        <!-- Wrap input + dropdown in a relative container -->
+                        <div class="relative">
+                            <input type="text" name="query" id="builder-card-name" autocomplete="off"
+                                   class="rounded-xl font-medium bg-surface-container-highest text-on-surface shadow-sm border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                                   placeholder="Search a card..."
+                                   th:attr="hx-get=@{/builder/deck/{did}/card-query(did=${builderView.deckId})}"
+                                   hx-trigger="input changed delay:200ms"
+                                   hx-target="#builder-card-query-results"
+                                   hx-swap="innerHTML"
+                                   hx-on::after-request="const r=document.getElementById('builder-card-query-results'); r.classList.toggle('hidden', !r.innerText.trim())"
+                                   onblur="setTimeout(()=>document.getElementById('builder-card-query-results').classList.add('hidden'),150)"/>
+
+                            <div id="builder-card-query-results"
+                                 class="hidden absolute top-full left-0 right-0 mt-1 z-50
+                max-h-60 overflow-y-auto
+                rounded-xl border border-outline-variant/40
+                bg-white shadow-lg
+                px-1 py-1 text-left">
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="flex flex-wrap gap-3 shrink-0">
+                        <button type="button" class="px-6 py-3 rounded-xl font-bold bg-white text-on-surface shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
+                            <span class="material-symbols-outlined">share</span> Share
+                        </button>
+                        <button type="button" class="px-6 py-3 rounded-xl font-bold bg-blue-400 text-on-surface shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
+                            <span class="material-symbols-outlined">Create</span> Buy
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>

@@ -1,8 +1,11 @@
 package com.example.mtg_deckbuilder.controllers;
 
+import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
+import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
+import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -10,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -20,10 +24,15 @@ public class BuilderController {
 
     private final BuilderService builderService;
     private final DeckService deckService;
+    private final PersonalLibraryService personalLibraryService;
 
-    public BuilderController(BuilderService builderService, DeckService deckService) {
+    public BuilderController(
+            BuilderService builderService,
+            DeckService deckService,
+            PersonalLibraryService personalLibraryService) {
         this.builderService = builderService;
         this.deckService = deckService;
+        this.personalLibraryService = personalLibraryService;
     }
 
     @GetMapping("/builder/deck/{id}")
@@ -32,11 +41,35 @@ public class BuilderController {
         var view = builderService.getBuilderView(deckId);
 
         model.addAttribute("builderView", view);
-        model.addAttribute("manaCurveLabels", List.of("0","1","2","3","4","5","6","7+"));
+        model.addAttribute("manaCurveLabels", List.of("0", "1", "2", "3", "4", "5", "6", "7+"));
         model.addAttribute("manaCurveData", view.manaCurveData());
         model.addAttribute("userName", userName);
+        model.addAttribute("ownedCard", new OwnedCard());
 
         return "builder";
+    }
+
+    @GetMapping(value = "/builder/deck/{deckId}/card-query", headers = "HX-Request=true")
+    public String builderCardQuery(@RequestParam(name = "query", required = false) String query, Model model) {
+        String trimmedQuery = query == null ? "" : query.trim();
+        model.addAttribute("query", trimmedQuery);
+        model.addAttribute("cards", personalLibraryService.getCardQuery(trimmedQuery));
+        model.addAttribute("addCardFormId", "builderAddCardForm");
+        model.addAttribute("cardQueryTargetId", "builder-card-query-results");
+        model.addAttribute("cardQueryInputId", "builder-card-name");
+        return "card-query :: card-results";
+    }
+
+    @GetMapping(value = "/builder/deck/{deckId}/owned-library", headers = "HX-Request=true")
+    public String builderOwnedLibrary(
+            @PathVariable("deckId") String deckId,
+            @AuthenticationPrincipal CustomUserDetails user,
+            Model model) {
+        LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+        model.addAttribute("libraryView", libraryView);
+        model.addAttribute("builderDeckId", deckId);
+        model.addAttribute("builderDeckName", builderService.getBuilderView(deckId).deckName());
+        return "fragments/builder-owned-cards :: builder-owned-cards";
     }
 
     @GetMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/hover", headers = "HX-Request=true")
