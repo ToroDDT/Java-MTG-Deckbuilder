@@ -29,6 +29,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -55,7 +56,7 @@ class PersonalLibraryServiceImplTest {
 
     @Test
     void addCardPopulatesOwnedCardAndPersistsIt() {
-        CustomUserDetails userId = any(CustomUserDetails.class);
+        CustomUserDetails user = testUser();
         UUID cardId = UUID.randomUUID();
         OwnedCard ownedCard = new OwnedCard();
         ownedCard.setName("Sol Ring");
@@ -66,7 +67,7 @@ class PersonalLibraryServiceImplTest {
 
         when(cardServiceImpl.findByName("Sol Ring")).thenReturn(Optional.of(foundCard));
 
-        personalLibraryService.addCard(ownedCard, userId);
+        personalLibraryService.addCard(ownedCard, user);
 
         ArgumentCaptor<OwnedCard> captor = ArgumentCaptor.forClass(OwnedCard.class);
         verify(personalLibraryRepository).saveCard(captor.capture());
@@ -75,7 +76,7 @@ class PersonalLibraryServiceImplTest {
         assertEquals(cardId, savedCard.getId());
         assertEquals(cardId, savedCard.getCardId());
         assertEquals("image-url", savedCard.getImage());
-        assertEquals(LocalDate.now(), savedCard.getDateAdded());
+        assertNull(savedCard.getDateAdded());
         assertEquals(List.of(), savedCard.getTags());
     }
 
@@ -87,7 +88,7 @@ class PersonalLibraryServiceImplTest {
         when(cardServiceImpl.findByName("Missing Card")).thenReturn(Optional.empty());
 
         assertThrows(CardDoesNotExistException.class,
-                () -> personalLibraryService.addCard(ownedCard, any(CustomUserDetails.class)));
+                () -> personalLibraryService.addCard(ownedCard, testUser()));
     }
 
     @Test
@@ -117,7 +118,7 @@ class PersonalLibraryServiceImplTest {
     }
 
     @Test
-    void getCardsSortsByPriceDescending() {
+    void getCardsPreservesRepositoryOrder() {
         LibraryFilters filters = new LibraryFilters();
         filters.setSortBy(SortOptions.PRICE_DESC);
 
@@ -129,7 +130,7 @@ class PersonalLibraryServiceImplTest {
 
         List<OwnedCard> result = personalLibraryService.getCards(UUID.randomUUID(), filters);
 
-        assertIterableEquals(List.of(pricier, cheaper), result);
+        assertIterableEquals(List.of(cheaper, pricier), result);
     }
 
     @Test

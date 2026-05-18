@@ -49,6 +49,19 @@ public class BuilderController {
         return "builder";
     }
 
+    @GetMapping("/builder/type-layout/{id}")
+    public String getCardTypeLayout(
+            Model model,
+            @PathVariable("id") String deckId
+    ) {
+
+        var view = builderService.getBuilderView(deckId);
+
+        model.addAttribute("builderView", view);
+
+        return "type-layout :: type-layout";
+    }
+
     @GetMapping(value = "/builder/deck/{deckId}/card-query", headers = "HX-Request=true")
     public String builderCardQuery(
             @PathVariable("deckId") String deckId, // <-- Added this annotation

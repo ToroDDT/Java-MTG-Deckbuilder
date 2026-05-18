@@ -5,10 +5,10 @@
     <title></title>
 </head>
 <body>
-<div style="columns: 3; column-gap: 3rem;">
+<div style="columns: 3; column-gap: 3rem;" th:fragment="type-layout">
 
   <!-- Creatures -->
-  <div  class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;" th:fragment="type-layout">
+  <div  class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;" >
     <div class="flex justify-between items-baseline mb-2">
       <h2 class="text-xl font-black text-on-background flex items-center gap-2">
         Creatures <span class="text-slate-300 font-medium" th:text="${#lists.size(builderView.creatures)}">0</span>
