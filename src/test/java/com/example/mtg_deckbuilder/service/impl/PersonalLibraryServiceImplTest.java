@@ -9,6 +9,7 @@ import com.example.mtg_deckbuilder.model.SortOptions;
 import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.CardService;
+import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDate;
@@ -42,6 +44,11 @@ class PersonalLibraryServiceImplTest {
     @Mock
     private CardService cardServiceImpl;
 
+    @Mock
+    private DeckService deckService;
+
+    @Mock
+    private ApplicationEventPublisher publisher;
 
     @InjectMocks
     private PersonalLibraryServiceImpl personalLibraryService;
@@ -143,6 +150,7 @@ class PersonalLibraryServiceImplTest {
                         firstOwnedId, List.of("Artifacts"),
                         secondOwnedId, List.of("Budget")
                 ));
+        when(deckService.getDeckIds(user)).thenReturn(List.of());
 
         LibraryViewModelImpl viewModel = personalLibraryService.buildPersonalLibraryViewModel(user);
 

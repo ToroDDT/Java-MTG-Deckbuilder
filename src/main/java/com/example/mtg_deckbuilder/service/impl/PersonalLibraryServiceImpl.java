@@ -23,17 +23,15 @@ import java.util.stream.Collectors;
 public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   private final PersonalLibraryRepository personalLibraryRepository;
   private final CardService cardServiceImpl;
-  private final DeckService deckServiceImpl;
+  private final DeckService deckService;
   private final ApplicationEventPublisher publisher;
-  private final PersonalLibraryService personalLibraryService;
 
   public PersonalLibraryServiceImpl(PersonalLibraryRepositoryImpl personalLibraryRepository,
-                                    CardService cardServiceImpl, DeckServiceImpl deckServiceImpl, ApplicationEventPublisher publisher, PersonalLibraryService personalLibraryService) {
+                                    CardService cardServiceImpl, DeckService deckService, ApplicationEventPublisher publisher) {
     this.personalLibraryRepository = personalLibraryRepository;
     this.cardServiceImpl = cardServiceImpl;
-    this.deckServiceImpl = deckServiceImpl;
-      this.publisher = publisher;
-    this.personalLibraryService = personalLibraryService;
+    this.deckService = deckService;
+    this.publisher = publisher;
   }
 
   @Override
@@ -241,6 +239,6 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
   }
 
   private List<Deck> getDeckNames(CustomUserDetails userId) {
-    return deckServiceImpl.getDeckIds(userId);
+    return deckService.getDeckIds(userId);
   }
 }

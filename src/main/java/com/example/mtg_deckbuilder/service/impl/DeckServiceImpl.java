@@ -6,9 +6,9 @@ import com.example.mtg_deckbuilder.model.CardEntry;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
+import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.DeckService;
-import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +22,14 @@ public class DeckServiceImpl implements DeckService {
 
     private final DeckRepository deckRepository;
     private final UserDecksCache userDecksCache;
-    private final PersonalLibraryService personalLibraryService;
+    private final PersonalLibraryRepository personalLibraryRepository;
 
 
     @Autowired
-    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache, PersonalLibraryService personalLibraryService) {
+    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache, PersonalLibraryRepository personalLibraryRepository) {
         this.deckRepository = deckRepository;
         this.userDecksCache = userDecksCache;
-        this.personalLibraryService = personalLibraryService;
+        this.personalLibraryRepository = personalLibraryRepository;
     }
 
 
@@ -73,7 +73,7 @@ public class DeckServiceImpl implements DeckService {
 
     @Override
     public void addCard(CustomUserDetails user, String deck, String cardId) {
-        var owned = personalLibraryService.findCard(user, cardId) == true;
+        var owned = personalLibraryRepository.findCardExists(user.getId(), cardId);
         var card = CardEntry.builder()
                 .deckId(UUID.fromString(deck))
                 .cardId(UUID.fromString(cardId))

@@ -49,22 +49,22 @@ public class BuilderController {
         return "builder";
     }
 
-@GetMapping(value = "/builder/deck/{deckId}/card-query", headers = "HX-Request=true")
-public String builderCardQuery(
-        @PathVariable("deckId") String deckId, // <-- Added this annotation
-        @RequestParam(name = "query", required = false) String query,
-        Model model) {
+    @GetMapping(value = "/builder/deck/{deckId}/card-query", headers = "HX-Request=true")
+    public String builderCardQuery(
+            @PathVariable("deckId") String deckId, // <-- Added this annotation
+            @RequestParam(name = "query", required = false) String query,
+            Model model) {
 
-    String trimmedQuery = query == null ? "" : query.trim();
-    model.addAttribute("query", trimmedQuery);
-    model.addAttribute("cards", personalLibraryService.getCardQuery(trimmedQuery));
-    model.addAttribute("addCardFormId", "builderAddCardForm");
-    model.addAttribute("cardQueryTargetId", "builder-card-query-results");
-    model.addAttribute("cardQueryInputId", "builder-card-name");
-    model.addAttribute("deckId", deckId);
+        String trimmedQuery = query == null ? "" : query.trim();
+        model.addAttribute("query", trimmedQuery);
+        model.addAttribute("cards", personalLibraryService.getCardQuery(trimmedQuery));
+        model.addAttribute("addCardFormId", "builderAddCardForm");
+        model.addAttribute("cardQueryTargetId", "builder-card-query-results");
+        model.addAttribute("cardQueryInputId", "builder-card-name");
+        model.addAttribute("deckId", deckId);
 
-    return "card-selection-for-deck :: card-results";
-}
+        return "card-selection-for-deck :: card-results";
+    }
     @GetMapping(value = "/builder/deck/{deckId}/owned-library", headers = "HX-Request=true")
     public String builderOwnedLibrary(
             @PathVariable("deckId") String deckId,
@@ -111,11 +111,16 @@ public String builderCardQuery(
         return "";
     }
     @PostMapping("/personal-library/add-to-deck")
-    @ResponseBody // <-- This prevents Thymeleaf from looking for a template file
+    @ResponseBody
     public void addToDeck(
             @RequestParam("deckId") String deckId,
             @RequestParam("name") String cardName,
-            @AuthenticationPrincipal CustomUserDetails user) {
+            @AuthenticationPrincipal CustomUserDetails user,
+            HttpServletResponse response) { // <-- Inject the response object
+
+        System.out.println("Adding card to deck: " + cardName + " to deck: " + deckId);
         deckService.addCard(user, deckId, cardName);
+
+        response.setHeader("HX-Trigger", "cardsUpdated");
     }
 }
