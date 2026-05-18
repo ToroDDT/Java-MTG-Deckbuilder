@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Randomized Hand</title>
+</head>
+<body class="bg-gray-900 text-white min-h-screen py-10 px-4">
+
+<div th:fragment="randomized-hand">
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold tracking-wide text-indigo-400">Your Hand</h2>
+        <p class="text-gray-400 text-sm mt-1">7 randomized cards from your deck</p>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
+
+        <div th:each="img: ${cardImages}" class="group">
+            <img th:src="${img}"
+                 alt="Card Image"
+                 class="w-36 h-auto rounded-xl shadow-lg border border-gray-700
+                        transition-all duration-300 ease-in-out
+                        group-hover:scale-105 group-hover:shadow-indigo-500/20 group-hover:border-indigo-500" />
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

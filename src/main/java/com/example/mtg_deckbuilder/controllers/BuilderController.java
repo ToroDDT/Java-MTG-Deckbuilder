@@ -138,7 +138,11 @@ public class BuilderController {
     }
 
 @GetMapping("/builder/randomize-cards")
-public String getRandomizedCards(Model model, @RequestParam("deckId") UUID deckId) {
+public String getRandomizedCards(
+    Model model,
+    @RequestParam("deckId") UUID deckId
+) {
+
     var imgs = builderService.getRandomizedCards(deckId);
 
     model.addAttribute("cardImages", imgs);
