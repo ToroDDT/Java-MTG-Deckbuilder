@@ -9,11 +9,7 @@ import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -37,6 +33,16 @@ public class BuilderServiceImpl implements BuilderService {
     public List<OwnedCard>getCardsFromDeck(UUID deckId) {
         return builderRepository.getAllCardsFromDeck(deckId);
     }
+
+@Override
+public List<String> getRandomizedCards(UUID deckId) {
+    var cards = builderRepository.getAllCardsFromDeck(deckId);
+    Collections.shuffle(cards);
+    return cards.stream()
+            .map(OwnedCard::getName)
+            .limit(7)
+            .toList();
+}
 
     @Override
     public BuilderViewModel getBuilderView(String deckId ) {

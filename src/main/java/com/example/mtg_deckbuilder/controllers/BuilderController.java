@@ -136,4 +136,9 @@ public class BuilderController {
 
         response.setHeader("HX-Trigger", "cardsUpdated");
     }
+
+    @GetMapping("/builder/randomize-cards")
+    public String getRandomizedCards(Model model, @RequestParam("deckId") UUID deckId) {
+        builderService.getRandomizedCards(deckId);
+    }
 }

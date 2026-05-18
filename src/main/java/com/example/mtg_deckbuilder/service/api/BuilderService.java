@@ -17,6 +17,8 @@ public interface BuilderService {
 
     List<OwnedCard> getCardsFromDeck(UUID deckId);
 
+    List<String> getRandomizedCards(UUID deckId);
+
     String optimizeDecksAgainstOpponent();
 
     String optimizeDeck();
