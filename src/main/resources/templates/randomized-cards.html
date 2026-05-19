@@ -7,22 +7,31 @@
 <body class="bg-gray-900 text-white min-h-screen py-10 px-4">
 
 <div th:fragment="randomized-hand">
-    <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold tracking-wide text-indigo-400">Your Hand</h2>
-        <p class="text-gray-400 text-sm mt-1">7 randomized cards from your deck</p>
-    </div>
-
-    <div class="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-
-        <div th:each="img: ${cardImages}" class="group">
-            <img th:src="${img}"
-                 alt="Card Image"
-                 class="w-48 h-auto rounded-xl shadow-lg border border-gray-700
-                        transition-all duration-300 ease-in-out
-                        group-hover:scale-105 group-hover:shadow-indigo-500/20 group-hover:border-indigo-500" />
+    <div class="pt-10 pb-6 px-8">
+        <div class="flex justify-center items-end">
+            <div th:each="img, iterStat : ${cardImages}"
+                 class="group relative -ml-10 first:ml-0 cursor-pointer"
+                 th:style="'z-index:' + ${iterStat.index}"
+                 style="will-change: transform;">
+                <img th:src="${img}"
+                     alt="Card"
+                     class="w-56 h-auto rounded-xl shadow-2xl border-2 border-white/10
+                            transition-all duration-300
+                            group-hover:border-indigo-400
+                            group-hover:[transform:translateY(-1.5rem)]"/>
+            </div>
         </div>
     </div>
-</div>
 
+    <div class="flex justify-center gap-3 pb-6">
+        <button class="px-6 py-2.5 rounded-xl bg-zinc-700 hover:bg-zinc-600 text-white font-semibold text-sm transition-colors">Playtest</button>
+        <button class="px-6 py-2.5 rounded-xl bg-zinc-700 hover:bg-zinc-600 text-white font-semibold text-sm transition-colors">Draw</button>
+        <button class="px-6 py-2.5 rounded-xl bg-zinc-700 hover:bg-zinc-600 text-white font-semibold text-sm transition-colors">Deal Another Hand</button>
+    </div>
+
+    <p class="text-center text-sm text-slate-400 pb-6">
+        ℹ️ Average number of lands in opening hand: <strong class="text-indigo-400">3.02</strong>
+    </p>
+</div>
 </body>
 </html>

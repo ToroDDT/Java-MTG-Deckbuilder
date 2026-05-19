@@ -16,7 +16,7 @@
 </head>
 <body class="">
 
-<div th:replace="fragments/nav-bar.html :: nav"></div>
+<div th:replace="~{fragments/nav-bar.html :: nav}"></div>
 
 <div class="flex min-h-screen">
     <main class="flex-1 pl-3 pr-8 py-8 bg-surface">
@@ -111,17 +111,16 @@
                         hx-trigger="load, cardsUpdated from:body"
                         hx-swap="innerHTML">
                 </div>
+                <!-- Buffer so card dropdowns don't overlap the hand section -->
+                <div class="h-48"></div>
                 <!-- Asymmetric Visual: Featured Mechanic -->
                 <div class="">
 
                     <main class="">
-
-
-
-                        <section class="bg-white flex flex-wrap gap-4 p-4">
-
+                        <section class="bg-zinc-900 rounded-3xl overflow-hidden">
                             <div
                                     id="randomized-hand-container"
+                                    class="w-full "
                                     th:attr="hx-get=@{/builder/randomize-cards(deckId=${builderView.deckId})}"
                                     hx-trigger="load, cardsUpdated from:body"
                                     hx-swap="innerHTML">
@@ -129,17 +128,10 @@
                                 <div class="p-4 text-slate-400">
                                     Loading hand...
                                 </div>
-
                             </div>
-
-                        </section>
-
-                    </main>
-
+                        </section>                   </main>
                 </div>
-
             </div>
-
             <!-- Right Column: Statistics (4/12) -->
             <div class="col-span-12 xl:col-span-4 space-y-8">
 
