@@ -73,7 +73,7 @@ public class Card {
                 .cmc(rs.getInt("cmc"))
                 .scryfallUri(rs.getString("scryfall_uri"))
 
-                .imageUris(rs.getString("image_uris"))
+                .imageUris(extractImageUrisJson(rs))
                 .image(extractImage(rs))
 
                 .colorIdentity(extractColorIdentity(rs))
@@ -88,12 +88,20 @@ public class Card {
         return rs.getObject(idColumn, UUID.class);
     }
 
+    private static String extractImageUrisJson(ResultSet rs) throws SQLException {
+        if (hasColumn(rs, "image_uris")) {
+            return rs.getString("image_uris");
+        }
+
+        return null;
+    }
+
     private static String extractImage(ResultSet rs) throws SQLException {
         if (hasColumn(rs, "image")) {
             return rs.getString("image");
         }
 
-        return bestArtUrlFromImageUrisJson(rs.getString("image_uris"));
+        return bestArtUrlFromImageUrisJson(extractImageUrisJson(rs));
     }
 
     /**
