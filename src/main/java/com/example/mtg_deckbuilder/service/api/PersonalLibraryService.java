@@ -83,5 +83,5 @@ public interface PersonalLibraryService {
    * @param user the user whose personal library contains the card to be removed; must not be null.
    * @param cardId the unique identifier of the card to be removed from the user's library; must not be null.
    */
- void delete(CustomUserDetails user, String cardId);
+ void delete(CustomUserDetails user, UUID cardId);
 }

@@ -180,7 +180,7 @@ public class PersonalLibraryController {
 
     @PostMapping("/delete-card")
     @ResponseBody
-    public String deleteCard(@RequestParam String personalCardId,
+    public String deleteCard(@RequestParam UUID personalCardId,
                              HttpServletResponse response,
                              @AuthenticationPrincipal CustomUserDetails user) {
 

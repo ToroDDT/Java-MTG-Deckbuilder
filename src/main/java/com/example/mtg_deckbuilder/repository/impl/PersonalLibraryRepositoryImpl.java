@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
+import com.example.mtg_deckbuilder.exceptions.UserDoesNotExistsException;
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
 import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
@@ -30,19 +31,22 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
     }
 
 
-    public void deleteCard(@NonNull CustomUserDetails user, @NonNull String personalCardId) {
+    public void deleteCard(@NonNull CustomUserDetails user, @NonNull UUID personalCardId) throws UserDoesNotExistsException {
         String sql = """
         DELETE FROM personal_collection_library
         WHERE id = :personalCardId AND user_id = :userId
         """;
 
         var rowsChanged = jdbcClient.sql(sql)
-                .param("personalCardId", UUID.fromString(personalCardId))
+                .param("personalCardId", personalCardId)
                 .param("userId", user.getId())
                 .update();
 
         if (rowsChanged == 0) {
             throw new CardDoesNotExistException("Card could not be found in library:" + personalCardId);
+        }
+        if (!user.isEnabled()){
+            throw new UserDoesNotExistsException("User must be login");
         }
     }
     private List<String> getUpdatedCardTags(@NonNull UUID personalCardId, @NonNull CustomUserDetails user) {

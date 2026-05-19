@@ -35,7 +35,7 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   }
 
   @Override
-  public void delete(CustomUserDetails user, String cardId) {
+  public void delete(CustomUserDetails user, UUID cardId) {
     publisher.publishEvent(new LibraryUpdatedEvent(this, user));
     personalLibraryRepository.deleteCard(user, cardId);
   }
