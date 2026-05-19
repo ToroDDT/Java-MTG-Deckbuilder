@@ -137,19 +137,11 @@ public class BuilderController {
         response.setHeader("HX-Trigger", "cardsUpdated");
     }
 
-@GetMapping("/builder/randomize-cards")
-public String getRandomizedCards(
-    Model model,
-    @RequestParam("deckId") UUID deckId
-) {
-
-    var imgs = builderService.getRandomizedCards(deckId);
-    for (String img : imgs) {
-        System.out.println(img);
+    @GetMapping("/builder/randomize-cards")
+    public String getRandomizedCards(
+            Model model,
+            @RequestParam("deckId") UUID deckId) {
+        model.addAttribute("cardImages", builderService.getRandomizedCards(deckId));
+        return "randomized-cards :: randomized-hand";
     }
-
-    model.addAttribute("cardImages", imgs);
-
-    return "randomized-cards :: randomized-hand";
-}
 }

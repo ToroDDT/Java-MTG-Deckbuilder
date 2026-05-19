@@ -73,6 +73,7 @@ public class Card {
                 .cmc(rs.getInt("cmc"))
                 .scryfallUri(rs.getString("scryfall_uri"))
 
+                .imageUris(rs.getString("image_uris"))
                 .image(extractImage(rs))
 
                 .colorIdentity(extractColorIdentity(rs))
@@ -92,16 +93,32 @@ public class Card {
             return rs.getString("image");
         }
 
-        String raw = rs.getString("image_uris");
-        if (raw == null || raw.isBlank()) {
+        return bestArtUrlFromImageUrisJson(rs.getString("image_uris"));
+    }
+
+    /**
+     * Parses Scryfall {@code image_uris} JSON; prefers {@code border_crop} but falls back to
+     * {@code normal}, {@code large}, etc.
+     */
+    public static String bestArtUrlFromImageUrisJson(String imageUrisJson) {
+        if (imageUrisJson == null || imageUrisJson.isBlank()) {
             return null;
         }
 
         try {
-            return OBJECT_MAPPER.readValue(raw, ImageUris.class).getBorderCrop();
+            ImageUris uris = OBJECT_MAPPER.readValue(imageUrisJson, ImageUris.class);
+            return uris != null ? uris.firstNonBlankArtUrl() : null;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /** Absolute image URL for UI: {@link #image} when set, else best URL from {@link #imageUris} JSON. */
+    public String artworkUrl() {
+        if (image != null && !image.isBlank()) {
+            return image.trim();
+        }
+        return bestArtUrlFromImageUrisJson(imageUris);
     }
 
     private static Prices extractPrices(ResultSet rs) throws SQLException {

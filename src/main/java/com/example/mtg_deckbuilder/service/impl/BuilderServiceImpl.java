@@ -35,16 +35,19 @@ public class BuilderServiceImpl implements BuilderService {
         return builderRepository.getAllCardsFromDeck(deckId);
     }
 
-@Override
-public List<String> getRandomizedCards(UUID deckId) {
-    var cards = builderRepository.getAllCardsFromDeck(deckId);
-    Collections.shuffle(cards);
-    return cards.stream()
-            .map(OwnedCard::getCard)
-            .map(Card::getImageUris)
-            .limit(7)
-            .toList();
-}
+    @Override
+    public List<String> getRandomizedCards(UUID deckId) {
+        var cards = builderRepository.getAllCardsFromDeck(deckId);
+        Collections.shuffle(cards);
+        // <img src> must be a plain https URL, not raw image_uris JSON (browser treats "{" as relative path).
+        return cards.stream()
+                .map(OwnedCard::getCard)
+                .map(Card::artworkUrl)
+                .filter(Objects::nonNull)
+                .filter(img -> !img.isBlank())
+                .limit(7)
+                .toList();
+    }
 
     @Override
     public BuilderViewModel getBuilderView(String deckId ) {

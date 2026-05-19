@@ -215,18 +215,21 @@ public class BuilderRepositoryImpl implements BuilderRepository {
 
        return jdbcClient.sql(sql)
     .param(deckId)
-    .query((rs, rowNum) ->
-        OwnedCard.builder()
+    .query((rs, rowNum) -> {
+        String imageUrisJson = rs.getString("image_uris");
+        return OwnedCard.builder()
             .card(
                 Card.builder()
                     .id(rs.getObject("card_id", UUID.class))
                     .name(rs.getString("card_name"))
                     .typeLine(rs.getString("type_line"))
                     .scryfallUri(rs.getString("scryfall_uri"))
+                    .imageUris(imageUrisJson)
+                    .image(Card.bestArtUrlFromImageUrisJson(imageUrisJson))
                     .build()
             )
-            .build()
-    )
+            .build();
+    })
     .list();
     }
 
