@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PersonalLibraryServiceImplTest {
+public class PersonalLibraryServiceImplTest {
 
     @Mock
     private PersonalLibraryRepositoryImpl personalLibraryRepository;
@@ -163,7 +163,7 @@ class PersonalLibraryServiceImplTest {
         assertNotNull(viewModel.getDeckNames());
     }
 
-    private static CustomUserDetails testUser() {
+    public static CustomUserDetails testUser() {
         return new CustomUserDetails(
                 "tester",
                 "password",

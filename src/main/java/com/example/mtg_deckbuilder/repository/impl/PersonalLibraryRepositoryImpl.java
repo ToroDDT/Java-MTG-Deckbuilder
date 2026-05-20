@@ -31,7 +31,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
     }
 
 
-    public void deleteCard(@NonNull CustomUserDetails user, @NonNull UUID personalCardId) throws UserDoesNotExistsException {
+    public void deleteCard(@NonNull CustomUserDetails user, @NonNull UUID personalCardId) {
         String sql = """
         DELETE FROM personal_collection_library
         WHERE id = :personalCardId AND user_id = :userId
@@ -45,9 +45,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         if (rowsChanged == 0) {
             throw new CardDoesNotExistException("Card could not be found in library:" + personalCardId);
         }
-        if (!user.isEnabled()){
-            throw new UserDoesNotExistsException("User must be login");
-        }
+
     }
     private List<String> getUpdatedCardTags(@NonNull UUID personalCardId, @NonNull CustomUserDetails user) {
         String sql = """

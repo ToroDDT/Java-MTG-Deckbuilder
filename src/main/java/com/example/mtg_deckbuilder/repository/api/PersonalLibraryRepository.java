@@ -31,5 +31,5 @@ public interface PersonalLibraryRepository {
 
   List<String> deleteTag (String tag, UUID personalCardId, CustomUserDetails user);
 
-  void deleteCard (CustomUserDetails user, String cardId);
+  void deleteCard (CustomUserDetails user, UUID cardId);
 }
