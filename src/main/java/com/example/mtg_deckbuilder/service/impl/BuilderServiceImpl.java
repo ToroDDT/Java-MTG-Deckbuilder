@@ -76,7 +76,9 @@ public class BuilderServiceImpl implements BuilderService {
 
         var deckName = cards.getLast().deckName();
         var deckImage = cards.getLast().deckImage();
-        var colorProduction = getColorProduction(cards);
+        var colorProduction = getColorProduction(cards.stream()
+                .filter(card -> containsType(card, "Land"))
+                .toList());
         List<Long> counts = List.of(
                 colorProduction.red(),
                 colorProduction.white(),
@@ -173,7 +175,7 @@ public class BuilderServiceImpl implements BuilderService {
 
     private ColorProduction getColorProduction(List<BuilderDeckCardRecord> cards) {
         return cards.stream()
-                .map(card -> ColorProduction.fromIdentity(card.colorIdentity()))
+                .map(card -> ColorProduction.fromIdentity(card.producedMana()))
                 .reduce(ColorProduction.builder().build(), ColorProduction::combine);
     }
 

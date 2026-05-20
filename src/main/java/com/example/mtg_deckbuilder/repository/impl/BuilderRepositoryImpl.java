@@ -156,6 +156,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         cards.color_identity,
         cards.image_uris,
         cards.prices,
+        cards.produced_mana,
 
         decks.name AS deck_name,
         decks.commander,
@@ -173,19 +174,23 @@ public class BuilderRepositoryImpl implements BuilderRepository {
     ORDER BY cards.name
    \s""";
 
-
         return jdbcClient.sql(sql)
                 .param(UUID.fromString(deckId))
-                .query((rs, rowNum) -> new BuilderDeckCardRecord(
-                        rs.getObject("deck_entry_id", UUID.class).toString(),
-                        rs.getString("card_name"),
-                        rs.getString("color_identity"),
-                        rs.getString("type_line"),
-                        rs.getString("cmc"),
-                        rs.getString("deck_image"),
-                        usdNumericPlainFromPricesColumn(rs),
-                        rs.getString("deck_name")))
+                .query((rs, rowNum) ->
+                        BuilderDeckCardRecord.builder()
+                                .deckEntryId(rs.getObject("deck_entry_id", UUID.class).toString())
+                                .name(rs.getString("card_name"))
+                                .deckName(rs.getString("deck_name"))
+                                .deckImage(rs.getString("deck_image"))
+                                .cmc(rs.getString("cmc"))
+                                .producedMana(rs.getString("produced_mana"))
+                                .colorIdentity(rs.getString("color_identity"))
+                                .priceUsd(usdNumericPlainFromPricesColumn(rs))
+                                .typeLine(rs.getString("type_line"))
+                                .build() // Closes out the Lombok builder for the record
+                )
                 .list();
+        //   }
     }
 
 
