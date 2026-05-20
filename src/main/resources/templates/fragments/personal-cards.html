@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<div class="cb-results-col" id="personal-cards" hx-swap-oob="true" th:fragment="personal-cards">
+<div class="cb-results-col rounded-2xl" id="personal-cards" hx-swap-oob="true" th:fragment="personal-cards">
 
     <div id="display-area">
     </div>
@@ -16,7 +16,7 @@
     <div class="cb-grid" id="cardGrid">
 
         <div class="cb-card"
-             th:each="card : ${libraryView.getCards()}"
+             th:each="card, iterStat : ${libraryView.getCards()}"
              th:data-name="${card.getCard().getName()}"
              th:data-type="${card.getCard().getTypeLine()}"
              th:data-cmc="${card.getCard().getCmc()}"
@@ -27,7 +27,7 @@
                         class="cb-card-img"
                         th:src="${card.getCard().getImage()}"
                         th:alt="${card.getCard().getName()}"
-                        loading="lazy"
+                        th:attr="fetchpriority=${iterStat.first ? 'high' : null},loading=${iterStat.first ? null : 'lazy'}"
                 />
                 <div class="cb-card-img-placeholder" style="display:none">🃏</div>
             </div>
@@ -37,11 +37,13 @@
                     <div class="cb-card-name" th:text="${card.getCard().getName()}">Card Name</div>
 
                     <button
+                            type="button"
                             th:attr="hx-post='/delete-card?personalCardId=' + ${card.getId()}"
                             hx-trigger="click"
                             hx-target="closest .cb-card"
                             hx-swap="outerHTML swap:150ms"
                             class="flex items-center justify-center w-6 h-6 bg-white border border-blue-200 rounded-md text-blue-600 hover:bg-blue-50 hover:border-blue-600 transition-colors duration-200 active:scale-90 group focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            aria-label="Remove card from library"
                     >
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -50,6 +52,7 @@
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
                                 stroke-width="2.5"
+                                aria-hidden="true"
                         >
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>

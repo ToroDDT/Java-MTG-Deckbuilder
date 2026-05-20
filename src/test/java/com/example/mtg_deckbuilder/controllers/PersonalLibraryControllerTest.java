@@ -57,12 +57,23 @@ class PersonalLibraryControllerTest {
 
     @Test
     void getPersonalLibraryReturnsPageWithExpectedModel() throws Exception {
+        when(personalLibraryService.buildPersonalLibraryViewModel(any(CustomUserDetails.class)))
+                .thenReturn(LibraryViewModelImpl.builder()
+                        .cards(List.of())
+                        .deckNames(List.of())
+                        .colorIdentityAmounts(Map.of())
+                        .totalValue(0.0)
+                        .totalCards(0)
+                        .avgPrice(0.0)
+                        .build());
+
         mockMvc.perform(get("/personal-library").with(authenticationToken()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("personal-library"))
                 .andExpect(model().attributeExists("personalLibrary"))
                 .andExpect(model().attributeExists("ownedCard"))
                 .andExpect(model().attributeExists("filters"))
+                .andExpect(model().attributeExists("libraryView"))
                 .andExpect(header().string("Content-Type", "text/html;charset=UTF-8"));
     }
 

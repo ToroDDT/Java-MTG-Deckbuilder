@@ -17,10 +17,10 @@
      class="fixed bottom-0 left-0 right-0 z-[500] border-t border-[#e2e8f8] rounded-md"
      style="background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 -4px 28px rgba(37,99,235,0.10);">
 
-    <div class="max-w-[1400px] mx-auto px-4 md:px-6 h-16 flex items-center gap-3 md:gap-4">
+    <div class="max-w-[1400px] mx-auto pl-2 px-4 md:px-6 h-16 flex items-center gap-3 md:gap-4">
 
       <!-- Label -->
-      <span class="hidden sm:block text-[10px] font-bold uppercase tracking-widest text-slate-400 shrink-0">
+      <span class="hidden sm:block text-[10px] font-bold uppercase tracking-widest text-slate-600 shrink-0">
         Colors
       </span>
 
@@ -36,7 +36,7 @@
                 th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['WHITE'] : 0}">14</span>
           <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
     ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['WHITE'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
-    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctW">22%</span>
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-600" id="pctW">22%</span>
         </div>
 
         <!-- Blue -->
@@ -48,7 +48,7 @@
                 th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['BLUE'] : 0}">22</span>
           <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
     ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['BLUE'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
-    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctU">35%</span>
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-600" id="pctU">35%</span>
         </div>
 
         <!-- Black -->
@@ -60,7 +60,7 @@
                 th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['BLACK'] : 0}">18</span>
           <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
     ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['BLACK'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
-    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctB">29%</span>
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-600" id="pctB">29%</span>
         </div>
 
         <!-- Red -->
@@ -72,7 +72,7 @@
                 th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['RED'] : 0}">7</span>
           <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
     ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['RED'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
-    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctR">11%</span>
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-600" id="pctR">11%</span>
         </div>
 
         <!-- Green -->
@@ -84,7 +84,7 @@
                 th:text="${personalLibrary.colorIdentityAmounts != null ? personalLibrary.colorIdentityAmounts['GREEN'] : 0}">12</span>
           <span th:text="${personalLibrary.colorIdentityAmounts != null and personalLibrary.totalCards > 0
     ? #numbers.formatDecimal((personalLibrary.colorIdentityAmounts['GREEN'] ?: 0) * 100.0 / personalLibrary.totalCards, 1, 1) + '%'
-    : '0%'}" class="hidden md:inline text-[11px] text-slate-400" id="pctG">19%</span>
+    : '0%'}" class="hidden md:inline text-[11px] text-slate-600" id="pctG">19%</span>
         </div>
 
       </div>
@@ -98,7 +98,7 @@
       <!-- ── Pricing block ── -->
       <div class="flex items-center gap-3 bg-[#f8faff]  rounded-[9px] px-3.5 py-1.5 shrink-0">
         <div>
-          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Value</div>
+          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Total Value</div>
           <div class="text-[18px] font-extrabold leading-tight grad-text"
                id="totalPrice"
                th:text="${personalLibrary.totalValue != null ? '$' + #numbers.formatDecimal(personalLibrary.totalValue, 1, 2) : '$0.00'}">
@@ -108,7 +108,7 @@
 
         <div class="w-px h-8 bg-[#e2e8f8]"></div>
         <div>
-          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Cards</div>
+          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Total Cards</div>
           <div class="text-[18px] font-extrabold leading-tight grad-text"
                id="totalCards"
                th:text="${personalLibrary.totalCards != null ? 'Total: ' + personalLibrary.totalCards : '10'}">
@@ -120,7 +120,7 @@
         <div class="w-px h-8 bg-[#e2e8f8]"></div>
 
         <div class="flex flex-col items-end">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Avg / card</span>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Avg / card</span>
           <span class="text-[13px] font-bold text-blue-600"
                 id="avgPrice"
                 th:text="${personalLibrary.avgPrice != null ? '$' + #numbers.formatDecimal(personalLibrary.avgPrice, 1, 2) : '$0.00'}">

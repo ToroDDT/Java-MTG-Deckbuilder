@@ -24,6 +24,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -44,11 +45,16 @@ public class PersonalLibraryController {
     }
 
     @GetMapping("/personal-library")
-    public String getPersonalLibrary(HttpServletResponse response, Model model) {
+    public String getPersonalLibrary(@AuthenticationPrincipal CustomUserDetails user,
+                                     HttpServletResponse response, Model model) {
 
         model.addAttribute("personalLibrary", new CardBrowserViewModelImpl());
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
+        model.addAttribute("libraryView",
+                user != null
+                        ? personalLibraryService.buildPersonalLibraryViewModel(user)
+                        : emptyLibraryView());
 
 
         response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
@@ -56,6 +62,18 @@ public class PersonalLibraryController {
 
         return "personal-library";
     }
+
+    private static LibraryViewModelImpl emptyLibraryView() {
+        return LibraryViewModelImpl.builder()
+                .cards(List.of())
+                .deckNames(List.of())
+                .totalCards(0)
+                .totalValue(0.0)
+                .avgPrice(0.0)
+                .colorIdentityAmounts(Map.of())
+                .build();
+    }
+
     @GetMapping("/personal-library/cards")
     public String getPersonalCards(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);

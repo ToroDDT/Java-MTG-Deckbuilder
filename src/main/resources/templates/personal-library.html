@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Browse and filter your Magic: The Gathering collection, manage tags and decks, and search cards in the personal library card browser." />
   <title>MTG Deckbuilder — Card Browser</title>
 
     <meta name="_csrf" th:content="${_csrf.token}"/>
@@ -11,8 +12,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="preconnect" href="https://cards.scryfall.io">
+  <link rel="preload" as="image" fetchpriority="high"
+        th:if="${libraryView != null and !#lists.isEmpty(libraryView.cards)}"
+        th:href="${libraryView.cards[0].card.image}">
   <link rel="preload" href="https://rsms.me/inter/font-files/InterVariable.woff2?v=4.1" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" th:href="@{/css/nav-bar.min.css}">
+  <link rel="preload" th:href="@{/css/nav-bar.min.css}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" th:href="@{/css/nav-bar.min.css}"></noscript>
   <link rel="preload" th:href="@{/css/library.min.css}" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" th:href="@{/css/library.min.css}"></noscript>
 </head>
@@ -222,33 +227,7 @@
 
     </aside>
 
-    <div id="personal-cards" class="cb-results-col rounded-2xl">
-
-
-      <div class="cb-results-header">
-        <p class="cb-count">Showing <span id="visibleCount">0</span> of <span id="totalCount">0</span> cards</p>
-      </div>
-
-      <div class="cb-grid" id="cardGrid">
-
-        <div class="cb-empty">
-          <div class="cb-empty-icon">🃏</div>
-          <p>No cards in your library yet.</p>
-        </div>
-
-        <div th:attr="hx-get=@{/personal-library/cards}"
-             hx-trigger="load"
-             hx-target="#personal-cards">
-          Loading details...
-        </div>
-
-      </div>
-
-      <div class="cb-load-more" id="loadMoreWrap" style="display:none">
-        <button class="cb-btn-load" id="loadMoreBtn">Load More</button>
-      </div>
-
-    </div>
+    <div th:replace="~{fragments/personal-cards :: personal-cards}"></div>
   </div>
 
 </main>
