@@ -3,6 +3,10 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Deckbuilder| Dashboard </title>
+    <meta name="description" th:content="|Edit ${builderView.deckName} — mana curve, hand simulation, and card search in the deck builder.|"
+          content="Edit your Commander deck with mana curve, hand simulation, and card search."/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <script th:src="@{/js/builder-tailwind-config.min.js}"></script>
@@ -11,16 +15,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/builder.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/nav-bar.min.css}"/>
-    <script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
-    <script th:src="@{/js/chart.min.js}"></script>
-    <!-- Thymeleaf only runs on templates; external static JS cannot use [[...]] — bootstrap the module from here. -->
-    <script th:inline="javascript">
-        window.__MTG_MANA_CURVE__ = {
-            data: /*[[${manaCurveData}]]*/ [],
-            labels: /*[[${manaCurveLabels}]]*/ []
-        };
-    </script>
-    <script type="module" th:src="@{/js/mana-distribution.js}"></script>
 </head>
 <body class="">
 
@@ -35,6 +29,7 @@
                 <div class="flex gap-8 items-start">
                     <div class="w-48 h-64 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(25,27,35,0.12)] shrink-0 border-4 border-white">
                         <img alt="The Commander" class="w-full h-full object-cover"
+                             decoding="async" fetchpriority="high" height="256" width="192"
                              th:src="@{${builderView.image}}"
                         />
                     </div>
@@ -50,15 +45,15 @@
                         <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none" th:text="${builderView.deckName}">The Necrobloom</h1>
                         <div class="flex gap-6 text-on-surface-variant font-medium">
                             <div class="flex flex-col">
-                                <span class="text-[10px] uppercase tracking-wider text-slate-400">Owner</span>
+                                <span class="text-[10px] uppercase tracking-wider text-slate-600">Owner</span>
                                 <span th:text="${userName}">Owner</span>
                             </div>
                             <div class="flex flex-col border-l border-outline-variant pl-6">
-                                <span class="text-[10px] uppercase tracking-wider text-slate-400">Win Rate</span>
+                                <span class="text-[10px] uppercase tracking-wider text-slate-600">Win Rate</span>
                                 <span class="text-blue-600">62.4%</span>
                             </div>
                             <div class="flex flex-col border-l border-outline-variant pl-6">
-                                <span class="text-[10px] uppercase tracking-wider text-slate-400">Value</span>
+                                <span class="text-[10px] uppercase tracking-wider text-slate-600">Value</span>
                                 <span th:text="'$'+${builderView.totalValue}">$0.00</span>
                             </div>
                         </div>
@@ -68,7 +63,7 @@
                     <form id="builderAddCardForm" class="flex-1 flex flex-col gap-2 min-w-0"
                           th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
                         <input type="hidden" name="_builderCardContext" value="true"/>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400" for="builder-card-name">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600" for="builder-card-name">
                             Search cards (add to library)
                         </label>
 
@@ -115,6 +110,7 @@
                 <!-- Creatures -->
                 <div
                         id="type-layout-container"
+                        class="min-h-[18rem]"
                         th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
                         hx-trigger="load, cardsUpdated from:body"
                         hx-swap="innerHTML">
@@ -133,7 +129,7 @@
                                     hx-trigger="load, cardsUpdated from:body"
                                     hx-swap="innerHTML">
 
-                                <div class="p-4 text-slate-400">
+                                <div class="p-4 text-slate-600 min-h-[14rem]">
                                     Loading hand...
                                 </div>
                             </div>
@@ -146,20 +142,18 @@
 
                 <!-- Mana Curve -->
                 <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
-                    <h4 class="text-sm font-black text-on-background uppercase tracking-wider mb-8">Mana Curve</h4>
-                    <div class="flex items-end justify-between h-48 gap-2">
-                        <div>
-                            <canvas id="myChart"></canvas>
-                        </div>
+                    <h2 class="text-sm font-black text-on-background uppercase tracking-wider mb-8">Mana Curve</h2>
+                    <div class="relative h-48 w-full min-h-[12rem]" role="presentation">
+                        <canvas id="myChart" aria-label="Mana curve showing card counts by mana value" class="block h-full w-full max-w-full"></canvas>
                     </div>
                 </div>
 
                 <!-- Color Production -->
                 <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
-                    <h4 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Color Production</h4>
+                    <h2 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Color Production</h2>
                     <div class="space-y-6">
-                        <div>
-                            <canvas id="colorProduction"></canvas>
+                        <div class="relative h-32 w-full min-h-[8rem]" role="presentation">
+                            <canvas id="colorProduction" aria-label="Color production chart" class="block h-full w-full max-w-full"></canvas>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -167,7 +161,7 @@
                                     <div class="w-3 h-3 rounded-full bg-green-500"></div>
                                     <span class="text-xs font-bold text-on-surface">Green</span>
                                 </div>
-                                <span class="text-xs font-bold text-slate-400">42%</span>
+                                <span class="text-xs font-bold text-slate-600">42%</span>
                             </div>
                             <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
                                 <div class="h-full bg-green-500 w-[42%] rounded-full"></div>
@@ -179,7 +173,7 @@
                                     <div class="w-3 h-3 rounded-full bg-white border border-slate-200"></div>
                                     <span class="text-xs font-bold text-on-surface">White</span>
                                 </div>
-                                <span class="text-xs font-bold text-slate-400">20%</span>
+                                <span class="text-xs font-bold text-slate-600">20%</span>
                             </div>
                             <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
                                 <div class="h-full bg-slate-300 w-[20%] rounded-full"></div>
@@ -190,34 +184,34 @@
 
                 <!-- Type Distribution -->
                 <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
-                    <h4 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Type Distribution</h4>
+                    <h2 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Type Distribution</h2>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="p-4 bg-slate-50 rounded-2xl">
-                            <span class="text-[10px] text-slate-400 uppercase font-black block mb-1">Ramp</span>
+                            <span class="text-[10px] text-slate-600 uppercase font-black block mb-1">Ramp</span>
                             <div class="flex items-baseline gap-1">
                                 <span class="text-2xl font-black text-on-background">12</span>
                                 <span class="text-[10px] font-bold text-green-600">+2 High</span>
                             </div>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-2xl">
-                            <span class="text-[10px] text-slate-400 uppercase font-black block mb-1">Draw</span>
+                            <span class="text-[10px] text-slate-600 uppercase font-black block mb-1">Draw</span>
                             <div class="flex items-baseline gap-1">
                                 <span class="text-2xl font-black text-on-background">9</span>
                                 <span class="text-[10px] font-bold text-blue-600">Optimal</span>
                             </div>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-2xl">
-                            <span class="text-[10px] text-slate-400 uppercase font-black block mb-1">Removal</span>
+                            <span class="text-[10px] text-slate-600 uppercase font-black block mb-1">Removal</span>
                             <div class="flex items-baseline gap-1">
                                 <span class="text-2xl font-black text-on-background">7</span>
-                                <span class="text-[10px] font-bold text-slate-400">Low</span>
+                                <span class="text-[10px] font-bold text-slate-600">Low</span>
                             </div>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-2xl">
-                            <span class="text-[10px] text-slate-400 uppercase font-black block mb-1">Board Wipes</span>
+                            <span class="text-[10px] text-slate-600 uppercase font-black block mb-1">Board Wipes</span>
                             <div class="flex items-baseline gap-1">
                                 <span class="text-2xl font-black text-on-background">3</span>
-                                <span class="text-[10px] font-bold text-slate-400">Balanced</span>
+                                <span class="text-[10px] font-bold text-slate-600">Balanced</span>
                             </div>
                         </div>
                     </div>
@@ -230,28 +224,38 @@
 
 <!-- Mobile Nav Bar -->
 <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around items-center h-16 z-50">
-    <button class="flex flex-col items-center gap-1 text-slate-400">
-        <span class="material-symbols-outlined">dashboard</span>
+    <button type="button" class="flex flex-col items-center gap-1 text-slate-600" aria-label="Home">
+        <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
         <span class="text-[10px] font-bold">Home</span>
     </button>
-    <button class="flex flex-col items-center gap-1 text-blue-600">
-        <span class="material-symbols-outlined">list_alt</span>
+    <button type="button" class="flex flex-col items-center gap-1 text-blue-600" aria-label="Decks">
+        <span class="material-symbols-outlined" aria-hidden="true">list_alt</span>
         <span class="text-[10px] font-bold">Decks</span>
     </button>
     <div class="relative -top-6">
-        <button class="bg-primary text-white p-4 rounded-full shadow-lg shadow-blue-300">
-            <span class="material-symbols-outlined">add</span>
+        <button type="button" class="bg-primary text-white p-4 rounded-full shadow-lg shadow-blue-300" aria-label="Add or quick actions">
+            <span class="material-symbols-outlined" aria-hidden="true">add</span>
         </button>
     </div>
-    <button class="flex flex-col items-center gap-1 text-slate-400">
-        <span class="material-symbols-outlined">bar_chart</span>
+    <button type="button" class="flex flex-col items-center gap-1 text-slate-600" aria-label="Stats">
+        <span class="material-symbols-outlined" aria-hidden="true">bar_chart</span>
         <span class="text-[10px] font-bold">Stats</span>
     </button>
-    <button class="flex flex-col items-center gap-1 text-slate-400">
-        <span class="material-symbols-outlined">account_circle</span>
+    <button type="button" class="flex flex-col items-center gap-1 text-slate-600" aria-label="Profile">
+        <span class="material-symbols-outlined" aria-hidden="true">account_circle</span>
         <span class="text-[10px] font-bold">Profile</span>
     </button>
 </div>
+
+<script defer src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+<script th:src="@{/js/chart.min.js}"></script>
+<script th:inline="javascript">
+    window.__MTG_MANA_CURVE__ = {
+        data: /*[[${manaCurveData}]]*/ [],
+        labels: /*[[${manaCurveLabels}]]*/ []
+    };
+</script>
+<script type="module" th:src="@{/js/mana-distribution.js}"></script>
 
 <script>
     document.addEventListener('click', function (event) {
