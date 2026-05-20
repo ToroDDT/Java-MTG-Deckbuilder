@@ -5,8 +5,8 @@
     <span class="relative inline-flex items-center gap-1.5 text-left">
         <span class="group relative inline-block">
             <span class="cursor-default border-b border-dotted border-transparent text-sm font-medium text-on-surface transition-colors hover:border-blue-400 hover:text-blue-700"
-                  th:text="${card['name']}"
-                  th:attr="hx-get=@{/builder/deck/{d}/deck-entry/{e}/hover(d=${deckId},e=${card['deck_entry_id']})},
+                  th:text="${card.name}"
+                  th:attr="hx-get=@{/builder/deck/{d}/deck-entry/{e}/hover(d=${deckId},e=${card.deckEntryId})},
                            hx-trigger='mouseenter delay:120ms throttle:750ms',
                            hx-target='next .builder-card-hover-drop',
                            hx-swap='innerHTML'">
@@ -17,7 +17,7 @@
         <button type="button"
                 class="builder-card-actions-toggle inline-flex h-5 w-5 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:border-blue-300 hover:text-blue-700"
                 aria-label="Card actions"
-                th:attr="hx-get=@{/builder/deck/{d}/deck-entry/{e}/actions(d=${deckId},e=${card['deck_entry_id']})},
+                th:attr="hx-get=@{/builder/deck/{d}/deck-entry/{e}/actions(d=${deckId},e=${card.deckEntryId})},
                          hx-trigger='click',
                          hx-target='next .builder-card-actions-drop',
                          hx-swap='innerHTML'">

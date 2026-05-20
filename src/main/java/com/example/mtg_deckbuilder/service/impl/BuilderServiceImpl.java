@@ -7,6 +7,7 @@ import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
 import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import org.springframework.stereotype.Service;
 
@@ -52,8 +53,24 @@ public class BuilderServiceImpl implements BuilderService {
     @Override
     public BuilderViewModel getBuilderView(String deckId ) {
         var cards = builderRepository.getAllCardsForUser(deckId);
-        var deckName = cards.getLast().get("deck_name");
-        var deckImage = cards.getLast().get("image");
+        if (cards.isEmpty()) {
+            List<Long> emptyCurve = List.of(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
+            return new BuilderViewModel(
+                    null,
+                    0.0,
+                    "",
+                    List.of(),
+                    emptyCurve,
+                    List.of(),
+                    List.of(),
+                    List.of(),
+                    List.of(),
+                    List.of(),
+                    deckId);
+        }
+
+        var deckName = cards.getLast().deckName();
+        var deckImage = cards.getLast().deckImage();
 
         var creatures = cards.stream()
                 .filter(card -> containsType(card, "Creature"))
@@ -74,15 +91,19 @@ public class BuilderServiceImpl implements BuilderService {
                 .filter(card -> containsType(card, "Artifact"))
                 .toList();
         var total = cards.stream()
-                .filter(card -> card.get("prices") != null)
-                .mapToDouble(card -> (Double.parseDouble(card.get("prices"))))
+                .map(BuilderDeckCardRecord::priceUsd)
+                .filter(Objects::nonNull)
+                .mapToDouble(Double::parseDouble)
                 .sum();
         Map<Integer, Long> manaCurve = cards.stream()
-                .filter(card -> card.get("cmc") != null)
+                .map(BuilderDeckCardRecord::cmc)
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isBlank())
                 .collect(Collectors.groupingBy(
-                        card -> (int) Double.parseDouble(card.get("cmc")),
+                        cmc -> (int) Double.parseDouble(cmc),
                         Collectors.counting()
-                ));       List<Long> manaCurveData = Stream.concat(
+                ));
+        List<Long> manaCurveData = Stream.concat(
                 IntStream.rangeClosed(0, manaCurve.size())
                         .mapToObj(i -> manaCurve.getOrDefault(i, 0L)),
                 Stream.of(manaCurve.entrySet().stream()
@@ -134,10 +155,10 @@ public class BuilderServiceImpl implements BuilderService {
         return "";
     }
 
-    private boolean containsType(Map<String, String> card, String type) {
-        if (card == null || card.get("type_line") == null) {
+    private boolean containsType(BuilderDeckCardRecord card, String type) {
+        if (card == null || card.typeLine() == null) {
             return false;
         }
-        return card.get("type_line").contains(type);
+        return card.typeLine().contains(type);
     }
 }

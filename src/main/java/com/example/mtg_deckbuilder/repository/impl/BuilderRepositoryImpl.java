@@ -6,6 +6,7 @@ import com.example.mtg_deckbuilder.dto.card.Prices;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -116,8 +117,31 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         }
     }
 
+    private String usdNumericPlainFromPricesColumn(ResultSet rs) throws SQLException {
+        String raw = rs.getString("prices");
+        if (raw == null || raw.isBlank()) {
+            return "0.00";
+        }
+        try {
+            Prices prices = objectMapper.readValue(raw, Prices.class);
+            Double usd = prices.getUsd();
+            if (usd == null || usd <= 0) {
+                usd = prices.getUsdFoil();
+            }
+            if (usd == null || usd <= 0) {
+                usd = prices.getUsdEtched();
+            }
+            if (usd == null || usd < 0) {
+                return "0.00";
+            }
+            return BigDecimal.valueOf(usd).setScale(2, RoundingMode.HALF_UP).toPlainString();
+        } catch (JsonProcessingException e) {
+            return "0.00";
+        }
+    }
+
     @Override
-    public List<Map<String, String>> getAllCardsForUser(String deckId) {
+    public List<BuilderDeckCardRecord> getAllCardsForUser(String deckId) {
         String sql = """
     SELECT\s
         deck_card_entries.id AS deck_entry_id,
@@ -152,30 +176,15 @@ public class BuilderRepositoryImpl implements BuilderRepository {
 
         return jdbcClient.sql(sql)
                 .param(UUID.fromString(deckId))
-                .query((rs, rowNum) -> {
-                    Map<String, String> row = new HashMap<>();
-                    row.put("deck_entry_id", rs.getObject("deck_entry_id", UUID.class).toString());
-                    row.put("name", rs.getString("card_name"));
-                    row.put("color_identity", rs.getString("color_identity"));
-                    row.put("type_line", rs.getString("type_line"));
-                    row.put("cmc", rs.getString("cmc"));
-                    row.put("deck_name", rs.getString("deck_name"));
-                    row.put("image", rs.getString("deck_image"));
-
-                    String pricesJson = rs.getString("prices");
-                    if (pricesJson != null) {
-                        try {
-                            Prices prices = objectMapper.readValue(pricesJson, Prices.class);
-                            String usd = prices.getUsd().toString();
-                            row.put("prices", usd != null ? usd : "0.00");
-                        } catch (JsonProcessingException e) {
-                            row.put("prices", "0.00");
-                        }
-                    } else {
-                        row.put("prices", "0.00");
-                    }
-                    return row;
-                })
+                .query((rs, rowNum) -> new BuilderDeckCardRecord(
+                        rs.getObject("deck_entry_id", UUID.class).toString(),
+                        rs.getString("card_name"),
+                        rs.getString("color_identity"),
+                        rs.getString("type_line"),
+                        rs.getString("cmc"),
+                        rs.getString("deck_image"),
+                        usdNumericPlainFromPricesColumn(rs),
+                        rs.getString("deck_name")))
                 .list();
     }
 
