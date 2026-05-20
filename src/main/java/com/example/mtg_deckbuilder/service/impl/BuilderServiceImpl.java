@@ -56,6 +56,24 @@ public class BuilderServiceImpl implements BuilderService {
     public BuilderViewModel getBuilderView(String deckId ) {
 
         var cards = builderRepository.getAllCardsForUser(deckId);
+        if (cards.isEmpty()) {
+            var emptyCurve = List.of(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
+            var emptyColors = List.of(0L, 0L, 0L, 0L, 0L, 0L);
+            return BuilderViewModel.builder()
+                    .image("")
+                    .deckId(deckId)
+                    .manaCurveData(emptyCurve)
+                    .lands(List.of())
+                    .artifacts(List.of())
+                    .creatures(List.of())
+                    .colorProduction(emptyColors)
+                    .enchantments(List.of())
+                    .sorceries(List.of())
+                    .totalValue(0.0)
+                    .deckName("")
+                    .build();
+        }
+
         var deckName = cards.getLast().deckName();
         var deckImage = cards.getLast().deckImage();
         var colorProduction = getColorProduction(cards);
@@ -67,23 +85,6 @@ public class BuilderServiceImpl implements BuilderService {
                 colorProduction.blue(),
                 colorProduction.colorless()
         );
-
-        if (cards.isEmpty()) {
-            var emptyCurve = List.of(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
-            return BuilderViewModel.builder()
-                    .image("")
-                    .deckId(deckId)
-                    .manaCurveData(emptyCurve)
-                    .lands(List.of())
-                    .artifacts(List.of())
-                    .creatures(List.of())
-                    .colorProduction(counts)
-                    .enchantments(List.of())
-                    .sorceries(List.of())
-                    .totalValue(0.0)
-                    .deckName("")
-                    .build();
-       }
 
         var creatures = cards.stream()
                 .filter(card -> containsType(card, "Creature"))
