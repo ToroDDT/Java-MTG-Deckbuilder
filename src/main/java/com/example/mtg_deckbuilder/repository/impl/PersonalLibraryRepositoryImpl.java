@@ -1,7 +1,6 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
-import com.example.mtg_deckbuilder.exceptions.UserDoesNotExistsException;
 import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
 import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
@@ -173,7 +172,6 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
         ORDER BY
             pcl.date_added DESC,
             pcl.id DESC
-        LIMIT 10
         """;
 
         return jdbcTemplate.query(sql, rowMapper, userId);
