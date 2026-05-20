@@ -22,14 +22,14 @@
 
     height: var(--header-height, var(--cb-nav-height));
 
-    background: rgba(255, 255, 255, 0.88);
+    background: transparent;
 
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
 
-    border-bottom: 1px solid var(--border-color, var(--cb-nav-border));
+    border-bottom: 1px solid transparent;
 
-    box-shadow: var(--shadow-sm, var(--cb-nav-shadow));
+    box-shadow: none;
 }
 
 .cb-nav-inner {
@@ -70,6 +70,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    background-color: transparent;
     flex-wrap: wrap;
     gap: clamp(12px, 2vw, 22px);
 }
