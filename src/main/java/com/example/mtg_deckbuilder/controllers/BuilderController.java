@@ -134,7 +134,6 @@ public class BuilderController {
             @AuthenticationPrincipal CustomUserDetails user,
             HttpServletResponse response) { // <-- Inject the response object
 
-        System.out.println("Adding card to deck: " + cardName + " to deck: " + deckId);
         deckService.addCard(user, deckId, cardName);
 
         response.setHeader("HX-Trigger", "cardsUpdated");

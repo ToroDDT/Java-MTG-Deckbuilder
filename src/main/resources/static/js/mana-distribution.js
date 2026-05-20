@@ -36,7 +36,7 @@ new Chart(manaDistribution, {
             },
             {
                 label: 'Distribution',
-                data: manaCurveData.map(v => Number(v) * 1.72),
+                data: manaCurveData.map(v => Number(v) * 1.30),
                 type: 'line',
                 order: 1,
                 borderColor: 'rgba(99, 153, 34, 0.85)',

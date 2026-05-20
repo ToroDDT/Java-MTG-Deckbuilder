@@ -112,6 +112,7 @@ public class BuilderServiceImpl implements BuilderService {
                 .mapToDouble(Double::parseDouble)
                 .sum();
         Map<Integer, Long> manaCurve = cards.stream()
+                .filter(card -> card.typeLine() == null || !card.typeLine().contains("Land"))
                 .map(BuilderDeckCardRecord::cmc)
                 .filter(Objects::nonNull)
                 .filter(s -> !s.isBlank())
