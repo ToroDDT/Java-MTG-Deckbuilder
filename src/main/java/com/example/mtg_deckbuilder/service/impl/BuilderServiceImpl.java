@@ -9,9 +9,11 @@ import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
+import lombok.Builder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -52,25 +54,36 @@ public class BuilderServiceImpl implements BuilderService {
 
     @Override
     public BuilderViewModel getBuilderView(String deckId ) {
-        var cards = builderRepository.getAllCardsForUser(deckId);
-        if (cards.isEmpty()) {
-            List<Long> emptyCurve = List.of(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
-            return new BuilderViewModel(
-                    null,
-                    0.0,
-                    "",
-                    List.of(),
-                    emptyCurve,
-                    List.of(),
-                    List.of(),
-                    List.of(),
-                    List.of(),
-                    List.of(),
-                    deckId);
-        }
 
+        var cards = builderRepository.getAllCardsForUser(deckId);
         var deckName = cards.getLast().deckName();
         var deckImage = cards.getLast().deckImage();
+        var colorProduction = getColorProduction(cards);
+        List<Long> counts = List.of(
+                colorProduction.red(),
+                colorProduction.white(),
+                colorProduction.green(),
+                colorProduction.black(),
+                colorProduction.blue(),
+                colorProduction.colorless()
+        );
+
+        if (cards.isEmpty()) {
+            var emptyCurve = List.of(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
+            return BuilderViewModel.builder()
+                    .image("")
+                    .deckId(deckId)
+                    .manaCurveData(emptyCurve)
+                    .lands(List.of())
+                    .artifacts(List.of())
+                    .creatures(List.of())
+                    .colorProduction(counts)
+                    .enchantments(List.of())
+                    .sorceries(List.of())
+                    .totalValue(0.0)
+                    .deckName("")
+                    .build();
+       }
 
         var creatures = cards.stream()
                 .filter(card -> containsType(card, "Creature"))
@@ -112,7 +125,55 @@ public class BuilderServiceImpl implements BuilderService {
                         .sum())
         ).collect(Collectors.toList());
 
-        return new BuilderViewModel(deckImage, total, deckName, creatures, manaCurveData, instants, enchantments, artifacts, lands, sorceries, deckId);
+        return BuilderViewModel.builder()
+                .image(deckImage)
+                .totalValue(total)
+                .deckName(deckName)
+                .creatures(creatures)
+                .manaCurveData(manaCurveData)
+                .instants(instants)
+                .enchantments(enchantments)
+                .artifacts(artifacts)
+                .lands(lands)
+                .colorProduction(counts)
+                .sorceries(sorceries)
+                .deckId(deckId)
+                .build();
+    }
+
+    @Builder
+    public record ColorProduction(long red, long white, long green, long black, long blue, long colorless) {
+
+        public ColorProduction combine(ColorProduction other) {
+            return ColorProduction.builder()
+                    .red(this.red + other.red())
+                    .white(this.white + other.white())
+                    .green(this.green + other.green())
+                    .black(this.black + other.black())
+                    .blue(this.blue + other.blue())
+                    .colorless(this.colorless + other.colorless())
+                    .build();
+        }
+
+        public static ColorProduction fromIdentity(String identity) {
+            if (identity == null || identity.isBlank()) {
+                return ColorProduction.builder().colorless(1).build();
+            }
+            return ColorProduction.builder()
+                    .red(identity.contains("R") ? 1 : 0)
+                    .white(identity.contains("W") ? 1 : 0)
+                    .green(identity.contains("G") ? 1 : 0)
+                    .black(identity.contains("B") ? 1 : 0)
+                    .blue(identity.contains("U") ? 1 : 0)
+                    .colorless(0)
+                    .build();
+        }
+    }
+
+    private ColorProduction getColorProduction(List<BuilderDeckCardRecord> cards) {
+        return cards.stream()
+                .map(card -> ColorProduction.fromIdentity(card.colorIdentity()))
+                .reduce(ColorProduction.builder().build(), ColorProduction::combine);
     }
 
     @Override

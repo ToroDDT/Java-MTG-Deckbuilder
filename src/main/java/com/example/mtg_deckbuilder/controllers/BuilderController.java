@@ -43,10 +43,13 @@ public class BuilderController {
         model.addAttribute("builderView", view);
         model.addAttribute("manaCurveLabels", List.of("0", "1", "2", "3", "4", "5", "6", "7+"));
         model.addAttribute("manaCurveData", view.manaCurveData());
+        model.addAttribute("colorProduction", view.colorProduction());
+        model.addAttribute("colorProductionLabels", List.of("red", "white", "green", "black", "blue", "colorless"));
         model.addAttribute("userName", userName);
         model.addAttribute("ownedCard", new OwnedCard());
 
         return "builder";
+
     }
 
     @GetMapping("/builder/type-layout/{id}")

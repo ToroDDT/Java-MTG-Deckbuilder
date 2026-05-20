@@ -1,8 +1,11 @@
 package com.example.mtg_deckbuilder.views;
 
 
+import lombok.Builder;
+
 import java.util.List;
 
+@Builder
 public record BuilderViewModel(
         String image,
         Double totalValue,
@@ -14,6 +17,7 @@ public record BuilderViewModel(
         List<BuilderDeckCardRecord> artifacts,
         List<BuilderDeckCardRecord> lands,
         List<BuilderDeckCardRecord> sorceries,
+        List<Long> colorProduction,
         String deckId
 ) {
 }
