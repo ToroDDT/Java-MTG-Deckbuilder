@@ -9,7 +9,7 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+  <th:block th:replace="~{fragments/font-awesome :: stylesheet-async}" />
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="preconnect" href="https://cards.scryfall.io">
   <link rel="preload" as="image" fetchpriority="high"

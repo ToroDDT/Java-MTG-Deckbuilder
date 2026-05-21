@@ -12,7 +12,7 @@
           as="font"
           type="font/woff2"
           crossorigin>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+    <th:block th:replace="~{fragments/font-awesome :: stylesheet-async}" />
     <!-- Styles -->
     <link rel="stylesheet" th:href="@{/css/library.min.css}">
     <link rel="stylesheet" th:href="@{/css/nav-bar.min.css}">
