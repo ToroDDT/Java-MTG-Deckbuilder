@@ -259,6 +259,12 @@
     </button>
 </div>
 
+<!-- Card hover: rendered outside columns (see builder deck list) to fix column stacking / bleed-through -->
+<div id="card-hover-portal"
+     class="fixed left-0 top-0 z-[9999] pointer-events-none hidden isolate"
+     style="isolation: isolate;"
+     aria-live="polite"></div>
+
 <script defer src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
 <script th:src="@{/js/chart.min.js}"></script>
 <script th:inline="javascript">
@@ -307,6 +313,70 @@
             if (t && h) event.detail.headers[h] = t;
         }
     });
+
+    (function () {
+        var PORTAL_ID = 'card-hover-portal';
+
+        function getPortal() {
+            return document.getElementById(PORTAL_ID);
+        }
+
+        function positionCardHoverPortal(portal, row) {
+            var gap = 16;
+            var rect = row.getBoundingClientRect();
+            portal.style.top = rect.top + 'px';
+            portal.style.left = (rect.right + gap) + 'px';
+        }
+
+        function hideCardHoverPortal() {
+            var portal = getPortal();
+            if (!portal) return;
+            portal.classList.add('hidden');
+            portal.innerHTML = '';
+        }
+
+        document.addEventListener('htmx:afterSwap', function (event) {
+            var detail = event.detail;
+            var swapTarget = detail.target;
+            // HTMX sets detail.elt to each swapped descendant (portal content); use requestConfig for the HX trigger.
+            if (!swapTarget || swapTarget.id !== PORTAL_ID) return;
+
+            var sourceElt =
+                detail.requestConfig && detail.requestConfig.elt ? detail.requestConfig.elt : null;
+            var row = sourceElt && sourceElt.closest && sourceElt.closest('.builder-deck-card-row');
+            var portal = getPortal();
+
+            if (!portal || portal !== swapTarget || !row || !row.matches(':hover')) {
+                hideCardHoverPortal();
+                return;
+            }
+
+            positionCardHoverPortal(portal, row);
+            portal.classList.remove('hidden');
+        });
+
+        document.addEventListener('mouseout', function (e) {
+            var row = e.target.closest && e.target.closest('.builder-deck-card-row');
+            if (!row) return;
+            var related = e.relatedTarget;
+            if (related && row.contains(related)) return;
+            hideCardHoverPortal();
+        }, true);
+
+        function repositionIfVisible() {
+            var portal = getPortal();
+            if (!portal || portal.classList.contains('hidden')) return;
+            var row = document.querySelector('.builder-deck-card-row:hover');
+            if (!row) {
+                hideCardHoverPortal();
+                return;
+            }
+            positionCardHoverPortal(portal, row);
+        }
+
+        window.addEventListener('scroll', repositionIfVisible, true);
+        window.addEventListener('resize', repositionIfVisible);
+    })();
 </script>
 </body>
 </html>

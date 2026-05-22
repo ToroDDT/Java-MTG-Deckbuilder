@@ -61,7 +61,7 @@ public class BuilderController {
 
         model.addAttribute("builderView", view);
 
-        return "builder/type-layout :: type-layout";
+        return "builder/layouts/type :: type-layout";
     }
 
     @GetMapping(value = "/builder/deck/{deckId}/card-query", headers = "HX-Request=true")
