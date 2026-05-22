@@ -65,16 +65,18 @@
                 <div class="flex gap-2">
                     <label class=" text-sm font-bold" th:for="'addTag-' + ${card.getId()}">Add Tag:</label>
 
-                    <input class="border border-blue-400 rounded px-2 text-xs w-1/2 focus:outline-none focus:ring-1 focus:ring-green-300"
-                           type="text"
-                           name="tag"
-                           th:id="'addTag-' + ${card.getId()}"
-                           placeholder="Add a tag"
-                           th:attr="hx-get='/update-tags?personalCardId=' + ${card.getId()},
-                           hx-target='#cb-card-tags-' + ${card.getId()}"
-                           hx-trigger="keydown[key=='Enter']"
-                           hx-on:htmx:after-request="if(event.detail.successful) this.value = ''"
-                           hx-include="this"/>
+                    <label>
+                        <input class="border border-blue-400 rounded px-2 text-xs w-1/2 focus:outline-none focus:ring-1 focus:ring-green-300"
+                               type="text"
+                               name="tag"
+                               th:id="'addTag-' + ${card.getId()}"
+                               placeholder="Add a tag"
+                               th:attr="hx-get='/update-tags?personalCardId=' + ${card.getId()},
+                               hx-target='#cb-card-tags-' + ${card.getId()}"
+                               hx-trigger="keydown[key=='Enter']"
+                               hx-on:htmx:after-request="if(event.detail.successful) this.value = ''"
+                               hx-include="this"/>
+                    </label>
                 </div>
                 <span class="cb-card-type">Located in:
 <span th:id="'located-in-' + ${card.getId()}"
@@ -83,18 +85,20 @@
 
                 <div class="flex">
                     <label class="cb-card-type" th:for="'deck-select-' + ${card.getId()}">Add to a Deck:</label>
-                    <select class="cb-card-type" name="deck"
-                            th:id="'deck-select-' + ${card.getId()}"
-                            th:attr="hx-get='/card/location?cardId=' + ${card.getCard().getId()} + '&personalCardId=' + ${card.getId()},
-                 hx-target='#located-in-' + ${card.getId()}"
-                            hx-trigger="change"
-                            hx-include="this">
-                        <option value="">None</option>
-                        <option th:each="deckName : ${libraryView.deckNames}"
-                                th:value="${deckName}"
-                                th:text="${deckName}"
-                                th:selected="${card.deckLocations != null && !#lists.isEmpty(card.deckLocations) && #lists.contains(card.deckLocations, deckName)}">Deck</option>
-                    </select>
+                    <label>
+                        <select class="cb-card-type" name="deck"
+                                th:id="'deck-select-' + ${card.getId()}"
+                                th:attr="hx-get='/card/location?cardId=' + ${card.getCard().getId()} + '&personalCardId=' + ${card.getId()},
+                     hx-target='#located-in-' + ${card.getId()}"
+                                hx-trigger="change"
+                                hx-include="this">
+                            <option value="">None</option>
+                            <option th:each="deckName : ${libraryView.deckNames}"
+                                    th:value="${deckName}"
+                                    th:text="${deckName}"
+                                    th:selected="${card.deckLocations != null && !#lists.isEmpty(card.deckLocations) && #lists.contains(card.deckLocations, deckName)}">Deck</option>
+                        </select>
+                    </label>
                 </div>
                 <div class="cb-card-type" th:text="${card.getCard().getTypeLine()}">Type</div>
 

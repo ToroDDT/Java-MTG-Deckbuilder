@@ -59,7 +59,7 @@ class CombosControllerTest {
                         .param("minPrice", "1.50")
                         .param("maxPrice", "9.99"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("combos :: combos-section"))
+                .andExpect(view().name("combos/combos :: combos-section"))
                 .andExpect(model().attributeExists("cardCombos"))
                 .andExpect(model().attributeExists("locationOptions"))
                 .andExpect(model().attribute("filters", org.hamcrest.Matchers.hasProperty("cardName", org.hamcrest.Matchers.equalTo("Goblin"))))
@@ -100,7 +100,7 @@ class CombosControllerTest {
                         .param("cards", "Bruce Banner||Legolas's Quick Reflexes")
                         .param("description", "Infinite combat phases."))
                 .andExpect(status().isOk())
-                .andExpect(view().name("combo-detail"))
+                .andExpect(view().name("combos/combo-detail"))
                 .andExpect(model().attributeExists("comboDetail"));
     }
 

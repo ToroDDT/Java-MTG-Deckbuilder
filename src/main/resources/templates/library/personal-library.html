@@ -60,7 +60,7 @@
                    hx-swap="innerHTML" />
           </div>
           <div id="card-query-results"
-               th:insert="~{card-query :: card-results}">
+               th:insert="~{library/card-query :: card-results}">
           </div>
         </div>
 
@@ -228,7 +228,7 @@
 
     </aside>
 
-    <div th:replace="~{fragments/personal-cards :: personal-cards}"></div>
+    <div th:replace="~{library/cards :: personal-cards}"></div>
   </div>
 
 </main>

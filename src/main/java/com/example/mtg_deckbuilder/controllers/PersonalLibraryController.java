@@ -7,7 +7,6 @@ import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.CardScannerClient;
 import com.example.mtg_deckbuilder.service.api.DeckService;
-import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.views.CardBrowserViewModelImpl;
@@ -24,7 +23,6 @@ import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -57,7 +55,7 @@ public class PersonalLibraryController {
         response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
 
-        return "personal-library";
+        return "library/personal-library";
     }
 
 
@@ -67,7 +65,7 @@ public class PersonalLibraryController {
 
         model.addAttribute("libraryView", libraryView);
 
-        return "fragments/personal-cards :: personal-cards";
+        return "library/cards :: personal-cards";
     }
 
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
@@ -77,7 +75,7 @@ public class PersonalLibraryController {
 
         model.addAttribute("libraryView", libraryView);
 
-        return "fragments/personal-cards :: personal-cards";
+        return "library/cards :: personal-cards";
     }
 
     @GetMapping("/personal-library/info")
@@ -86,7 +84,7 @@ public class PersonalLibraryController {
 
         model.addAttribute("personalLibrary", libraryView);
 
-        return "fragments/collection-info :: stickyStatsBar";
+        return "library/stats :: stickyStatsBar";
     }
 
     @GetMapping(path = "/personal-library/card-query", headers = "hx-request=true")
@@ -94,7 +92,7 @@ public class PersonalLibraryController {
         String trimmedQuery = query == null ? "" : query.trim();
         model.addAttribute("query", trimmedQuery);
         model.addAttribute("cards", personalLibraryService.getCardQuery(trimmedQuery));
-        return "card-query :: card-results";
+        return "library/card-query :: card-results";
     }
 
 
@@ -152,7 +150,7 @@ public class PersonalLibraryController {
 
         List<String> tags = personalLibraryService.updateCardTags(tag, personalCardId, user);
         model.addAttribute("card", new CardTagsViewModel(personalCardId, tags));
-        return "fragments/tags :: tags";
+        return "library/tags :: tags";
     }
 
     @PostMapping(value = "/remove-tag", headers = "hx-request=true")
@@ -164,7 +162,7 @@ public class PersonalLibraryController {
 
         List<String> tags = personalLibraryService.removeCardTag(tag, personalCardId, user);
         model.addAttribute("card", new CardTagsViewModel(personalCardId, tags));
-        return "fragments/tags :: tags";
+        return "library/tags :: tags";
     }
 
     @GetMapping(value = "/card/location", headers = "hx-request=true")
@@ -199,6 +197,6 @@ public class PersonalLibraryController {
         model.addAttribute("query", "");
         model.addAttribute("cards", java.util.List.of());
         model.addAttribute("message", message);
-        return "card-query :: card-results";
+        return "library/card-query :: card-results";
     }
 }

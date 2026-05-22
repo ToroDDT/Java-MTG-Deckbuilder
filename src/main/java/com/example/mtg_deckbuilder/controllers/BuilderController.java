@@ -48,7 +48,7 @@ public class BuilderController {
         model.addAttribute("userName", userName);
         model.addAttribute("ownedCard", new OwnedCard());
 
-        return "builder";
+        return "builder/builder";
 
     }
 
@@ -62,7 +62,7 @@ public class BuilderController {
 
         model.addAttribute("builderView", view);
 
-        return "type-layout :: type-layout";
+        return "builder/type-layout :: type-layout";
     }
 
     @GetMapping(value = "/builder/deck/{deckId}/card-query", headers = "HX-Request=true")
@@ -90,7 +90,7 @@ public class BuilderController {
         model.addAttribute("libraryView", libraryView);
         model.addAttribute("builderDeckId", deckId);
         model.addAttribute("builderDeckName", builderService.getBuilderView(deckId).deckName());
-        return "fragments/builder-owned-cards :: builder-owned-cards";
+        return "builder/builder-owned-cards :: builder-owned-cards";
     }
 
     @GetMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/hover", headers = "HX-Request=true")
@@ -102,7 +102,7 @@ public class BuilderController {
         var hoverOpt = builderService.getDeckEntryHover(
                 user, deckIdStr, deckCardEntryIdStr);
         model.addAttribute("hover", hoverOpt.orElse(null));
-        return "fragments/builder-card-hover :: hoverPanel";
+        return "builder/builder-card-hover :: hoverPanel";
     }
 
     @GetMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/actions", headers = "HX-Request=true")
@@ -112,7 +112,7 @@ public class BuilderController {
             @PathVariable("deckCardEntryId") String deckCardEntryId) {
         model.addAttribute("deckId", deckId);
         model.addAttribute("deckEntryId", deckCardEntryId);
-        return "fragments/builder-card-actions :: actionsPanel";
+        return "builder/builder-card-actions :: actionsPanel";
     }
 
     @PostMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/delete", headers = "HX-Request=true")
@@ -145,6 +145,6 @@ public class BuilderController {
             @RequestParam("deckId") UUID deckId) {
         model.addAttribute("deckId", deckId);
         model.addAttribute("cardImages", builderService.getRandomizedCards(deckId));
-        return "randomized-cards :: randomized-hand";
+        return "builder/randomized-cards :: randomized-hand";
     }
 }

@@ -37,7 +37,7 @@ public class DeckController {
                 "listOfCommanders", cardService.findLegalCommanders(),
                 "newDeck", newDeck
         ));
-        return "decks";
+        return "decks/decks";
     }
 
     @GetMapping(path = "/search", headers = "hx-request=true")
@@ -45,7 +45,7 @@ public class DeckController {
         model.addAllAttributes(Map.of(
                 "decks", deckServiceImpl.getDecks(user, deckSearchCriteria)
         ));
-        return "fragments/deck-search-results :: decks";
+        return "decks/deck-search-results :: decks";
     }
 
     @PostMapping(value = "/add-deck")

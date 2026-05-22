@@ -16,30 +16,28 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AccountController {
 
-    private final UserDetailsServiceImpl userService;
     private final RegistrationServiceImpl registrationService;
 
     @Autowired
-    public AccountController(UserDetailsServiceImpl userService, RegistrationServiceImpl registrationService) {
-        this.userService = userService;
+    public AccountController(RegistrationServiceImpl registrationService) {
         this.registrationService = registrationService;
     }
 
     @GetMapping("/login")
     public String showLoginPage() {
-        return "login";
+        return "auth/login";
     }
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new UserRegistrationDto());
-        return "register";
+        return "auth/register";
     }
 
     @PostMapping("/register")
     public String registerUserAccount(@Valid @ModelAttribute("user") UserRegistrationDto registrationDto, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "register";
+            return "auth/register";
         }
 
         try {
@@ -56,7 +54,7 @@ public class AccountController {
 
             result.rejectValue("email", "error.user", e.getMessage());
 
-            return "register";
+            return "auth/register";
         }
     }
 

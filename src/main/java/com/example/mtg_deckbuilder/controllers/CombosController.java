@@ -29,11 +29,11 @@ public class CombosController {
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
         model.addAttribute("locationOptions", comboServiceImpl.getLocations(user));
-        return "combo-browser";
+        return "combos/combo-browser";
     }
 
     @GetMapping(path = "/personal-library/combos-list", headers = "hx-request=true")
-    public  String getCombos(@ModelAttribute("personalLibraryFilters") @Sanitize LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
+    public  String getCombos(@ModelAttribute("personalLibraryFilters") @Sanitize LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user) {
 
         ComboViewModelImpl cardBrowserViewModel = new ComboViewModelImpl();
         var combosList = comboServiceImpl.getCombos(user, personalLibraryFilters);
@@ -45,7 +45,7 @@ public class CombosController {
                 .addAttribute("cardCombos", combosList )
                 .addAttribute("filters", personalLibraryFilters);
 
-        return "combos :: combos-section";
+        return "combos/combos :: combos-section";
 
     }
 
@@ -63,7 +63,7 @@ public class CombosController {
         }
 
         model.addAttribute("comboDetail", detail.get());
-        return "combo-detail";
+        return "combos/combo-detail";
     }
 
 }

@@ -69,7 +69,7 @@ class PersonalLibraryControllerTest {
 
         mockMvc.perform(get("/personal-library").with(authenticationToken()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("personal-library"))
+                .andExpect(view().name("library/personal-library"))
                 .andExpect(model().attributeExists("personalLibrary"))
                 .andExpect(model().attributeExists("ownedCard"))
                 .andExpect(model().attributeExists("filters"))
@@ -91,7 +91,7 @@ class PersonalLibraryControllerTest {
 
         mockMvc.perform(get("/personal-library/cards").with(authenticationToken()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("fragments/personal-cards :: personal-cards"))
+                .andExpect(view().name("library/cards :: personal-cards"))
                 .andExpect(model().attributeExists("libraryView"));
     }
 
@@ -113,7 +113,7 @@ class PersonalLibraryControllerTest {
                         .param("cardName", "Sol")
                         .param("tagSearch", "ramp, recursion"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("fragments/personal-cards :: personal-cards"))
+                .andExpect(view().name("library/cards :: personal-cards"))
                 .andExpect(model().attributeExists("libraryView"));
     }
 
@@ -125,7 +125,7 @@ class PersonalLibraryControllerTest {
                         .header("HX-Request", "true")
                         .param("name", "Sol Ring"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("card-query :: card-results"))
+                .andExpect(view().name("library/card-query :: card-results"))
                 .andExpect(model().attribute("message", "Sol Ring added to your library."));
 
         verify(personalLibraryService).addCard(any(OwnedCard.class), any(CustomUserDetails.class));
@@ -143,7 +143,7 @@ class PersonalLibraryControllerTest {
                         .with(csrf())
                         .header("HX-Request", "true"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("card-query :: card-results"))
+                .andExpect(view().name("library/card-query :: card-results"))
                 .andExpect(model().attribute("message", "Thassa, Deep-Dwelling added to your library."));
 
         verify(cardScannerClient).scanCard(any(byte[].class), eq("thassa.png"), eq("image/png"));
@@ -162,7 +162,7 @@ class PersonalLibraryControllerTest {
                         .param("tag", "Ramp")
                         .param("personalCardId", personalCardId.toString()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("fragments/tags :: tags"))
+                .andExpect(view().name("library/tags :: tags"))
                 .andExpect(model().attributeExists("card"));
     }
 
@@ -179,7 +179,7 @@ class PersonalLibraryControllerTest {
                         .param("tag", "Ramp")
                         .param("personalCardId", personalCardId.toString()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("fragments/tags :: tags"))
+                .andExpect(view().name("library/tags :: tags"))
                 .andExpect(model().attributeExists("card"));
     }
 
@@ -224,7 +224,7 @@ class PersonalLibraryControllerTest {
 
         mockMvc.perform(get("/personal-library/info").with(authenticationToken()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("fragments/collection-info :: stickyStatsBar"))
+                .andExpect(view().name("library/stats :: stickyStatsBar"))
                 .andExpect(model().attributeExists("personalLibrary"));
     }
 
