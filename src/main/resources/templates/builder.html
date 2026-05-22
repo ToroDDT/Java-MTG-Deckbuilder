@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html class="light" lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+<html class="light" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Deckbuilder| Dashboard </title>
-    <meta name="description" th:content="|Edit ${builderView.deckName} — mana curve, hand simulation, and card search in the deck builder.|"
+    <title>Deckbuilder | Dashboard</title>
+    <meta name="description"
+          th:content="|Edit ${builderView.deckName} — mana curve, hand simulation, and card search in the deck builder.|"
           content="Build your commander decks with cards searching and filtering tools."/>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -11,27 +13,29 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <script th:src="@{/js/builder-tailwind-config.min.js}"></script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/nav-bar.min.css}"/>
 </head>
 
-<div th:replace="~{fragments/nav-bar.html :: nav}"></div>
 <body class="bg-[#f9f9ff] text-[#191b23] font-[Inter,sans-serif]">
 
+<div th:replace="~{fragments/nav-bar.html :: nav}"></div>
+
 <div class="flex min-h-screen bg-[#f9f9ff]">
- <main class="flex-1 w-full max-w-[1480px] mx-auto bg-surface"
-  style="padding: clamp(1.25rem,3vw,2.5rem);
-         background: radial-gradient(ellipse at 70% 0%,rgba(216,226,255,.55),transparent 42%),#f9f9ff;">
+    <main class="flex-1 w-full max-w-[1480px] mx-auto"
+          style="padding: clamp(1.25rem, 3vw, 2.5rem);
+                 background: radial-gradient(ellipse at 70% 0%, rgba(216,226,255,0.55), transparent 42%), #f9f9ff;">
+
         <!-- Hero Header -->
-        <section class="mb-12">
+        <section class="mb-12" style="padding-bottom: clamp(1rem, 2vw, 1.5rem);">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="flex gap-8 items-start">
                     <div class="w-48 h-64 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(25,27,35,0.12)] shrink-0 border-4 border-white">
-                        <img alt="The Commander" class="w-full h-full object-cover"
+                        <img alt="The Commander"
+                             class="w-full h-full object-cover"
                              decoding="async" fetchpriority="high" height="256" width="192"
-                             th:src="@{${builderView.image}}"
-                        />
+                             th:src="@{${builderView.image}}"/>
                     </div>
                     <div class="pt-4">
                         <div class="flex items-center gap-3 mb-2">
@@ -42,7 +46,8 @@
                                 <div class="w-4 h-4 rounded-full bg-white border border-black/10 shadow-sm"></div>
                             </span>
                         </div>
-                        <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none" th:text="${builderView.deckName}">The Necrobloom</h1>
+                        <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none"
+                            th:text="${builderView.deckName}">The Necrobloom</h1>
                         <div class="flex gap-6 text-on-surface-variant font-medium">
                             <div class="flex flex-col">
                                 <span class="text-[10px] uppercase tracking-wider text-slate-600">Owner</span>
@@ -59,15 +64,15 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="flex flex-col lg:flex-row lg:items-end gap-1">
                     <form id="builderAddCardForm" class="flex-1 flex flex-col gap-2 min-w-0"
                           th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
                         <input type="hidden" name="_builderCardContext" value="true"/>
-                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600" for="builder-card-name">
+                        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600"
+                               for="builder-card-name">
                             Search cards (add to library)
                         </label>
-
-                        <!-- Wrap input + dropdown in a relative container -->
                         <div class="relative">
                             <input type="text" name="query" id="builder-card-name" autocomplete="off"
                                    class="rounded-xl font-medium bg-surface-container-highest text-on-surface shadow-sm border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
@@ -78,22 +83,22 @@
                                    hx-swap="innerHTML"
                                    hx-on::after-request="const r=document.getElementById('builder-card-query-results'); r.classList.toggle('hidden', !r.innerText.trim())"
                                    onblur="setTimeout(()=>document.getElementById('builder-card-query-results').classList.add('hidden'),150)"/>
-
                             <div id="builder-card-query-results"
                                  class="hidden absolute top-full left-0 right-0 mt-1 z-50
-                max-h-60 overflow-y-auto
-                rounded-xl border border-outline-variant/40
-                bg-white shadow-lg
-                px-1 py-1 text-left">
+                                        max-h-60 overflow-y-auto rounded-xl
+                                        border border-outline-variant/40
+                                        bg-white shadow-lg px-1 py-1 text-left">
                             </div>
                         </div>
                     </form>
 
                     <div class="flex flex-wrap gap-3 shrink-0">
-                        <button type="button" class="px-6 py-3 rounded-xl font-bold bg-white text-on-surface shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
+                        <button type="button"
+                                class="px-6 py-3 rounded-xl font-bold bg-white text-on-surface shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
                             <span class="material-symbols-outlined">share</span> Share
                         </button>
-                        <button type="button" class="px-6 py-3 rounded-xl font-bold bg-blue-400 text-on-surface shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
+                        <button type="button"
+                                class="px-6 py-3 rounded-xl font-bold bg-blue-400 text-on-surface shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
                             <span class="material-symbols-outlined">Create</span> Buy
                         </button>
                     </div>
@@ -107,28 +112,23 @@
             <!-- Left Column: Decklist (8/12) -->
             <div class="col-span-12 xl:col-span-8 space-y-12">
 
-                <!-- Creatures -->
-                <div
-                        id="type-layout-container"
-                        class="min-h-[18rem]"
-                        th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
-                        hx-trigger="load, cardsUpdated from:body"
-                        hx-swap="innerHTML">
+                <!-- Card type layout (HTMX loaded) -->
+                <div id="type-layout-container"
+                     class="min-h-[18rem]"
+                     th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
+                     hx-trigger="load, cardsUpdated from:body"
+                     hx-swap="innerHTML">
                 </div>
-                <!-- Buffer so card dropdowns don't overlap the hand section -->
 
-                <!-- Asymmetric Visual: Featured Mechanic -->
-                <div class="">
-
-                    <main class="">
+                <!-- Randomized Hand Section -->
+                <div>
+                    <main>
                         <section class="bg-surface-dim rounded-3xl overflow-hidden">
-                            <div
-                                    id="randomized-hand-container"
-                                    class="w-full "
-                                    th:attr="hx-get=@{/builder/randomize-cards(deckId=${builderView.deckId})}"
-                                    hx-trigger="load, cardsUpdated from:body"
-                                    hx-swap="innerHTML">
-
+                            <div id="randomized-hand-container"
+                                 class="w-full"
+                                 th:attr="hx-get=@{/builder/randomize-cards(deckId=${builderView.deckId})}"
+                                 hx-trigger="load, cardsUpdated from:body"
+                                 hx-swap="innerHTML">
                                 <div class="p-4 text-slate-600 min-h-[14rem]">
                                     Loading hand...
                                 </div>
@@ -137,26 +137,32 @@
                     </main>
                 </div>
             </div>
-            <!-- Right Column: Statistics (4/12) -->
-            <div class="col-span-12 xl:col-span-4 space-y-8">
+
+            <!-- Right Column: Statistics (4/12) — sticky -->
+            <div class="col-span-12 xl:col-span-4 space-y-8 xl:sticky xl:top-24 self-start">
 
                 <!-- Mana Curve -->
-
-<div class="bg-white/[.92] backdrop-blur-md rounded-3xl p-6
-     border border-[rgba(194,198,214,.55)]
-     shadow-[0_20px_40px_rgba(25,27,35,.06)]">
-    <h2 class="text-sm font-black text-on-background uppercase tracking-wider mb-8">Mana Curve</h2>
+                <div class="bg-white/[.92] backdrop-blur-md rounded-3xl p-6
+                            border border-[rgba(194,198,214,.55)]
+                            shadow-[0_20px_40px_rgba(25,27,35,.06)]">
+                    <h2 class="text-sm font-black text-on-background uppercase tracking-wider mb-8">Mana Curve</h2>
                     <div class="relative h-48 w-full min-h-[12rem]" role="presentation">
-                        <canvas id="myChart" aria-label="Mana curve showing card counts by mana value" class="block h-full w-full max-w-full"></canvas>
+                        <canvas id="myChart"
+                                aria-label="Mana curve showing card counts by mana value"
+                                class="block h-full w-full max-w-full"></canvas>
                     </div>
                 </div>
 
                 <!-- Color Production -->
-                <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
+                <div class="bg-white/[.92] backdrop-blur-md rounded-3xl p-6
+                            border border-[rgba(194,198,214,.55)]
+                            shadow-[0_20px_40px_rgba(25,27,35,.06)]">
                     <h2 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Color Production</h2>
                     <div class="space-y-6">
                         <div class="relative h-32 w-full min-h-[8rem]" role="presentation">
-                            <canvas id="colorProduction" aria-label="Color production chart" class="block h-full w-full max-w-full"></canvas>
+                            <canvas id="colorProduction"
+                                    aria-label="Color production chart"
+                                    class="block h-full w-full max-w-full"></canvas>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -186,7 +192,9 @@
                 </div>
 
                 <!-- Type Distribution -->
-                <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_rgba(25,27,35,0.06)] border border-outline-variant/10">
+                <div class="bg-white/[.92] backdrop-blur-md rounded-3xl p-6
+                            border border-[rgba(194,198,214,.55)]
+                            shadow-[0_20px_40px_rgba(25,27,35,.06)]">
                     <h2 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Type Distribution</h2>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="p-4 bg-slate-50 rounded-2xl">
@@ -220,8 +228,8 @@
                     </div>
                 </div>
 
-            </div>
-        </div>
+            </div><!-- /right column -->
+        </div><!-- /grid -->
     </main>
 </div>
 
@@ -236,7 +244,8 @@
         <span class="text-[10px] font-bold">Decks</span>
     </button>
     <div class="relative -top-6">
-        <button type="button" class="bg-primary text-white p-4 rounded-full shadow-lg shadow-blue-300" aria-label="Add or quick actions">
+        <button type="button" class="bg-primary text-white p-4 rounded-full shadow-lg shadow-blue-300"
+                aria-label="Add or quick actions">
             <span class="material-symbols-outlined" aria-hidden="true">add</span>
         </button>
     </div>
@@ -270,20 +279,14 @@
         var insideActions = event.target.closest('.builder-card-actions-drop');
         var openDrops = document.querySelectorAll('.builder-card-actions-drop');
 
-        if (insideActions) {
-            return;
-        }
+        if (insideActions) return;
 
         if (toggle) {
             var drop = toggle.nextElementSibling;
             var isOpen = drop && drop.innerHTML.trim().length > 0;
-
             openDrops.forEach(function (openDrop) {
-                if (openDrop !== drop) {
-                    openDrop.innerHTML = '';
-                }
+                if (openDrop !== drop) openDrop.innerHTML = '';
             });
-
             if (isOpen) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
@@ -292,9 +295,7 @@
             return;
         }
 
-        openDrops.forEach(function (drop) {
-            drop.innerHTML = '';
-        });
+        openDrops.forEach(function (drop) { drop.innerHTML = ''; });
     }, true);
 
     document.addEventListener('htmx:configRequest', function (event) {
@@ -303,9 +304,7 @@
         if (csrfMeta && hdrMeta) {
             var t = csrfMeta.getAttribute('content');
             var h = hdrMeta.getAttribute('content');
-            if (t && h) {
-                event.detail.headers[h] = t;
-            }
+            if (t && h) event.detail.headers[h] = t;
         }
     });
 </script>
