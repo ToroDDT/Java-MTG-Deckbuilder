@@ -48,8 +48,7 @@ public class BuilderController {
         model.addAttribute("userName", userName);
         model.addAttribute("ownedCard", new OwnedCard());
 
-        return "builder/builder";
-
+        return "builder/main";
     }
 
     @GetMapping("/builder/type-layout/{id}")
@@ -79,7 +78,7 @@ public class BuilderController {
         model.addAttribute("cardQueryInputId", "builder-card-name");
         model.addAttribute("deckId", deckId);
 
-        return "card-selection-for-deck :: card-results";
+        return "builder/results :: card-results";
     }
     @GetMapping(value = "/builder/deck/{deckId}/owned-library", headers = "HX-Request=true")
     public String builderOwnedLibrary(
@@ -90,7 +89,7 @@ public class BuilderController {
         model.addAttribute("libraryView", libraryView);
         model.addAttribute("builderDeckId", deckId);
         model.addAttribute("builderDeckName", builderService.getBuilderView(deckId).deckName());
-        return "builder/builder-owned-cards :: builder-owned-cards";
+        return "builder/cards :: builder-owned-cards";
     }
 
     @GetMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/hover", headers = "HX-Request=true")
@@ -102,7 +101,7 @@ public class BuilderController {
         var hoverOpt = builderService.getDeckEntryHover(
                 user, deckIdStr, deckCardEntryIdStr);
         model.addAttribute("hover", hoverOpt.orElse(null));
-        return "builder/builder-card-hover :: hoverPanel";
+        return "builder/card-hover :: hoverPanel";
     }
 
     @GetMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/actions", headers = "HX-Request=true")
@@ -112,7 +111,7 @@ public class BuilderController {
             @PathVariable("deckCardEntryId") String deckCardEntryId) {
         model.addAttribute("deckId", deckId);
         model.addAttribute("deckEntryId", deckCardEntryId);
-        return "builder/builder-card-actions :: actionsPanel";
+        return "builder/card-actions :: actionsPanel";
     }
 
     @PostMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/delete", headers = "HX-Request=true")

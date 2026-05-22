@@ -80,7 +80,7 @@
                     <button class="btn-action btn-secondary" type="button">New Folder</button>
                 </div>
             </div>
-            <div th:replace="~{decks/add-deck-modal.html :: add-deck-modal}">...</div>
+            <div th:replace="~{decks/create-deck.html :: add-deck-modal}">...</div>
             <div th:if="${#lists.isEmpty(decks)}" class="empty-state">
                 <i class="fas fa-folder-open"></i>
                 <p>No decks found matching your filters.</p>

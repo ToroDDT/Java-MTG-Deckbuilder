@@ -55,7 +55,7 @@ public class PersonalLibraryController {
         response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
 
-        return "library/personal-library";
+        return "library/main";
     }
 
 
@@ -92,7 +92,7 @@ public class PersonalLibraryController {
         String trimmedQuery = query == null ? "" : query.trim();
         model.addAttribute("query", trimmedQuery);
         model.addAttribute("cards", personalLibraryService.getCardQuery(trimmedQuery));
-        return "library/card-query :: card-results";
+        return "library/results :: card-results";
     }
 
 
@@ -197,6 +197,6 @@ public class PersonalLibraryController {
         model.addAttribute("query", "");
         model.addAttribute("cards", java.util.List.of());
         model.addAttribute("message", message);
-        return "library/card-query :: card-results";
+        return "library/results :: card-results";
     }
 }

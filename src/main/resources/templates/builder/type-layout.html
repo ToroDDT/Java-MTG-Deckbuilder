@@ -20,7 +20,7 @@
            th:each="card : ${builderView.creatures}">
         <div class="flex items-center gap-4">
           <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
         </div>
       </div>
       <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.creatures)}">No creatures found.</div>
@@ -40,7 +40,7 @@
            th:each="card : ${builderView.instants}">
         <div class="flex items-center gap-4">
           <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
         </div>
       </div>
       <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.instants)}">No instants found.</div>
@@ -60,7 +60,7 @@
            th:each="card : ${builderView.sorceries}">
         <div class="flex items-center gap-4">
           <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
         </div>
       </div>
       <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.sorceries)}">No sorceries found.</div>
@@ -80,7 +80,7 @@
            th:each="card : ${builderView.enchantments}">
         <div class="flex items-center gap-4">
           <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
         </div>
       </div>
       <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.enchantments)}">No enchantments found.</div>
@@ -100,7 +100,7 @@
            th:each="card : ${builderView.artifacts}">
         <div class="flex items-center gap-4">
           <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
         </div>
       </div>
       <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.artifacts)}">No artifacts found.</div>
@@ -120,7 +120,7 @@
            th:each="card : ${builderView.lands}">
         <div class="flex items-center gap-4">
           <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/builder-deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
         </div>
       </div>
       <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.lands)}">No lands found.</div>
