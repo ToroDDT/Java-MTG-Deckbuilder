@@ -51,10 +51,7 @@ public class PersonalLibraryController {
         model.addAttribute("personalLibrary", new CardBrowserViewModelImpl());
         model.addAttribute("ownedCard", new OwnedCard());
         model.addAttribute("filters", new LibraryFilters());
-        model.addAttribute("libraryView",
-                user != null
-                        ? personalLibraryService.buildPersonalLibraryViewModel(user)
-                        : emptyLibraryView());
+        model.addAttribute("libraryView", personalLibraryService.buildPersonalLibraryViewModel(user));
 
 
         response.setHeader("Cache-Control", "max-age=" + TimeUnit.DAYS.toDays(30));
@@ -63,16 +60,6 @@ public class PersonalLibraryController {
         return "personal-library";
     }
 
-    private static LibraryViewModelImpl emptyLibraryView() {
-        return LibraryViewModelImpl.builder()
-                .cards(List.of())
-                .deckNames(List.of())
-                .totalCards(0)
-                .totalValue(0.0)
-                .avgPrice(0.0)
-                .colorIdentityAmounts(Map.of())
-                .build();
-    }
 
     @GetMapping("/personal-library/cards")
     public String getPersonalCards(Model model, @AuthenticationPrincipal CustomUserDetails user) {
