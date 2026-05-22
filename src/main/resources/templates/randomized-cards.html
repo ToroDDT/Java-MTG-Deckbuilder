@@ -28,7 +28,13 @@
     <div class="flex justify-center gap-3 pb-6">
         <button class="px-6 py-2.5 rounded-xl bg-zinc-700 hover:bg-zinc-600 text-white font-semibold text-sm transition-colors">Playtest</button>
         <button class="px-6 py-2.5 rounded-xl bg-zinc-700 hover:bg-zinc-600 text-white font-semibold text-sm transition-colors">Draw</button>
-        <button class="px-6 py-2.5 rounded-xl bg-zinc-700 hover:bg-zinc-600 text-white font-semibold text-sm transition-colors">Deal Another Hand</button>
+        <button type="button"
+                class="px-6 py-2.5 rounded-xl bg-zinc-700 hover:bg-zinc-600 text-white font-semibold text-sm transition-colors"
+                th:attr="hx-get=@{/builder/randomize-cards(deckId=${deckId})}"
+                hx-target="#randomized-hand-container"
+                hx-swap="innerHTML">
+            Deal Another Hand
+        </button>
     </div>
 
     <p class="text-center text-sm text-slate-600 pb-6">

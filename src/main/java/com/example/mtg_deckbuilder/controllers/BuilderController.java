@@ -143,6 +143,7 @@ public class BuilderController {
     public String getRandomizedCards(
             Model model,
             @RequestParam("deckId") UUID deckId) {
+        model.addAttribute("deckId", deckId);
         model.addAttribute("cardImages", builderService.getRandomizedCards(deckId));
         return "randomized-cards :: randomized-hand";
     }
