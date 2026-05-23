@@ -1,10 +1,13 @@
 package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.dto.card.Card;
+import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
+import com.example.mtg_deckbuilder.service.api.CardService;
+import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
@@ -22,9 +25,13 @@ import java.util.stream.Stream;
 public class BuilderServiceImpl implements BuilderService {
 
     private final BuilderRepository builderRepository;
+    private final DeckService deckService;
+    private final CardService cardService;
 
-    public BuilderServiceImpl(BuilderRepository builderRepository) {
+    public BuilderServiceImpl(BuilderRepository builderRepository, DeckService deckService, CardService cardService) {
         this.builderRepository = builderRepository;
+        this.deckService = deckService;
+        this.cardService = cardService;
     }
 
     @Override
@@ -56,6 +63,7 @@ public class BuilderServiceImpl implements BuilderService {
     public BuilderViewModel getBuilderView(String deckId ) {
 
         var cards = builderRepository.getAllCardsForUser(deckId);
+
         if (cards.isEmpty()) {
             var emptyCurve = List.of(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
             var emptyColors = List.of(0L, 0L, 0L, 0L, 0L, 0L);
@@ -68,6 +76,7 @@ public class BuilderServiceImpl implements BuilderService {
                     .creatures(List.of())
                     .colorProduction(emptyColors)
                     .enchantments(List.of())
+                    .colors(List.of())
                     .sorceries(List.of())
                     .totalValue(0.0)
                     .deckName("")
@@ -129,6 +138,10 @@ public class BuilderServiceImpl implements BuilderService {
                         .sum())
         ).collect(Collectors.toList());
 
+        var commander = cardService.findByName(cards.getLast().commander());
+        List<String> colors = commander.map(ColorIdentity::getColors).orElse(List.of());
+
+
         return BuilderViewModel.builder()
                 .image(deckImage)
                 .totalValue(total)
@@ -136,6 +149,7 @@ public class BuilderServiceImpl implements BuilderService {
                 .creatures(creatures)
                 .manaCurveData(manaCurveData)
                 .instants(instants)
+                .colors(colors)
                 .enchantments(enchantments)
                 .artifacts(artifacts)
                 .lands(lands)

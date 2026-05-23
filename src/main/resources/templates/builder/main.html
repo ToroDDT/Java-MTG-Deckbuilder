@@ -164,28 +164,28 @@
                                     aria-label="Color production chart"
                                     class="block h-full w-full max-w-full"></canvas>
                         </div>
-                        <div>
+
+                        <!-- Same order as colorProduction chart (Red, White, Green, Black, Blue, Colorless) -->
+                        <div th:each="label, stat : ${colorProductionLabels}" class="mb-4 last:mb-0"
+                             th:with="rawCount=${colorProductionData.get(stat.index)},
+                                      count=${rawCount != null ? rawCount : 0},
+                                      total=${colorProductionTotal != null && colorProductionTotal > 0 ? colorProductionTotal : 1},
+                                      pct=${count * 100.0 / total},
+                                      dotClass=${stat.index == 0 ? 'bg-red-500 border-red-900/20' : (stat.index == 1 ? 'bg-slate-100 border-slate-300' : (stat.index == 2 ? 'bg-green-600 border-green-900/20' : (stat.index == 3 ? 'bg-slate-900 border-black/30' : (stat.index == 4 ? 'bg-blue-600 border-blue-900/20' : 'bg-slate-400 border-slate-500/40'))))},
+                                      barClass=${stat.index == 0 ? 'bg-red-500' : (stat.index == 1 ? 'bg-slate-300' : (stat.index == 2 ? 'bg-green-500' : (stat.index == 3 ? 'bg-slate-900' : (stat.index == 4 ? 'bg-blue-600' : 'bg-slate-400'))))}">
                             <div class="flex justify-between items-center mb-2">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                    <span class="text-xs font-bold text-on-surface">Green</span>
+                                    <div class="w-3 h-3 shrink-0 rounded-full border"
+                                         th:classappend="${dotClass}"></div>
+                                    <span class="text-xs font-bold text-on-surface" th:text="${label}">Red</span>
                                 </div>
-                                <span class="text-xs font-bold text-slate-600">42%</span>
+                                <span class="text-xs font-bold text-slate-600"
+                                      th:text="${#numbers.formatDecimal(pct, 1, 1)} + '%'">0%</span>
                             </div>
                             <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                                <div class="h-full bg-green-500 w-[42%] rounded-full"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-white border border-slate-200"></div>
-                                    <span class="text-xs font-bold text-on-surface">White</span>
-                                </div>
-                                <span class="text-xs font-bold text-slate-600">20%</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                                <div class="h-full bg-slate-300 w-[20%] rounded-full"></div>
+                                <div class="h-full rounded-full"
+                                     th:classappend="${barClass}"
+                                     th:style="|width: ${#numbers.formatDecimal(pct, 1, 2)}%;|"></div>
                             </div>
                         </div>
                     </div>

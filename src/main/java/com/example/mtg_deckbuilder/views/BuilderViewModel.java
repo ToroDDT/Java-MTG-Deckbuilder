@@ -18,6 +18,7 @@ public record BuilderViewModel(
         List<BuilderDeckCardRecord> lands,
         List<BuilderDeckCardRecord> sorceries,
         List<Long> colorProduction,
-        String deckId
+        String deckId,
+        List<String> colors
 ) {
 }

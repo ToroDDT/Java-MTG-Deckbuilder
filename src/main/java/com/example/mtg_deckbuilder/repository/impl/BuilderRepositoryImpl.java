@@ -182,6 +182,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                                 .name(rs.getString("card_name"))
                                 .deckName(rs.getString("deck_name"))
                                 .deckImage(rs.getString("deck_image"))
+                                .commander(rs.getString("commander"))
                                 .cmc(rs.getString("cmc"))
                                 .producedMana(rs.getString("produced_mana"))
                                 .colorIdentity(rs.getString("color_identity"))
