@@ -33,20 +33,20 @@
             </div>
 
             <!-- Tags (Clean, Legible, No Background) -->
-            <div>
+            <div >
                 <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Tags</div>
-                <div class="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                <div class="mt-1 flex flex-wrap gap-x-1 gap-y-1">
                     <!-- Placeholder if no tags -->
                     <span th:if="${#lists.isEmpty(hover.tags())}" class="text-xs italic text-zinc-600">No tags</span>
 
-                    <!-- Individual Tags -->
-                    <th:block th:each="tag, tagStat : ${hover.tags()}">
-                        <span class="text-xl font-bold text-white"
-                              th:if="${tagStat.index < 4}"
-                              th:text="${tag}">
-                            Tag
-                        </span>
-                    </th:block>
+                    <div class="flex gap-1">
+                        <th:block th:each="tag, tagStat : ${hover.tags()}">
+                            <span class="text-sm font-bold text-white"
+                                th:if="${tagStat.index < 4}"
+                                th:text="${tag}"> Tag
+                            </span>
+                        </th:block>
+                    </div>
 
                     <!-- Overflow Count -->
                     <span class="text-xs font-bold text-zinc-500"
