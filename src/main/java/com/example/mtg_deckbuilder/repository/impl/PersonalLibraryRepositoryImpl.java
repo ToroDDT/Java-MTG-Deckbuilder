@@ -493,7 +493,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
     }
 
     @Override
-    public PersonalLibraryStats getInfo(CustomUserDetails user) {
+    public List<OwnedCard> getInfo(CustomUserDetails user) {
         String sql = """
          SELECT\s
              personal_collection_library.id AS personal_library_id,
@@ -522,20 +522,8 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
          ORDER BY personal_collection_library.date_added DESC , personal_collection_library.id DESC \s
         \s""";
 
-        List<OwnedCard> cards = jdbcTemplate.query(sql, rowMapper, user.getId());
+        return jdbcTemplate.query(sql, rowMapper, user.getId());
 
-        double totalValue = cards.stream()
-                .filter(card -> card.getCard() != null && card.getCard().getPrices() != null)
-                .filter(card -> card.getCard().getPrices().getUsd() != null)
-                .mapToDouble(card -> card.getCard().getPrices().getUsd())
-                .sum();
-
-        var colorCounts = cards.stream()
-                .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
-        var totalCards = cards.size();
-        var avgPrice = totalCards == 0 ? 0.0 : totalValue / totalCards;
-
-        return new PersonalLibraryStats(totalValue, colorCounts, totalCards, avgPrice);
     }
 
 }

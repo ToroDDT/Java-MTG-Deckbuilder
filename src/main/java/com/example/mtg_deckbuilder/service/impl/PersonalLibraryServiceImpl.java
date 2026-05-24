@@ -185,7 +185,25 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
 
   @Override
   public PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user) {
-    return personalLibraryRepository.getInfo(user);
+    var cards = personalLibraryRepository.getInfo(user);
+
+    double totalValue = cards.stream()
+            .filter(card -> card.getCard() != null && card.getCard().getPrices() != null)
+            .filter(card -> card.getCard().getPrices().getUsd() != null)
+            .mapToDouble(card -> card.getCard().getPrices().getUsd())
+            .sum();
+
+    var colorCounts = cards.stream()
+            .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
+    var totalCards = cards.size();
+    var avgPrice = totalCards == 0 ? 0.0 : totalValue / totalCards;
+
+    return PersonalLibraryStats.builder()
+            .totalCards(totalCards)
+            .totalValue(totalValue)
+            .avgPrice(avgPrice)
+            .colorIdentityAmounts(colorCounts)
+            .build();
   }
 
   @Override

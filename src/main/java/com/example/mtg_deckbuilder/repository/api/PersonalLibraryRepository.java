@@ -25,7 +25,7 @@ public interface PersonalLibraryRepository {
 
   Map<UUID, List<String>> findLocations(CustomUserDetails user, List<UUID> cardIds);
 
-  PersonalLibraryStats getInfo(CustomUserDetails user);
+  List<OwnedCard>getInfo(CustomUserDetails user);
 
   List<String> saveTags (String tag, UUID personalCardId, CustomUserDetails user);
 
