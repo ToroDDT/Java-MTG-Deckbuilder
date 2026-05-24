@@ -219,7 +219,7 @@ class PersonalLibraryControllerTest {
 
     @Test
     void personalLibraryInfoReturnsStatsFragment() throws Exception {
-        when(personalLibraryService.getStatsOfPersonalLibrary(any(CustomUserDetails.class)))
+        when(personalLibraryService.getLibraryInfo(any(CustomUserDetails.class)))
                 .thenReturn(new PersonalLibraryStats(42.0, Map.of(ColorIdentity.COLORLESS, 2L), 2, 21.0));
 
         mockMvc.perform(get("/personal-library/info").with(authenticationToken()))

@@ -80,7 +80,7 @@ public class PersonalLibraryController {
 
     @GetMapping("/personal-library/info")
     public String getPersonalCardsInfo(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        PersonalLibraryStats libraryView = personalLibraryService.getStatsOfPersonalLibrary(user);
+        PersonalLibraryStats libraryView = personalLibraryService.getLibraryInfo(user);
 
         model.addAttribute("personalLibrary", libraryView);
 

@@ -67,7 +67,7 @@ public interface PersonalLibraryService {
 
   LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);
 
-  PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user);
+  PersonalLibraryStats getLibraryInfo (CustomUserDetails user);
 
   Boolean findCard(CustomUserDetails user,String cardId);
 

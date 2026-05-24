@@ -184,7 +184,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
   }
 
   @Override
-  public PersonalLibraryStats getStatsOfPersonalLibrary(CustomUserDetails user) {
+  public PersonalLibraryStats getLibraryInfo(CustomUserDetails user) {
     var cards = personalLibraryRepository.getInfo(user);
 
     double totalValue = cards.stream()
