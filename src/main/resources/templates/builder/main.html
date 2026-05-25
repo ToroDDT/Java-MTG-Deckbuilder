@@ -120,19 +120,54 @@
                 <!-- Hidden + script are outside the spaced stack so space-y / gap doesn’t add margin above #type-layout-container -->
                 <div id="builder-deck-layout-request-params" hidden>
                     <input type="hidden" name="viewStyle" id="builder-deck-layout-view-style-input" value="text"/>
+                    <input type="hidden" name="groupBy" id="builder-deck-layout-group-input" value="type"/>
+                    <input type="hidden" name="sortBy" id="builder-deck-layout-sort-input" value="name"/>
+                    <div id="builder-deck-layout-extras-fields"></div>
                 </div>
                 <script th:inline="javascript">
                     (function () {
+                        function applyPrefs(prefObject) {
+                            var p = (prefObject && typeof prefObject === 'object')
+                                ? prefObject
+                                : {};
+
+                            function setHidden(id, v, fallback) {
+                                var el = document.getElementById(id);
+                                if (!el) return;
+                                el.value = (v !== undefined && v !== null && v !== '')
+                                    ? '' + v
+                                    : fallback;
+                            }
+
+                            function rebuildExtras(extraKeys) {
+                                var box = document.getElementById('builder-deck-layout-extras-fields');
+                                if (!box) return;
+                                box.innerHTML = '';
+                                (extraKeys || []).forEach(function (key) {
+                                    if (!key) return;
+                                    var input = document.createElement('input');
+                                    input.type = 'hidden';
+                                    input.name = 'extras';
+                                    input.value = '' + key;
+                                    box.appendChild(input);
+                                });
+                            }
+
+                            setHidden('builder-deck-layout-view-style-input', p.viewStyle, 'text');
+                            setHidden('builder-deck-layout-group-input', p.groupBy, 'type');
+                            setHidden('builder-deck-layout-sort-input', p.sortBy, 'name');
+
+                            rebuildExtras(Array.isArray(p.extras) ? p.extras : []);
+                        }
+
+                        window.__BUILDER_SYNC_DECK_LAYOUT_HIDDENS__ = applyPrefs;
+
                         var deckId = /*[[${builderView.deckId}]]*/ '';
                         try {
                             var raw = localStorage.getItem('mtg-builder-view:' + deckId);
                             if (!raw) return;
-                            var p = JSON.parse(raw);
-                            if (p && p.viewStyle) {
-                                var inp = document.getElementById('builder-deck-layout-view-style-input');
-                                if (inp) inp.value = p.viewStyle;
-                            }
-                        } catch (e) { /* ignore malformed storage */ }
+                            applyPrefs(JSON.parse(raw));
+                        } catch (ignored) {}
                     })();
                 </script>
                 <div class="flex flex-col gap-12">
@@ -431,6 +466,15 @@
             viewStyleInput.value = viewStyle || 'text';
         }
 
+        function syncDeckLayoutInputs(prefs) {
+            var fn = window.__BUILDER_SYNC_DECK_LAYOUT_HIDDENS__;
+            if (typeof fn === 'function') {
+                fn(prefs || {});
+            } else {
+                syncHiddenViewStyle((prefs || {}).viewStyle);
+            }
+        }
+
         function closeModal() {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
@@ -468,7 +512,7 @@
             var deckId = getDeckId();
             var prefs = readPrefsFromModal();
             writePrefs(deckId, prefs);
-            syncHiddenViewStyle(prefs.viewStyle);
+            syncDeckLayoutInputs(prefs);
             closeModal();
             htmx.trigger(document.body, 'builderViewChanged');
         });

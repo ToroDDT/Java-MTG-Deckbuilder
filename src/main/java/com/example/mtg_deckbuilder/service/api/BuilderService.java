@@ -2,6 +2,7 @@ package com.example.mtg_deckbuilder.service.api;
 
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.BuilderDeckSection;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 
@@ -12,6 +13,8 @@ import java.util.UUID;
 public interface BuilderService {
 
     BuilderViewModel getBuilderView(String deckId);
+
+    List<BuilderDeckSection> buildDeckSections(String deckId, String groupBy, String sortBy);
 
     Optional<BuilderCardHoverView> getDeckEntryHover(CustomUserDetails user, UUID deckId, UUID deckCardEntryId);
 

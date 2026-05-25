@@ -58,122 +58,57 @@
     .card-stack-item:hover + .card-stack-item {
       z-index: 20; /* Keep the immediate next card below it, but separate */
     }
+
+    .deck-visual-spoiler-tile img {
+      filter: blur(10px) saturate(55%);
+      transform: translateZ(0);
+    }
+
+    .deck-visual-spoiler-tile:focus-within img,
+    .deck-visual-spoiler-tile:hover img {
+      filter: none;
+      transform: translateZ(0);
+    }
+
+    .deck-visual-spoiler-tile .deck-visual-spoiler-veil {
+      opacity: 1;
+      transition: opacity 180ms ease;
+    }
+
+    .deck-visual-spoiler-tile:focus-within .deck-visual-spoiler-veil,
+    .deck-visual-spoiler-tile:hover .deck-visual-spoiler-veil {
+      opacity: 0;
+      pointer-events: none;
+    }
   </style>
 
   <div class="rounded-3xl p-6 sm:p-8 border shadow-2xl space-y-10">
 
-    <div class="space-y-4">
+    <div th:each="sec : ${deckSections}" class="space-y-4">
+
       <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
         <h2 class="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
-          Creatures
-          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.creatures)} + ')'">0</span>
+          <span th:text="${sec.title}">Section</span>
+          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(sec.cards)} + ')'">0</span>
         </h2>
         <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Avg CMC: 3.2</span>
       </div>
 
-      <th:block th:if="${builderView.creatures != null and !#lists.isEmpty(builderView.creatures)}">
-        <div th:each="startIndex : ${#numbers.sequence(0, #lists.size(builderView.creatures) - 1, 12)}" class="space-y-2 mb-6">
-          <th:block th:with="endIndex=${startIndex + 12 > #lists.size(builderView.creatures) ? #lists.size(builderView.creatures) : startIndex + 12}">
-            <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.creatures.subList(startIndex, endIndex)})}"/>
+      <div th:if="${#lists.isEmpty(sec.cards)}"
+           class="text-sm text-zinc-500 italic px-1">No cards in this group.</div>
+
+      <div th:if="${!#lists.isEmpty(sec.cards)}">
+        <div th:each="startIndex : ${#numbers.sequence(0, (#lists.size(sec.cards) > 1) ? #lists.size(sec.cards) - 1 : 0, 12)}"
+             class="space-y-2 mb-6 last:mb-0">
+          <th:block th:with="
+                        sz=${#lists.size(sec.cards)},
+                        end=${startIndex + 12 > sz ? sz : startIndex + 12}">
+            <th:block
+                th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${sec.cards.subList(startIndex, end)})}"/>
           </th:block>
         </div>
-      </th:block>
-      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.creatures)}">No creatures found.</p>
-    </div>
-
-    <div class="space-y-4">
-      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
-        <h2 class="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
-          Instants
-          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.instants)} + ')'">0</span>
-        </h2>
-        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Interaction</span>
       </div>
 
-      <th:block th:if="${builderView.instants != null and !#lists.isEmpty(builderView.instants)}">
-        <div th:each="startIndex : ${#numbers.sequence(0, #lists.size(builderView.instants) - 1, 12)}" class="space-y-2 mb-6">
-          <th:block th:with="endIndex=${startIndex + 12 > #lists.size(builderView.instants) ? #lists.size(builderView.instants) : startIndex + 12}">
-            <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.instants.subList(startIndex, endIndex)})}"/>
-          </th:block>
-        </div>
-      </th:block>
-      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.instants)}">No instants found.</p>
-    </div>
-
-    <div class="space-y-4">
-      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
-        <h2 class="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
-          Sorceries
-          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.sorceries)} + ')'">0</span>
-        </h2>
-        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Value</span>
-      </div>
-
-      <th:block th:if="${builderView.sorceries != null and !#lists.isEmpty(builderView.sorceries)}">
-        <div th:each="startIndex : ${#numbers.sequence(0, #lists.size(builderView.sorceries) - 1, 12)}" class="space-y-2 mb-6">
-          <th:block th:with="endIndex=${startIndex + 12 > #lists.size(builderView.sorceries) ? #lists.size(builderView.sorceries) : startIndex + 12}">
-            <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.sorceries.subList(startIndex, endIndex)})}"/>
-          </th:block>
-        </div>
-      </th:block>
-      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.sorceries)}">No sorceries found.</p>
-    </div>
-
-    <div class="space-y-4">
-      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
-        <h2 class="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
-          Enchantments
-          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.enchantments)} + ')'">0</span>
-        </h2>
-        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Value</span>
-      </div>
-
-      <th:block th:if="${builderView.enchantments != null and !#lists.isEmpty(builderView.enchantments)}">
-        <div th:each="startIndex : ${#numbers.sequence(0, #lists.size(builderView.enchantments) - 1, 12)}" class="space-y-2 mb-6">
-          <th:block th:with="endIndex=${startIndex + 12 > #lists.size(builderView.enchantments) ? #lists.size(builderView.enchantments) : startIndex + 12}">
-            <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.enchantments.subList(startIndex, endIndex)})}"/>
-          </th:block>
-        </div>
-      </th:block>
-      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.enchantments)}">No enchantments found.</p>
-    </div>
-
-    <div class="space-y-4">
-      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
-        <h2 class="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
-          Artifacts
-          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.artifacts)} + ')'">0</span>
-        </h2>
-        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Value</span>
-      </div>
-
-      <th:block th:if="${builderView.artifacts != null and !#lists.isEmpty(builderView.artifacts)}">
-        <div th:each="startIndex : ${#numbers.sequence(0, #lists.size(builderView.artifacts) - 1, 12)}" class="space-y-2 mb-6">
-          <th:block th:with="endIndex=${startIndex + 12 > #lists.size(builderView.artifacts) ? #lists.size(builderView.artifacts) : startIndex + 12}">
-            <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.artifacts.subList(startIndex, endIndex)})}"/>
-          </th:block>
-        </div>
-      </th:block>
-      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.artifacts)}">No artifacts found.</p>
-    </div>
-
-    <div class="space-y-4">
-      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
-        <h2 class="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
-          Lands
-          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.lands)} + ')'">0</span>
-        </h2>
-        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Core Foundation</span>
-      </div>
-
-      <th:block th:if="${builderView.lands != null and !#lists.isEmpty(builderView.lands)}">
-        <div th:each="startIndex : ${#numbers.sequence(0, #lists.size(builderView.lands) - 1, 12)}" class="space-y-2 mb-6">
-          <th:block th:with="endIndex=${startIndex + 12 > #lists.size(builderView.lands) ? #lists.size(builderView.lands) : startIndex + 12}">
-            <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.lands.subList(startIndex, endIndex)})}"/>
-          </th:block>
-        </div>
-      </th:block>
-      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.lands)}">No lands found.</p>
     </div>
 
   </div>
@@ -183,19 +118,23 @@
   <div th:if="${cards != null and !#lists.isEmpty(cards)}" class="w-full py-2">
     <div class="mtg-flex-stack">
       <div th:each="card : ${cards}"
-           class="card-stack-item group aspect-[223/311] rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 shadow-md cursor-pointer">
+           class="card-stack-item group aspect-[223/311] rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 shadow-md cursor-pointer"
+           th:classappend="${deckSpoilerReveal eq true} ? 'deck-visual-spoiler-tile' : ''">
 
         <div class="relative w-full h-full">
-          <img th:if="${card.previewImageUrl() != null}"
-               th:src="${card.previewImageUrl()}"
+          <img th:if="${card.previewImageUrl != null}"
+               th:src="${card.previewImageUrl}"
                th:alt="${card.name}"
-               class="absolute inset-0 h-full w-full object-cover select-none"
+               class="absolute inset-0 h-full w-full object-cover select-none transition-[filter] duration-200 ease-out"
                loading="lazy" decoding="async" width="200" height="279"/>
 
-          <div th:if="${card.previewImageUrl() == null}"
+          <div th:if="${card.previewImageUrl == null}"
                class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-950 p-3 text-center">
             <span class="text-xs font-bold text-zinc-300 leading-tight line-clamp-3" th:text="${card.name}">Card Name</span>
           </div>
+
+          <div th:if="${deckSpoilerReveal eq true}"
+               class="deck-visual-spoiler-veil absolute inset-0 rounded-lg bg-black/65 mix-blend-soft-light"></div>
         </div>
 
         <div class="hidden">

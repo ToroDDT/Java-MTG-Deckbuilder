@@ -5,199 +5,67 @@
     <title></title>
 </head>
 <body>
-<div class="max-w-full min-w-0 bg-white/[.92] backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[rgba(194,198,214,.55)] shadow-[0_20px_40px_rgba(25,27,35,.06)] space-y-10" th:fragment="type-layout">
+<div class="max-w-full min-w-0 bg-white/[.92] backdrop-blur-md rounded-3xl p-6 sm:p-8
+            border border-[rgba(194,198,214,.55)]
+            shadow-[0_20px_40px_rgba(25,27,35,.06)]
+            space-y-10"
+     th:fragment="type-layout">
 
-  <!-- Creatures -->
-  <div class="space-y-4">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Creatures <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.creatures)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Avg CMC: 3.2</span>
-    </div>
-    <div class="flex flex-wrap gap-4 items-start">
-      <div class="builder-deck-card-row flex flex-col items-center gap-2 w-[7.75rem] shrink-0 rounded-xl p-2 hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.creatures}">
-        <div class="relative w-full rounded-lg overflow-hidden shadow-md ring-1 ring-black/10 bg-slate-200"
-             style="aspect-ratio: 226/311;">
-          <img th:if="${card.previewImageUrl() != null}"
-               th:src="${card.previewImageUrl()}"
-               th:alt="${card.name}"
-               class="absolute inset-0 h-full w-full object-cover"
-               loading="lazy" width="155" height="216" decoding="async"/>
-          <div th:if="${card.previewImageUrl() == null}"
-               class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-400 to-slate-600 p-2 text-center">
-            <span class="text-[10px] font-bold text-white leading-tight line-clamp-4" th:text="${card.name}">Name</span>
-          </div>
-        </div>
-        <div class="flex w-full items-start justify-center gap-1 text-center">
-          <span class="text-xs font-bold text-slate-600 shrink-0">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600 w-full" th:if="${#lists.isEmpty(builderView.creatures)}">No creatures found.</div>
-    </div>
-  </div>
+    <section th:each="sec : ${deckSections}" class="space-y-6">
 
-  <!-- Instants -->
-  <div class="space-y-4">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Instants <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.instants)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Interaction</span>
-    </div>
-    <div class="flex flex-wrap gap-4 items-start">
-      <div class="builder-deck-card-row flex flex-col items-center gap-2 w-[7.75rem] shrink-0 rounded-xl p-2 hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.instants}">
-        <div class="relative w-full rounded-lg overflow-hidden shadow-md ring-1 ring-black/10 bg-slate-200"
-             style="aspect-ratio: 226/311;">
-          <img th:if="${card.previewImageUrl() != null}"
-               th:src="${card.previewImageUrl()}"
-               th:alt="${card.name}"
-               class="absolute inset-0 h-full w-full object-cover"
-               loading="lazy" width="155" height="216" decoding="async"/>
-          <div th:if="${card.previewImageUrl() == null}"
-               class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-400 to-slate-600 p-2 text-center">
-            <span class="text-[10px] font-bold text-white leading-tight line-clamp-4" th:text="${card.name}">Name</span>
-          </div>
-        </div>
-        <div class="flex w-full items-start justify-center gap-1 text-center">
-          <span class="text-xs font-bold text-slate-600 shrink-0">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600 w-full" th:if="${#lists.isEmpty(builderView.instants)}">No instants found.</div>
-    </div>
-  </div>
+        <header class="flex flex-wrap gap-4 justify-between items-baseline pb-3 border-b border-outline-variant">
+            <h2 class="text-xl font-black text-on-background flex gap-3 items-center">
+                <span th:text="${sec.title}">Section</span>
+                <span class="text-base font-semibold text-on-surface-variant"
+                      th:text="${#lists.size(sec.cards)}">0</span>
+            </h2>
+            <span class="text-[10px] font-bold text-on-surface-variant tracking-[0.28em] uppercase"
+                  th:text="${deckVisualSplit eq true} ? 'Split columns' : 'Wrapped stacks'">Stacks</span>
+        </header>
 
-  <!-- Sorceries -->
-  <div class="space-y-4">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Sorceries <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.sorceries)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Value</span>
-    </div>
-    <div class="flex flex-wrap gap-4 items-start">
-      <div class="builder-deck-card-row flex flex-col items-center gap-2 w-[7.75rem] shrink-0 rounded-xl p-2 hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.sorceries}">
-        <div class="relative w-full rounded-lg overflow-hidden shadow-md ring-1 ring-black/10 bg-slate-200"
-             style="aspect-ratio: 226/311;">
-          <img th:if="${card.previewImageUrl() != null}"
-               th:src="${card.previewImageUrl()}"
-               th:alt="${card.name}"
-               class="absolute inset-0 h-full w-full object-cover"
-               loading="lazy" width="155" height="216" decoding="async"/>
-          <div th:if="${card.previewImageUrl() == null}"
-               class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-400 to-slate-600 p-2 text-center">
-            <span class="text-[10px] font-bold text-white leading-tight line-clamp-4" th:text="${card.name}">Name</span>
-          </div>
-        </div>
-        <div class="flex w-full items-start justify-center gap-1 text-center">
-          <span class="text-xs font-bold text-slate-600 shrink-0">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600 w-full" th:if="${#lists.isEmpty(builderView.sorceries)}">No sorceries found.</div>
-    </div>
-  </div>
+        <p class="text-sm text-on-surface-variant"
+           th:if="${#lists.isEmpty(sec.cards)}">No cards in this group.</p>
 
-  <!-- Enchantments -->
-  <div class="space-y-4">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Enchantments <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.enchantments)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Value</span>
-    </div>
-    <div class="flex flex-wrap gap-4 items-start">
-      <div class="builder-deck-card-row flex flex-col items-center gap-2 w-[7.75rem] shrink-0 rounded-xl p-2 hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.enchantments}">
-        <div class="relative w-full rounded-lg overflow-hidden shadow-md ring-1 ring-black/10 bg-slate-200"
-             style="aspect-ratio: 226/311;">
-          <img th:if="${card.previewImageUrl() != null}"
-               th:src="${card.previewImageUrl()}"
-               th:alt="${card.name}"
-               class="absolute inset-0 h-full w-full object-cover"
-               loading="lazy" width="155" height="216" decoding="async"/>
-          <div th:if="${card.previewImageUrl() == null}"
-               class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-400 to-slate-600 p-2 text-center">
-            <span class="text-[10px] font-bold text-white leading-tight line-clamp-4" th:text="${card.name}">Name</span>
-          </div>
-        </div>
-        <div class="flex w-full items-start justify-center gap-1 text-center">
-          <span class="text-xs font-bold text-slate-600 shrink-0">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600 w-full" th:if="${#lists.isEmpty(builderView.enchantments)}">No enchantments found.</div>
-    </div>
-  </div>
+        <!-- Split stacks use CSS columns so tall sections balance across the panel. -->
 
-  <!-- Artifacts -->
-  <div class="space-y-4">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Artifacts <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.artifacts)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Value</span>
-    </div>
-    <div class="flex flex-wrap gap-4 items-start">
-      <div class="builder-deck-card-row flex flex-col items-center gap-2 w-[7.75rem] shrink-0 rounded-xl p-2 hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.artifacts}">
-        <div class="relative w-full rounded-lg overflow-hidden shadow-md ring-1 ring-black/10 bg-slate-200"
-             style="aspect-ratio: 226/311;">
-          <img th:if="${card.previewImageUrl() != null}"
-               th:src="${card.previewImageUrl()}"
-               th:alt="${card.name}"
-               class="absolute inset-0 h-full w-full object-cover"
-               loading="lazy" width="155" height="216" decoding="async"/>
-          <div th:if="${card.previewImageUrl() == null}"
-               class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-400 to-slate-600 p-2 text-center">
-            <span class="text-[10px] font-bold text-white leading-tight line-clamp-4" th:text="${card.name}">Name</span>
-          </div>
-        </div>
-        <div class="flex w-full items-start justify-center gap-1 text-center">
-          <span class="text-xs font-bold text-slate-600 shrink-0">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600 w-full" th:if="${#lists.isEmpty(builderView.artifacts)}">No artifacts found.</div>
-    </div>
-  </div>
+        <div th:if="${!#lists.isEmpty(sec.cards)}"
+             class="transition-[column-count]"
+             th:class="${deckVisualSplit eq true}
+                        ? 'xl:columns-2 xl:[column-gap:3.25rem]'
+                        : 'flex flex-wrap gap-5'">
 
-  <!-- Lands -->
-  <div class="space-y-4">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Lands <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.lands)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Core Foundation</span>
-    </div>
-    <div class="flex flex-wrap gap-4 items-start">
-      <div class="builder-deck-card-row flex flex-col items-center gap-2 w-[7.75rem] shrink-0 rounded-xl p-2 hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.lands}">
-        <div class="relative w-full rounded-lg overflow-hidden shadow-md ring-1 ring-black/10 bg-slate-200"
-             style="aspect-ratio: 226/311;">
-          <img th:if="${card.previewImageUrl() != null}"
-               th:src="${card.previewImageUrl()}"
-               th:alt="${card.name}"
-               class="absolute inset-0 h-full w-full object-cover"
-               loading="lazy" width="155" height="216" decoding="async"/>
-          <div th:if="${card.previewImageUrl() == null}"
-               class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-400 to-slate-600 p-2 text-center">
-            <span class="text-[10px] font-bold text-white leading-tight line-clamp-4" th:text="${card.name}">Name</span>
-          </div>
+            <div class="builder-deck-card-row flex flex-col items-center gap-3 w-[7.75rem]
+                        rounded-xl p-2 mb-8 last:mb-0
+                        hover:bg-surface-container-highest transition-colors cursor-pointer ring-1 ring-transparent
+                        hover:ring-blue-400/35
+                        xl:mb-6 xl:break-inside-avoid xl:w-[8.125rem]"
+                 th:classAppend="${deckVisualSplit eq false} ? ' shrink-0' : ''"
+                 th:each="card : ${sec.cards}">
+                <div class="relative w-full rounded-lg overflow-hidden shadow-md ring-1 ring-black/10 bg-surface-dim"
+                     style="aspect-ratio: 226/311;">
+                    <img th:if="${card.previewImageUrl != null}"
+                         th:src="${card.previewImageUrl}"
+                         th:alt="${card.name}"
+                         class="absolute inset-0 h-full w-full object-cover"
+                         loading="lazy" width="155" height="216" decoding="async"/>
+                    <div th:if="${card.previewImageUrl == null}"
+                         class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-400 to-slate-600 p-2 text-center">
+                        <span class="text-[10px] font-bold text-white leading-tight line-clamp-4 break-words"
+                              th:text="${card.name}">
+                            Name
+                        </span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 w-full text-center px-px">
+                    <div class="flex w-full justify-center gap-1">
+                        <span class="text-xs font-bold text-slate-600 shrink-0 mt-px">1</span>
+                        <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+                    </div>
+                    <th:block th:replace="~{builder/deck-list-row-text :: extrasStripCenter(${card})}"/>
+                </div>
+            </div>
         </div>
-        <div class="flex w-full items-start justify-center gap-1 text-center">
-          <span class="text-xs font-bold text-slate-600 shrink-0">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600 w-full" th:if="${#lists.isEmpty(builderView.lands)}">No lands found.</div>
-    </div>
-  </div>
+    </section>
 </div>
 </body>
 </html>

@@ -11,6 +11,7 @@ import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
+import com.example.mtg_deckbuilder.views.BuilderDeckSection;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,12 @@ public class BuilderServiceImpl implements BuilderService {
         this.builderRepository = builderRepository;
         this.deckService = deckService;
         this.cardService = cardService;
+    }
+
+    @Override
+    public List<BuilderDeckSection> buildDeckSections(String deckId, String groupBy, String sortBy) {
+        List<BuilderDeckCardRecord> cards = builderRepository.getAllCardsForUser(deckId);
+        return BuilderDeckLayoutComposer.build(groupBy, sortBy, cards);
     }
 
     @Override

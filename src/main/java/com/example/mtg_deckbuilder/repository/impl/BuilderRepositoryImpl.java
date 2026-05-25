@@ -184,8 +184,10 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         cards.type_line,
         cards.cmc,
         cards.rarity,
+        cards.artist,
         cards.mana_cost,
         cards.scryfall_uri,
+        (substring(cards.scryfall_uri FROM '/card/([^/]+)/')) AS deck_set_hint,
         cards.color_identity,
         cards.image_uris,
         cards.prices,
@@ -214,7 +216,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                                 .deckEntryId(rs.getObject("deck_entry_id", UUID.class).toString())
                                 .name(rs.getString("card_name"))
                                 .artist(rs.getString("artist"))
-                                .set(rs.getString("set_name"))
+                                .set(rs.getString("deck_set_hint"))
                                 .manaCost(rs.getString("mana_cost"))
                                 .rarity(rs.getString("rarity"))
                                 .deckName(rs.getString("deck_name"))

@@ -5,127 +5,38 @@
     <title></title>
 </head>
 <body>
-<div style="columns: 3; column-gap: 3rem;" th:fragment="type-layout">
+<div style="columns: 3; column-gap: 3rem;" th:fragment="type-layout"
+     class="min-w-0 max-w-full text-on-background">
 
-  <!-- Creatures -->
-  <div  class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;" >
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Creatures <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.creatures)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Avg CMC: 3.2</span>
-    </div>
-    <div class="space-y-2">
-      <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.creatures}">
-        <div class="flex items-center gap-4">
-          <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.creatures)}">No creatures found.</div>
-    </div>
-  </div>
+    <section th:each="sec : ${deckSections}"
+             class="space-y-4"
+             style="break-inside: avoid; margin-bottom: 2.5rem;"
+             th:attr="aria-label=${sec.title}">
 
-  <!-- Instants -->
-  <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Instants <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.instants)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Interaction</span>
-    </div>
-    <div class="space-y-2">
-      <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.instants}">
-        <div class="flex items-center gap-4">
-          <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+        <div class="flex justify-between items-baseline mb-2 gap-4">
+            <h2 class="text-xl font-black text-on-background flex flex-wrap items-baseline gap-2">
+                <span th:text="${sec.title}">Section</span>
+                <span class="text-slate-600 font-medium"
+                      th:text="${#lists.size(sec.cards)}">0</span>
+            </h2>
+            <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase whitespace-nowrap"
+                  th:if="${deckListCondensed eq true}">
+                Condensed
+            </span>
         </div>
-      </div>
-      <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.instants)}">No instants found.</div>
-    </div>
-  </div>
 
-  <!-- Sorceries -->
-  <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Sorceries <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.sorceries)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Value</span>
-    </div>
-    <div class="space-y-2">
-      <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.sorceries}">
-        <div class="flex items-center gap-4">
-          <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.sorceries)}">No sorceries found.</div>
-    </div>
-  </div>
+        <div th:classAppend="${deckListCondensed eq true} ? ' space-y-1' : ' space-y-2'"
+             class="">
+            <th:block th:each="card : ${sec.cards}">
+                <th:block th:replace="~{builder/deck-list-row-text :: textRowDeck(${card})}"/>
+            </th:block>
 
-  <!-- Enchantments -->
-  <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Enchantments <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.enchantments)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Value</span>
-    </div>
-    <div class="space-y-2">
-      <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.enchantments}">
-        <div class="flex items-center gap-4">
-          <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+            <div class="text-sm text-slate-600 py-3"
+                 th:if="${#lists.isEmpty(sec.cards)}">
+                No cards in this group.
+            </div>
         </div>
-      </div>
-      <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.enchantments)}">No enchantments found.</div>
-    </div>
-  </div>
-
-  <!-- Artifacts -->
-  <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Artifacts <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.artifacts)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Value</span>
-    </div>
-    <div class="space-y-2">
-      <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.artifacts}">
-        <div class="flex items-center gap-4">
-          <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.artifacts)}">No artifacts found.</div>
-    </div>
-  </div>
-
-  <!-- Lands -->
-  <div class="space-y-4" style="break-inside: avoid; margin-bottom: 2.5rem;">
-    <div class="flex justify-between items-baseline mb-2">
-      <h2 class="text-xl font-black text-on-background flex items-center gap-2">
-        Lands <span class="text-slate-600 font-medium" th:text="${#lists.size(builderView.lands)}">0</span>
-      </h2>
-      <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase">Core Foundation</span>
-    </div>
-    <div class="space-y-2">
-      <div class="builder-deck-card-row flex items-center justify-between p-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
-           th:each="card : ${builderView.lands}">
-        <div class="flex items-center gap-4">
-          <span class="text-sm font-bold text-slate-600">1</span>
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
-        </div>
-      </div>
-      <div class="text-sm text-slate-600" th:if="${#lists.isEmpty(builderView.lands)}">No lands found.</div>
-    </div>
-  </div>
+    </section>
 </div>
 </body>
 </html>
