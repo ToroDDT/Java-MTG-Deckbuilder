@@ -116,9 +116,8 @@
         <div class="grid grid-cols-12 gap-8 min-w-0">
 
             <!-- Left Column: Decklist (8/12) — min-w-0 lets the column shrink so HTMX views don’t blow out the 12-col grid -->
-            <div class="col-span-12 xl:col-span-8 space-y-12 min-w-0 isolate">
-
-                <!-- Card type layout (HTMX loaded) — viewStyle comes from hidden field + localStorage (see sync script below) -->
+            <div class="col-span-12 xl:col-span-8 min-w-0 isolate">
+                <!-- Hidden + script are outside the spaced stack so space-y / gap doesn’t add margin above #type-layout-container -->
                 <div id="builder-deck-layout-request-params" hidden>
                     <input type="hidden" name="viewStyle" id="builder-deck-layout-view-style-input" value="text"/>
                 </div>
@@ -136,29 +135,31 @@
                         } catch (e) { /* ignore malformed storage */ }
                     })();
                 </script>
-                <div id="type-layout-container"
-                     class="min-h-[18rem] w-full max-w-full min-w-0 transition-all duration-200 overflow-x-auto"
-                     hx-include="#builder-deck-layout-request-params"
-                     th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
-                     hx-trigger="load, cardsUpdated from:body, builderViewChanged from:body"
-                     hx-swap="innerHTML">
-                </div>
+                <div class="flex flex-col gap-12">
+                    <div id="type-layout-container"
+                         class="min-h-[18rem] w-full max-w-full min-w-0 transition-all duration-200 overflow-x-auto"
+                         hx-include="#builder-deck-layout-request-params"
+                         th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
+                         hx-trigger="load, cardsUpdated from:body, builderViewChanged from:body"
+                         hx-swap="innerHTML">
+                    </div>
 
-                <!-- Randomized Hand Section -->
-                <div>
-                    <main>
-                        <section class="bg-surface-dim rounded-3xl overflow-hidden">
-                            <div id="randomized-hand-container"
-                                 class="w-full"
-                                 th:attr="hx-get=@{/builder/randomize-cards(deckId=${builderView.deckId})}"
-                                 hx-trigger="load, cardsUpdated from:body"
-                                 hx-swap="innerHTML">
-                                <div class="p-4 text-slate-600 min-h-[14rem]">
-                                    Loading hand...
+                    <!-- Randomized Hand Section -->
+                    <div>
+                        <main>
+                            <section class="bg-surface-dim rounded-3xl overflow-hidden">
+                                <div id="randomized-hand-container"
+                                     class="w-full"
+                                     th:attr="hx-get=@{/builder/randomize-cards(deckId=${builderView.deckId})}"
+                                     hx-trigger="load, cardsUpdated from:body"
+                                     hx-swap="innerHTML">
+                                    <div class="p-4 text-slate-600 min-h-[14rem]">
+                                        Loading hand...
+                                    </div>
                                 </div>
-                            </div>
-                        </section>
-                    </main>
+                            </section>
+                        </main>
+                    </div>
                 </div>
             </div>
 
