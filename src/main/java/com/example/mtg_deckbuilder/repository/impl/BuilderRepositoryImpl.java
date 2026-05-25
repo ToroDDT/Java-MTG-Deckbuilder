@@ -117,6 +117,25 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         }
     }
 
+    /** Prefer compact URLs for grid / stack deck views. */
+    private String previewImageUrlFrom(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            ImageUris u = objectMapper.readValue(raw, ImageUris.class);
+            if (u.getSmall() != null && !u.getSmall().isBlank()) {
+                return u.getSmall().trim();
+            }
+            if (u.getBorderCrop() != null && !u.getBorderCrop().isBlank()) {
+                return u.getBorderCrop().trim();
+            }
+            return u.firstNonBlankArtUrl();
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
     private String usdNumericPlainFromPricesColumn(ResultSet rs) throws SQLException {
         String raw = rs.getString("prices");
         if (raw == null || raw.isBlank()) {
@@ -188,12 +207,12 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                                 .colorIdentity(rs.getString("color_identity"))
                                 .priceUsd(usdNumericPlainFromPricesColumn(rs))
                                 .typeLine(rs.getString("type_line"))
+                                .previewImageUrl(previewImageUrlFrom(rs.getString("image_uris")))
                                 .build() // Closes out the Lombok builder for the record
                 )
                 .list();
         //   }
     }
-
 
     @Override
     public List<OwnedCard> getAllCardsFromDeck(UUID deckId) {

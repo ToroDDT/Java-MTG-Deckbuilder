@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,13 +35,11 @@ class OwnedCardMapperTest {
 
     @Test
     void shouldMapRowToOwnedCard() throws SQLException {
-        // 1. Setup the columns that hasColumn() will inspect
         String[] columns = { "card_id", "name", "type_line", "toughness", "power", "artist", "cmc", "scryfall_uri", "prices", "color_identity" };
 
         when(resultSet.getMetaData()).thenReturn(metaData);
         when(metaData.getColumnCount()).thenReturn(columns.length);
 
-        // Loop through our expected columns to build the metadata stub mappings
         for (int i = 0; i < columns.length; i++) {
             int sqlIndex = i + 1; // SQL metadata indices are 1-based
             when(metaData.getColumnLabel(sqlIndex)).thenReturn(columns[i]);
@@ -82,5 +81,6 @@ class OwnedCardMapperTest {
         assertEquals("Black Lotus", result.getCard().getName());
         assertEquals(0.0, result.getCard().getPrices().getUsd());
         assertEquals(2, result.getCard().getColorIdentity().size());
+        assertEquals(List.of(), result.getTags());
     }
 }

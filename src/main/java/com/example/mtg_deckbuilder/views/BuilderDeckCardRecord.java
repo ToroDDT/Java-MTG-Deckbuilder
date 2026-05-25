@@ -21,6 +21,8 @@ public record BuilderDeckCardRecord(
         String deckImage,
         /** Plain USD amount for {@link Double#parseDouble}, e.g. {@code "12.34"}. */
         String priceUsd,
-        String deckName
+        String deckName,
+        /** Small / crop image URL from {@code cards.image_uris} for deck list thumbnails. */
+        String previewImageUrl
 ) {
 }

@@ -17,10 +17,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Controller
 public class BuilderController {
+
+    private static final Set<String> ALLOWED_VIEW_STYLES = Set.of(
+            "text",
+            "condensed",
+            "visual-grid",
+            "visual-stacks",
+            "visual-split",
+            "visual-spoiler"
+    );
 
     private final BuilderService builderService;
     private final DeckService deckService;
@@ -56,13 +66,21 @@ public class BuilderController {
     @GetMapping("/builder/type-layout/{id}")
     public String getCardTypeLayout(
             Model model,
-            @PathVariable("id") String deckId
+            @PathVariable("id") String deckId,
+            @RequestParam(name = "viewStyle", required = false, defaultValue = "text") String viewStyle
     ) {
 
         var view = builderService.getBuilderView(deckId);
 
         model.addAttribute("builderView", view);
 
+        var normalized =
+                ALLOWED_VIEW_STYLES.contains(viewStyle) ? viewStyle : "text";
+        model.addAttribute("deckViewStyle", normalized);
+
+        if ("visual-stacks".equals(normalized)) {
+            return "builder/layouts/visual-stack :: type-layout";
+        }
         return "builder/layouts/type :: type-layout";
     }
 

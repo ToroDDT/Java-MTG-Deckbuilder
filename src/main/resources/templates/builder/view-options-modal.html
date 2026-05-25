@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<th:block th:fragment="viewOptionsModal(deckId)">
+  <style>
+    #builder-view-options-modal .pill.selected { border-color: #7F77DD; }
+    #builder-view-options-modal .pill.selected .dot { border-color: #7F77DD; }
+    #builder-view-options-modal .pill.selected .dot-inner { display: block; }
+    #builder-view-options-modal .pill.selected .chk-box { border-color: #7F77DD; background: #7F77DD; }
+    #builder-view-options-modal .pill.selected .chk-icon { display: block; }
+  </style>
+
+  <div id="builder-view-options-modal"
+       class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 font-sans"
+       th:attr="data-deck-id=${deckId}"
+       role="presentation">
+    <div class="absolute inset-0 bg-black/45"
+         data-builder-view-options-dismiss="true"
+         aria-hidden="true"></div>
+
+    <div class="relative bg-white rounded-xl border border-black/10 w-full max-w-[520px] max-h-[min(90vh,720px)] overflow-hidden shadow-xl flex flex-col"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="builder-view-options-title">
+
+      <div class="flex items-center justify-between px-5 py-[1.1rem] border-b border-black/10 shrink-0">
+        <span id="builder-view-options-title" class="text-[17px] font-medium text-gray-900">Customize view</span>
+        <button type="button"
+                data-builder-view-options-dismiss="true"
+                aria-label="Close"
+                class="text-gray-500 p-1 rounded-lg hover:bg-gray-100 transition-colors leading-none cursor-pointer">
+          <i class="ti ti-x text-[18px]"></i>
+        </button>
+      </div>
+
+      <div class="px-5 py-[1.1rem] overflow-y-auto flex-1 min-h-0">
+
+        <div class="flex gap-2.5 items-start bg-blue-50 rounded-lg px-3.5 py-2.5 mb-5">
+          <i class="ti ti-info-circle text-blue-700 text-base shrink-0 mt-0.5"></i>
+          <p class="text-[13px] text-blue-800 leading-relaxed m-0">
+            The following settings apply to this deck only. To change your default settings, visit your
+            <a href="#" class="font-semibold text-blue-800 underline-offset-2 hover:underline">Account settings</a>.
+          </p>
+        </div>
+
+        <p class="text-[13px] font-medium text-gray-900 mb-2.5">View style</p>
+        <div class="flex flex-wrap gap-2 mb-5" id="builder-view-style" data-builder-radio-group>
+          <div class="pill selected flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="text">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Text
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="condensed">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Condensed text
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="visual-grid">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Visual grid
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="visual-stacks">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Visual stacks
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="visual-split">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Visual stacks (split)
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="visual-spoiler">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Visual spoiler
+          </div>
+        </div>
+
+        <p class="text-[13px] font-medium text-gray-900 mb-2.5">Group by</p>
+        <div class="flex flex-wrap gap-2 mb-5" id="builder-group-by" data-builder-radio-group>
+          <div class="pill selected flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="type">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Type
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="subtype">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            SubType
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="type-tag">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Type &amp; tag
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="rarity">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Rarity
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="color">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Color
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="color-identity">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Color identity
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="mana-value">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Mana value
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="set">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Set
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="artist">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Artist
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="none">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            No grouping
+          </div>
+        </div>
+
+        <p class="text-[13px] font-medium text-gray-900 mb-2.5">Sort by</p>
+        <div class="flex flex-wrap gap-2 mb-5" id="builder-sort-by" data-builder-radio-group>
+          <div class="pill selected flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="name">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Name
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="mana-value">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Mana value
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="price">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Price
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="rarity">
+            <div class="dot w-[15px] h-[15px] rounded-full border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <div class="dot-inner hidden w-[7px] h-[7px] rounded-full bg-[#7F77DD]"></div>
+            </div>
+            Rarity
+          </div>
+        </div>
+
+        <p class="text-[13px] font-medium text-gray-900 mb-2.5">Include extra data</p>
+        <div class="flex flex-wrap gap-2" id="builder-extra-data" data-builder-check-group>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="mana-cost">
+            <div class="chk-box w-[15px] h-[15px] rounded-[3px] border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <i class="chk-icon ti ti-check hidden text-white text-[10px]"></i>
+            </div>
+            Mana cost
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="price">
+            <div class="chk-box w-[15px] h-[15px] rounded-[3px] border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <i class="chk-icon ti ti-check hidden text-white text-[10px]"></i>
+            </div>
+            Price
+          </div>
+          <div class="pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-black/20 bg-white cursor-pointer text-[13px] text-gray-900 hover:bg-gray-50 transition-colors select-none"
+               data-val="set-symbol">
+            <div class="chk-box w-[15px] h-[15px] rounded-[3px] border-[1.5px] border-black/25 flex items-center justify-center shrink-0">
+              <i class="chk-icon ti ti-check hidden text-white text-[10px]"></i>
+            </div>
+            Set symbol
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5 pb-4 shrink-0">
+        <hr class="border-t border-black/10 mb-4">
+        <button type="button"
+                id="builder-view-options-set-default-placeholder"
+                class="px-4 py-2 rounded-lg border border-black/20 bg-[#444441] hover:bg-[#2C2C2A] text-white text-[13px] cursor-pointer transition-colors">
+          Set as default for others
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between px-5 py-4 border-t border-black/10 gap-2 shrink-0">
+        <button type="button"
+                id="builder-view-options-reset"
+                class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-black/20 bg-[#444441] hover:bg-[#2C2C2A] text-white text-[13px] cursor-pointer transition-colors">
+          Reset <i class="ti ti-chevron-down text-[13px]"></i>
+        </button>
+        <div class="flex gap-2">
+          <button type="button"
+                  data-builder-view-options-dismiss="true"
+                  class="px-5 py-2 rounded-lg border border-black/20 bg-[#444441] hover:bg-[#2C2C2A] text-white text-[13px] cursor-pointer transition-colors">
+            Cancel
+          </button>
+          <button type="button"
+                  id="builder-view-options-save"
+                  class="px-5 py-2 rounded-lg bg-[#534AB7] hover:bg-[#3C3489] text-white text-[13px] font-medium cursor-pointer transition-colors">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+</body>
+</html>

@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/nav-bar.min.css}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 
 <body class="bg-[#f9f9ff] text-[#191b23] font-[Inter,sans-serif]">
@@ -64,8 +65,12 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="flex flex-col lg:flex-row lg:items-end gap-1">
+                    <button type="button"
+                            id="builder-open-view-options"
+                            class="text-blue-800 font-semibold hover:underline text-left whitespace-nowrap">
+                        Edit View Options
+                    </button>
                     <form id="builderAddCardForm" class="flex-1 flex flex-col gap-2 min-w-0"
                           th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
                         <input type="hidden" name="_builderCardContext" value="true"/>
@@ -112,11 +117,29 @@
             <!-- Left Column: Decklist (8/12) -->
             <div class="col-span-12 xl:col-span-8 space-y-12">
 
-                <!-- Card type layout (HTMX loaded) -->
+                <!-- Card type layout (HTMX loaded) — viewStyle comes from hidden field + localStorage (see sync script below) -->
+                <div id="builder-deck-layout-request-params" hidden>
+                    <input type="hidden" name="viewStyle" id="builder-deck-layout-view-style-input" value="text"/>
+                </div>
+                <script th:inline="javascript">
+                    (function () {
+                        var deckId = /*[[${builderView.deckId}]]*/ '';
+                        try {
+                            var raw = localStorage.getItem('mtg-builder-view:' + deckId);
+                            if (!raw) return;
+                            var p = JSON.parse(raw);
+                            if (p && p.viewStyle) {
+                                var inp = document.getElementById('builder-deck-layout-view-style-input');
+                                if (inp) inp.value = p.viewStyle;
+                            }
+                        } catch (e) { /* ignore malformed storage */ }
+                    })();
+                </script>
                 <div id="type-layout-container"
                      class="min-h-[18rem]"
+                     hx-include="#builder-deck-layout-request-params"
                      th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
-                     hx-trigger="load, cardsUpdated from:body"
+                     hx-trigger="load, cardsUpdated from:body, builderViewChanged from:body"
                      hx-swap="innerHTML">
                 </div>
 
@@ -233,6 +256,8 @@
     </main>
 </div>
 
+<th:block th:replace="~{builder/view-options-modal :: viewOptionsModal(${builderView.deckId})}"/>
+
 <!-- Mobile Nav Bar -->
 <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around items-center h-16 z-50">
     <button type="button" class="flex flex-col items-center gap-1 text-slate-600" aria-label="Home">
@@ -313,6 +338,145 @@
             if (t && h) event.detail.headers[h] = t;
         }
     });
+
+    (function builderViewOptionsModal() {
+        var modal = document.getElementById('builder-view-options-modal');
+        var openBtn = document.getElementById('builder-open-view-options');
+        var saveBtn = document.getElementById('builder-view-options-save');
+        var resetBtn = document.getElementById('builder-view-options-reset');
+        var viewStyleInput = document.getElementById('builder-deck-layout-view-style-input');
+        if (!modal || !openBtn || !saveBtn || !viewStyleInput) return;
+
+        function storageKey(deckId) {
+            return 'mtg-builder-view:' + deckId;
+        }
+
+        function defaultPrefs() {
+            return { viewStyle: 'text', groupBy: 'type', sortBy: 'name', extras: [] };
+        }
+
+        function readPrefs(deckId) {
+            try {
+                var raw = localStorage.getItem(storageKey(deckId));
+                if (!raw) return defaultPrefs();
+                var parsed = JSON.parse(raw);
+                if (!parsed || typeof parsed !== 'object') return defaultPrefs();
+                var out = defaultPrefs();
+                if (parsed.viewStyle) out.viewStyle = parsed.viewStyle;
+                if (parsed.groupBy) out.groupBy = parsed.groupBy;
+                if (parsed.sortBy) out.sortBy = parsed.sortBy;
+                if (Array.isArray(parsed.extras)) out.extras = parsed.extras.slice();
+                return out;
+            } catch (err) {
+                return defaultPrefs();
+            }
+        }
+
+        function writePrefs(deckId, prefs) {
+            localStorage.setItem(storageKey(deckId), JSON.stringify(prefs));
+        }
+
+        function getDeckId() {
+            return modal.getAttribute('data-deck-id') || '';
+        }
+
+        function selectedRadioValue(groupId) {
+            var sel = document.querySelector('#' + groupId + ' .pill.selected');
+            return sel ? sel.getAttribute('data-val') : null;
+        }
+
+        function setRadioGroup(groupId, value) {
+            var root = document.getElementById(groupId);
+            if (!root) return;
+            root.querySelectorAll('.pill').forEach(function (pill) {
+                var v = pill.getAttribute('data-val');
+                pill.classList.toggle('selected', v === value);
+            });
+        }
+
+        function readExtrasFromModal() {
+            var out = [];
+            document.querySelectorAll('#builder-extra-data .pill.selected').forEach(function (pill) {
+                var v = pill.getAttribute('data-val');
+                if (v) out.push(v);
+            });
+            return out;
+        }
+
+        function applyPrefsToModal(prefs) {
+            setRadioGroup('builder-view-style', prefs.viewStyle || 'text');
+            setRadioGroup('builder-group-by', prefs.groupBy || 'type');
+            setRadioGroup('builder-sort-by', prefs.sortBy || 'name');
+            document.querySelectorAll('#builder-extra-data .pill').forEach(function (pill) {
+                var v = pill.getAttribute('data-val');
+                pill.classList.toggle('selected', (prefs.extras || []).indexOf(v) >= 0);
+            });
+        }
+
+        function readPrefsFromModal() {
+            var groupBy = selectedRadioValue('builder-group-by') || 'type';
+            var sortBy = selectedRadioValue('builder-sort-by') || 'name';
+            var viewStyle = selectedRadioValue('builder-view-style') || 'text';
+            return {
+                viewStyle: viewStyle,
+                groupBy: groupBy,
+                sortBy: sortBy,
+                extras: readExtrasFromModal()
+            };
+        }
+
+        function syncHiddenViewStyle(viewStyle) {
+            viewStyleInput.value = viewStyle || 'text';
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function openModal() {
+            applyPrefsToModal(readPrefs(getDeckId()));
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        openBtn.addEventListener('click', function () {
+            openModal();
+        });
+
+        modal.addEventListener('click', function (e) {
+            if (e.target.closest('[data-builder-view-options-dismiss="true"]')) {
+                closeModal();
+                return;
+            }
+            var pill = e.target.closest('[data-builder-radio-group] .pill');
+            if (pill) {
+                var group = pill.closest('[data-builder-radio-group]');
+                group.querySelectorAll('.pill').forEach(function (p) {
+                    p.classList.remove('selected');
+                });
+                pill.classList.add('selected');
+                return;
+            }
+            var checkPill = e.target.closest('#builder-extra-data .pill');
+            if (checkPill) checkPill.classList.toggle('selected');
+        });
+
+        saveBtn.addEventListener('click', function () {
+            var deckId = getDeckId();
+            var prefs = readPrefsFromModal();
+            writePrefs(deckId, prefs);
+            syncHiddenViewStyle(prefs.viewStyle);
+            closeModal();
+            htmx.trigger(document.body, 'builderViewChanged');
+        });
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function () {
+                applyPrefsToModal(defaultPrefs());
+            });
+        }
+    })();
 
     (function () {
         var PORTAL_ID = 'card-hover-portal';
