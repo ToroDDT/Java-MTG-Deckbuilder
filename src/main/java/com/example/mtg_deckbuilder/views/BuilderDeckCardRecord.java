@@ -12,6 +12,10 @@ import java.util.UUID;
 public record BuilderDeckCardRecord(
         String deckEntryId,
         String name,
+        String artist,
+        String set,
+        String rarity,
+        String manaCost,
         String colorIdentity,
         String typeLine,
         String producedMana,

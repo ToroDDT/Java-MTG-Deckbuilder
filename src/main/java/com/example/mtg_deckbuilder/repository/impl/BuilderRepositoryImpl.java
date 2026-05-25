@@ -183,6 +183,8 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         cards.name AS card_name,
         cards.type_line,
         cards.cmc,
+        cards.rarity,
+        cards.mana_cost,
         cards.scryfall_uri,
         cards.color_identity,
         cards.image_uris,
@@ -211,6 +213,10 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                         BuilderDeckCardRecord.builder()
                                 .deckEntryId(rs.getObject("deck_entry_id", UUID.class).toString())
                                 .name(rs.getString("card_name"))
+                                .artist(rs.getString("artist"))
+                                .set(rs.getString("set_name"))
+                                .manaCost(rs.getString("mana_cost"))
+                                .rarity(rs.getString("rarity"))
                                 .deckName(rs.getString("deck_name"))
                                 .deckImage(rs.getString("deck_image"))
                                 .commander(rs.getString("commander"))
