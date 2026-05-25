@@ -78,6 +78,9 @@ public class BuilderController {
                 ALLOWED_VIEW_STYLES.contains(viewStyle) ? viewStyle : "text";
         model.addAttribute("deckViewStyle", normalized);
 
+        if ("visual-grid".equals(normalized)) {
+            return "builder/layouts/visual-grid :: type-layout";
+        }
         if ("visual-stacks".equals(normalized)) {
             return "builder/layouts/visual-stack :: type-layout";
         }

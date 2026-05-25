@@ -17,14 +17,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/nav-bar.min.css}"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
 </head>
 
 <body class="bg-[#f9f9ff] text-[#191b23] font-[Inter,sans-serif]">
 
 <div th:replace="~{fragments/nav-bar.html :: nav}"></div>
 
-<div class="flex min-h-screen bg-[#f9f9ff]">
-    <main class="flex-1 w-full max-w-[1480px] mx-auto"
+<div class="flex min-h-screen min-w-0 bg-[#f9f9ff]">
+    <main class="flex-1 w-full min-w-0 max-w-[1480px] mx-auto"
           style="padding: clamp(1.25rem, 3vw, 2.5rem);
                  background: radial-gradient(ellipse at 70% 0%, rgba(216,226,255,0.55), transparent 42%), #f9f9ff;">
 
@@ -112,10 +113,10 @@
         </section>
 
         <!-- Grid Content -->
-        <div class="grid grid-cols-12 gap-8">
+        <div class="grid grid-cols-12 gap-8 min-w-0">
 
-            <!-- Left Column: Decklist (8/12) -->
-            <div class="col-span-12 xl:col-span-8 space-y-12">
+            <!-- Left Column: Decklist (8/12) — min-w-0 lets the column shrink so HTMX views don’t blow out the 12-col grid -->
+            <div class="col-span-12 xl:col-span-8 space-y-12 min-w-0 isolate">
 
                 <!-- Card type layout (HTMX loaded) — viewStyle comes from hidden field + localStorage (see sync script below) -->
                 <div id="builder-deck-layout-request-params" hidden>
@@ -136,7 +137,7 @@
                     })();
                 </script>
                 <div id="type-layout-container"
-                     class="min-h-[18rem]"
+                     class="min-h-[18rem] w-full max-w-full min-w-0 transition-all duration-200 overflow-x-auto"
                      hx-include="#builder-deck-layout-request-params"
                      th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
                      hx-trigger="load, cardsUpdated from:body, builderViewChanged from:body"
@@ -161,8 +162,8 @@
                 </div>
             </div>
 
-            <!-- Right Column: Statistics (4/12) — sticky -->
-            <div class="col-span-12 xl:col-span-4 space-y-8 xl:sticky xl:top-24 self-start">
+            <!-- Right Column: Statistics (4/12) — sticky; z-index above deck hover lifts so panels aren’t clipped oddly -->
+            <div class="col-span-12 xl:col-span-4 space-y-8 xl:sticky xl:top-24 self-start min-w-0 z-20">
 
                 <!-- Mana Curve -->
                 <div class="bg-white/[.92] backdrop-blur-md rounded-3xl p-6
@@ -487,9 +488,27 @@
 
         function positionCardHoverPortal(portal, row) {
             var gap = 16;
+            var estimatedWidth = 400;
+            if (portal && portal.firstElementChild) {
+                var w = portal.firstElementChild.getBoundingClientRect().width;
+                if (w && w > 120) estimatedWidth = w;
+            }
+
             var rect = row.getBoundingClientRect();
-            portal.style.top = rect.top + 'px';
-            portal.style.left = (rect.right + gap) + 'px';
+
+            portal.style.bottom = '';
+            portal.style.right = '';
+
+            /* Fixed positioning: viewport coordinates only. */
+            if (rect.right + gap + estimatedWidth <= window.innerWidth - gap) {
+                portal.style.left = (rect.right + gap) + 'px';
+            } else if (rect.left - gap - estimatedWidth >= gap) {
+                portal.style.left = (rect.left - gap - estimatedWidth) + 'px';
+            } else {
+                portal.style.left = Math.max(gap, (window.innerWidth - estimatedWidth) / 2) + 'px';
+            }
+
+            portal.style.top = Math.max(gap, rect.top) + 'px';
         }
 
         function hideCardHoverPortal() {
@@ -515,8 +534,8 @@
                 return;
             }
 
-            positionCardHoverPortal(portal, row);
             portal.classList.remove('hidden');
+            positionCardHoverPortal(portal, row);
         });
 
         document.addEventListener('mouseout', function (e) {
