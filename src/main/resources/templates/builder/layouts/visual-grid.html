@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<th:block th:fragment="type-layout">
+  <style>
+    /* The flex wrapper needs a tiny bit of right-padding so the final card's
+       hover effect doesn't get clipped by parent containers with overflow-hidden.
+    */
+    .mtg-flex-stack {
+      display: flex;
+      flex-wrap: wrap;
+      row-gap: 1.5rem; /* Space between wrapped rows */
+      padding: 0.5rem 2rem 0.5rem 0.25rem;
+    }
+
+    /* Base sizing for the pile-stack container items.
+       Adjust the default width/margins for gorgeous scaling.
+    */
+    .card-stack-item {
+      position: relative;
+      flex-shrink: 0;
+      width: 8rem; /* default fallback width ~128px */
+      margin-right: -5.25rem; /* The magic overlap coefficient */
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), z-index 0.15s ease;
+      z-index: 1;
+    }
+
+    /* Responsive scaling for different viewports */
+    @media (min-width: 640px) {
+      .card-stack-item {
+        width: 10rem; /* ~160px */
+        margin-right: -6.75rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .card-stack-item {
+        width: 11rem; /* ~176px */
+        margin-right: -7.5rem;
+      }
+    }
+
+    /* Bring the hovered card forward and push it up slightly
+       so you can see the text/mana cost clearly.
+    */
+    .card-stack-item:hover {
+      z-index: 50;
+      transform: translateY(-14px) scale(1.05);
+      box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.5), 0 12px 16px -6px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Ensure that any cards that wrap naturally into a new line
+       reset their stacking boundary cleanly.
+    */
+    .card-stack-item:hover + .card-stack-item {
+      z-index: 20; /* Keep the immediate next card below it, but separate */
+    }
+  </style>
+
+  <div class="bg-zinc-900 rounded-3xl p-6 sm:p-8 border border-zinc-800 shadow-2xl space-y-10">
+
+    <div class="space-y-4">
+      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
+        <h2 class="text-sm font-black text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+          Creatures
+          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.creatures)} + ')'">0</span>
+        </h2>
+        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Avg CMC: 3.2</span>
+      </div>
+      <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.creatures})}"/>
+      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.creatures)}">No creatures found.</p>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
+        <h2 class="text-sm font-black text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+          Instants
+          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.instants)} + ')'">0</span>
+        </h2>
+        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Interaction</span>
+      </div>
+      <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.instants})}"/>
+      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.instants)}">No instants found.</p>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
+        <h2 class="text-sm font-black text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+          Sorceries
+          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.sorceries)} + ')'">0</span>
+        </h2>
+        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Value</span>
+      </div>
+      <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.sorceries})}"/>
+      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.sorceries)}">No sorceries found.</p>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
+        <h2 class="text-sm font-black text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+          Enchantments
+          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.enchantments)} + ')'">0</span>
+        </h2>
+        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Value</span>
+      </div>
+      <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.enchantments})}"/>
+      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.enchantments)}">No enchantments found.</p>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
+        <h2 class="text-sm font-black text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+          Artifacts
+          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.artifacts)} + ')'">0</span>
+        </h2>
+        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Value</span>
+      </div>
+      <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.artifacts})}"/>
+      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.artifacts)}">No artifacts found.</p>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
+        <h2 class="text-sm font-black text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+          Lands
+          <span class="font-medium text-xs text-zinc-400" th:text="'(' + ${#lists.size(builderView.lands)} + ')'">0</span>
+        </h2>
+        <span class="text-[10px] font-bold text-zinc-400 tracking-widest uppercase">Core Foundation</span>
+      </div>
+      <th:block th:replace="~{builder/layouts/visual-grid :: visualGridStrip(cards=${builderView.lands})}"/>
+      <p class="text-sm text-zinc-500 italic px-1" th:if="${#lists.isEmpty(builderView.lands)}">No lands found.</p>
+    </div>
+  </div>
+</th:block>
+
+<th:block th:fragment="visualGridStrip(cards)">
+  <div th:if="${cards != null and !#lists.isEmpty(cards)}" class="w-full py-2">
+
+    <div class="mtg-flex-stack">
+
+      <div th:each="card : ${cards}"
+           class="card-stack-item group aspect-[223/311] rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 shadow-md cursor-pointer">
+
+        <div class="relative w-full h-full">
+          <img th:if="${card.previewImageUrl() != null}"
+               th:src="${card.previewImageUrl()}"
+               th:alt="${card.name}"
+               class="absolute inset-0 h-full w-full object-cover select-none"
+               loading="lazy" decoding="async" width="200" height="279"/>
+
+          <div th:if="${card.previewImageUrl() == null}"
+               class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-950 p-3 text-center">
+            <span class="text-xs font-bold text-zinc-300 leading-tight line-clamp-3" th:text="${card.name}">Card Name</span>
+          </div>
+        </div>
+
+        <div class="hidden">
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</th:block>
+</body>
+</html>
