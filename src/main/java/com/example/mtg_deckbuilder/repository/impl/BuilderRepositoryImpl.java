@@ -117,18 +117,30 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         }
     }
 
-    /** Prefer compact URLs for grid / stack deck views. */
+    /**
+     * Art URL suited to grid/stack tiles (~100–150px CSS width ×2 DPR → need “normal” or better;
+     * “small” is too low‑res and looks soft when stretched).
+     */
     private String previewImageUrlFrom(String raw) {
         if (raw == null || raw.isBlank()) {
             return null;
         }
         try {
             ImageUris u = objectMapper.readValue(raw, ImageUris.class);
-            if (u.getSmall() != null && !u.getSmall().isBlank()) {
-                return u.getSmall().trim();
+            if (u.getNormal() != null && !u.getNormal().isBlank()) {
+                return u.getNormal().trim();
+            }
+            if (u.getLarge() != null && !u.getLarge().isBlank()) {
+                return u.getLarge().trim();
+            }
+            if (u.getPng() != null && !u.getPng().isBlank()) {
+                return u.getPng().trim();
             }
             if (u.getBorderCrop() != null && !u.getBorderCrop().isBlank()) {
                 return u.getBorderCrop().trim();
+            }
+            if (u.getSmall() != null && !u.getSmall().isBlank()) {
+                return u.getSmall().trim();
             }
             return u.firstNonBlankArtUrl();
         } catch (JsonProcessingException e) {
