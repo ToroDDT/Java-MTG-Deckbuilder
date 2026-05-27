@@ -72,15 +72,20 @@ public class BuilderServiceImpl implements BuilderService {
     }
 
     @Override
-    public BuilderMainView getMainView(String deckId) {
+    public BuilderMainView getMainView(String deckId, CustomUserDetails user) {
         var view = getBuilderView(deckId);
-        return new BuilderMainView(
-                view,
-                List.of("0", "1", "2", "3", "4", "5", "6", "7+"),
-                view.manaCurveData(),
-                view.colorProduction(),
-                view.colorProduction().stream().mapToLong(Long::longValue).sum(),
-                List.of("Red", "White", "Green", "Black", "Blue", "Colorless"));
+        return BuilderMainView.builder()
+                .builderView(view)
+                .manaCurveLabels(List.of("0", "1", "2", "3", "4", "5", "6", "7+"))
+                .manaCurveData(view.manaCurveData())
+                .colorProductionData(view.colorProduction())
+                .colorProductionTotal(view.colorProduction()
+                        .stream()
+                        .mapToLong(Long::longValue)
+                        .sum())
+                .colorProductionLabels(List.of("Red", "White", "Green", "Black", "Blue", "Colorless"))
+                .user(user)
+                .build();
     }
 
     @Override

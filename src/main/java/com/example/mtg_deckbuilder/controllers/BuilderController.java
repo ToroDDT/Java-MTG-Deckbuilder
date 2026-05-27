@@ -27,16 +27,9 @@ public class BuilderController {
 
     @GetMapping("/builder/deck/{id}")
     public String getDeck(@AuthenticationPrincipal CustomUserDetails user, Model model, @PathVariable("id") String deckId) {
-        var userName = user.getUsername();
-        var view = builderService.getMainView(deckId);
+        var view = builderService.getMainView(deckId, user);
 
-        model.addAttribute("builderView", view.builderView());
-        model.addAttribute("manaCurveLabels", view.manaCurveLabels());
-        model.addAttribute("manaCurveData", view.manaCurveData());
-        model.addAttribute("colorProductionData", view.colorProductionData());
-        model.addAttribute("colorProductionTotal", view.colorProductionTotal());
-        model.addAttribute("colorProductionLabels", view.colorProductionLabels());
-        model.addAttribute("userName", userName);
+        model.addAttribute("view", view);
         model.addAttribute("ownedCard", new OwnedCard());
 
         return "builder/main";

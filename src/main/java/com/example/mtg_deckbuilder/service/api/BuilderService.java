@@ -18,7 +18,7 @@ public interface BuilderService {
 
     BuilderViewModel getBuilderView(String deckId);
 
-    BuilderMainView getMainView(String deckId);
+    BuilderMainView getMainView(String deckId, CustomUserDetails user);
 
     BuilderDeckLayoutView getDeckLayoutView(String deckId, String viewStyle, String groupBy, String sortBy, List<String> extrasParams);
 

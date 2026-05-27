@@ -37,7 +37,7 @@
                         <img alt="The Commander"
                              class="w-full h-full object-cover"
                              decoding="async" fetchpriority="high" height="256" width="192"
-                             th:src="@{${builderView.image}}"/>
+                             th:src="@{${view.builderView().image}}"/>
                     </div>
                     <div class="pt-4">
                         <div class="flex items-center gap-3 mb-2">
@@ -49,11 +49,11 @@
                             </span>
                         </div>
                         <h1 class="text-5xl font-black text-on-background tracking-tight mb-4 leading-none"
-                            th:text="${builderView.deckName}">The Necrobloom</h1>
+                            th:text="${view.builderView().deckName}">The Necrobloom</h1>
                         <div class="flex gap-6 text-on-surface-variant font-medium">
                             <div class="flex flex-col">
                                 <span class="text-[10px] uppercase tracking-wider text-slate-600">Owner</span>
-                                <span th:text="${userName}">Owner</span>
+                                <span th:text="${view.user().getUsername()}">Owner</span>
                             </div>
                             <div class="flex flex-col border-l border-outline-variant pl-6">
                                 <span class="text-[10px] uppercase tracking-wider text-slate-600">Win Rate</span>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="flex flex-col border-l border-outline-variant pl-6">
                                 <span class="text-[10px] uppercase tracking-wider text-slate-600">Value</span>
-                                <span th:text="'$'+${builderView.totalValue}">$0.00</span>
+                                <span th:text="'$'+${view.builderView().totalValue}">$0.00</span>
                             </div>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                             <input type="text" name="query" id="builder-card-name" autocomplete="off"
                                    class="rounded-xl font-medium bg-surface-container-highest text-on-surface shadow-sm border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                                    placeholder="Search a card..."
-                                   th:attr="hx-get=@{/builder/deck/{did}/card-query(did=${builderView.deckId})}"
+                                   th:attr="hx-get=@{/builder/deck/{did}/card-query(did=${view.builderView().deckId()})}"
                                    hx-trigger="input changed delay:200ms"
                                    hx-target="#builder-card-query-results"
                                    hx-swap="innerHTML"
@@ -162,7 +162,7 @@
 
                         window.__BUILDER_SYNC_DECK_LAYOUT_HIDDENS__ = applyPrefs;
 
-                        var deckId = /*[[${builderView.deckId}]]*/ '';
+                        var deckId = /*[[${view.builderView().deckId}]]*/ '';
                         try {
                             var raw = localStorage.getItem('mtg-builder-view:' + deckId);
                             if (!raw) return;
@@ -174,7 +174,7 @@
                     <div id="type-layout-container"
                          class="min-h-[18rem] w-full max-w-full min-w-0 transition-all duration-200 overflow-x-auto"
                          hx-include="#builder-deck-layout-request-params"
-                         th:attr="hx-get=@{/builder/type-layout/{id}(id=${builderView.deckId})}"
+                         th:attr="hx-get=@{/builder/type-layout/{id}(id=${view.builderView().deckId})}"
                          hx-trigger="load, cardsUpdated from:body, builderViewChanged from:body"
                          hx-swap="innerHTML">
                     </div>
@@ -185,7 +185,7 @@
                             <section class="bg-surface-dim rounded-3xl overflow-hidden">
                                 <div id="randomized-hand-container"
                                      class="w-full"
-                                     th:attr="hx-get=@{/builder/randomize-cards(deckId=${builderView.deckId})}"
+                                     th:attr="hx-get=@{/builder/randomize-cards(deckId=${view.builderView().deckId})}"
                                      hx-trigger="load, cardsUpdated from:body"
                                      hx-swap="innerHTML">
                                     <div class="p-4 text-slate-600 min-h-[14rem]">
@@ -226,10 +226,10 @@
                         </div>
 
                         <!-- Same order as colorProduction chart (Red, White, Green, Black, Blue, Colorless) -->
-                        <div th:each="label, stat : ${colorProductionLabels}" class="mb-4 last:mb-0"
-                             th:with="rawCount=${colorProductionData.get(stat.index)},
+                        <div th:each="label, stat : ${view.colorProductionLabels()}" class="mb-4 last:mb-0"
+                             th:with="rawCount=${view.colorProductionData().get(stat.index)},
                                       count=${rawCount != null ? rawCount : 0},
-                                      total=${colorProductionTotal != null && colorProductionTotal > 0 ? colorProductionTotal : 1},
+                                      total=${view.colorProductionTotal() != null && view.colorProductionTotal()> 0 ? view.colorProductionTotal() : 1},
                                       pct=${count * 100.0 / total},
                                       dotClass=${stat.index == 0 ? 'bg-red-500 border-red-900/20' : (stat.index == 1 ? 'bg-slate-100 border-slate-300' : (stat.index == 2 ? 'bg-green-600 border-green-900/20' : (stat.index == 3 ? 'bg-slate-900 border-black/30' : (stat.index == 4 ? 'bg-blue-600 border-blue-900/20' : 'bg-slate-400 border-slate-500/40'))))},
                                       barClass=${stat.index == 0 ? 'bg-red-500' : (stat.index == 1 ? 'bg-slate-300' : (stat.index == 2 ? 'bg-green-500' : (stat.index == 3 ? 'bg-slate-900' : (stat.index == 4 ? 'bg-blue-600' : 'bg-slate-400'))))}">
@@ -293,7 +293,7 @@
     </main>
 </div>
 
-<th:block th:replace="~{builder/view-options-modal :: viewOptionsModal(${builderView.deckId})}"/>
+<th:block th:replace="~{builder/view-options-modal :: viewOptionsModal(${view.builderView().deckId})}"/>
 
 <!-- Mobile Nav Bar -->
 <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around items-center h-16 z-50">
@@ -331,12 +331,12 @@
 <script th:src="@{/js/chart.min.js}"></script>
 <script th:inline="javascript">
     window.__MTG_MANA_CURVE__ = {
-        data: /*[[${manaCurveData}]]*/ [],
-        labels: /*[[${manaCurveLabels}]]*/ []
+        data: /*[[${view.manaCurveData()}]]*/ [],
+        labels: /*[[${view.manaCurveLabels()}]]*/ []
     };
     window.__MTG_COLOR_PRODUCTION__ = {
-        data: /*[[${colorProductionData}]]*/ [],
-        labels: /*[[${colorProductionLabels}]]*/ []
+        data: /*[[${view.colorProductionData()}]]*/ [],
+        labels: /*[[${view.colorProductionLabels()}]]*/ []
     };
 </script>
 <script type="module" th:src="@{/js/mana-distribution.js}"></script>
