@@ -8,16 +8,21 @@ import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
+import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.BuilderCardQueryView;
 import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
+import com.example.mtg_deckbuilder.views.BuilderDeckLayoutView;
 import com.example.mtg_deckbuilder.views.BuilderDeckSection;
+import com.example.mtg_deckbuilder.views.BuilderMainView;
+import com.example.mtg_deckbuilder.views.BuilderOwnedLibraryView;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
+import com.example.mtg_deckbuilder.views.DeckLayoutExtrasFlags;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -25,14 +30,89 @@ import java.util.stream.Stream;
 @Service
 public class BuilderServiceImpl implements BuilderService {
 
+    private static final Set<String> ALLOWED_VIEW_STYLES = Set.of(
+            "text",
+            "condensed",
+            "visual-grid",
+            "visual-stacks",
+            "visual-split",
+            "visual-spoiler"
+    );
+
+    private static final Set<String> ALLOWED_GROUP_BY = Set.of(
+            "type",
+            "subtype",
+            "type-tag",
+            "rarity",
+            "color",
+            "color-identity",
+            "mana-value",
+            "set",
+            "artist",
+            "none");
+
+    private static final Set<String> ALLOWED_SORT_BY =
+            Set.of("name", "mana-value", "price", "rarity");
+
+    private static final Set<String> ALLOWED_EXTRAS = Set.of("mana-cost", "price", "set-symbol");
+
     private final BuilderRepository builderRepository;
     private final DeckService deckService;
     private final CardService cardService;
+    private final PersonalLibraryService personalLibraryService;
 
-    public BuilderServiceImpl(BuilderRepository builderRepository, DeckService deckService, CardService cardService) {
+    public BuilderServiceImpl(BuilderRepository builderRepository,
+                              DeckService deckService,
+                              CardService cardService,
+                              PersonalLibraryService personalLibraryService) {
         this.builderRepository = builderRepository;
         this.deckService = deckService;
         this.cardService = cardService;
+        this.personalLibraryService = personalLibraryService;
+    }
+
+    @Override
+    public BuilderMainView getMainView(String deckId) {
+        var view = getBuilderView(deckId);
+        return new BuilderMainView(
+                view,
+                List.of("0", "1", "2", "3", "4", "5", "6", "7+"),
+                view.manaCurveData(),
+                view.colorProduction(),
+                view.colorProduction().stream().mapToLong(Long::longValue).sum(),
+                List.of("Red", "White", "Green", "Black", "Blue", "Colorless"));
+    }
+
+    @Override
+    public BuilderDeckLayoutView getDeckLayoutView(String deckId,
+                                                   String viewStyle,
+                                                   String groupBy,
+                                                   String sortBy,
+                                                   List<String> extrasParams) {
+        String normalizedStyle = ALLOWED_VIEW_STYLES.contains(viewStyle) ? viewStyle : "text";
+        String normalizedGroup = ALLOWED_GROUP_BY.contains(groupBy) ? groupBy : "type";
+        String normalizedSort = ALLOWED_SORT_BY.contains(sortBy) ? sortBy : "name";
+
+        Set<String> extras = new HashSet<>();
+        if (extrasParams != null) {
+            for (String chunk : extrasParams) {
+                if (chunk != null && ALLOWED_EXTRAS.contains(chunk)) {
+                    extras.add(chunk);
+                }
+            }
+        }
+
+        return new BuilderDeckLayoutView(
+                getBuilderView(deckId),
+                normalizedStyle,
+                new DeckLayoutExtrasFlags(
+                        extras.contains("mana-cost"),
+                        extras.contains("price"),
+                        extras.contains("set-symbol")),
+                buildDeckSections(deckId, normalizedGroup, normalizedSort),
+                "condensed".equals(normalizedStyle),
+                "visual-split".equals(normalizedStyle),
+                "visual-spoiler".equals(normalizedStyle));
     }
 
     @Override
@@ -42,13 +122,27 @@ public class BuilderServiceImpl implements BuilderService {
     }
 
     @Override
+    public BuilderCardQueryView getCardQueryView(String query) {
+        String trimmedQuery = query == null ? "" : query.trim();
+        return new BuilderCardQueryView(trimmedQuery, personalLibraryService.getCardQuery(trimmedQuery));
+    }
+
+    @Override
+    public BuilderOwnedLibraryView getOwnedLibraryView(String deckId, CustomUserDetails user) {
+        return new BuilderOwnedLibraryView(
+                personalLibraryService.buildPersonalLibraryViewModel(user),
+                deckId,
+                getBuilderView(deckId).deckName());
+    }
+
+    @Override
     public Optional<BuilderCardHoverView> getDeckEntryHover(CustomUserDetails user, UUID deckId, UUID deckCardEntryId) {
         return builderRepository.findDeckEntryHover(user.getId(), deckId, deckCardEntryId);
     }
 
 
     @Override
-    public List<OwnedCard>getCardsFromDeck(UUID deckId) {
+    public List<OwnedCard> getCardsFromDeck(UUID deckId) {
         return builderRepository.getAllCardsFromDeck(deckId);
     }
 
@@ -64,6 +158,16 @@ public class BuilderServiceImpl implements BuilderService {
                 .filter(img -> !img.isBlank())
                 .limit(7)
                 .toList();
+    }
+
+    @Override
+    public void removeDeckEntry(CustomUserDetails user, UUID deckId, UUID deckCardEntryId) {
+        deckService.removeDeckEntry(user, deckId, deckCardEntryId);
+    }
+
+    @Override
+    public void addCardToDeck(CustomUserDetails user, String deckId, String cardName) {
+        deckService.addCard(user, deckId, cardName);
     }
 
     @Override
