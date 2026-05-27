@@ -73,19 +73,7 @@ public class BuilderServiceImpl implements BuilderService {
 
     @Override
     public BuilderMainView getMainView(String deckId, CustomUserDetails user) {
-        var view = getBuilderView(deckId);
-        return BuilderMainView.builder()
-                .builderView(view)
-                .manaCurveLabels(List.of("0", "1", "2", "3", "4", "5", "6", "7+"))
-                .manaCurveData(view.manaCurveData())
-                .colorProductionData(view.colorProduction())
-                .colorProductionTotal(view.colorProduction()
-                        .stream()
-                        .mapToLong(Long::longValue)
-                        .sum())
-                .colorProductionLabels(List.of("Red", "White", "Green", "Black", "Blue", "Colorless"))
-                .user(user)
-                .build();
+        return BuilderMainView.from(getBuilderView(deckId), user);
     }
 
     @Override
@@ -107,18 +95,12 @@ public class BuilderServiceImpl implements BuilderService {
             }
         }
 
-        return new BuilderDeckLayoutView(
+        return BuilderDeckLayoutView.of(
                 getBuilderView(deckId),
                 normalizedStyle,
-                new DeckLayoutExtrasFlags(
-                        extras.contains("mana-cost"),
-                        extras.contains("price"),
-                        extras.contains("set-symbol")),
-                buildDeckSections(deckId, normalizedGroup, normalizedSort),
-                "condensed".equals(normalizedStyle),
-                "visual-split".equals(normalizedStyle),
-                "visual-spoiler".equals(normalizedStyle));
-    }
+                DeckLayoutExtrasFlags.from(extras),
+                buildDeckSections(deckId, normalizedGroup, normalizedSort));
+   }
 
     @Override
     public List<BuilderDeckSection> buildDeckSections(String deckId, String groupBy, String sortBy) {
@@ -128,13 +110,13 @@ public class BuilderServiceImpl implements BuilderService {
 
     @Override
     public BuilderCardQueryView getCardQueryView(String query) {
-        String trimmedQuery = query == null ? "" : query.trim();
-        return new BuilderCardQueryView(trimmedQuery, personalLibraryService.getCardQuery(trimmedQuery));
+        String normalizedQuery = BuilderCardQueryView.normalize(query);
+        return BuilderCardQueryView.of(normalizedQuery, personalLibraryService.getCardQuery(normalizedQuery));
     }
 
     @Override
     public BuilderOwnedLibraryView getOwnedLibraryView(String deckId, CustomUserDetails user) {
-        return new BuilderOwnedLibraryView(
+        return BuilderOwnedLibraryView.of(
                 personalLibraryService.buildPersonalLibraryViewModel(user),
                 deckId,
                 getBuilderView(deckId).deckName());
@@ -181,22 +163,7 @@ public class BuilderServiceImpl implements BuilderService {
         var cards = builderRepository.getAllCardsForUser(deckId);
 
         if (cards.isEmpty()) {
-            var emptyCurve = List.of(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
-            var emptyColors = List.of(0L, 0L, 0L, 0L, 0L, 0L);
-            return BuilderViewModel.builder()
-                    .image("")
-                    .deckId(deckId)
-                    .manaCurveData(emptyCurve)
-                    .lands(List.of())
-                    .artifacts(List.of())
-                    .creatures(List.of())
-                    .colorProduction(emptyColors)
-                    .enchantments(List.of())
-                    .colors(List.of())
-                    .sorceries(List.of())
-                    .totalValue(0.0)
-                    .deckName("")
-                    .build();
+            return BuilderViewModel.empty(deckId);
         }
 
         var deckName = cards.getLast().deckName();
@@ -258,21 +225,20 @@ public class BuilderServiceImpl implements BuilderService {
         List<String> colors = commander.map(ColorIdentity::getColors).orElse(List.of());
 
 
-        return BuilderViewModel.builder()
-                .image(deckImage)
-                .totalValue(total)
-                .deckName(deckName)
-                .creatures(creatures)
-                .manaCurveData(manaCurveData)
-                .instants(instants)
-                .colors(colors)
-                .enchantments(enchantments)
-                .artifacts(artifacts)
-                .lands(lands)
-                .colorProduction(counts)
-                .sorceries(sorceries)
-                .deckId(deckId)
-                .build();
+        return BuilderViewModel.of(
+                deckId,
+                deckName,
+                deckImage,
+                total,
+                creatures,
+                manaCurveData,
+                instants,
+                enchantments,
+                artifacts,
+                lands,
+                sorceries,
+                counts,
+                colors);
     }
 
     @Builder
