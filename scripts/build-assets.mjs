@@ -85,14 +85,21 @@ async function writeStaticFile(file, contents) {
   await fs.writeFile(outputPath, contents);
 }
 
+async function resolveCssImports(input) {
+  const css = await readStaticFile(input);
+  const result = await postcss([postcssImport()]).process(css, {
+    from: path.join(staticDir, input),
+  });
+  return result.css;
+}
+
 async function buildCssBundle(output, inputs) {
   const source = (await Promise.all(inputs.map(async (input) => {
-    const css = await readStaticFile(input);
+    const css = await resolveCssImports(input);
     return `/* ${input} */\n${css}`;
   }))).join("\n\n");
 
   const result = await postcss([
-    postcssImport(),
     autoprefixer(),
     cssnano({ preset: "default" }),
   ]).process(source, {
