@@ -63,15 +63,18 @@
                                 <span class="text-[10px] uppercase tracking-wider text-slate-600">Value</span>
                                 <span th:text="'$'+${view.builderView().totalValue}">$0.00</span>
                             </div>
+                            <div class="flex flex-col">
+                                <span class="text-[10px] uppercase tracking-wider text-slate-600">Value</span>
+                                <button type="button"
+                                        id="builder-open-view-options"
+                                        class="text-blue-600 font-semibold hover:underline text-left whitespace-nowrap hover:border-b-blue-400">
+                                    Edit View Options
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="flex flex-col lg:flex-row lg:items-end gap-1">
-                    <button type="button"
-                            id="builder-open-view-options"
-                            class="text-blue-800 font-semibold hover:underline text-left whitespace-nowrap">
-                        Edit View Options
-                    </button>
                     <form id="builderAddCardForm" class="flex-1 flex flex-col gap-2 min-w-0"
                           th:action="@{/personal-library/add}" th:object="${ownedCard}" method="post">
                         <input type="hidden" name="_builderCardContext" value="true"/>

@@ -73,6 +73,7 @@ public class Card {
     private String deckName;
     /** Art URL from {@code cards.image_uris} — prefers “normal/large” for sharp grid/stack tiles. */
     private String previewImageUrl;
+    private CardFaces cardFaces;
 
     public static Card fromResultSet(ResultSet rs) throws SQLException {
 
@@ -85,20 +86,24 @@ public class Card {
                 .artist(rs.getString("artist"))
                 .cmc(rs.getInt("cmc"))
                 .scryfallUri(rs.getString("scryfall_uri"))
-
                 .imageUris(extractImageUrisJson(rs))
                 .image(extractImage(rs))
-
                 .colorIdentity(extractColorIdentity(rs))
-
                 .prices(extractPrices(rs))
-
+                .cardFaces()
                 .build();
     }
 
     private static UUID extractId(ResultSet rs) throws SQLException {
         String idColumn = hasColumn(rs, "card_id") ? "card_id" : "id";
         return rs.getObject(idColumn, UUID.class);
+    }
+
+    private static CardFaces extractCardFaces(ResultSet rs) throws SQLException {
+        if(rs.getString("card_faces") == null || rs.getString("card_faces").isEmpty()){
+            return null;
+        }
+
     }
 
     private static String extractImageUrisJson(ResultSet rs) throws SQLException {

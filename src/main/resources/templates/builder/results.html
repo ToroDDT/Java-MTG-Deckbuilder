@@ -30,7 +30,7 @@
                 name="name"
                 th:value="${card.id}"
                 onclick=" setTimeout(() => {document.getElementById('card-name').value = '';}, 50)"
-                style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0.35rem 0.6rem; border: 1px solid #dbe4f0; border-radius: 0.5rem; background: #fff; text-align: left; cursor: pointer; font-size: 0.75rem;">
+                style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0.35rem 0.6rem; border-radius: 0.5rem; background: #fff; text-align: left; cursor: pointer; font-size: 0.75rem;">
             <span style="font-weight: 400;" th:text="${card.name}">Card Name</span>
             <span th:text="${card.prices != null and card.prices.usd != null ? '$' + #numbers.formatDecimal(card.prices.usd, 1, 2) : '$0.00'}">Price</span>
         </button>
