@@ -61,6 +61,19 @@ public class Card {
 
     private String artist;
 
+    private String deckEntryId;
+    private String commander;
+    private String rarity;
+    private String set;
+    private String producedMana;
+    /** Deck-level image URL ({@code decks.image}), same for each row in a deck query. */
+    private String deckImage;
+    /** Plain USD amount for {@link Double#parseDouble}, e.g. {@code "12.34"}. */
+    private String priceUsd;
+    private String deckName;
+    /** Art URL from {@code cards.image_uris} — prefers “normal/large” for sharp grid/stack tiles. */
+    private String previewImageUrl;
+
     public static Card fromResultSet(ResultSet rs) throws SQLException {
 
         return Card.builder()

@@ -9,10 +9,10 @@ public record BuilderCardQueryView(
         List<Card> cards
 ) {
     public static BuilderCardQueryView of(String query, List<Card> cards) {
-        return new BuilderCardQueryView(normalize(query), cards);
+        return new BuilderCardQueryView(getString(query), cards);
     }
 
-    public static String normalize(String query) {
+    public static String getString(String query) {
         return query == null ? "" : query.trim();
     }
 }

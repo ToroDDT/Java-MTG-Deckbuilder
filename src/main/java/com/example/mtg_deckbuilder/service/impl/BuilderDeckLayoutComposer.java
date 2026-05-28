@@ -1,6 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
-import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
+import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.views.BuilderDeckSection;
 
 import java.math.BigDecimal;
@@ -53,24 +53,24 @@ public final class BuilderDeckLayoutComposer {
     }
 
     public static List<BuilderDeckSection> build(String groupBy, String sortBy,
-            List<BuilderDeckCardRecord> deckCards) {
+            List<Card> deckCards) {
         Objects.requireNonNull(groupBy);
         Objects.requireNonNull(sortBy);
-        List<BuilderDeckCardRecord> cards =
+        List<Card> cards =
                 deckCards == null ? List.of() : List.copyOf(deckCards);
 
         if (cards.isEmpty()) {
             return List.of(new BuilderDeckSection("Deck", List.of()));
         }
 
-        Map<String, List<BuilderDeckCardRecord>> buckets = new HashMap<>();
-        for (BuilderDeckCardRecord card : cards) {
+        Map<String, List<Card>> buckets = new HashMap<>();
+        for (Card card : cards) {
             String key = bucketTitle(groupBy, card);
             buckets.computeIfAbsent(key, k -> new ArrayList<>()).add(card);
         }
 
         List<String> titleOrder = sectionTitleOrder(groupBy, buckets.keySet());
-        Comparator<BuilderDeckCardRecord> rowCmp = comparatorFor(sortBy);
+        Comparator<Card> rowCmp = comparatorFor(sortBy);
 
         List<BuilderDeckSection> sections = new ArrayList<>();
 
@@ -100,14 +100,14 @@ public final class BuilderDeckLayoutComposer {
 
             List<BuilderDeckSection> out,
 
-            Map<String, List<BuilderDeckCardRecord>> buckets,
+            Map<String, List<Card>> buckets,
 
             String title,
 
-            Comparator<BuilderDeckCardRecord> rowCmp) {
+            Comparator<Card> rowCmp) {
 
 
-        List<BuilderDeckCardRecord> rows = buckets.get(title);
+        List<Card> rows = buckets.get(title);
 
 
         if (rows == null || rows.isEmpty() || seen.contains(title)) {
@@ -151,12 +151,12 @@ public final class BuilderDeckLayoutComposer {
         }
     }
 
-    private static Comparator<BuilderDeckCardRecord> comparatorFor(String sortBy) {
+    private static Comparator<Card> comparatorFor(String sortBy) {
 
-        Comparator<BuilderDeckCardRecord> byNameThenEntry =
-                Comparator.comparing(BuilderDeckCardRecord::name,
+        Comparator<Card> byNameThenEntry =
+                Comparator.comparing(Card::getName,
                                 Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER))
-                        .thenComparing(c -> Objects.toString(c.deckEntryId(), ""));
+                        .thenComparing(c -> Objects.toString(c.getDeckEntryId(), ""));
 
         return switch (sortBy) {
 
@@ -167,8 +167,8 @@ public final class BuilderDeckLayoutComposer {
 
 
             case "price" ->
-                    Comparator.comparingDouble((BuilderDeckCardRecord c)
-                                    -> BuilderDeckLayoutComposer.parseUsd(c.priceUsd()))
+                    Comparator.comparingDouble((Card c)
+                                    -> BuilderDeckLayoutComposer.parseUsd(c.getPriceUsd()))
                             .reversed()
                             .thenComparing(byNameThenEntry);
 
@@ -187,11 +187,11 @@ public final class BuilderDeckLayoutComposer {
 
 
     /** Lands sorted after spells when Mana value sorting is requested. */
-    static double manaValueNumericForSort(BuilderDeckCardRecord card) {
+    static double manaValueNumericForSort(Card card) {
 
 
 
-        if (card.typeLine() != null && card.typeLine().contains("Land")) {
+        if (card.getTypeLine() != null && card.getTypeLine().contains("Land")) {
 
 
 
@@ -204,7 +204,7 @@ public final class BuilderDeckLayoutComposer {
 
 
 
-        Double v = parseCmc(card.cmc());
+        Double v = parseCmc(card.getCmc());
 
         return v != null ? v : 9999;
 
@@ -212,7 +212,11 @@ public final class BuilderDeckLayoutComposer {
 
 
 
-    /** Parse {@link BuilderDeckCardRecord#cmc()} as a double row key; ignores non-numeric placeholders. */
+    /** Parse card mana value as a double row key; ignores missing placeholders. */
+
+    static Double parseCmc(Integer raw) {
+        return raw == null ? null : raw.doubleValue();
+    }
 
 
     static Double parseCmc(String raw) {
@@ -277,9 +281,9 @@ public final class BuilderDeckLayoutComposer {
     /** Per-row rarity tiers for intra-section sort by rarity. */
 
 
-    static int cardRarityTier(BuilderDeckCardRecord card) {
+    static int cardRarityTier(Card card) {
 
-        return rarityTierOrdinal(card.rarity());
+        return rarityTierOrdinal(card.getRarity());
 
     }
 
@@ -340,7 +344,7 @@ public final class BuilderDeckLayoutComposer {
     /** Single heading per card bucket for the modal’s grouping tokens. */
 
 
-    static String bucketTitle(String groupMode, BuilderDeckCardRecord card) {
+    static String bucketTitle(String groupMode, Card card) {
 
 
         return switch (groupMode) {
@@ -348,39 +352,39 @@ public final class BuilderDeckLayoutComposer {
             case "none" -> "Deck";
 
 
-            case "type" -> primaryType(card.typeLine(), card.name());
+            case "type" -> primaryType(card.getTypeLine(), card.getName());
 
 
-            case "subtype" -> firstSubtypePhrase(card.typeLine());
+            case "subtype" -> firstSubtypePhrase(card.getTypeLine());
 
 
-            case "type-tag" -> typeCombinedWithFirstTag(card.typeLine());
+            case "type-tag" -> typeCombinedWithFirstTag(card.getTypeLine());
 
 
-            case "rarity" -> rarityBucketTitle(card.rarity());
+            case "rarity" -> rarityBucketTitle(card.getRarity());
 
 
             case "color", "color-identity", "colors" ->
-                    colorIdentityLabel(card.colorIdentity());
+                    colorIdentityLabel(card.getColorIdentity());
 
 
             case "mana-value" -> manaBandTitle(card);
 
 
             case "set" ->
-                    setLabel(card.set());
+                    setLabel(card.getSet());
 
 
             case "artist" -> {
 
-                String a = trimmed(card.artist());
+                String a = trimmed(card.getArtist());
 
                 yield a.isEmpty() ? "Unknown Artist" : a;
 
             }
 
             default ->
-                    primaryType(card.typeLine(), card.name());
+                    primaryType(card.getTypeLine(), card.getName());
 
 
         };
@@ -675,6 +679,11 @@ public final class BuilderDeckLayoutComposer {
     /** “WUBRG” shorthand color identity headings (Mana symbols order). */
 
 
+    static String colorIdentityLabel(List<String> colorIdentity) {
+        return colorIdentityLabel(colorIdentity == null ? "" : String.join(",", colorIdentity));
+    }
+
+
     static String colorIdentityLabel(String jdbcLiteralOrEmpty) {
 
 
@@ -829,9 +838,9 @@ public final class BuilderDeckLayoutComposer {
 
 
 
-    static String manaBandTitle(BuilderDeckCardRecord card) {
+    static String manaBandTitle(Card card) {
 
-        if (trimmed(card.typeLine()).contains("Land")) {
+        if (trimmed(card.getTypeLine()).contains("Land")) {
 
             /* Treat land cards specially when bucketed — dry for ramp lands that still tap for mana. */
 
@@ -842,7 +851,7 @@ public final class BuilderDeckLayoutComposer {
 
 
 
-        Double cmcDouble = BuilderDeckLayoutComposer.parseCmc(card.cmc());
+        Double cmcDouble = BuilderDeckLayoutComposer.parseCmc(card.getCmc());
 
 
         if (cmcDouble == null || cmcDouble.isNaN()) {

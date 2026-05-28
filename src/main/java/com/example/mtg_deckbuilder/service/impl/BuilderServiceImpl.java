@@ -1,7 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.dto.card.Card;
-import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -12,49 +11,18 @@ import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
 import com.example.mtg_deckbuilder.views.BuilderCardQueryView;
-import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
 import com.example.mtg_deckbuilder.views.BuilderDeckLayoutView;
 import com.example.mtg_deckbuilder.views.BuilderDeckSection;
 import com.example.mtg_deckbuilder.views.BuilderMainView;
 import com.example.mtg_deckbuilder.views.BuilderOwnedLibraryView;
 import com.example.mtg_deckbuilder.views.BuilderViewModel;
-import com.example.mtg_deckbuilder.views.DeckLayoutExtrasFlags;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 public class BuilderServiceImpl implements BuilderService {
-
-    private static final Set<String> ALLOWED_VIEW_STYLES = Set.of(
-            "text",
-            "condensed",
-            "visual-grid",
-            "visual-stacks",
-            "visual-split",
-            "visual-spoiler"
-    );
-
-    private static final Set<String> ALLOWED_GROUP_BY = Set.of(
-            "type",
-            "subtype",
-            "type-tag",
-            "rarity",
-            "color",
-            "color-identity",
-            "mana-value",
-            "set",
-            "artist",
-            "none");
-
-    private static final Set<String> ALLOWED_SORT_BY =
-            Set.of("name", "mana-value", "price", "rarity");
-
-    private static final Set<String> ALLOWED_EXTRAS = Set.of("mana-cost", "price", "set-symbol");
 
     private final BuilderRepository builderRepository;
     private final DeckService deckService;
@@ -82,35 +50,25 @@ public class BuilderServiceImpl implements BuilderService {
                                                    String groupBy,
                                                    String sortBy,
                                                    List<String> extrasParams) {
-        String normalizedStyle = ALLOWED_VIEW_STYLES.contains(viewStyle) ? viewStyle : "text";
-        String normalizedGroup = ALLOWED_GROUP_BY.contains(groupBy) ? groupBy : "type";
-        String normalizedSort = ALLOWED_SORT_BY.contains(sortBy) ? sortBy : "name";
-
-        Set<String> extras = new HashSet<>();
-        if (extrasParams != null) {
-            for (String chunk : extrasParams) {
-                if (chunk != null && ALLOWED_EXTRAS.contains(chunk)) {
-                    extras.add(chunk);
-                }
-            }
-        }
-
         return BuilderDeckLayoutView.of(
                 getBuilderView(deckId),
-                normalizedStyle,
-                DeckLayoutExtrasFlags.from(extras),
-                buildDeckSections(deckId, normalizedGroup, normalizedSort));
-   }
+                viewStyle,
+                extrasParams,
+                buildDeckSections(
+                        deckId,
+                        BuilderDeckLayoutView.normalizeGroupBy(groupBy),
+                        BuilderDeckLayoutView.normalizeSortBy(sortBy)));
+    }
 
     @Override
     public List<BuilderDeckSection> buildDeckSections(String deckId, String groupBy, String sortBy) {
-        List<BuilderDeckCardRecord> cards = builderRepository.getAllCardsForUser(deckId);
+        List<Card> cards = builderRepository.getAllCardsForUser(deckId);
         return BuilderDeckLayoutComposer.build(groupBy, sortBy, cards);
     }
 
     @Override
     public BuilderCardQueryView getCardQueryView(String query) {
-        String normalizedQuery = BuilderCardQueryView.normalize(query);
+        String normalizedQuery = BuilderCardQueryView.getString(query);
         return BuilderCardQueryView.of(normalizedQuery, personalLibraryService.getCardQuery(normalizedQuery));
     }
 
@@ -158,122 +116,9 @@ public class BuilderServiceImpl implements BuilderService {
     }
 
     @Override
-    public BuilderViewModel getBuilderView(String deckId ) {
-
+    public BuilderViewModel getBuilderView(String deckId) {
         var cards = builderRepository.getAllCardsForUser(deckId);
-
-        if (cards.isEmpty()) {
-            return BuilderViewModel.empty(deckId);
-        }
-
-        var deckName = cards.getLast().deckName();
-        var deckImage = cards.getLast().deckImage();
-        var colorProduction = getColorProduction(cards.stream()
-                .filter(card -> containsType(card, "Land"))
-                .toList());
-        List<Long> counts = List.of(
-                colorProduction.red(),
-                colorProduction.white(),
-                colorProduction.green(),
-                colorProduction.black(),
-                colorProduction.blue(),
-                colorProduction.colorless()
-        );
-
-        var creatures = cards.stream()
-                .filter(card -> containsType(card, "Creature"))
-                .toList();
-        var instants = cards.stream()
-                .filter(card -> containsType(card, "Instant"))
-                .toList();
-        var sorceries = cards.stream()
-                .filter(card -> containsType(card, "Sorcery"))
-                .toList();
-        var enchantments = cards.stream()
-                .filter(card -> containsType(card, "Enchantment"))
-                .toList();
-        var lands = cards.stream()
-                .filter(card -> containsType(card, "Land"))
-                .toList();
-        var artifacts = cards.stream()
-                .filter(card -> containsType(card, "Artifact"))
-                .toList();
-        var total = cards.stream()
-                .map(BuilderDeckCardRecord::priceUsd)
-                .filter(Objects::nonNull)
-                .mapToDouble(Double::parseDouble)
-                .sum();
-        Map<Integer, Long> manaCurve = cards.stream()
-                .filter(card -> card.typeLine() == null || !card.typeLine().contains("Land"))
-                .map(BuilderDeckCardRecord::cmc)
-                .filter(Objects::nonNull)
-                .filter(s -> !s.isBlank())
-                .collect(Collectors.groupingBy(
-                        cmc -> (int) Double.parseDouble(cmc),
-                        Collectors.counting()
-                ));
-        List<Long> manaCurveData = Stream.concat(
-                IntStream.rangeClosed(0, manaCurve.size())
-                        .mapToObj(i -> manaCurve.getOrDefault(i, 0L)),
-                Stream.of(manaCurve.entrySet().stream()
-                        .filter(e -> e.getKey() >= manaCurve.size())
-                        .mapToLong(Map.Entry::getValue)
-                        .sum())
-        ).collect(Collectors.toList());
-
-        var commander = cardService.findByName(cards.getLast().commander());
-        List<String> colors = commander.map(ColorIdentity::getColors).orElse(List.of());
-
-
-        return BuilderViewModel.of(
-                deckId,
-                deckName,
-                deckImage,
-                total,
-                creatures,
-                manaCurveData,
-                instants,
-                enchantments,
-                artifacts,
-                lands,
-                sorceries,
-                counts,
-                colors);
-    }
-
-    @Builder
-    public record ColorProduction(long red, long white, long green, long black, long blue, long colorless) {
-
-        public ColorProduction combine(ColorProduction other) {
-            return ColorProduction.builder()
-                    .red(this.red + other.red())
-                    .white(this.white + other.white())
-                    .green(this.green + other.green())
-                    .black(this.black + other.black())
-                    .blue(this.blue + other.blue())
-                    .colorless(this.colorless + other.colorless())
-                    .build();
-        }
-
-        public static ColorProduction fromIdentity(String identity) {
-            if (identity == null || identity.isBlank()) {
-                return ColorProduction.builder().colorless(1).build();
-            }
-            return ColorProduction.builder()
-                    .red(identity.contains("R") ? 1 : 0)
-                    .white(identity.contains("W") ? 1 : 0)
-                    .green(identity.contains("G") ? 1 : 0)
-                    .black(identity.contains("B") ? 1 : 0)
-                    .blue(identity.contains("U") ? 1 : 0)
-                    .colorless(0)
-                    .build();
-        }
-    }
-
-    private ColorProduction getColorProduction(List<BuilderDeckCardRecord> cards) {
-        return cards.stream()
-                .map(card -> ColorProduction.fromIdentity(card.producedMana()))
-                .reduce(ColorProduction.builder().build(), ColorProduction::combine);
+        return BuilderViewModel.fromCards(deckId, cards, cardService::findByName);
     }
 
     @Override
@@ -314,12 +159,5 @@ public class BuilderServiceImpl implements BuilderService {
     @Override
     public String optimizeDeck() {
         return "";
-    }
-
-    private boolean containsType(BuilderDeckCardRecord card, String type) {
-        if (card == null || card.typeLine() == null) {
-            return false;
-        }
-        return card.typeLine().contains(type);
     }
 }

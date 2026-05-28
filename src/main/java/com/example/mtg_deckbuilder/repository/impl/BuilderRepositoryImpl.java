@@ -6,7 +6,6 @@ import com.example.mtg_deckbuilder.dto.card.Prices;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
 import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
-import com.example.mtg_deckbuilder.views.BuilderDeckCardRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -171,8 +170,34 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         }
     }
 
+    private static Integer integerFromRs(ResultSet rs, String columnName) throws SQLException {
+        Object value = rs.getObject(columnName);
+        return value instanceof Number number ? number.intValue() : null;
+    }
+
+    private static List<String> stringListFromSqlArray(Array sqlArray) throws SQLException {
+        if (sqlArray == null) {
+            return List.of();
+        }
+        try {
+            Object raw = sqlArray.getArray();
+            if (raw instanceof String[] values) {
+                return List.copyOf(Arrays.asList(values));
+            }
+            if (raw instanceof Object[] values) {
+                return Arrays.stream(values)
+                        .filter(Objects::nonNull)
+                        .map(Object::toString)
+                        .toList();
+            }
+            return List.of();
+        } finally {
+            sqlArray.free();
+        }
+    }
+
     @Override
-    public List<BuilderDeckCardRecord> getAllCardsForUser(String deckId) {
+    public List<Card> getAllCardsForUser(String deckId) {
         String sql = """
     SELECT\s
         deck_card_entries.id AS deck_entry_id,
@@ -212,7 +237,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         return jdbcClient.sql(sql)
                 .param(UUID.fromString(deckId))
                 .query((rs, rowNum) ->
-                        BuilderDeckCardRecord.builder()
+                        Card.builder()
                                 .deckEntryId(rs.getObject("deck_entry_id", UUID.class).toString())
                                 .name(rs.getString("card_name"))
                                 .artist(rs.getString("artist"))
@@ -222,16 +247,15 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                                 .deckName(rs.getString("deck_name"))
                                 .deckImage(rs.getString("deck_image"))
                                 .commander(rs.getString("commander"))
-                                .cmc(rs.getString("cmc"))
+                                .cmc(integerFromRs(rs, "cmc"))
                                 .producedMana(rs.getString("produced_mana"))
-                                .colorIdentity(rs.getString("color_identity"))
+                                .colorIdentity(stringListFromSqlArray(rs.getArray("color_identity")))
                                 .priceUsd(usdNumericPlainFromPricesColumn(rs))
                                 .typeLine(rs.getString("type_line"))
                                 .previewImageUrl(previewImageUrlFrom(rs.getString("image_uris")))
-                                .build() // Closes out the Lombok builder for the record
+                                .build()
                 )
                 .list();
-        //   }
     }
 
     @Override
