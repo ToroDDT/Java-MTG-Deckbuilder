@@ -11,7 +11,7 @@
             space-y-10"
      th:fragment="type-layout">
 
-    <section th:each="sec : ${deckSections}" class="space-y-6">
+    <section th:each="sec : ${layout.deckSections()}" class="space-y-6">
 
         <header class="flex flex-wrap gap-4 justify-between items-baseline pb-3 border-b border-outline-variant">
             <h2 class="text-xl font-black text-on-background flex gap-3 items-center">
@@ -20,7 +20,7 @@
                       th:text="${#lists.size(sec.cards)}">0</span>
             </h2>
             <span class="text-[10px] font-bold text-on-surface-variant tracking-[0.28em] uppercase"
-                  th:text="${deckVisualSplit eq true} ? 'Split columns' : 'Wrapped stacks'">Stacks</span>
+                  th:text="${layout.deckVisualSplit() eq true} ? 'Split columns' : 'Wrapped stacks'">Stacks</span>
         </header>
 
         <p class="text-sm text-on-surface-variant"
@@ -30,7 +30,7 @@
 
         <div th:if="${!#lists.isEmpty(sec.cards)}"
              class="transition-[column-count]"
-             th:class="${deckVisualSplit eq true}
+             th:class="${layout.deckVisualSplit() eq true}
                         ? 'xl:columns-2 xl:[column-gap:3.25rem]'
                         : 'flex flex-wrap gap-5'">
 
@@ -39,7 +39,7 @@
                         hover:bg-surface-container-highest transition-colors cursor-pointer ring-1 ring-transparent
                         hover:ring-blue-400/35
                         xl:mb-6 xl:break-inside-avoid xl:w-[8.125rem]"
-                 th:classAppend="${deckVisualSplit eq false} ? ' shrink-0' : ''"
+                 th:classAppend="${layout.deckVisualSplit() eq false} ? ' shrink-0' : ''"
                  th:each="card : ${sec.cards}">
                 <div class="relative w-full rounded-lg overflow-hidden shadow-md ring-1 ring-black/10 bg-surface-dim"
                      style="aspect-ratio: 226/311;">
@@ -59,7 +59,7 @@
                 <div class="flex flex-col gap-2 w-full text-center px-px">
                     <div class="flex w-full justify-center gap-1">
                         <span class="text-xs font-bold text-slate-600 shrink-0 mt-px">1</span>
-                        <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+                        <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${layout.builderView().deckId()})}"/>
                     </div>
                     <th:block th:replace="~{builder/deck-list-row-text :: extrasStripCenter(${card})}"/>
                 </div>

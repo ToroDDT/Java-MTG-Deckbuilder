@@ -84,7 +84,7 @@
 
   <div class="rounded-3xl p-6 sm:p-8 border shadow-2xl space-y-10">
 
-    <div th:each="sec : ${deckSections}" class="space-y-4">
+    <div th:each="sec : ${layout.deckSections()}" class="space-y-4">
 
       <div class="flex justify-between items-baseline mb-1 pb-2 border-b border-zinc-800">
         <h2 class="text-sm font-black text-black uppercase tracking-wider flex items-center gap-2">
@@ -119,7 +119,7 @@
     <div class="mtg-flex-stack">
       <div th:each="card : ${cards}"
            class="card-stack-item group aspect-[223/311] rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 shadow-md cursor-pointer"
-           th:classappend="${deckSpoilerReveal eq true} ? 'deck-visual-spoiler-tile' : ''">
+           th:classappend="${layout.deckSpoilerReveal() eq true} ? 'deck-visual-spoiler-tile' : ''">
 
         <div class="relative w-full h-full">
           <img th:if="${card.previewImageUrl != null}"
@@ -133,12 +133,12 @@
             <span class="text-xs font-bold text-zinc-300 leading-tight line-clamp-3" th:text="${card.name}">Card Name</span>
           </div>
 
-          <div th:if="${deckSpoilerReveal eq true}"
+          <div th:if="${layout.deckSpoilerReveal() eq true}"
                class="deck-visual-spoiler-veil absolute inset-0 rounded-lg bg-black/65 mix-blend-soft-light"></div>
         </div>
 
         <div class="hidden">
-          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${builderView.deckId})}"/>
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${layout.builderView().deckId()})}"/>
         </div>
 
       </div>

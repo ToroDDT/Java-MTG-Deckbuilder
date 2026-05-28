@@ -54,7 +54,10 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   public List<Card> getCardQuery(String query) {
     return query.isEmpty()
             ? List.of()
-            : cardServiceImpl.findByNameContaining(query).stream().limit(8).toList();
+            : cardServiceImpl.findByNameContaining(query)
+            .stream()
+            .limit(8)
+            .toList();
   }
 
 @Override
@@ -114,7 +117,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
   @Override
   public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user) {
 
-    var cardsFuture = CompletableFuture.supplyAsync(() -> this.getCardsPaginated(user.getId()));
+    var cardsFuture = CompletableFuture.supplyAsync(() -> getCardsPaginated(user.getId()));
 
     var deckNamesFuture = CompletableFuture.supplyAsync(() -> getDeckNames(user));
 

@@ -8,7 +8,7 @@
 <div style="columns: 3; column-gap: 3rem;" th:fragment="type-layout"
      class="min-w-0 max-w-full text-on-background">
 
-    <section th:each="sec : ${deckSections}"
+    <section th:each="sec : ${layout.deckSections()}"
              class="space-y-4"
              style="break-inside: avoid; margin-bottom: 2.5rem;"
              th:attr="aria-label=${sec.title}">
@@ -20,12 +20,12 @@
                       th:text="${#lists.size(sec.cards)}">0</span>
             </h2>
             <span class="text-[10px] font-bold text-slate-600 tracking-widest uppercase whitespace-nowrap"
-                  th:if="${deckListCondensed eq true}">
+                  th:if="${layout.deckListCondensed() eq true}">
                 Condensed
             </span>
         </div>
 
-        <div th:classAppend="${deckListCondensed eq true} ? ' space-y-1' : ' space-y-2'"
+        <div th:classAppend="${layout.deckListCondensed() eq true} ? ' space-y-1' : ' space-y-2'"
              class="">
             <th:block th:each="card : ${sec.cards}">
                 <th:block th:replace="~{builder/deck-list-row-text :: textRowDeck(${card})}"/>
