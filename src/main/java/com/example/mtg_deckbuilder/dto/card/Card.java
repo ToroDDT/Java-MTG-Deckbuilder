@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.dto.card;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
@@ -73,7 +74,7 @@ public class Card {
     private String deckName;
     /** Art URL from {@code cards.image_uris} — prefers “normal/large” for sharp grid/stack tiles. */
     private String previewImageUrl;
-    private CardFaces cardFaces;
+    private List<CardFaces> cardFaces;
 
     public static Card fromResultSet(ResultSet rs) throws SQLException {
 
@@ -90,7 +91,7 @@ public class Card {
                 .image(extractImage(rs))
                 .colorIdentity(extractColorIdentity(rs))
                 .prices(extractPrices(rs))
-                .cardFaces()
+                .cardFaces(extractCardFaces(rs))
                 .build();
     }
 
@@ -99,11 +100,24 @@ public class Card {
         return rs.getObject(idColumn, UUID.class);
     }
 
-    private static CardFaces extractCardFaces(ResultSet rs) throws SQLException {
-        if(rs.getString("card_faces") == null || rs.getString("card_faces").isEmpty()){
+    private static List<CardFaces> extractCardFaces(ResultSet rs) throws SQLException {
+        if (!hasColumn(rs, "card_faces")) {
             return null;
         }
 
+        String jsonString = rs.getString("card_faces");
+        if (jsonString == null || jsonString.isBlank()) {
+            return null;
+        }
+
+        try {
+            return OBJECT_MAPPER.readValue(
+                    jsonString,
+                    new TypeReference<List<CardFaces>>() {}
+            );
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static String extractImageUrisJson(ResultSet rs) throws SQLException {
