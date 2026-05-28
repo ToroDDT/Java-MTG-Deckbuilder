@@ -47,13 +47,7 @@ public class BuilderController {
 
         var layout = builderService.getDeckLayoutView(deckId, viewStyle, groupBy, sortBy, extrasParams);
 
-        model.addAttribute("builderView", layout.builderView());
-        model.addAttribute("deckViewStyle", layout.deckViewStyle());
-        model.addAttribute("deckExtras", layout.deckExtras());
-        model.addAttribute("deckSections", layout.deckSections());
-        model.addAttribute("deckListCondensed", layout.deckListCondensed());
-        model.addAttribute("deckVisualSplit", layout.deckVisualSplit());
-        model.addAttribute("deckSpoilerReveal", layout.deckSpoilerReveal());
+        model.addAttribute("layout", layout);
 
         boolean visualStacksLike =
                 "visual-stacks".equals(layout.deckViewStyle()) || "visual-split".equals(layout.deckViewStyle());
