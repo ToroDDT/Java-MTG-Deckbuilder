@@ -62,7 +62,7 @@ public class BuilderController {
 
     @GetMapping(value = "/builder/deck/{deckId}/card-query", headers = "HX-Request=true")
     public String builderCardQuery(
-            @PathVariable("deckId") String deckId,
+            @PathVariable String deckId,
             @RequestParam(name = "query", required = false) String query,
             Model model) {
 
@@ -79,7 +79,7 @@ public class BuilderController {
 
     @GetMapping(value = "/builder/deck/{deckId}/owned-library", headers = "HX-Request=true")
     public String builderOwnedLibrary(
-            @PathVariable("deckId") String deckId,
+            @PathVariable String deckId,
             @AuthenticationPrincipal CustomUserDetails user,
             Model model) {
         var libraryView = builderService.getOwnedLibraryView(deckId, user);
@@ -104,8 +104,8 @@ public class BuilderController {
     @GetMapping(value = "/builder/deck/{deckId}/deck-entry/{deckCardEntryId}/actions", headers = "HX-Request=true")
     public String deckEntryActions(
             Model model,
-            @PathVariable("deckId") String deckId,
-            @PathVariable("deckCardEntryId") String deckCardEntryId) {
+            @PathVariable String deckId,
+            @PathVariable String deckCardEntryId) {
         model.addAttribute("deckId", deckId);
         model.addAttribute("deckEntryId", deckCardEntryId);
         return "builder/card-actions :: actionsPanel";
