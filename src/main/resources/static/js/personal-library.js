@@ -1,3 +1,21 @@
+function splitFaceData(value) {
+    if (!value) {
+        return [];
+    }
+    return value.split('||').filter((part) => part.length > 0);
+}
+
+function initDualFacedCards(root) {
+    const scope = root || document;
+    scope.querySelectorAll('.cb-card-flip-btn').forEach((btn) => {
+        if (btn.dataset.bound === 'true') {
+            return;
+        }
+        btn.dataset.bound = 'true';
+        btn.dataset.faceIndex = btn.dataset.faceIndex || '0';
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // This script adds csrf token to htmx requests headers
     document.body.addEventListener('htmx:configRequest', (event) => {
@@ -57,6 +75,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (target.id === "personal-cards" || target.classList.contains("cb-card")) {
             updateVisibleCardCounts();
+            initDualFacedCards(target);
+        }
+    });
+
+    document.body.addEventListener('click', (evt) => {
+        const flipBtn = evt.target.closest('.cb-card-flip-btn');
+        if (!flipBtn) {
+            return;
+        }
+
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        const urls = splitFaceData(flipBtn.dataset.faceUrls);
+        const names = splitFaceData(flipBtn.dataset.faceNames);
+        if (urls.length < 2) {
+            return;
+        }
+
+        const wrap = flipBtn.closest('.cb-card-img-wrap');
+        const img = wrap && wrap.querySelector('.cb-card-img');
+        if (!img) {
+            return;
+        }
+
+        const cardEl = flipBtn.closest('.cb-card');
+        const nameEl = cardEl && cardEl.querySelector('.cb-card-name--primary');
+
+        let faceIndex = parseInt(flipBtn.dataset.faceIndex || '0', 10) || 0;
+        faceIndex = (faceIndex + 1) % urls.length;
+        flipBtn.dataset.faceIndex = String(faceIndex);
+
+        img.src = urls[faceIndex];
+        if (names[faceIndex]) {
+            img.alt = names[faceIndex];
+            if (nameEl) {
+                nameEl.textContent = names[faceIndex];
+            }
         }
     });
 
@@ -118,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (target.id === "personal-cards" || target.classList.contains("cb-card")) {
             updateVisibleCardCounts();
+            initDualFacedCards(target);
         }
 
         if (target.id === "card-query-results") {
@@ -168,4 +225,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     updateVisibleCardCounts();
+    initDualFacedCards(document);
 });

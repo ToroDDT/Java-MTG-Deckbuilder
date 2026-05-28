@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Setter
@@ -100,12 +101,15 @@ public class Card {
         return rs.getObject(idColumn, UUID.class);
     }
 
-    private static List<CardFaces> extractCardFaces(ResultSet rs) throws SQLException {
+    public static List<CardFaces> extractCardFaces(ResultSet rs) throws SQLException {
         if (!hasColumn(rs, "card_faces")) {
             return null;
         }
 
-        String jsonString = rs.getString("card_faces");
+        return parseCardFacesJson(rs.getString("card_faces"));
+    }
+
+    public static List<CardFaces> parseCardFacesJson(String jsonString) {
         if (jsonString == null || jsonString.isBlank()) {
             return null;
         }
@@ -130,10 +134,15 @@ public class Card {
 
     private static String extractImage(ResultSet rs) throws SQLException {
         if (hasColumn(rs, "image")) {
-            return rs.getString("image");
+            String image = rs.getString("image");
+            if (image != null && !image.isBlank()) {
+                return image;
+            }
         }
 
-        return bestArtUrlFromImageUrisJson(extractImageUrisJson(rs));
+        return bestArtUrlFromImageUrisOrCardFaces(
+                extractImageUrisJson(rs),
+                hasColumn(rs, "card_faces") ? rs.getString("card_faces") : null);
     }
 
     /**
@@ -153,12 +162,70 @@ public class Card {
         }
     }
 
+    public static String bestArtUrlFromCardFaces(List<CardFaces> cardFaces) {
+        if (cardFaces == null || cardFaces.isEmpty()) {
+            return null;
+        }
+
+        return cardFaces.stream()
+                .map(CardFaces::artworkUrl)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(url -> !url.isBlank())
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static String bestArtUrlFromCardFacesJson(String cardFacesJson) {
+        return bestArtUrlFromCardFaces(parseCardFacesJson(cardFacesJson));
+    }
+
+    public static String bestArtUrlFromImageUrisOrCardFaces(String imageUrisJson, String cardFacesJson) {
+        String image = bestArtUrlFromImageUrisJson(imageUrisJson);
+        return image != null ? image : bestArtUrlFromCardFacesJson(cardFacesJson);
+    }
+
     /** Absolute image URL for UI: {@link #image} when set, else best URL from {@link #imageUris} JSON. */
     public String artworkUrl() {
         if (image != null && !image.isBlank()) {
             return image.trim();
         }
-        return bestArtUrlFromImageUrisJson(imageUris);
+        String imageFromUris = bestArtUrlFromImageUrisJson(imageUris);
+        return imageFromUris != null ? imageFromUris : bestArtUrlFromCardFaces(cardFaces);
+    }
+
+    /** One art URL per {@link #cardFaces} entry, in face order. */
+    public List<String> faceArtworkUrls() {
+        if (cardFaces == null || cardFaces.isEmpty()) {
+            return List.of();
+        }
+
+        return cardFaces.stream()
+                .map(CardFaces::artworkUrl)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(url -> !url.isBlank())
+                .toList();
+    }
+
+    /** Display name per face; falls back to {@link #name} when a face has no name. */
+    public List<String> faceNames() {
+        if (cardFaces == null || cardFaces.isEmpty()) {
+            return List.of();
+        }
+
+        return cardFaces.stream()
+                .map(face -> {
+                    if (face.name() != null && !face.name().isBlank()) {
+                        return face.name().trim();
+                    }
+                    return name != null ? name.trim() : "";
+                })
+                .toList();
+    }
+
+    public boolean hasSwitchableFaces() {
+        return faceArtworkUrls().size() >= 2;
     }
 
     private static Prices extractPrices(ResultSet rs) throws SQLException {

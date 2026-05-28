@@ -22,19 +22,29 @@
              th:data-cmc="${card.getCard().getCmc()}"
              th:data-colors="${#strings.listJoin(card.getColors(), ',')}">
 
-            <div class="cb-card-img-wrap">
+            <div class="cb-card-img-wrap"
+                 th:classappend="${card.card.hasSwitchableFaces()} ? ' cb-card-img-wrap--dual' : ''">
                 <img
                         class="cb-card-img"
-                        th:src="${card.getCard().getImage()}"
+                        th:src="${card.card.artworkUrl()}"
                         th:alt="${card.getCard().getName()}"
                         th:attr="fetchpriority=${iterStat.first ? 'high' : null},loading=${iterStat.first ? null : 'lazy'}"
                 />
+                <button type="button"
+                        class="cb-card-flip-btn"
+                        th:if="${card.card.hasSwitchableFaces()}"
+                        th:attr="data-face-urls=${#strings.listJoin(card.card.faceArtworkUrls(), '||')},
+                                 data-face-names=${#strings.listJoin(card.card.faceNames(), '||')}"
+                        aria-label="Show other card face"
+                        title="Flip card face">
+                    <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+                </button>
                 <div class="cb-card-img-placeholder" style="display:none">🃏</div>
             </div>
 
             <div class="cb-card-body">
                 <div class="flex items-center justify-between w-full">
-                    <div class="cb-card-name" th:text="${card.getCard().getName()}">Card Name</div>
+                    <div class="cb-card-name cb-card-name--primary" th:text="${card.getCard().getName()}">Card Name</div>
 
                     <button
                             type="button"

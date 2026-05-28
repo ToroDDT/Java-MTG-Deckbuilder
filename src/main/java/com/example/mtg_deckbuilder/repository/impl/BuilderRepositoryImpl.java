@@ -120,9 +120,9 @@ public class BuilderRepositoryImpl implements BuilderRepository {
      * Art URL suited to grid/stack tiles (~100–150px CSS width ×2 DPR → need “normal” or better;
      * “small” is too low‑res and looks soft when stretched).
      */
-    private String previewImageUrlFrom(String raw) {
+    private String previewImageUrlFrom(String raw, String cardFacesJson) {
         if (raw == null || raw.isBlank()) {
-            return null;
+            return Card.bestArtUrlFromCardFacesJson(cardFacesJson);
         }
         try {
             ImageUris u = objectMapper.readValue(raw, ImageUris.class);
@@ -141,9 +141,10 @@ public class BuilderRepositoryImpl implements BuilderRepository {
             if (u.getSmall() != null && !u.getSmall().isBlank()) {
                 return u.getSmall().trim();
             }
-            return u.firstNonBlankArtUrl();
+            String image = u.firstNonBlankArtUrl();
+            return image != null ? image : Card.bestArtUrlFromCardFacesJson(cardFacesJson);
         } catch (JsonProcessingException e) {
-            return null;
+            return Card.bestArtUrlFromCardFacesJson(cardFacesJson);
         }
     }
 
@@ -215,6 +216,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         (substring(cards.scryfall_uri FROM '/card/([^/]+)/')) AS deck_set_hint,
         cards.color_identity,
         cards.image_uris,
+        cards.card_faces,
         cards.prices,
         cards.produced_mana,
 
@@ -252,7 +254,9 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                                 .colorIdentity(stringListFromSqlArray(rs.getArray("color_identity")))
                                 .priceUsd(usdNumericPlainFromPricesColumn(rs))
                                 .typeLine(rs.getString("type_line"))
-                                .previewImageUrl(previewImageUrlFrom(rs.getString("image_uris")))
+                                .imageUris(rs.getString("image_uris"))
+                                .cardFaces(Card.extractCardFaces(rs))
+                                .previewImageUrl(previewImageUrlFrom(rs.getString("image_uris"), rs.getString("card_faces")))
                                 .build()
                 )
                 .list();
@@ -273,6 +277,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         cards.scryfall_uri,
         cards.color_identity,
         cards.image_uris,
+        cards.card_faces,
         cards.prices,
 
         decks.name AS deck_name,
@@ -295,6 +300,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
     .param(deckId)
     .query((rs, rowNum) -> {
         String imageUrisJson = rs.getString("image_uris");
+        String cardFacesJson = rs.getString("card_faces");
         return OwnedCard.builder()
             .card(
                 Card.builder()
@@ -303,7 +309,8 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                     .typeLine(rs.getString("type_line"))
                     .scryfallUri(rs.getString("scryfall_uri"))
                     .imageUris(imageUrisJson)
-                    .image(Card.bestArtUrlFromImageUrisJson(imageUrisJson))
+                    .cardFaces(Card.parseCardFacesJson(cardFacesJson))
+                    .image(Card.bestArtUrlFromImageUrisOrCardFaces(imageUrisJson, cardFacesJson))
                     .build()
             )
             .build();

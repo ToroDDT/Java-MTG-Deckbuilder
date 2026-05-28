@@ -23,9 +23,13 @@ public class ImageUris {
 
     /** First non-blank URL Scryfall provides; avoids null {@code border_crop} on some layouts. */
     public String firstNonBlankArtUrl() {
-        for (String candidate : List.of(borderCrop, normal, large, png, small, artCrop)) {
-            if (candidate != null && !candidate.isBlank()) {
-                return candidate.trim();
+        for (String candidate : new String[] { borderCrop, normal, large, png, small, artCrop }) {
+            if (candidate == null) {
+                continue;
+            }
+            String trimmed = candidate.trim();
+            if (!trimmed.isBlank()) {
+                return trimmed;
             }
         }
         return null;

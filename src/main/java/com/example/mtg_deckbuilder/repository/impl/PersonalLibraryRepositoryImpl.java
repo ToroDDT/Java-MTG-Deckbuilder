@@ -111,8 +111,13 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             c.cmc,
             c.scryfall_uri,
             c.color_identity,
+            c.image_uris,
+            c.card_faces,
 
-            c.image_uris->>'border_crop' AS image,
+            COALESCE(
+                c.image_uris->>'border_crop',
+                c.card_faces->0->'image_uris'->>'border_crop'
+            ) AS image,
 
             c.prices->>'usd' AS usd,
             c.prices->>'usd_foil' AS usd_foil,
@@ -154,8 +159,13 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             c.cmc,
             c.scryfall_uri,
             c.color_identity,
+            c.image_uris,
+            c.card_faces,
 
-            c.image_uris->>'border_crop' AS image,
+            COALESCE(
+                c.image_uris->>'border_crop',
+                c.card_faces->0->'image_uris'->>'border_crop'
+            ) AS image,
 
             c.prices->>'usd' AS usd,
             c.prices->>'usd_foil' AS usd_foil,
@@ -199,8 +209,13 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             c.cmc,
             c.scryfall_uri,
             c.color_identity,
+            c.image_uris,
+            c.card_faces,
 
-            c.image_uris->>'border_crop' AS image,
+            COALESCE(
+                c.image_uris->>'border_crop',
+                c.card_faces->0->'image_uris'->>'border_crop'
+            ) AS image,
 
             c.prices->>'usd' AS usd,
             c.prices->>'usd_foil' AS usd_foil,
@@ -258,8 +273,13 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             cards.cmc,
             cards.scryfall_uri,
             cards.color_identity,
+            cards.image_uris,
+            cards.card_faces,
 
-            cards.image_uris->>'border_crop' AS image,
+            COALESCE(
+                cards.image_uris->>'border_crop',
+                cards.card_faces->0->'image_uris'->>'border_crop'
+            ) AS image,
 
             cards.prices->>'usd' AS usd,
             cards.prices->>'usd_foil' AS usd_foil,
@@ -510,7 +530,12 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
              cards.cmc,
              cards.scryfall_uri,
              cards.color_identity,
-             cards.image_uris->>'border_crop' AS image,
+             cards.image_uris,
+             cards.card_faces,
+             COALESCE(
+                 cards.image_uris->>'border_crop',
+                 cards.card_faces->0->'image_uris'->>'border_crop'
+             ) AS image,
              cards.prices->>'usd' AS usd,
              cards.prices->>'usd_foil' AS usd_foil,
              cards.prices->>'eur_foil' AS eur_foil,
