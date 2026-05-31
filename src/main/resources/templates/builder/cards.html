@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="builder-owned-cards"
+         class="rounded-xl border border-outline-variant/40 bg-white p-4 text-sm text-slate-600">
+    <p th:text="${builderDeckName != null ? 'Library picker for deck: ' + builderDeckName : 'Library picker'}">
+        Library picker
+    </p>
+</section>
+
+</body>
+</html>

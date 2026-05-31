@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<!-- Printed row extras beneath the clickable card name (+ optional set crest). -->
+<th:block th:fragment="extrasStrip(card)">
+  <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 mt-1 max-w-xl"
+       th:if="${layout.deckExtras().showManaCost() or layout.deckExtras().showPrice() or layout.deckExtras().showSetSymbol()}">
+
+        <span th:if="${layout.deckExtras().showManaCost() and card.manaCost != null and !#strings.isEmpty(card.manaCost)}"
+              class="font-mono text-xs text-slate-600 whitespace-pre-wrap tracking-tight"
+              th:text="${card.manaCost}">Mana</span>
+    <span th:if="${layout.deckExtras().showPrice() and card.priceUsd != null and !#strings.isEmpty(card.priceUsd)}"
+          class="font-semibold tabular-nums text-slate-700"
+          th:text="|${'$'}${card.priceUsd}|">$9.99</span>
+    <img th:if="${layout.deckExtras().showSetSymbol() and card.set != null and !#strings.isEmpty(card.set)}"
+         loading="lazy" alt=""
+         decoding="async"
+         class="h-[18px] w-[18px] object-contain opacity-95"
+         width="18" height="18"
+         th:src="|https://svgs.scryfall.io/sets/${#strings.toLowerCase(card.set)}.svg|"/>
+  </div>
+</th:block>
+
+<th:block th:fragment="extrasStripCenter(card)">
+  <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-slate-500 mt-2 w-full"
+       th:if="${layout.deckExtras().showManaCost() or layout.deckExtras().showPrice() or layout.deckExtras().showSetSymbol()}">
+    <span th:if="${layout.deckExtras().showManaCost() and card.manaCost != null and !#strings.isEmpty(card.manaCost)}"
+          class="font-mono text-[11px] text-slate-600 whitespace-pre-wrap tracking-tight text-center"
+          th:text="${card.manaCost}"/>
+    <span th:if="${layout.deckExtras().showPrice() and card.priceUsd != null and !#strings.isEmpty(card.priceUsd)}"
+          class="font-semibold tabular-nums text-slate-700"
+          th:text="|${'$'}${card.priceUsd}|"/>
+    <img th:if="${layout.deckExtras().showSetSymbol() and card.set != null and !#strings.isEmpty(card.set)}"
+         loading="lazy" alt=""
+         decoding="async"
+         class="h-[18px] w-[18px] object-contain opacity-95"
+         width="18" height="18"
+         th:src="|https://svgs.scryfall.io/sets/${#strings.toLowerCase(card.set)}.svg|"/>
+  </div>
+</th:block>
+
+<!-- Text decklist row hover target + mana / price badges. -->
+<th:block th:fragment="textRowDeck(card)">
+  <div class="builder-deck-card-row flex flex-col gap-1 rounded-lg hover:bg-surface-container-highest transition-colors cursor-pointer"
+       th:classappend="${layout.deckListCondensed() eq true} ? ' py-px' : ''"
+       style="padding: 0.4rem;">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-y-2 w-full">
+      <div class="flex items-start gap-3 sm:gap-4 min-w-0">
+        <span class="inline-flex shrink-0 text-sm font-bold text-slate-600 leading-[1.4] mt-px">1</span>
+        <div class="min-w-0">
+          <th:block th:replace="~{builder/deck-card-name :: builderDeckRowCardName(${card}, ${layout.builderView().deckId()})}"/>
+          <th:block th:replace="~{builder/deck-list-row-text :: extrasStrip(${card})}"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+
+</body>
+</html>
