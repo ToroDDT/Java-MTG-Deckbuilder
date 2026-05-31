@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
+import com.example.mtg_deckbuilder.cache.PersonalLibraryCache;
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
 import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
@@ -41,6 +42,9 @@ public class PersonalLibraryServiceImplTest {
 
     @Mock
     private PersonalLibraryRepositoryImpl personalLibraryRepository;
+
+    @Mock
+    private PersonalLibraryCache personalLibraryCache;
 
     @Mock
     private CardService cardServiceImpl;
@@ -125,10 +129,11 @@ public class PersonalLibraryServiceImplTest {
         OwnedCard cheaper = ownedCard("Arcane Signet", 1.0, UUID.randomUUID());
         OwnedCard pricier = ownedCard("Mana Crypt", 10.0, UUID.randomUUID());
 
-        when(personalLibraryRepository.findCards(any(UUID.class), eq(filters)))
+        UUID userId = UUID.randomUUID();
+        when(personalLibraryCache.getAllCards(userId, filters))
                 .thenReturn(List.of(cheaper, pricier));
 
-        List<OwnedCard> result = personalLibraryService.getCards(UUID.randomUUID(), filters);
+        List<OwnedCard> result = personalLibraryService.getCards(userId, filters);
 
         assertIterableEquals(List.of(cheaper, pricier), result);
     }
@@ -144,7 +149,9 @@ public class PersonalLibraryServiceImplTest {
         OwnedCard second = ownedCard("Arcane Signet", 1.5, secondOwnedId);
         second.setDateAdded(LocalDate.of(2026, 4, 2));
 
-        when(personalLibraryRepository.findCardsPaginated(user.getId()))
+        when(personalLibraryCache.getAllCardsPaginated(user.getId()))
+                .thenReturn(List.of(first, second));
+        when(personalLibraryCache.getAllCards(user.getId()))
                 .thenReturn(List.of(first, second));
         when(personalLibraryRepository.findLocations(user, List.of(firstOwnedId, secondOwnedId)))
                 .thenReturn(Map.of(

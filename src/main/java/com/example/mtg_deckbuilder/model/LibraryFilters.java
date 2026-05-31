@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class LibraryFilters {
     private String cardName;
     private List<String> selectedColors = new ArrayList<>();

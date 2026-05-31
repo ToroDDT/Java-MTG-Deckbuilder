@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.service.impl;
 
+import com.example.mtg_deckbuilder.cache.PersonalLibraryCache;
 import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.exceptions.CardDoesNotExistException;
 import com.example.mtg_deckbuilder.model.*;
@@ -22,22 +23,24 @@ import java.util.stream.Collectors;
 @Service
 public class PersonalLibraryServiceImpl implements PersonalLibraryService {
   private final PersonalLibraryRepository personalLibraryRepository;
+  private final PersonalLibraryCache personalLibraryCache;
   private final CardService cardServiceImpl;
   private final DeckService deckService;
   private final ApplicationEventPublisher publisher;
 
-  public PersonalLibraryServiceImpl(PersonalLibraryRepositoryImpl personalLibraryRepository,
+  public PersonalLibraryServiceImpl(PersonalLibraryRepositoryImpl personalLibraryRepository, PersonalLibraryCache personalLibraryCache,
                                     CardService cardServiceImpl, DeckService deckService, ApplicationEventPublisher publisher) {
     this.personalLibraryRepository = personalLibraryRepository;
-    this.cardServiceImpl = cardServiceImpl;
+      this.personalLibraryCache = personalLibraryCache;
+      this.cardServiceImpl = cardServiceImpl;
     this.deckService = deckService;
     this.publisher = publisher;
   }
 
   @Override
   public void delete(CustomUserDetails user, UUID cardId) {
-    publisher.publishEvent(new LibraryUpdatedEvent(this, user));
     personalLibraryRepository.deleteCard(user, cardId);
+    publisher.publishEvent(new LibraryUpdatedEvent(this, user));
   }
 
   @Override
@@ -89,8 +92,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
 
   @Override
   public List<OwnedCard> getCardsPaginated(UUID userId) {
-    return personalLibraryRepository
-            .findCardsPaginated(userId)
+    return personalLibraryCache.getAllCardsPaginated(userId)
             .stream()
             .peek(ownedCard -> {
               if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
@@ -102,9 +104,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
 
   @Override
   public List<OwnedCard> getCards(UUID userid, LibraryFilters personalLibraryFilters) {
-
-    return personalLibraryRepository
-            .findCards(userid, personalLibraryFilters)
+    return personalLibraryCache.getAllCards(userid, personalLibraryFilters)
             .stream()
             .peek(ownedCard -> {
               if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
@@ -224,13 +224,14 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
 
   @Override
   public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId) {
-    return personalLibraryRepository.findCards(userId)
+
+    return personalLibraryCache.getAllCards(userId)
             .stream()
             .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
   }
 
   public Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId, LibraryFilters personalLibraryFilters) {
-    return personalLibraryRepository.findCards(userId, personalLibraryFilters)
+    return personalLibraryCache.getAllCards(userId, personalLibraryFilters)
             .stream()
             .collect(Collectors.groupingBy(ColorIdentity::fromString, Collectors.counting()));
   }
