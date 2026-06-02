@@ -5,7 +5,7 @@ import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.advice.Sanitize;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
-import com.example.mtg_deckbuilder.views.ComboViewModelImpl;
+import com.example.mtg_deckbuilder.views.impl.ComboViewModelImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

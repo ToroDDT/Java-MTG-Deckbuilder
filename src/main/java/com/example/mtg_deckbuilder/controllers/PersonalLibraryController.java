@@ -9,10 +9,10 @@ import com.example.mtg_deckbuilder.service.api.CardScannerClient;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
-import com.example.mtg_deckbuilder.views.CardBrowserViewModelImpl;
-import com.example.mtg_deckbuilder.views.CardTagsViewModel;
-import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
-import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.impl.CardBrowserViewModelImpl;
+import com.example.mtg_deckbuilder.views.impl.CardTagsViewModelImpl;
+import com.example.mtg_deckbuilder.views.api.LibraryViewModel;
+import com.example.mtg_deckbuilder.views.api.PersonalLibraryStats;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -61,7 +61,7 @@ public class PersonalLibraryController {
 
     @GetMapping("/personal-library/cards")
     public String getPersonalCards(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
+        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user);
 
         model.addAttribute("libraryView", libraryView);
 
@@ -71,7 +71,7 @@ public class PersonalLibraryController {
     @GetMapping(path = "/personal-library/search", headers = "hx-request=true")
     public  String getCardsMatchingFilter(@ModelAttribute("personalLibraryFilters") @Sanitize LibraryFilters personalLibraryFilters, Model model, @AuthenticationPrincipal CustomUserDetails user){
 
-        LibraryViewModelImpl libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
+        LibraryViewModel libraryView = personalLibraryService.buildPersonalLibraryViewModel(user, personalLibraryFilters);
 
         model.addAttribute("libraryView", libraryView);
 
@@ -149,7 +149,7 @@ public class PersonalLibraryController {
             Model model) {
 
         List<String> tags = personalLibraryService.updateCardTags(tag, personalCardId, user);
-        model.addAttribute("card", new CardTagsViewModel(personalCardId, tags));
+        model.addAttribute("card", new CardTagsViewModelImpl(personalCardId, tags));
         return "library/tags :: tags";
     }
 
@@ -161,7 +161,7 @@ public class PersonalLibraryController {
             Model model) {
 
         List<String> tags = personalLibraryService.removeCardTag(tag, personalCardId, user);
-        model.addAttribute("card", new CardTagsViewModel(personalCardId, tags));
+        model.addAttribute("card", new CardTagsViewModelImpl(personalCardId, tags));
         return "library/tags :: tags";
     }
 

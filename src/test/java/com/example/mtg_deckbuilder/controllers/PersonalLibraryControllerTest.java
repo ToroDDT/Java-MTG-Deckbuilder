@@ -8,8 +8,9 @@ import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.CardScannerClient;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.impl.PersonalLibraryServiceImpl;
-import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
-import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.impl.LibraryViewModelImpl;
+import com.example.mtg_deckbuilder.views.api.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.impl.PersonalLibraryStatsImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -220,7 +221,7 @@ class PersonalLibraryControllerTest {
     @Test
     void personalLibraryInfoReturnsStatsFragment() throws Exception {
         when(personalLibraryService.getLibraryInfo(any(CustomUserDetails.class)))
-                .thenReturn(new PersonalLibraryStats(42.0, Map.of(ColorIdentity.COLORLESS, 2L), 2, 21.0));
+                .thenReturn(new PersonalLibraryStatsImpl(42.0, Map.of(ColorIdentity.COLORLESS, 2L), 2, 21.0));
 
         mockMvc.perform(get("/personal-library/info").with(authenticationToken()))
                 .andExpect(status().isOk())

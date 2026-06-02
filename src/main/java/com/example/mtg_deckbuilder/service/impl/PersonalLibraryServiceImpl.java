@@ -11,8 +11,10 @@ import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.subscribers.LibraryUpdatedEvent;
-import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
-import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.api.LibraryViewModel;
+import com.example.mtg_deckbuilder.views.api.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.impl.PersonalLibraryStatsImpl;
+import com.example.mtg_deckbuilder.views.impl.LibraryViewModelImpl;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -119,7 +121,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
   }
 
   @Override
-  public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user) {
+  public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user) {
 
     var cardsFuture = CompletableFuture.supplyAsync(() -> getCardsPaginated(user.getId()));
 
@@ -147,7 +149,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
   }
 
   @Override
-  public LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails userId,
+  public LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails userId,
                                                             LibraryFilters personalLibraryFilters) {
     var cardsFuture = CompletableFuture.supplyAsync(() -> this.getCards(userId.getId(), personalLibraryFilters));
 
@@ -205,7 +207,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
     var totalCards = cards.size();
     var avgPrice = totalCards == 0 ? 0.0 : totalValue / totalCards;
 
-    return PersonalLibraryStats.builder()
+    return PersonalLibraryStatsImpl.builder()
             .totalCards(totalCards)
             .totalValue(totalValue)
             .avgPrice(avgPrice)

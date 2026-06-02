@@ -5,7 +5,7 @@ import com.example.mtg_deckbuilder.mapper.OwnedCardRowMapper;
 import com.example.mtg_deckbuilder.model.*;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.api.PersonalLibraryStats;
 import lombok.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

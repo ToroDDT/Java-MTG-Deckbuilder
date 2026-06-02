@@ -5,7 +5,7 @@ import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
-import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.api.PersonalLibraryStats;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

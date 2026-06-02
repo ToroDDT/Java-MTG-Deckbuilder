@@ -11,7 +11,8 @@ import com.example.mtg_deckbuilder.repository.impl.PersonalLibraryRepositoryImpl
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
-import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
+import com.example.mtg_deckbuilder.views.api.LibraryViewModel;
+import com.example.mtg_deckbuilder.views.impl.LibraryViewModelImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -160,7 +161,7 @@ public class PersonalLibraryServiceImplTest {
                 ));
         when(deckService.getDeckIds(user)).thenReturn(List.of());
 
-        LibraryViewModelImpl viewModel = personalLibraryService.buildPersonalLibraryViewModel(user);
+        LibraryViewModel viewModel = personalLibraryService.buildPersonalLibraryViewModel(user);
 
         assertEquals(2, viewModel.getCards().size());
         assertEquals(4.0, viewModel.getTotalValue());

@@ -1,13 +1,13 @@
 package com.example.mtg_deckbuilder.service.api;
 
 import com.example.mtg_deckbuilder.model.OwnedCard;
-import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
-import com.example.mtg_deckbuilder.views.BuilderCardQueryView;
-import com.example.mtg_deckbuilder.views.BuilderDeckLayoutView;
-import com.example.mtg_deckbuilder.views.BuilderDeckSection;
-import com.example.mtg_deckbuilder.views.BuilderMainView;
-import com.example.mtg_deckbuilder.views.BuilderOwnedLibraryView;
-import com.example.mtg_deckbuilder.views.BuilderViewModel;
+import com.example.mtg_deckbuilder.views.api.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.api.BuilderCardQueryView;
+import com.example.mtg_deckbuilder.views.api.BuilderDeckLayoutView;
+import com.example.mtg_deckbuilder.views.api.BuilderDeckSection;
+import com.example.mtg_deckbuilder.views.api.BuilderMainView;
+import com.example.mtg_deckbuilder.views.api.BuilderOwnedLibraryView;
+import com.example.mtg_deckbuilder.views.api.BuilderViewModel;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 
 import java.util.List;

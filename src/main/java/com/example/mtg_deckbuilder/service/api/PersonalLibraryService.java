@@ -5,8 +5,8 @@ import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.views.LibraryViewModelImpl;
-import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.api.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.api.LibraryViewModel;
 
 import java.util.List;
 import java.util.Map;
@@ -63,9 +63,9 @@ public interface PersonalLibraryService {
    */
   Map<ColorIdentity, Long> getAmountOfEachColorIdentity(UUID userId);
 
-  LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user);
+  LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user);
 
-  LibraryViewModelImpl buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);
+  LibraryViewModel buildPersonalLibraryViewModel(CustomUserDetails user, LibraryFilters personalLibraryFilters);
 
   PersonalLibraryStats getLibraryInfo (CustomUserDetails user);
 

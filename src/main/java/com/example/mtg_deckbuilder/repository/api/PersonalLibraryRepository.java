@@ -3,7 +3,7 @@ package com.example.mtg_deckbuilder.repository.api;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.views.PersonalLibraryStats;
+import com.example.mtg_deckbuilder.views.api.PersonalLibraryStats;
 
 import java.util.List;
 import java.util.Map;

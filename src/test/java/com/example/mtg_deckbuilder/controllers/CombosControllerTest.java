@@ -5,7 +5,8 @@ import com.example.mtg_deckbuilder.dto.combo.CardCombos;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
-import com.example.mtg_deckbuilder.views.ComboDetailViewModel;
+import com.example.mtg_deckbuilder.views.api.ComboDetailViewModel;
+import com.example.mtg_deckbuilder.views.impl.ComboDetailViewModelImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -74,7 +75,7 @@ class CombosControllerTest {
     @Test
     void comboDetailReturnsDedicatedPage() throws Exception {
         when(comboService.getComboDetail(any(CustomUserDetails.class), any(), any(), any()))
-                .thenReturn(Optional.of(new ComboDetailViewModel(
+                .thenReturn(Optional.of(new ComboDetailViewModelImpl(
                         "Bruce Banner | Legolas's Quick Reflexes",
                         "library",
                         "GUR",
@@ -91,7 +92,7 @@ class CombosControllerTest {
                         List.of("Infinite combat phases."),
                         "$87.87",
                         "$37.99",
-                        List.of(new ComboDetailViewModel.LegalityRow("Commander", true))
+                        List.of(new ComboDetailViewModelImpl.LegalityRowImpl("Commander", true))
                 )));
 
         mockMvc.perform(get("/personal-library/combos/detail")

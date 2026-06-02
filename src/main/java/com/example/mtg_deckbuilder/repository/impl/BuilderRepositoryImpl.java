@@ -5,7 +5,8 @@ import com.example.mtg_deckbuilder.dto.card.ImageUris;
 import com.example.mtg_deckbuilder.dto.card.Prices;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
-import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.api.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.impl.BuilderCardHoverViewImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -55,7 +56,7 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         String imageUrl = largeImageUrlFrom(rs.getString("image_uris"));
         String price = usdPriceFrom(rs.getString("prices"));
         List<String> tags = tagsFromRs(rs.getArray("tags"));
-        return new BuilderCardHoverView(name, imageUrl, price, tags);
+        return new BuilderCardHoverViewImpl(name, imageUrl, price, tags);
     }
 
     private String usdPriceFrom(String raw) {

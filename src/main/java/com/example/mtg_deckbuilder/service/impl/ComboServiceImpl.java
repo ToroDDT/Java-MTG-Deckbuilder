@@ -16,7 +16,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
-import com.example.mtg_deckbuilder.views.ComboDetailViewModel;
+import com.example.mtg_deckbuilder.views.api.ComboDetailViewModel;
+import com.example.mtg_deckbuilder.views.impl.ComboDetailViewModelImpl;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -463,7 +464,7 @@ public void updateCombos(CustomUserDetails user) {
                 .map(featureProduced -> formatProducedFeature(featureProduced.getQuantity(), featureProduced.getFeature().getName()))
                 .toList();
 
-        return new ComboDetailViewModel(
+        return new ComboDetailViewModelImpl(
                 title,
                 location,
                 Optional.ofNullable(variant.getIdentity()).orElse(""),
@@ -592,17 +593,17 @@ public void updateCombos(CustomUserDetails user) {
         return value == null ? "" : value.trim();
     }
 
-    private static List<ComboDetailViewModel.LegalityRow> legalityRows(ComboVariant variant) {
+    private static List<ComboDetailViewModelImpl.LegalityRowImpl> legalityRows(ComboVariant variant) {
         if (variant.getLegalities() == null) {
             return List.of();
         }
 
         return List.of(
-                new ComboDetailViewModel.LegalityRow("Commander", variant.getLegalities().isCommander()),
-                new ComboDetailViewModel.LegalityRow("Pauper Commander", variant.getLegalities().isPauperCommander()),
-                new ComboDetailViewModel.LegalityRow("Pauper Commander in 99", variant.getLegalities().isPauperCommanderMain()),
-                new ComboDetailViewModel.LegalityRow("Oathbreaker", variant.getLegalities().isOathbreaker()),
-                new ComboDetailViewModel.LegalityRow("PreDH", variant.getLegalities().isPredh())
+                new ComboDetailViewModelImpl.LegalityRowImpl("Commander", variant.getLegalities().isCommander()),
+                new ComboDetailViewModelImpl.LegalityRowImpl("Pauper Commander", variant.getLegalities().isPauperCommander()),
+                new ComboDetailViewModelImpl.LegalityRowImpl("Pauper Commander in 99", variant.getLegalities().isPauperCommanderMain()),
+                new ComboDetailViewModelImpl.LegalityRowImpl("Oathbreaker", variant.getLegalities().isOathbreaker()),
+                new ComboDetailViewModelImpl.LegalityRowImpl("PreDH", variant.getLegalities().isPredh())
         );
     }
 

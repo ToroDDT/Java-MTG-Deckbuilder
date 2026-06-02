@@ -1,7 +1,7 @@
 package com.example.mtg_deckbuilder.repository.api;
 
 import com.example.mtg_deckbuilder.model.OwnedCard;
-import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.api.BuilderCardHoverView;
 import com.example.mtg_deckbuilder.dto.card.Card;
 
 import java.util.List;

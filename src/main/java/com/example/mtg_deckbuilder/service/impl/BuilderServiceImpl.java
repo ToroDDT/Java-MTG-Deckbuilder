@@ -9,13 +9,18 @@ import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.api.DeckService;
 import com.example.mtg_deckbuilder.service.api.PersonalLibraryService;
 import com.example.mtg_deckbuilder.utils.DeckOptimizerV2;
-import com.example.mtg_deckbuilder.views.BuilderCardHoverView;
-import com.example.mtg_deckbuilder.views.BuilderCardQueryView;
-import com.example.mtg_deckbuilder.views.BuilderDeckLayoutView;
-import com.example.mtg_deckbuilder.views.BuilderDeckSection;
-import com.example.mtg_deckbuilder.views.BuilderMainView;
-import com.example.mtg_deckbuilder.views.BuilderOwnedLibraryView;
-import com.example.mtg_deckbuilder.views.BuilderViewModel;
+import com.example.mtg_deckbuilder.views.api.BuilderCardHoverView;
+import com.example.mtg_deckbuilder.views.api.BuilderCardQueryView;
+import com.example.mtg_deckbuilder.views.api.BuilderDeckLayoutView;
+import com.example.mtg_deckbuilder.views.api.BuilderDeckSection;
+import com.example.mtg_deckbuilder.views.api.BuilderMainView;
+import com.example.mtg_deckbuilder.views.api.BuilderOwnedLibraryView;
+import com.example.mtg_deckbuilder.views.api.BuilderViewModel;
+import com.example.mtg_deckbuilder.views.impl.BuilderCardQueryViewImpl;
+import com.example.mtg_deckbuilder.views.impl.BuilderDeckLayoutViewImpl;
+import com.example.mtg_deckbuilder.views.impl.BuilderMainViewImpl;
+import com.example.mtg_deckbuilder.views.impl.BuilderOwnedLibraryViewImpl;
+import com.example.mtg_deckbuilder.views.impl.BuilderViewModelImpl;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +46,7 @@ public class BuilderServiceImpl implements BuilderService {
 
     @Override
     public BuilderMainView getMainView(String deckId, CustomUserDetails user) {
-        return BuilderMainView.from(getBuilderView(deckId), user);
+        return BuilderMainViewImpl.from(getBuilderView(deckId), user);
     }
 
     @Override
@@ -50,14 +55,14 @@ public class BuilderServiceImpl implements BuilderService {
                                                    String groupBy,
                                                    String sortBy,
                                                    List<String> extrasParams) {
-        return BuilderDeckLayoutView.of(
+        return BuilderDeckLayoutViewImpl.of(
                 getBuilderView(deckId),
                 viewStyle,
                 extrasParams,
                 buildDeckSections(
                         deckId,
-                        BuilderDeckLayoutView.normalizeGroupBy(groupBy),
-                        BuilderDeckLayoutView.normalizeSortBy(sortBy)));
+                        BuilderDeckLayoutViewImpl.normalizeGroupBy(groupBy),
+                        BuilderDeckLayoutViewImpl.normalizeSortBy(sortBy)));
     }
 
     @Override
@@ -68,13 +73,13 @@ public class BuilderServiceImpl implements BuilderService {
 
     @Override
     public BuilderCardQueryView getCardQueryView(String query) {
-        String normalizedQuery = BuilderCardQueryView.getString(query);
-        return BuilderCardQueryView.of(normalizedQuery, personalLibraryService.getCardQuery(normalizedQuery));
+        String normalizedQuery = BuilderCardQueryViewImpl.getString(query);
+        return BuilderCardQueryViewImpl.of(normalizedQuery, personalLibraryService.getCardQuery(normalizedQuery));
     }
 
     @Override
     public BuilderOwnedLibraryView getOwnedLibraryView(String deckId, CustomUserDetails user) {
-        return BuilderOwnedLibraryView.of(
+        return BuilderOwnedLibraryViewImpl.of(
                 personalLibraryService.buildPersonalLibraryViewModel(user),
                 deckId,
                 getBuilderView(deckId).deckName());
@@ -118,7 +123,7 @@ public class BuilderServiceImpl implements BuilderService {
     @Override
     public BuilderViewModel getBuilderView(String deckId) {
         var cards = builderRepository.getAllCardsForUser(deckId);
-        return BuilderViewModel.fromCards(deckId, cards, cardService::findByName);
+        return BuilderViewModelImpl.fromCards(deckId, cards, cardService::findByName);
     }
 
     @Override

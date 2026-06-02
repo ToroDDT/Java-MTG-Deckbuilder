@@ -1,7 +1,8 @@
 package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.dto.card.Card;
-import com.example.mtg_deckbuilder.views.BuilderDeckSection;
+import com.example.mtg_deckbuilder.views.api.BuilderDeckSection;
+import com.example.mtg_deckbuilder.views.impl.BuilderDeckSectionImpl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -60,7 +61,7 @@ public final class BuilderDeckLayoutComposer {
                 deckCards == null ? List.of() : List.copyOf(deckCards);
 
         if (cards.isEmpty()) {
-            return List.of(new BuilderDeckSection("Deck", List.of()));
+            return List.of(new BuilderDeckSectionImpl("Deck", List.of()));
         }
 
         Map<String, List<Card>> buckets = new HashMap<>();
@@ -125,7 +126,7 @@ public final class BuilderDeckLayoutComposer {
         seen.add(title);
 
 
-        out.add(new BuilderDeckSection(title, Collections.unmodifiableList(rows)));
+        out.add(new BuilderDeckSectionImpl(title, Collections.unmodifiableList(rows)));
 
     }
 
