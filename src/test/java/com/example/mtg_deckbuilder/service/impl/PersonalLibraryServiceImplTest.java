@@ -153,7 +153,7 @@ public class PersonalLibraryServiceImplTest {
                 .thenReturn(List.of(first, second));
         when(personalLibraryCache.getAllCards(user.getId()))
                 .thenReturn(List.of(first, second));
-        when(personalLibraryRepository.findLocations(user, List.of(firstOwnedId, secondOwnedId)))
+        when(personalLibraryCache.findLocations(user, List.of(firstOwnedId, secondOwnedId)))
                 .thenReturn(Map.of(
                         firstOwnedId, List.of("Artifacts"),
                         secondOwnedId, List.of("Budget")

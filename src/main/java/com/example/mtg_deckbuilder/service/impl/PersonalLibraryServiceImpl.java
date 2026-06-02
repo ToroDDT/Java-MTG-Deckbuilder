@@ -45,12 +45,16 @@ public class PersonalLibraryServiceImpl implements PersonalLibraryService {
 
   @Override
   public List<String> updateCardTags(String tag, String personalCardId, CustomUserDetails user) {
-    return personalLibraryRepository.saveTags(tag, UUID.fromString(personalCardId), user);
+    var tags = personalLibraryRepository.saveTags(tag, UUID.fromString(personalCardId), user);
+    publisher.publishEvent(new LibraryUpdatedEvent(this, user));
+    return tags;
   }
 
   @Override
   public List<String> removeCardTag(String tag, String personalCardId, CustomUserDetails user) {
-    return personalLibraryRepository.deleteTag(tag, UUID.fromString(personalCardId), user);
+    var tags = personalLibraryRepository.deleteTag(tag, UUID.fromString(personalCardId), user);
+    publisher.publishEvent(new LibraryUpdatedEvent(this, user));
+    return tags;
   }
 
   @Override
@@ -79,8 +83,8 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
 }
   @Override
   public List<OwnedCard> getCards(UUID userId) {
-    return personalLibraryRepository
-            .findCardsForCombos(userId)
+    return personalLibraryCache
+            .getAllCardsForCombos(userId)
             .stream()
             .peek(ownedCard -> {
               if (ownedCard.getTags() == null || ownedCard.getTags().isEmpty()) {
@@ -178,7 +182,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
       return;
     }
 
-    Map<UUID, List<String>> deckLocations = personalLibraryRepository.findLocations(
+    Map<UUID, List<String>> deckLocations = personalLibraryCache.findLocations(
             user,
             cards.stream().map(OwnedCard::getId).toList());
 
@@ -188,7 +192,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
 
   @Override
   public PersonalLibraryStats getLibraryInfo(CustomUserDetails user) {
-    var cards = personalLibraryRepository.getInfo(user);
+    var cards = personalLibraryCache.getInfo(user);
 
     double totalValue = cards.stream()
             .filter(card -> card.getCard() != null && card.getCard().getPrices() != null)
@@ -211,7 +215,7 @@ public void addCard(OwnedCard ownedCard, CustomUserDetails user) throws CardDoes
 
   @Override
   public Boolean findCard(CustomUserDetails user, String cardId) {
-    return personalLibraryRepository.findCardExists(user.getId(),cardId);
+    return personalLibraryCache.findCard(user.getId(), cardId);
   }
 
   private Double getTotalValue(List<OwnedCard> cards) {

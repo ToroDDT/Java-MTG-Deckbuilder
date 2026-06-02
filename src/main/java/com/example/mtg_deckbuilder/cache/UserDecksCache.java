@@ -4,7 +4,9 @@ import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,8 +20,21 @@ public class UserDecksCache {
     public UserDecksCache(DeckRepository deckRepository){
         this.deckRepository = deckRepository;
     }
-    @Cacheable("userId")
+    @Cacheable(value = "userId", key = "#user.id")
     public List<Deck> getAllDecksForUser (CustomUserDetails user) {
         return deckRepository.getDecks(user);
+    }
+
+    @Cacheable(value = "userDeckIds", key = "#user.id")
+    public List<Deck> getDeckIdsForUser(CustomUserDetails user) {
+        return deckRepository.getDeckIds(user);
+    }
+
+    @Caching(evict = {
+            @CacheEvict(value = "userId", key = "#userId"),
+            @CacheEvict(value = "userDeckIds", key = "#userId")
+    })
+    public void evictForUser(UUID userId) {
+        // Eviction is applied by Spring Cache AOP.
     }
 }

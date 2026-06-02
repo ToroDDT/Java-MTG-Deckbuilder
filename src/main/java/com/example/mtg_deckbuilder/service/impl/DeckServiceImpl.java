@@ -9,9 +9,11 @@ import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.DeckService;
+import com.example.mtg_deckbuilder.subscribers.LibraryUpdatedEvent;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
 import com.example.mtg_deckbuilder.utils.DeckUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,19 +25,24 @@ public class DeckServiceImpl implements DeckService {
     private final DeckRepository deckRepository;
     private final UserDecksCache userDecksCache;
     private final PersonalLibraryRepository personalLibraryRepository;
+    private final ApplicationEventPublisher publisher;
 
 
     @Autowired
-    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache, PersonalLibraryRepository personalLibraryRepository) {
+    public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache,
+                           PersonalLibraryRepository personalLibraryRepository,
+                           ApplicationEventPublisher publisher) {
         this.deckRepository = deckRepository;
         this.userDecksCache = userDecksCache;
         this.personalLibraryRepository = personalLibraryRepository;
+        this.publisher = publisher;
     }
 
 
     @Override
     public void addDeck(NewDeck newDeck) {
         deckRepository.createNewDeckEntry(newDeck);
+        userDecksCache.evictForUser(newDeck.getUserId());
     }
 
     @Override
@@ -64,6 +71,7 @@ public class DeckServiceImpl implements DeckService {
                         .build();
 
                 addCard(card);
+                publisher.publishEvent(new LibraryUpdatedEvent(this, user));
                 return ownedDeck.name();
             }
         }
@@ -86,6 +94,7 @@ public class DeckServiceImpl implements DeckService {
     @Override
     public void removePersonalLibraryCardFromDeck(CustomUserDetails user, UUID personalLibraryCardId) {
         deckRepository.removeDeckEntryByPersonalLibraryCardId(user, personalLibraryCardId);
+        publisher.publishEvent(new LibraryUpdatedEvent(this, user));
     }
 
     @Override
@@ -118,7 +127,7 @@ public class DeckServiceImpl implements DeckService {
 
     @Override
     public List<Deck> getDeckIds(CustomUserDetails user) {
-        return deckRepository.getDeckIds(user);
+        return userDecksCache.getDeckIdsForUser(user);
     }
 
 }
