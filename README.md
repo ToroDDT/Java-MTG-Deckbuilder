@@ -20,7 +20,6 @@ Built with **Spring Boot** • **React** • **TypeScript** • **PostgreSQL** �
 
 * [Overview](#overview)
 * [Features](#features)
-* [Screenshots](#screenshots)
 * [Deck Builder](#card-deck-builder)
 * [Combo Browser](#combo-browser)
 * [Installation](#installation)
@@ -112,23 +111,6 @@ Whether you're building your next Commander deck, refining a competitive list, o
 
 ---
 
-<a id="screenshots"></a>
-
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=540&height=45&lines=SCREENSHOTS"/>
-
----
-
-<div align="center">
-
-|                                      Library Browser                                     |                                     Combo Discovery                                     |
-| :--------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
-| <img src="src/main/resources/static/img/browser.png" width="500" alt="Library Browser"/> | <img src="src/main/resources/static/img/combos.png" width="500" alt="Combo Discovery"/> |
-
-</div>
-
-<div align="right">
-  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
-</div>
 
 ---
 
