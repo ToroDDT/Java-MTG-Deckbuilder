@@ -3,7 +3,7 @@
 <div align="center">
   <div style="display: flex; align-items: center; justify-content: center; gap: 30px; background-color: #1e1e24; padding: 25px; border-radius: 12px; margin-bottom: 20px;">
     <img src="assets/farewell-image.jpg" width="22%" height="auto" alt="Project Demo" style="border-radius: 6px;"/>
-    <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=32&pause=1000&color=FFFFFF&center=true&vCenter=true&width=350&height=100&lines=Farewell" alt="Farewell"/>
+    <img src="https://readme-typing-svg.herokuapp.com?font=Inter&size=32&pause=1000&color=FFFFFF&center=true&vCenter=true&width=350&height=100&lines=Farewell" alt="Farewell"/>
   </div>
 
 ## Modern MTG Deck Builder & Collection Manager
@@ -33,7 +33,7 @@ Built with **Spring Boot** • **React** • **TypeScript** • **PostgreSQL** �
 
 <a id="overview"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=OVERVIEW" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=500&height=45&lines=OVERVIEW"/>
 
 ---
 
@@ -63,7 +63,7 @@ Whether you're building your next Commander deck, refining a competitive list, o
 
 <a id="features"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=FEATURES" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=500&height=45&lines=FEATURES"/>
 
 ---
 
@@ -114,7 +114,7 @@ Whether you're building your next Commander deck, refining a competitive list, o
 
 <a id="screenshots"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=SCREENSHOTS" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=540&height=45&lines=SCREENSHOTS"/>
 
 ---
 
@@ -134,7 +134,7 @@ Whether you're building your next Commander deck, refining a competitive list, o
 
 <a id="card-deck-builder"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=DECK+BUILDER" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=560&height=45&lines=DECK+BUILDER"/>
 
 ---
 
@@ -152,7 +152,7 @@ Build and refine Commander decks with drag-and-drop card organization, live vali
 
 <a id="combo-browser"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=COMBO+BROWSER" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=600&height=45&lines=COMBO+BROWSER"/>
 
 ---
 
@@ -170,7 +170,7 @@ Browse and filter combo lines from Commander Spellbook, explore card interaction
 
 <a id="installation"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=INSTALLATION" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=560&height=45&lines=INSTALLATION"/>
 
 ---
 
@@ -228,7 +228,7 @@ docker-compose up --build
 
 <a id="verification"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=VERIFICATION" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=580&height=45&lines=VERIFICATION"/>
 
 ---
 
@@ -252,7 +252,7 @@ npm test
 
 <a id="contributing"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=CONTRIBUTING" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=580&height=45&lines=CONTRIBUTING"/>
 
 ---
 
@@ -275,7 +275,7 @@ Please open an issue first if you plan on making significant changes.
 
 <a id="star-history"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=STAR+HISTORY" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=560&height=45&lines=STAR+HISTORY"/>
 
 ---
 
@@ -289,7 +289,7 @@ Please open an issue first if you plan on making significant changes.
 
 <a id="credits"></a>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=THANK+YOU!" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=FFFFFF&center=true&vCenter=true&width=520&height=45&lines=THANK+YOU!"/>
 
 ---
 
