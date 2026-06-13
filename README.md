@@ -110,25 +110,6 @@ Whether you're building your next Commander deck, refining a competitive list, o
   <a href="#top"><kbd>⬆ Back to Top</kbd></a>
 </div>
 
----
-
-<a id="screenshots"></a>
-
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=SCREENSHOTS" width="450"/>
-
----
-
-<div align="center">
-
-|                                      Library Browser                                     |                                     Combo Discovery                                     |
-| :--------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
-| <img src="src/main/resources/static/img/browser.png" width="500" alt="Library Browser"/> | <img src="src/main/resources/static/img/combos.png" width="500" alt="Combo Discovery"/> |
-
-</div>
-
-<div align="right">
-  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
-</div>
 
 ---
 
