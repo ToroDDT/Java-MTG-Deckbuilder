@@ -1,14 +1,18 @@
 <a id="top"></a>
 
 <div align="center">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 30px; background-color: #1e1e24; padding: 25px; border-radius: 12px; margin-bottom: 20px;">
+    <img src="assets/farewell-image.jpg" width="22%" height="auto" alt="Project Demo" style="border-radius: 6px;"/>
+    <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=32&pause=1000&color=FFFFFF&center=true&vCenter=true&width=350&height=100&lines=Farewell" alt="Farewell"/>
+  </div>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=50&pause=1000&color=2563EB&center=true&vCenter=true&width=700&height=100&lines=Farewell" alt="Farewell"/>
+## Modern MTG Deck Builder & Collection Manager
 
-### Modern MTG Deck Builder & Collection Manager
-
-Built with **Spring Boot**, **React**, **TypeScript**, **PostgreSQL**, and **Docker**
-
+Built with **Spring Boot** • **React** • **TypeScript** • **PostgreSQL** • **Docker**
 </div>
+
+---
+
 
 ---
 
