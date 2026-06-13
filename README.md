@@ -3,6 +3,13 @@
   <p>Modern MTG Deck Builder & Collection Manager</p>
 </div>
 ## Demo
+<div id="installation" >Overview</div><div>
+  An open-source Magic: The Gathering deckbuilding application built with Spring Boot, React, TypeScript, and Docker. Inspired by platforms such as Moxfield and Archidekt, this project aims to provide a powerful and user-focused deckbuilding experience.
+
+  By integrating community resources like Commander Spellbook, the application helps players discover combos, explore card synergies, and gain deeper insights into their decks. What started as a passion project to solve my own deckbuilding challenges has grown into a platform focused on making deck construction, analysis, and optimization more accessible for the entire Magic community.
+
+  Whether you're brewing a new commander deck, refining a competitive list, or searching for hidden interactions, this project is designed to give you the tools and information you need in one place.
+</div>
 
 <div align="center">
   <img src="assets/demo.gif" width="100%" alt="Project Demo" />
