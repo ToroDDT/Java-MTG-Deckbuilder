@@ -21,6 +21,8 @@ Built with **Spring Boot** • **React** • **TypeScript** • **PostgreSQL** �
 * [Overview](#overview)
 * [Features](#features)
 * [Screenshots](#screenshots)
+* [Deck Builder](#card-deck-builder)
+* [Combo Browser](#combo-browser)
 * [Installation](#installation)
 * [Verification](#verification)
 * [Contributing](#contributing)
@@ -122,6 +124,42 @@ Whether you're building your next Commander deck, refining a competitive list, o
 | :--------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
 | <img src="src/main/resources/static/img/browser.png" width="500" alt="Library Browser"/> | <img src="src/main/resources/static/img/combos.png" width="500" alt="Combo Discovery"/> |
 
+</div>
+
+<div align="right">
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
+</div>
+
+---
+
+<a id="card-deck-builder"></a>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=DECK+BUILDER" width="450"/>
+
+---
+
+Build and refine Commander decks with drag-and-drop card organization, live validation, and instant search.
+
+<div align="center">
+  <img src="assets/deckbuilder.gif" width="95%" alt="Card Deck Builder Demo"/>
+</div>
+
+<div align="right">
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
+</div>
+
+---
+
+<a id="combo-browser"></a>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=COMBO+BROWSER" width="450"/>
+
+---
+
+Browse and filter combo lines from Commander Spellbook, explore card interactions, and find synergies for your decks.
+
+<div align="center">
+  <img src="assets/combo-browser.gif" width="95%" alt="Combo Browser Demo"/>
 </div>
 
 <div align="right">
