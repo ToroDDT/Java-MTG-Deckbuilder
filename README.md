@@ -1,185 +1,279 @@
-<div align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=50&pause=1000&color=2563EB&center=true&vCenter=true&width=500&height=100&lines=Farewell" alt="Farewell" />
-  <p>Modern MTG Deck Builder & Collection Manager</p>
-</div>
-## Demo
-<div id="installation" >Overview</div><div>
-  An open-source Magic: The Gathering deckbuilding application built with Spring Boot, React, TypeScript, and Docker. Inspired by platforms such as Moxfield and Archidekt, this project aims to provide a powerful and user-focused deckbuilding experience.
-
-  By integrating community resources like Commander Spellbook, the application helps players discover combos, explore card synergies, and gain deeper insights into their decks. What started as a passion project to solve my own deckbuilding challenges has grown into a platform focused on making deck construction, analysis, and optimization more accessible for the entire Magic community.
-
-  Whether you're brewing a new commander deck, refining a competitive list, or searching for hidden interactions, this project is designed to give you the tools and information you need in one place.
-</div>
+<a id="top"></a>
 
 <div align="center">
-  <img src="assets/demo.gif" width="100%" alt="Project Demo" />
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=50&pause=1000&color=2563EB&center=true&vCenter=true&width=700&height=100&lines=Farewell" alt="Farewell"/>
+
+### Modern MTG Deck Builder & Collection Manager
+
+Built with **Spring Boot**, **React**, **TypeScript**, **PostgreSQL**, and **Docker**
+
 </div>
 
-<br>
+---
+
+## Navigation
+
+* [Overview](#overview)
+* [Features](#features)
+* [Screenshots](#screenshots)
+* [Installation](#installation)
+* [Verification](#verification)
+* [Contributing](#contributing)
+* [Credits](#credits)
+* [Star History](#star-history)
+
+---
+
+<a id="overview"></a>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=OVERVIEW" width="450"/>
+
+---
+
+Farewell is an open-source **Magic: The Gathering deckbuilding application** designed to help players build, manage, and analyze their decks and collections.
+
+Inspired by platforms such as **Moxfield** and **Archidekt**, Farewell aims to provide a modern, feature-rich deckbuilding experience while integrating community-driven resources like **Commander Spellbook**.
+
+What began as a passion project to solve my own deckbuilding challenges has evolved into a platform focused on:
+
+* Building and managing decks
+* Tracking personal collections
+* Discovering card combos and synergies
+* Analyzing deck statistics
+* Streamlining the brewing process
+
+Whether you're building your next Commander deck, refining a competitive list, or exploring hidden interactions, Farewell provides the tools and information you need in one place.
+
+<div align="center">
+  <img src="assets/demo.gif" width="95%" alt="Project Demo"/>
+</div>
+
+<div align="right">
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
+</div>
+
+---
+
+<a id="features"></a>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=FEATURES" width="450"/>
+
+---
+
+### Deck Building
+
+* Create and manage Commander decks
+* Organize cards using custom categories
+* Real-time deck validation and statistics
+* Fast card search powered by Scryfall
+
+### Collection Management
+
+* Manage your personal MTG collection
+* Track card ownership and quantities
+* Monitor collection value
+* Search and filter cards instantly
+
+### Combo Discovery
+
+* Integration with Commander Spellbook
+* Automatically discover combos in decks
+* Explore synergistic card interactions
+* Find combo pieces already present in your collection
+
+### Analytics
+
+* Mana curve visualization
+* Color distribution analysis
+* Card type breakdowns
+* Collection valuation insights
+* Deck composition statistics
+
+### Technology Stack
+
+* Spring Boot
+* React
+* TypeScript
+* PostgreSQL
+* Docker
+* Scryfall API
+* Commander Spellbook API
+
+<div align="right">
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
+</div>
+
+---
+
+<a id="screenshots"></a>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=SCREENSHOTS" width="450"/>
+
+---
+
+<div align="center">
+
+|                                      Library Browser                                     |                                     Combo Discovery                                     |
+| :--------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
+| <img src="src/main/resources/static/img/browser.png" width="500" alt="Library Browser"/> | <img src="src/main/resources/static/img/combos.png" width="500" alt="Combo Discovery"/> |
+
+</div>
+
+<div align="right">
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
+</div>
+
+---
 
 <a id="installation"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=INSTALLATION" width="450"/>
 
-To install and run the project, follow these steps:
-
-1. **Clone the repository**:
-   ```shell
-   git clone https://github.com/ToroDDT/Java-MTG-Deckbuilder.git
-   cd Java-MTG-Deckbuilder
-   ```
-
-2. **Configure the Database**:
-   - Ensure you have PostgreSQL installed and running.
-   - Create a database named `mtg_deckbuilder`.
-   - Update `src/main/resources/application.properties` with your database credentials.
-
-3. **Build and Run**:
-   ```shell
-   ./mvnw spring-boot:run
-   ```
-
-<div align="right">
-  <br>
-  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
-
-<div align="right">
-  <br>
-  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
-
-<a id="contributing"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=CONTRIBUTING" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=INSTALLATION" width="450"/>
 
 ---
 
-We welcome contributions! Please feel free to submit a Pull Request.
+### Clone the Repository
 
-<div align="right">
-  <br>
-  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
+```bash
+git clone https://github.com/ToroDDT/Java-MTG-Deckbuilder.git
 
-<a id="verification"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=VERIFICATION" width="450"/>
+cd Java-MTG-Deckbuilder
+```
 
----
+### Configure PostgreSQL
 
-To run the tests and verify the project, use:
+Create a PostgreSQL database:
 
-```shell
-./mvnw test
+```sql
+CREATE DATABASE mtg_deckbuilder;
+```
+
+Update your application configuration:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/mtg_deckbuilder
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
+
+### Run the Backend
+
+```bash
+./mvnw spring-boot:run
+```
+
+### Run the Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+### Run with Docker
+
+```bash
+docker-compose up --build
 ```
 
 <div align="right">
-  <br>
-  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
 </div>
-
-<a id="features"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=FEATURES" width="450"/>
 
 ---
 
-- **Personal Library**: Manage your own collection of MTG cards.
-- **Deck Building**: Create and customize your commander decks.
-- **Combo Discovery**: Automatically find combos in your collection using Commander's Spellbook API.
-- **Stats & Analytics**: Detailed insights into your collection's value, color distribution, and more.
+<a id="verification"></a>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=VERIFICATION" width="450"/>
+
+---
+
+Run the test suite:
+
+```bash
+./mvnw test
+```
+
+For frontend tests:
+
+```bash
+npm test
+```
 
 <div align="right">
-  <br>
-  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
 </div>
-
-
-<a id="screenshots"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=SCREENSHOTS" width="450"/>
 
 ---
 
-<div align="center">
-  <table>
-    <tr>
-      <td><img src="src/main/resources/static/img/browser.png" alt="Library Browser"/></td>
-      <td><img src="src/main/resources/static/img/combos.png" alt="Combo Discovery"/></td>
-    </tr>
-  </table>
-</div>
+<a id="contributing"></a>
 
-
-
-<a id="star_history"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=STARS" width="450"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=CONTRIBUTING" width="450"/>
 
 ---
 
-[![Stargazers over time](https://starchart.cc/ToroDDT/Java-MTG-Deckbuilder.svg?background=%231f2226&axis=%23ebbcba&line=%23c79bf0)](https://starchart.cc/ToroDDT/Java-MTG-Deckbuilder)
+Contributions are welcome!
 
+If you would like to improve Farewell:
 
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a Pull Request
+
+Please open an issue first if you plan on making significant changes.
+
+<div align="right">
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
+</div>
+
+---
+
+<a id="star-history"></a>
+
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=STAR+HISTORY" width="450"/>
+
+---
+
+[![Stargazers over time](https://starchart.cc/ToroDDT/Java-MTG-Deckbuilder.svg?background=%231f2226\&axis=%23ebbcba\&line=%2360A5FA)](https://starchart.cc/ToroDDT/Java-MTG-Deckbuilder)
+
+<div align="right">
+  <a href="#top"><kbd>⬆ Back to Top</kbd></a>
+</div>
 
 ---
 
 <a id="credits"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=THANK YOU!" width="450"/>
 
-
-- [See the full Credits page here](./CREDITS.md).
-
-
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=60A5FA&vCenter=true&width=435&height=25&lines=THANK+YOU!" width="450"/>
 
 ---
 
-<div align="right">
-  <br>
-  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
+Special thanks to:
+
+* The Commander Spellbook team
+* The Scryfall team
+* Contributors and testers
+* The Magic: The Gathering community
+
+For detailed acknowledgements, see:
+
+```text
+CREDITS.md
+```
+
+---
+
+<div align="center">
+
+Made with ❤️ for the Magic: The Gathering community.
+
+<sub>Last Updated: June 2026</sub>
+
 </div>
 
-<div align="right">
-  <sub>Last edited on: 27/02/2025<span id="last-edited"></span></sub>
-</div>
+---
 
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
-
-
-# Motivations on why to start the project 
-I started working on this project after experiencing limitations with websites like Moxfield. While the platform is effective for building decks and providing useful information, it falls short in several key areas.
-One major issue I encountered with Moxfield was its limited support for managing personal card collections. I wanted more control over tracking the cards I own, including where they are used and how they are distributed across my decks.
-I also wanted better analytics for my collection, such as insights into mana distribution, the cost of individual cards, and the total value of my collection. These features would help me better understand and optimize both my decks and my overall inventory.
-Additionally, I was looking for a more simplified user interface for adding personal cards to specific decks. The process on existing platforms often feels more complicated than necessary.
-
-  Another goal was to evaluate how my decks perform against others. I wanted a way to manage my friends’ decks, compare builds, and draw inspiration from their strategies.
-Finally, I wanted to improve the card search experience. Existing tools, such as the Scryfall API, can be complex and difficult to navigate due to their many filters and submenus. I aim to integrate machine learning to simplify this process, making card searches more intuitive and user-friendly.
-
-# Vision and Scope Document
-https://docs.google.com/document/d/1ML6qYriH7DKFijyOO23LfxHKEfjlWr9qMn-fBJCjRMk/edit?tab=t.0
-
-## Summary of Vision and Scope Document
-  The main business problem this application addresses is reducing friction in the deck-building process by providing a single platform for finding, creating, cataloging, and sending decks to local card shops.
-This application aims to make it simple and convenient for users to send completed decks to local card shops with the click of a button. While many deck-building websites offer strong integration with online card retailers, they often lack an easy way to connect with local card shops in the same seamless manner.
-Another issue this application tackles is the management of personal card collections. Many users need the same cards across multiple decks, yet they often lack an effective way to track what they already own. As a result, users may end up requesting or purchasing cards they already have.
-This application streamlines the process by helping users accurately determine which cards they need to complete their decks, ensuring that only necessary cards are sent to their local card shop.
-
-# Lessons Learned while building this tool
-## Lesson 1 Introducing Frameworks Too Early.
-  One of the biggest mistakes I made in this project was introducing frameworks too early. When I began, I chose React because I believed it was the best option for dynamically updating information and partially rendering the UI while maintaining application state.
-At the time, I assumed React would simplify state management and help me build a more responsive interface. In reality, it introduced far more complexity than it solved. State management quickly became a challenge, as I now had to manage state in both the frontend and the backend.
-
-  Instead of using server-side rendering (SSR), where the server is responsible for maintaining and hydrating state, I split responsibility across two layers. This made even basic functionality—such as authentication—significantly more complex. Previously, authentication could be handled entirely on the backend. 
-With a separate frontend, I had to consider solutions like Clerk or token-based authentication flows. If the backend needed user information, it had to rely on tokens passed from the frontend, adding another layer of coordination.
-This complexity was further compounded by browser security constraints. Because the frontend and backend were hosted on separate domains, standard cookie-based authentication no longer worked reliably due to cross-site cookie restrictions. 
-One workaround was to move both services under subdomains, but this introduced additional infrastructure challenges—especially since both applications were running in Docker containers.
-To make this setup work, I had to introduce a reverse proxy such as Traefik or NGINX. This added yet another layer of configuration and made the development environment significantly harder to manage. Debugging issues in this setup became time-consuming and frustrating.
-An alternative approach was to serve the frontend as static files from the backend. However, this came with its own trade-offs. It made development slower and less efficient, as the React application had to be rebuilt and served statically for changes to take effect. 
-Error messages were also less helpful, making debugging more difficult.
-
-  This experience reinforced a broader lesson: introducing frameworks before they are truly necessary can create unnecessary complexity. I encountered a similar issue on the backend when I chose Java Persistence API over simpler approaches like JDBC. While JPA can improve developer productivity, it also abstracts away important implementation details, which can make debugging more difficult.
-For example, I ran into a bug caused by bidirectional relationships between entities. Because these entities referenced each other, the JSON serializer attempted to traverse the object graph indefinitely, resulting in infinite recursion and deeply nested, unusable responses.
-Although the root cause was related to how Hibernate manages entity relationships, the error messages did not clearly point to the issue. This made it harder to diagnose and reinforced the importance of understanding how abstractions behave under the hood.
-I realized with all these situations, that introducing abstractions to soon had their tradeoffs and introducing abstractions to soon without knowing the fundamentals or internal workings was a recipe to headaches. 
+This project follows the all-contributors specification. Contributions of any kind are welcome.
