@@ -16,4 +16,6 @@ public class CardCombos {
     private List<String> locations;
     private String location;
     private List<String> results;
+    /** Full Commander Spellbook variant payloads, parallel to {@link #cardCombinations}. */
+    private List<ComboVariant> variants;
 }

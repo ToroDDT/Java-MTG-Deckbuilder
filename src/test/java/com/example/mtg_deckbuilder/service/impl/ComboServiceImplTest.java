@@ -3,14 +3,20 @@ package com.example.mtg_deckbuilder.service.impl;
 import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.dto.card.Prices;
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
+import com.example.mtg_deckbuilder.dto.combo.CardDto;
+import com.example.mtg_deckbuilder.dto.combo.CardUse;
+import com.example.mtg_deckbuilder.dto.combo.ComboVariant;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.SortOptions;
+import com.example.mtg_deckbuilder.views.api.ComboDetailViewModel;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ComboServiceImplTest {
 
@@ -106,6 +112,48 @@ class ComboServiceImplTest {
                 List.of("Phyrexian Altar", "Pitiless Plunderer"),
                 List.of("Goblin Bombardment", "Gravecrawler")
         ), filtered.getCardCombinations());
+    }
+
+    @Test
+    void findStoredComboDetailUsesPersistedVariantWithoutApiLookup() {
+        ComboVariant variant = comboVariant(
+                "Deal infinite damage.",
+                "Goblin Bombardment",
+                "Gravecrawler"
+        );
+        CardCombos stored = CardCombos.builder()
+                .cardCombinations(List.of(List.of("Goblin Bombardment", "Gravecrawler")))
+                .description(List.of("Deal infinite damage."))
+                .locations(List.of("library"))
+                .variants(List.of(variant))
+                .build();
+
+        Optional<ComboDetailViewModel> detail = ComboServiceImpl.findStoredComboDetail(
+                stored,
+                "library",
+                List.of("Goblin Bombardment", "Gravecrawler"),
+                "Deal infinite damage."
+        );
+
+        assertTrue(detail.isPresent());
+        assertEquals("Goblin Bombardment | Gravecrawler", detail.get().title());
+        assertEquals("library", detail.get().location());
+        assertEquals(List.of("Goblin Bombardment", "Gravecrawler"), detail.get().cardNames());
+    }
+
+    private static ComboVariant comboVariant(String description, String... cardNames) {
+        ComboVariant variant = new ComboVariant();
+        variant.description = description;
+        variant.uses = java.util.Arrays.stream(cardNames)
+                .map(name -> {
+                    CardUse cardUse = new CardUse();
+                    CardDto card = new CardDto();
+                    card.name = name;
+                    cardUse.card = card;
+                    return cardUse;
+                })
+                .toList();
+        return variant;
     }
 
     private static CardCombos combos() {

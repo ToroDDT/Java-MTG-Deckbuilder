@@ -117,13 +117,22 @@ public void updateCombos(CustomUserDetails user) {
             String cardsKey,
             String description
     ) throws Exception {
-        List<OwnedCard> sourceCards = getCardsForLocation(user, location);
-        if (sourceCards.isEmpty()) {
+        List<String> selectedCardNames = splitCardsKey(cardsKey);
+        if (selectedCardNames.isEmpty()) {
             return Optional.empty();
         }
 
-        List<String> selectedCardNames = splitCardsKey(cardsKey);
-        if (selectedCardNames.isEmpty()) {
+        Optional<ComboDetailViewModel> storedDetail = findStoredComboDetail(
+                comboRespository.getCombos(user),
+                location,
+                selectedCardNames,
+                description);
+        if (storedDetail.isPresent()) {
+            return storedDetail;
+        }
+
+        List<OwnedCard> sourceCards = getCardsForLocation(user, location);
+        if (sourceCards.isEmpty()) {
             return Optional.empty();
         }
 
@@ -187,6 +196,7 @@ public void updateCombos(CustomUserDetails user) {
         List<List<String>> images = combos.getImages() == null ? List.of() : combos.getImages();
         List<String> locations = combos.getLocations() == null ? List.of() : combos.getLocations();
         List<String> results = combos.getResults() == null ? List.of() : combos.getResults();
+        List<ComboVariant> variants = combos.getVariants() == null ? List.of() : combos.getVariants();
 
         for (int i = 0; i < combos.getCardCombinations().size(); i++) {
             List<String> cardNames = combos.getCardCombinations().get(i);
@@ -194,10 +204,11 @@ public void updateCombos(CustomUserDetails user) {
             List<String> comboImages = i < images.size() ? images.get(i) : List.of();
             String location = i < locations.size() ? locations.get(i) : combos.getLocation();
             String result = i < results.size() ? results.get(i) : "";
+            ComboVariant variant = i < variants.size() ? variants.get(i) : null;
             List<com.example.mtg_deckbuilder.dto.card.Card> comboCards = comboCards(cardNames, cardsByName);
 
             if (matchesComboFilters(cardNames, description, location, filters, comboCards)) {
-                filteredCombos.add(new FilteredCombo(cardNames, description, comboImages, location, result, comboCards));
+                filteredCombos.add(new FilteredCombo(cardNames, description, comboImages, location, result, comboCards, variant));
             }
         }
 
@@ -209,8 +220,51 @@ public void updateCombos(CustomUserDetails user) {
                 .images(filteredCombos.stream().map(FilteredCombo::images).toList())
                 .locations(filteredCombos.stream().map(FilteredCombo::location).toList())
                 .results(filteredCombos.stream().map(FilteredCombo::results).toList())
+                .variants(filteredCombos.stream().map(FilteredCombo::variant).toList())
                 .location(combos.getLocation())
                 .build();
+    }
+
+    static Optional<ComboDetailViewModel> findStoredComboDetail(
+            CardCombos stored,
+            String location,
+            List<String> selectedCardNames,
+            String description
+    ) {
+        if (stored == null || stored.getCardCombinations() == null || stored.getVariants() == null) {
+            return Optional.empty();
+        }
+
+        List<String> descriptions = stored.getDescription() == null ? List.of() : stored.getDescription();
+        List<String> locations = stored.getLocations() == null ? List.of() : stored.getLocations();
+        List<ComboVariant> variants = stored.getVariants();
+
+        for (int i = 0; i < stored.getCardCombinations().size(); i++) {
+            if (i >= variants.size() || variants.get(i) == null) {
+                continue;
+            }
+
+            List<String> cardNames = stored.getCardCombinations().get(i);
+            String comboDescription = i < descriptions.size() ? descriptions.get(i) : "";
+            String comboLocation = i < locations.size() ? locations.get(i) : stored.getLocation();
+
+            if (!normalize(comboLocation).equals(normalize(location))) {
+                continue;
+            }
+            if (!normalize(comboDescription).equals(normalize(description))) {
+                continue;
+            }
+
+            List<String> normalizedCardNames = cardNames.stream().map(ComboServiceImpl::normalize).toList();
+            List<String> normalizedSelectedNames = selectedCardNames.stream().map(ComboServiceImpl::normalize).toList();
+            if (!normalizedCardNames.equals(normalizedSelectedNames)) {
+                continue;
+            }
+
+            return Optional.of(toDetailViewModel(variants.get(i), location));
+        }
+
+        return Optional.empty();
     }
 
     private static List<com.example.mtg_deckbuilder.dto.card.Card> comboCards(
@@ -653,7 +707,8 @@ public void updateCombos(CustomUserDetails user) {
             List<String> images,
             String location,
             String results,
-            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards
+            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards,
+            ComboVariant variant
     ) {
         private String primaryName() {
             return cardNames.isEmpty() ? "" : cardNames.getFirst();
@@ -666,6 +721,7 @@ public void updateCombos(CustomUserDetails user) {
                 .description(List.of())
                 .images(List.of())
                 .results(List.of())
+                .variants(List.of())
                 .build();
     }
 
@@ -719,6 +775,7 @@ public void updateCombos(CustomUserDetails user) {
                                 .map(cardUse -> cardUse.getCard().getImageUriFrontNormal())
                                 .toList())
                         .toList())
+                .variants(filteredVariants)
                 .build();
     }
     static CardCombos getCardCombos(List<ComboVariant> filteredVariants) {
@@ -749,6 +806,7 @@ public void updateCombos(CustomUserDetails user) {
                                 .map(cardUse -> cardUse.getCard().getImageUriFrontNormal())
                                 .toList())
                         .toList())
+                .variants(filteredVariants)
                 .build();
     }
 
