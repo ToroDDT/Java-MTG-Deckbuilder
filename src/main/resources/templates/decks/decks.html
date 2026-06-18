@@ -58,6 +58,7 @@
                                         <option value="commander">Commander</option>
                                         <option value="lastUpdated">Last Updated</option>
                                         <option value="color identity">Color Identity</option>
+                                        <option value="price">Price</option>
                                     </select>
                                 </label>
                                 <label>
@@ -81,6 +82,7 @@
                 </div>
             </div>
             <div th:replace="~{decks/create-deck.html :: add-deck-modal}">...</div>
+            <div th:replace="~{decks/edit-deck-modal.html :: edit-deck-modal}">...</div>
             <div th:if="${#lists.isEmpty(decks)}" class="empty-state">
                 <i class="fas fa-folder-open"></i>
                 <p>No decks found matching your filters.</p>

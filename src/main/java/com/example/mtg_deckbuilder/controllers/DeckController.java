@@ -5,12 +5,14 @@ import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import com.example.mtg_deckbuilder.service.impl.DeckServiceImpl;
 import com.example.mtg_deckbuilder.utils.DeckSearchCriteria;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -73,6 +75,22 @@ public class DeckController {
 
         deckServiceImpl.addDeck(newDeck);
 
+        return "redirect:/decks";
+    }
+
+    @PostMapping("/decks/edit")
+    public String updateDeck(
+            @RequestParam UUID deckId,
+            @RequestParam @NotBlank String name,
+            @RequestParam(required = false) String commander,
+            @AuthenticationPrincipal CustomUserDetails user,
+            RedirectAttributes redirectAttributes) {
+        try {
+            deckServiceImpl.updateDeck(user, deckId, name.trim(), commander);
+            redirectAttributes.addFlashAttribute("deckUpdateSuccess", true);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("deckUpdateError", "Could not update deck. Please try again.");
+        }
         return "redirect:/decks";
     }
 

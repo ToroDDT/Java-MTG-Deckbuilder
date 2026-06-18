@@ -114,4 +114,84 @@ document.addEventListener("DOMContentLoaded", function() {
         modeSelect.addEventListener("change", syncExistingListPanels);
         syncExistingListPanels();
     }
+
+    const editModal = document.getElementById("editDeckModal");
+    const closeEditBtn = document.getElementById("closeEditDeckModalBtn");
+    const cancelEditBtn = document.getElementById("cancelEditDeckBtn");
+    const editCommanderGroup = document.getElementById("editDeckCommanderGroup");
+
+    function openEditDeckModal(deckId, name, commander, format) {
+        if (!editModal) {
+            return;
+        }
+
+        const idInput = document.getElementById("editDeckId");
+        const nameInput = document.getElementById("editDeckName");
+        const commanderInput = document.getElementById("editDeckCommander");
+
+        if (idInput) {
+            idInput.value = deckId || "";
+        }
+        if (nameInput) {
+            nameInput.value = name || "";
+        }
+        if (commanderInput) {
+            commanderInput.value = commander || "";
+        }
+        if (editCommanderGroup) {
+            editCommanderGroup.hidden = format !== "Commander";
+        }
+
+        editModal.classList.add("is-open");
+        editModal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+
+        if (nameInput) {
+            nameInput.focus();
+        }
+    }
+
+    function closeEditDeckModal() {
+        if (!editModal) {
+            return;
+        }
+
+        editModal.classList.remove("is-open");
+        editModal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+    }
+
+    if (closeEditBtn) {
+        closeEditBtn.addEventListener("click", closeEditDeckModal);
+    }
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener("click", closeEditDeckModal);
+    }
+    if (editModal) {
+        editModal.addEventListener("click", function(e) {
+            if (e.target === editModal) {
+                closeEditDeckModal();
+            }
+        });
+    }
+
+    document.addEventListener("click", function(e) {
+        const editBtn = e.target.closest(".edit-deck-btn");
+        if (!editBtn) {
+            return;
+        }
+
+        openEditDeckModal(
+            editBtn.dataset.deckId,
+            editBtn.dataset.deckName,
+            editBtn.dataset.deckCommander,
+            editBtn.dataset.deckFormat
+        );
+    });
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape" && editModal && editModal.classList.contains("is-open")) {
+            closeEditDeckModal();
+        }
+    });
 });

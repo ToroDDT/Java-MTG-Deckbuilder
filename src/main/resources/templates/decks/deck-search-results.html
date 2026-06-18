@@ -6,39 +6,56 @@
 </head>
 <body>
 <div id="search-results" hx-swap-oob="true" th:fragment="decks" class="deck-grid">
-  <div th:each="deck : ${decks}" class="deck-item">
+  <div th:each="deckItem : ${decks}" class="deck-item">
     <div class="deck-item-inner">
       <div class="deck-info">
         <div class="deck-title-row">
-          <img th:src="${deck.getKey().image()}" alt="Deck Image" class="deck-image">
+          <img th:src="${deckItem.deck().image()}" alt="Deck Image" class="deck-image">
           <div class="info">
             <div>
-          <a th:href="${deck.getKey().name()}" th:text="${deck.getKey().name()}" class="deck-link">Deck Name</a>
+          <a th:href="@{/builder/deck/{id}(id=${deckItem.deck().id()})}" th:text="${deckItem.deck().name()}" class="deck-link">Deck Name</a>
             </div>
             <div>
-          <span th:if="${deck.getKey().bracket!= null}" class="badge bracket-badge"
-                th:text="'Bracket ' + ${deck.getKey().bracket()}"></span>
+          <span th:if="${deckItem.deck().bracket()!= null}" class="badge bracket-badge"
+                th:text="'Bracket ' + ${deckItem.deck().bracket()}"></span>
         </div>
 
         <div class="deck-meta">
           <div class="mana-colors">
-                                    <span th:each="color : ${deck.getValue()}"
+                                    <span th:each="color : ${deckItem.colors()}"
                                           th:class="'mana-symbol color-' + ${color}"
                                           th:text="${color}">
                                     </span>
           </div>
           <span class="meta-sep">•</span>
-          <span th:text="${deck.getKey().format()}">Commander</span>
-          <span th:if="${deck.getKey().format() == 'Commander'}" th:text="${deck.getKey().commander()}">Commander</span>
+          <span th:text="${deckItem.deck().format()}">Commander</span>
+          <span th:if="${deckItem.deck().format() == 'Commander'}" th:text="${deckItem.deck().commander()}">Commander</span>
           <span class="meta-sep">•</span>
-          <span th:text="${#temporals.format(deck.getKey().last_updated(),'dd MMM yyyy')}">Date</span>
+          <span th:text="${#temporals.format(deckItem.deck().last_updated(),'dd MMM yyyy')}">Date</span>
+          <span class="meta-sep">•</span>
+          <span class="deck-price"
+                th:text="${'$' + #numbers.formatDecimal(deckItem.totalPrice(), 1, 2)}">$0.00</span>
         </div>
         </div>
         </div>
       </div>
-      <a class="fas fa-external-link-alt external-icon"
-         th:href="@{/builder/deck/{id}(id=${deck.getKey().id()})}">
-      </a>
+      <div class="deck-item-actions">
+        <button type="button"
+                class="btn-icon edit-deck-btn"
+                title="Edit deck"
+                aria-label="Edit deck"
+                th:attr="data-deck-id=${deckItem.deck().id()},
+                         data-deck-name=${deckItem.deck().name()},
+                         data-deck-commander=${deckItem.deck().commander()},
+                         data-deck-format=${deckItem.deck().format()}">
+          <i class="fas fa-pencil-alt" aria-hidden="true"></i>
+        </button>
+        <a class="fas fa-external-link-alt external-icon"
+           th:href="@{/builder/deck/{id}(id=${deckItem.deck().id()})}"
+           title="Open in builder"
+           aria-label="Open in builder">
+        </a>
+      </div>
     </div>
   </div>
 </div>

@@ -11,8 +11,11 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.time.LocalDate;
 
 /**
  * Repository class responsible for managing operations related to the "deck" table in the database.
@@ -68,6 +71,66 @@ public class DeckRepositoryImpl implements DeckRepository {
                 .list();
     }
     //
+    @Override
+    public Map<UUID, Double> getDeckTotalPricesForUser(UUID userId) {
+        String sql = """
+                SELECT d.id,
+                    COALESCE(SUM(
+                        COALESCE(
+                            NULLIF(c.prices->>'usd', '')::numeric,
+                            NULLIF(c.prices->>'usd_foil', '')::numeric,
+                            NULLIF(c.prices->>'usd_etched', '')::numeric,
+                            0
+                        )
+                    ), 0)::double precision AS total_price
+                FROM decks d
+                LEFT JOIN deck_card_entries dce ON dce.deck_id = d.id
+                LEFT JOIN cards c ON c.id = dce.card_id
+                WHERE d.user_id = :userId
+                GROUP BY d.id
+                """;
+
+        Map<UUID, Double> prices = new HashMap<>();
+        jdbcClient.sql(sql)
+                .param("userId", userId)
+                .query((rs, rowNum) -> {
+                    prices.put(rs.getObject("id", UUID.class), rs.getDouble("total_price"));
+                    return null;
+                })
+                .list();
+        return prices;
+    }
+
+    @Override
+    public void updateDeckMetadata(
+            CustomUserDetails user,
+            UUID deckId,
+            String name,
+            String commander,
+            String colorIdentity,
+            String image,
+            LocalDate lastUpdate) {
+        String sql = """
+                UPDATE decks
+                SET name = :name,
+                    commander = :commander,
+                    colors_identity = :colorIdentity,
+                    image = :image,
+                    last_updated = :lastUpdate
+                WHERE id = :id AND user_id = :userId
+                """;
+
+        jdbcClient.sql(sql)
+                .param("name", name)
+                .param("commander", commander)
+                .param("colorIdentity", colorIdentity)
+                .param("image", image)
+                .param("lastUpdate", lastUpdate)
+                .param("id", deckId)
+                .param("userId", user.getId())
+                .update();
+    }
+
     @Override
     public List<Deck> getDeckIds(CustomUserDetails user) {
         String sql = """

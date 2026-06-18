@@ -421,6 +421,36 @@
 }
 
 /* ── EXTERNAL ICON ── */
+.deck-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-icon {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 8px 10px;
+    transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-icon:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background: #eff6ff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.deck-price {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
 .external-icon {
     color: var(--border-color);
     font-size: 1rem;
