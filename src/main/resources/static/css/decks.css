@@ -342,6 +342,18 @@
     align-items: center;
 }
 
+.deck-info-link {
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.deck-info-link:hover .deck-link {
+    color: var(--accent-color);
+}
+
 .deck-title-row {
     display: flex;
     align-items: start;

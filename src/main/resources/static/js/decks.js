@@ -177,16 +177,27 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.addEventListener("click", function(e) {
         const editBtn = e.target.closest(".edit-deck-btn");
-        if (!editBtn) {
+        if (editBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            openEditDeckModal(
+                editBtn.dataset.deckId,
+                editBtn.dataset.deckName,
+                editBtn.dataset.deckCommander,
+                editBtn.dataset.deckFormat
+            );
             return;
         }
 
-        openEditDeckModal(
-            editBtn.dataset.deckId,
-            editBtn.dataset.deckName,
-            editBtn.dataset.deckCommander,
-            editBtn.dataset.deckFormat
-        );
+        const deckItem = e.target.closest(".deck-item");
+        if (!deckItem || e.target.closest(".deck-item-actions")) {
+            return;
+        }
+
+        const builderLink = deckItem.querySelector(".deck-info-link");
+        if (builderLink && builderLink.href) {
+            window.location.href = builderLink.href;
+        }
     });
 
     document.addEventListener("keydown", function(e) {
