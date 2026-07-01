@@ -1,0 +1,14 @@
+.git
+.DS_Store
+.cursorj
+.idea
+.mvn/wrapper/maven-wrapper.jar
+.settings
+
+node
+node_modules
+target
+
+*.mov
+*.log
+

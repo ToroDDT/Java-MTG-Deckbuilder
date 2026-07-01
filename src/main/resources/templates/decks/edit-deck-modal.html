@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Deck</title>
+</head>
+<body>
+<div th:fragment="edit-deck-modal" class="modal-overlay" id="editDeckModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="editDeckModalTitle">
+  <div class="modal-container" role="document">
+    <div class="modal-header">
+      <h2 id="editDeckModalTitle">Edit Deck</h2>
+      <button class="modal-close" type="button" id="closeEditDeckModalBtn" aria-label="Close modal">✕</button>
+    </div>
+    <form th:action="@{/decks/edit}" th:method="post" class="modal-body" id="editDeckForm">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <input type="hidden" name="deckId" id="editDeckId">
+
+      <div class="modal-section">
+        <label class="field-label" for="editDeckName">Name</label>
+        <input class="field-input" type="text" id="editDeckName" name="name" placeholder="Deck name" maxlength="120" required>
+      </div>
+
+      <div class="modal-section" id="editDeckCommanderGroup">
+        <label class="field-label" for="editDeckCommander">Commander</label>
+        <input type="text"
+               id="editDeckCommander"
+               class="field-input"
+               list="editCommanderOptions"
+               name="commander"
+               placeholder="Search commanders..."
+               autocomplete="on">
+        <datalist id="editCommanderOptions">
+          <option th:each="card : ${listOfCommanders}" th:value="${card}"></option>
+        </datalist>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-action btn-secondary" type="button" id="cancelEditDeckBtn">Cancel</button>
+        <button class="btn-action" type="submit">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

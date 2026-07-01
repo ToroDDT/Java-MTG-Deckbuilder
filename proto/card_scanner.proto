@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package mtg.scanner.v1;
+
+option java_multiple_files = true;
+option java_package = "com.example.mtg_deckbuilder.scanner.proto";
+option java_outer_classname = "CardScannerProto";
+
+service CardScannerService {
+  rpc ScanCardImage(ScanCardImageRequest) returns (ScanCardImageResponse);
+}
+
+message ScanCardImageRequest {
+  bytes image_data = 1;
+  string filename = 2;
+  string content_type = 3;
+}
+
+message ScanCardImageResponse {
+  bool success = 1;
+  string card_name = 2;
+  string message = 3;
+}
