@@ -2,9 +2,9 @@ package com.example.mtg_deckbuilder.controllers;
 import com.example.mtg_deckbuilder.dto.combo.UserRegistrationDto;
 import com.example.mtg_deckbuilder.exceptions.UserAlreadyExistsException;
 import com.example.mtg_deckbuilder.service.impl.RegistrationServiceImpl;
-import com.example.mtg_deckbuilder.service.impl.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,7 +24,10 @@ public class AccountController {
     }
 
     @GetMapping("/login")
-    public String showLoginPage() {
+    public String showLoginPage(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/decks";
+        }
         return "auth/login";
     }
 
