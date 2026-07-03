@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title></title>
+</head>
+<body class="p-8 bg-[#f1f5fe] font-[Inter]">
+
+<div th:fragment="stickyStatsBar">
+  <div class="h-20"></div>
+
+<div id="stickyStatsBar"
+     hx-get="/card-browser/info"
+     hx-trigger="refreshLibrary from:body"
+     hx-swap="outerHTML"
+     class="fixed bottom-0 left-0 right-0 z-[500] border-t border-[#e2e8f8] rounded-md"
+     style="background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 -4px 28px rgba(37,99,235,0.10);">
+
+    <div class="max-w-[1400px] mx-auto pl-2 px-4 md:px-6 h-16 flex items-center gap-3 md:gap-4">
+
+      <span class="hidden sm:block text-[10px] font-bold uppercase tracking-widest text-slate-600 shrink-0">
+        Colors
+      </span>
+
+      <div class="flex items-center gap-1.5 md:gap-2">
+
+        <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-[#f9f6ee] text-[#6b6245] border-2 border-[#c8b97e]">W</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                th:text="${catalogView.colorIdentityAmounts != null ? catalogView.colorIdentityAmounts['WHITE'] : 0}">0</span>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-[#0e68ab] text-[#d4edff] border-2 border-[#0e68ab]">U</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                th:text="${catalogView.colorIdentityAmounts != null ? catalogView.colorIdentityAmounts['BLUE'] : 0}">0</span>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-gray-800 text-[#d4edff] border-2 border-slate-600">B</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                th:text="${catalogView.colorIdentityAmounts != null ? catalogView.colorIdentityAmounts['BLACK'] : 0}">0</span>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-red-700 text-red-100 border-2 border-red-700">R</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                th:text="${catalogView.colorIdentityAmounts != null ? catalogView.colorIdentityAmounts['RED'] : 0}">0</span>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 transition-all cursor-default">
+          <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                       bg-green-900 text-green-100 border-2 border-green-700">G</span>
+          <span class="text-[13px] font-bold text-slate-800"
+                th:text="${catalogView.colorIdentityAmounts != null ? catalogView.colorIdentityAmounts['GREEN'] : 0}">0</span>
+        </div>
+
+      </div>
+
+      <div class="hidden sm:block w-px h-8 bg-[#e2e8f8] shrink-0"></div>
+      <div class="flex-1"></div>
+
+      <div class="flex items-center gap-3 bg-[#f8faff] rounded-[9px] px-3.5 py-1.5 shrink-0">
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Page Value</div>
+          <div class="text-[18px] font-extrabold leading-tight grad-text"
+               th:text="${catalogView.totalValue != null ? '$' + #numbers.formatDecimal(catalogView.totalValue, 1, 2) : '$0.00'}">
+            $0.00
+          </div>
+        </div>
+
+        <div class="w-px h-8 bg-[#e2e8f8]"></div>
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Showing</div>
+          <div class="text-[18px] font-extrabold leading-tight grad-text"
+               th:text="${catalogView.totalCards != null ? catalogView.totalCards : 0}">
+            12
+          </div>
+        </div>
+
+        <div class="w-px h-8 bg-[#e2e8f8]"></div>
+
+        <div class="flex flex-col items-end">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-600">Avg / card</span>
+          <span class="text-[13px] font-bold text-blue-600"
+                th:text="${catalogView.avgPrice != null ? '$' + #numbers.formatDecimal(catalogView.avgPrice, 1, 2) : '$0.00'}">
+            $0.00
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+                id="prevBtn"
+                class="group inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#d7e3fb] bg-[#f8faff] text-[22px] font-semibold text-[#2563eb] shadow-[0_8px_20px_rgba(37,99,235,0.10)] transition-all hover:-translate-y-[1px] hover:border-[#bfdbfe] hover:bg-white hover:text-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
+                aria-label="Previous page"
+        >
+          <span class="pointer-events-none transition-transform group-hover:-translate-x-px">&lt;</span>
+        </button>
+
+        <button
+                id="nextBtn"
+                class="group inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-transparent grad-bg text-[22px] font-semibold text-white shadow-[0_10px_24px_rgba(37,99,235,0.22)] transition-all hover:-translate-y-[1px] hover:shadow-[0_14px_28px_rgba(37,99,235,0.28)]"
+                aria-label="Next page"
+        >
+          <span class="pointer-events-none transition-transform group-hover:translate-x-px">&gt;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

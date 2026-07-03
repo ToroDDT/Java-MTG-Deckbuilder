@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="cb-results-col rounded-2xl" id="personal-cards" hx-swap-oob="true" th:fragment="catalog-cards">
+
+    <div id="display-area"></div>
+    <div class="cb-results-header">
+        <p class="cb-count">Showing <span id="visibleCount">12</span> of <span id="totalCount">12</span> cards</p>
+    </div>
+    <div class="cb-grid" id="cardGrid">
+
+        <div class="cb-card"
+             th:each="card, iterStat : ${catalogView.getCards()}"
+             th:data-name="${card.getName()}"
+             th:data-type="${card.getTypeLine()}"
+             th:data-cmc="${card.getCmc()}"
+             th:data-colors="${#strings.listJoin(card.getColorIdentity(), ',')}">
+
+            <div class="cb-card-img-wrap"
+                 th:classappend="${card.hasSwitchableFaces()} ? ' cb-card-img-wrap--dual' : ''">
+                <img
+                        class="cb-card-img"
+                        th:src="${card.artworkUrl()}"
+                        th:alt="${card.getName()}"
+                        th:attr="fetchpriority=${iterStat.first ? 'high' : null},loading=${iterStat.first ? null : 'lazy'}"
+                />
+                <button type="button"
+                        class="cb-card-flip-btn"
+                        th:if="${card.hasSwitchableFaces()}"
+                        th:attr="data-face-urls=${#strings.listJoin(card.faceArtworkUrls(), '||')},
+                                 data-face-names=${#strings.listJoin(card.faceNames(), '||')}"
+                        aria-label="Show other card face"
+                        title="Flip card face">
+                    <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+                </button>
+                <div class="cb-card-img-placeholder" style="display:none">🃏</div>
+            </div>
+
+            <div class="cb-card-body">
+                <div class="cb-card-name cb-card-name--primary"
+                     style="display: grid; grid-template-columns: auto 1fr; column-gap: 8px; align-items: center; width: 100%;">
+                    <span th:if="${card.isNewRelease()}"
+                          style="background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; padding: 2px 7px; border-radius: 5px; text-transform: uppercase; box-shadow: 0 1px 6px rgba(37, 99, 235, 0.35);">NEW</span>
+                    <span th:text="${card.getName()}">Card Name</span>
+                </div>
+                <div class="cb-card-name">
+                    Price: <span class="cb-card-type" th:text="${'$' + card.getPrices().getUsd()}">0</span>
+                </div>
+                <div class="cb-card-type" th:text="${card.getTypeLine()}">Type</div>
+                <div class="cb-card-type" th:if="${card.releasedAt != null}"
+                     th:text="'Released: ' + ${#temporals.format(card.releasedAt, 'MMM d, yyyy')}">Released</div>
+            </div>
+
+            <a th:href="${card.getScryfallUri()}"
+               class="cb-card-link"
+               target="_blank"
+               rel="noopener noreferrer">
+                <i class="fas fa-eye"></i>
+                Card Details ↗
+            </a>
+        </div>
+
+        <div class="cb-empty" th:if="${#lists.isEmpty(catalogView.getCards())}">
+            <div class="cb-empty-icon">🃏</div>
+            <p>No cards match your filters.</p>
+        </div>
+
+    </div>
+
+    <div class="cb-load-more" id="loadMoreWrap" style="display:none">
+        <button class="cb-btn-load" id="loadMoreBtn">Load More</button>
+    </div>
+
+</div>
+</body>
+</html>
