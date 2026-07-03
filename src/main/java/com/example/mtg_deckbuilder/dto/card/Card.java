@@ -93,7 +93,21 @@ public class Card {
                 .colorIdentity(extractColorIdentity(rs))
                 .prices(extractPrices(rs))
                 .cardFaces(extractCardFaces(rs))
+                .releasedAt(extractReleasedAt(rs))
                 .build();
+    }
+
+    private static LocalDate extractReleasedAt(ResultSet rs) throws SQLException {
+        if (!hasColumn(rs, "released_at")) {
+            return null;
+        }
+        return rs.getObject("released_at", LocalDate.class);
+    }
+
+    private static final long NEW_RELEASE_DAYS = 90;
+
+    public boolean isNewRelease() {
+        return releasedAt != null && !releasedAt.isBefore(LocalDate.now().minusDays(NEW_RELEASE_DAYS));
     }
 
     private static UUID extractId(ResultSet rs) throws SQLException {

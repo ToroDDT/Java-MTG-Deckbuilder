@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.dto.card.Card;
+import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.repository.impl.CardRepositoryImpl;
 import com.example.mtg_deckbuilder.service.api.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,13 @@ public class CardServiceImpl implements CardService {
     return scryfallRepository.findByCardsBySubstring(name);
   }
 
+  @Override
+  public List<Card> findCardsPaginated() {
+    return scryfallRepository.findCardsPaginated();
+  }
 
+  @Override
+  public List<Card> findCards(LibraryFilters filters) {
+    return scryfallRepository.findCards(filters);
+  }
 }
