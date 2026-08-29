@@ -61,38 +61,6 @@
           </div>
         </div>
 
-        <div class="cb-filter-section">
-          <span class="cb-filter-label">Color</span>
-          <div class="cb-color-row">
-            <div class="pip-container flex flex-wrap gap-2" id="color-row">
-
-              <input hx-trigger="change" type="checkbox" th:field="*{selectedColors}" value="W" id="colorW" style="display:none;">
-              <label onclick="toggleWhite(this)" for="colorW" id="whiteToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
-                flex items-center justify-center hover:scale-110 active:scale-95
-                bg-[#f9f6ee] text-[#6b6245] border-[#c8b97e] opacity-40">W</label>
-
-              <input hx-trigger="change" type="checkbox" th:field="*{selectedColors}" value="U" id="colorU" style="display:none;">
-              <label onclick="toggleBlue(this)" for="colorU" id="blueToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
-                flex items-center justify-center hover:scale-110 active:scale-95
-                bg-[#0e68ab] text-[#d4edff] border-[#0e68ab] opacity-40">U</label>
-
-              <input type="checkbox" th:field="*{selectedColors}" value="B" id="colorB" style="display:none;">
-              <label onclick="toggleBlack(this)" for="colorB" id="blackToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
-                flex items-center justify-center hover:scale-110 active:scale-95
-                bg-gray-800 text-[#d4edff] border-[#0e68ab] opacity-40">B</label>
-
-              <input type="checkbox" th:field="*{selectedColors}" value="R" id="colorR" style="display:none;">
-              <label onclick="toggleRed(this)" for="colorR" id="redToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
-                flex items-center justify-center hover:scale-110 active:scale-95
-                bg-red-700 text-[#d4edff] border-[#0e68ab] opacity-40">R</label>
-
-              <input type="checkbox" th:field="*{selectedColors}" value="G" id="colorG" style="display:none;">
-              <label onclick="toggleGreen(this)" for="colorG" id="greenToggle" class="pip w-9 h-9 rounded-full border-2 text-[13px] font-bold cursor-pointer transition-all
-                flex items-center justify-center hover:scale-110 active:scale-95
-                bg-green-900 text-[#d4edff] border-[#0e68ab] opacity-40">G</label>
-            </div>
-          </div>
-
           <label for="searchOracleText" class="cb-filter-label">Oracle Text</label>
           <div class="cb-search-wrap">
             <svg class="cb-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
