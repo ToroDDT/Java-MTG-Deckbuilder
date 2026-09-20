@@ -94,5 +94,19 @@ public class DeckController {
         return "redirect:/decks";
     }
 
+    @PostMapping("/decks/delete")
+    public String deleteDeck(
+            @RequestParam UUID deckId,
+            @AuthenticationPrincipal CustomUserDetails user,
+            RedirectAttributes redirectAttributes) {
+        try {
+            deckServiceImpl.deleteDeck(user, deckId);
+            redirectAttributes.addFlashAttribute("deckDeleteSuccess", true);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("deckDeleteError", "Could not delete deck. Please try again.");
+        }
+        return "redirect:/decks";
+    }
+
 
 }

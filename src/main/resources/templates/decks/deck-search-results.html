@@ -52,6 +52,17 @@
                          data-deck-format=${deckItem.deck().format()}">
           <i class="fas fa-pencil-alt" aria-hidden="true"></i>
         </button>
+        <form th:action="@{/decks/delete}" method="post" class="delete-deck-form">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+          <input type="hidden" name="deckId" th:value="${deckItem.deck().id()}">
+          <button type="submit"
+                  class="btn-icon btn-icon-danger delete-deck-btn"
+                  title="Delete deck"
+                  aria-label="Delete deck"
+                  th:attr="data-deck-name=${deckItem.deck().name()}">
+            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+          </button>
+        </form>
         <a class="fas fa-external-link-alt external-icon"
            th:href="@{/builder/deck/{id}(id=${deckItem.deck().id()})}"
            title="Open in builder"

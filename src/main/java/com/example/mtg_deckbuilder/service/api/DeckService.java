@@ -22,6 +22,8 @@ public interface DeckService {
 
     void updateDeck(CustomUserDetails user, UUID deckId, String name, String commander);
 
+    void deleteDeck(CustomUserDetails user, UUID deckId);
+
     List<Deck> getDeckIds(CustomUserDetails user);
 
     void removePersonalLibraryCardFromDeck(CustomUserDetails user, UUID personalLibraryCardId);

@@ -28,6 +28,8 @@ public interface DeckRepository {
             String image,
             LocalDate lastUpdate);
 
+    void deleteDeck(CustomUserDetails user, UUID deckId);
+
     void addCard(CardEntry request);
 
     void removeDeckEntryByPersonalLibraryCardId(CustomUserDetails user, UUID personalLibraryCardId);

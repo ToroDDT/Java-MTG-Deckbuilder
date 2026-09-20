@@ -189,6 +189,11 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
+        const deleteBtn = e.target.closest(".delete-deck-btn");
+        if (deleteBtn) {
+            e.stopPropagation();
+        }
+
         const deckItem = e.target.closest(".deck-item");
         if (!deckItem || e.target.closest(".deck-item-actions")) {
             return;
@@ -197,6 +202,20 @@ document.addEventListener("DOMContentLoaded", function() {
         const builderLink = deckItem.querySelector(".deck-info-link");
         if (builderLink && builderLink.href) {
             window.location.href = builderLink.href;
+        }
+    });
+
+    document.addEventListener("submit", function(e) {
+        const deleteForm = e.target.closest(".delete-deck-form");
+        if (!deleteForm) {
+            return;
+        }
+
+        const deleteBtn = deleteForm.querySelector(".delete-deck-btn");
+        const deckName = deleteBtn && deleteBtn.dataset.deckName ? deleteBtn.dataset.deckName : "this deck";
+
+        if (!window.confirm(`Delete ${deckName}? This will remove the deck and all cards in it.`)) {
+            e.preventDefault();
         }
     });
 

@@ -18,6 +18,7 @@ import com.example.mtg_deckbuilder.views.impl.DeckListItemViewImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -168,6 +169,18 @@ public class DeckServiceImpl implements DeckService {
                 colorIdentity,
                 image,
                 LocalDate.now());
+        userDecksCache.evictForUser(user.getId());
+    }
+
+    @Override
+    @Transactional
+    public void deleteDeck(CustomUserDetails user, UUID deckId) {
+        userDecksCache.getAllDecksForUser(user).stream()
+                .filter(deck -> deck.id().equals(deckId))
+                .findFirst()
+                .orElseThrow(() -> new DeckDoesNotExistException(deckId.toString()));
+
+        deckRepository.deleteDeck(user, deckId);
         userDecksCache.evictForUser(user.getId());
     }
 
