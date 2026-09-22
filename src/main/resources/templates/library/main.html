@@ -21,6 +21,7 @@
   <link rel="preload" th:href="@{/css/library.min.css}" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" th:href="@{/css/library.min.css}"></noscript>
   <link rel="stylesheet" th:href="@{/css/card-face-flip.css}">
+  <link rel="stylesheet" th:href="@{/css/bulk-image-scan.css}">
   <script th:src="@{/js/builder-tailwind-config.min.js}"></script>
 </head>
 <body>
@@ -76,16 +77,18 @@
             hx-target="#card-query-results"
             hx-swap="innerHTML">
         <div class="cb-filter-section">
-          <label for="scan-file" class="cb-filter-label">Scan Card Image</label>
+          <label for="scan-file" class="cb-filter-label">Scan Card Images</label>
           <input id="scan-file"
                  name="file"
                  type="file"
                  accept="image/png,image/jpeg,image/jpg,image/webp"
+                 multiple
                  class="cb-search-input" />
-          <button type="submit"
+          <button type="button"
+                  id="reviewBulkScanBtn"
                   class="cb-btn-apply"
                   style="margin-top: 0.75rem; width: 100%;">
-            Scan And Add
+            Review Images
           </button>
         </div>
       </form>
@@ -234,6 +237,24 @@
 
 </main>
 
+<div class="bulk-image-modal" id="bulkImageModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="bulkImageModalTitle">
+  <div class="bulk-image-dialog" role="document">
+    <div class="bulk-image-header">
+      <div>
+        <h2 id="bulkImageModalTitle">Selected Images</h2>
+        <p id="bulkImageCount">0 images selected.</p>
+      </div>
+      <button type="button" class="bulk-image-close" id="closeBulkImageModalBtn" aria-label="Close selected images">x</button>
+    </div>
+    <div class="bulk-image-grid" id="bulkImageGrid"></div>
+    <div class="bulk-image-status" id="bulkImageStatus" aria-live="polite"></div>
+    <div class="bulk-image-actions">
+      <button type="button" class="bulk-image-secondary" id="clearBulkImagesBtn">Clear</button>
+      <button type="button" class="bulk-image-secondary" id="addMoreBulkImagesBtn">Add More</button>
+      <button type="button" class="bulk-image-primary" id="scanBulkImagesBtn">Scan And Add</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════════ FOOTER ══════════════ -->
 <footer class="cb-footer">
@@ -246,5 +267,6 @@
 <div id="personal-cards-info"></div>
 <script th:src="@{/js/htmx.min.js}" defer></script>
 <script th:src="@{/js/library.min.js}" defer></script>
+<script th:src="@{/js/bulk-image-scan.js}" defer></script>
 </body>
 </html>
