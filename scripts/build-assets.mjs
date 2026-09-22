@@ -29,6 +29,7 @@ const cssBundles = {
   "css/library.min.css": [
     "css/main.css",
     "css/personal-library.css",
+    "css/bulk-image-scan.css",
     "css/combos.css",
   ],
   "css/decks.min.css": [
@@ -62,6 +63,7 @@ const jsBundles = {
     "js/decks.js",
     "js/combos.js",
     "js/personal-library.js",
+    "js/bulk-image-scan.js",
   ],
   "js/deck-builder.min.js": [
     "js/deck-builder.js",
