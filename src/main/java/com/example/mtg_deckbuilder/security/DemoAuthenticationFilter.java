@@ -14,6 +14,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Supplies the local demo account so development pages remain usable without
+ * a manual sign-in. Do not enable this filter in a deployed environment.
+ */
 @Component
 public class DemoAuthenticationFilter extends OncePerRequestFilter {
 

@@ -2,58 +2,12 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import autoprefixer from "autoprefixer";
-import cssnano from "cssnano";
-import postcss from "postcss";
-import postcssImport from "postcss-import";
 import { minify } from "terser";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const staticDir = path.join(rootDir, "src/main/resources/static");
 const nodeModulesDir = path.join(rootDir, "node_modules");
-
-const args = new Set(process.argv.slice(2));
-const cssOnly = args.has("--css");
-const jsOnly = args.has("--js");
-
-const cssBundles = {
-  "css/nav-bar.min.css": ["css/nav-bar.css"],
-  "css/tailwind.min.css": [
-    "css/main.css",
-  ],
-  "css/site.min.css": [
-    "css/main.css",
-    "css/style.css",
-  ],
-  "css/library.min.css": [
-    "css/main.css",
-    "css/personal-library.css",
-    "css/bulk-image-scan.css",
-    "css/combos.css",
-  ],
-  "css/decks.min.css": [
-    "css/style.css",
-    "css/decks.css",
-  ],
-  "css/builder.min.css": [
-    "css/main.css",
-    "css/builder.css",
-    "css/personal-library.css",
-  ],
-  "css/combos.min.css": [
-    "css/main.css",
-    "css/combos.css",
-  ],
-  "css/login.min.css": [
-    "css/main.css",
-    "css/login.css",
-  ],
-  "css/dashboard.min.css": [
-    "css/style.css",
-    "mtg-dashboard.css",
-  ],
-};
 
 const jsBundles = {
   "js/decks.min.js": [
@@ -87,33 +41,6 @@ async function writeStaticFile(file, contents) {
   await fs.writeFile(outputPath, contents);
 }
 
-async function resolveCssImports(input) {
-  const css = await readStaticFile(input);
-  const result = await postcss([postcssImport()]).process(css, {
-    from: path.join(staticDir, input),
-  });
-  return result.css;
-}
-
-async function buildCssBundle(output, inputs) {
-  const source = (await Promise.all(inputs.map(async (input) => {
-    const css = await resolveCssImports(input);
-    return `/* ${input} */\n${css}`;
-  }))).join("\n\n");
-
-  const result = await postcss([
-    autoprefixer(),
-    cssnano({ preset: "default" }),
-  ]).process(source, {
-    from: path.join(staticDir, output),
-    to: path.join(staticDir, output),
-    map: false,
-  });
-
-  await writeStaticFile(output, result.css);
-  return result.css.length;
-}
-
 async function buildJsBundle(output, inputs) {
   const source = (await Promise.all(inputs.map(async (input) => {
     const js = await readStaticFile(input);
@@ -143,23 +70,14 @@ async function copyVendorAsset(output, input) {
 }
 
 async function main() {
-  if (!jsOnly) {
-    for (const [output, inputs] of Object.entries(cssBundles)) {
-      const bytes = await buildCssBundle(output, inputs);
-      console.log(`css ${output} ${bytes} bytes`);
-    }
+  for (const [output, input] of Object.entries(vendorAssets)) {
+    const bytes = await copyVendorAsset(output, input);
+    console.log(`js  ${output} ${bytes} bytes`);
   }
 
-  if (!cssOnly) {
-    for (const [output, input] of Object.entries(vendorAssets)) {
-      const bytes = await copyVendorAsset(output, input);
-      console.log(`js  ${output} ${bytes} bytes`);
-    }
-
-    for (const [output, inputs] of Object.entries(jsBundles)) {
-      const bytes = await buildJsBundle(output, inputs);
-      console.log(`js  ${output} ${bytes} bytes`);
-    }
+  for (const [output, inputs] of Object.entries(jsBundles)) {
+    const bytes = await buildJsBundle(output, inputs);
+    console.log(`js  ${output} ${bytes} bytes`);
   }
 }
 

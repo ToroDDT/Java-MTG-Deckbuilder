@@ -1,5 +1,9 @@
 /* Dual-faced card flip control (personal library card grid) */
 
+.cb-card-img-wrap--dual {
+    position: relative;
+}
+
 .cb-card-img-wrap--dual .cb-card-flip-btn {
     display: inline-flex;
 }

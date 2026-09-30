@@ -7,9 +7,6 @@
 
 <!-- ── STICKY STATS BAR FRAGMENT ── -->
 <div th:fragment="stickyStatsBar">
-  <!-- Spacer so page content isn't hidden behind the bar -->
-  <div class="h-20"></div>
-
 <div id="stickyStatsBar"
      hx-get="/personal-library/info"
      hx-trigger="refreshLibrary from:body"
