@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Combos Section</title>
+    <script th:src="@{/js/htmx.min.js}" defer></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/combos.css}"/>
+    <style>
+    </style>
+</head>
+<body>
+
+<!-- Main content -->
+<div class="page-body" id="personal-cards" th:fragment="combos-section">
+
+    <div class="cb-empty-state"
+         th:if="${cardCombos == null || cardCombos.cardCombinations == null || #lists.isEmpty(cardCombos.cardCombinations)}">
+        No combos match these filters.
+    </div>
+
+    <div class="combo-grid">
+
+        <!-- Repeat for each combo -->
+        <a class="combo-card combo-card-link"
+           th:each="cardList, comboStat : ${cardCombos.images}"
+           th:with="comboLocation=${cardCombos.locations != null and comboStat.index < #lists.size(cardCombos.locations) ? cardCombos.locations[comboStat.index] : 'library'},
+                    comboDescription=${cardCombos.description[comboStat.index]},
+                    comboCardsKey=${#strings.listJoin(cardCombos.cardCombinations[comboStat.index], '||')}"
+           th:href="@{/personal-library/combos/detail(location=${comboLocation}, cards=${comboCardsKey}, description=${comboDescription})}">
+
+            <!-- Mana color identity row -->
+            <div class="combo-card-header">
+                <!-- These pips represent color identity — swap classes (mana-G, mana-U, mana-R, mana-B, mana-W) per combo -->
+                <div class="mana-pip mana-G" title="Green">
+                    <!-- Tree icon approximation -->
+                    <svg class="mana-symbol" viewBox="0 0 16 16" fill="white"><path d="M8 1 L11 7 H9 L12 12 H10 L13 15 H3 L6 12 H4 L7 7 H5 Z"/></svg>
+                </div>
+                <div class="mana-pip mana-U" title="Blue">
+                    <svg class="mana-symbol" viewBox="0 0 16 16" fill="white"><path d="M8 2 C4 2 2 6 2 10 C2 14 5 15 8 15 C11 15 14 14 14 10 C14 6 12 2 8 2Z"/></svg>
+                </div>
+                <div class="mana-pip mana-R" title="Red">
+                    <svg class="mana-symbol" viewBox="0 0 16 16" fill="white"><path d="M8 1 L14 6 L12 8 L14 14 L8 11 L2 14 L4 8 L2 6 Z"/></svg>
+                </div>
+            </div>
+
+            <!-- Card names + effects -->
+            <div class="combo-card-body">
+                <div class="combo-card-names">
+                    <span class="combo-card-name-group"
+                          th:each="cardName, nameStat : ${cardCombos.cardCombinations[comboStat.index]}"
+                          th:with="img=${nameStat.index < #lists.size(cardList) ? cardList[nameStat.index] : null}">
+                        <span class="combo-card-name"
+                              th:text="${cardName}">
+                            Card Name
+                        </span>
+                        <span class="combo-card-hover-drop">
+                            <span class="combo-card-hover-panel" th:if="${img != null}">
+                                <img th:src="${img}"
+                                     th:alt="${cardName}"
+                                     class="combo-card-hover-img"
+                                     loading="lazy"
+                                     onerror="this.closest('.combo-card-hover-panel').style.display='none'"/>
+                            </span>
+                            <span class="combo-card-hover-panel combo-card-hover-empty" th:if="${img == null}">
+                                Preview unavailable.
+                            </span>
+                        </span>
+                    </span>
+                </div>
+
+                <hr class="combo-divider"/>
+
+                <ul class="combo-effects"
+                    th:with="resultText=${cardCombos.results != null and comboStat.index < #lists.size(cardCombos.results) ? cardCombos.results[comboStat.index] : ''},
+                              steps=${#strings.arraySplit(resultText, '.')}">
+                    <li th:each="step : ${steps}"
+                        th:if="${!#strings.isEmpty(#strings.trim(step))}"
+                        th:text="${#strings.trim(step) + '.'}">
+                        Infinite combat phases.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Footer: deck count -->
+            <div class="combo-card-footer">
+                — decks (EDHREC)
+            </div>
+        </a>
+        <!-- /combo-card -->
+
+    </div>
+    <!-- /combo grid -->
+
+</div>
+
+<button class="fab">
+    <span class="material-symbols-outlined" style="font-family:'Material Symbols Outlined';font-size:22px;font-style:normal;">add</span>
+    <span class="fab-tooltip">Register New Combo</span>
+</button>
+
+<div class="toast">
+    <div class="toast-pips">
+        <div class="toast-pip" style="background:#3b82f6;"></div>
+        <div class="toast-pip" style="background:#504840;"></div>
+        <div class="toast-pip" style="background:#111;border-color:#333;"></div>
+    </div>
+    <span class="toast-text">Archivist Mode: <strong>Collaborative Curation</strong></span>
+</div>
+
+</body>
+</html>
