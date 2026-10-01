@@ -1,15 +1,19 @@
 package com.example.mtg_deckbuilder.views.impl;
 
 import com.example.mtg_deckbuilder.dto.card.Card;
+import com.example.mtg_deckbuilder.dto.combo.CardCombos;
 import com.example.mtg_deckbuilder.model.ColorIdentity;
+import com.example.mtg_deckbuilder.model.LibraryFilters;
+import com.example.mtg_deckbuilder.security.CustomUserDetails;
+import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
 import com.example.mtg_deckbuilder.views.api.BuilderViewModel;
 import lombok.Builder;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -17,6 +21,7 @@ import java.util.stream.Stream;
 @Builder
 public record BuilderViewModelImpl(
         String image,
+        int bracketInfo,
         Double totalValue,
         String deckName,
         List<Card> creatures,
@@ -73,6 +78,55 @@ public record BuilderViewModelImpl(
                     identity.contains("U") ? 1 : 0,
                     0);
         }
+    }
+
+    public int getBracketInfo(ComboServiceImpl comboServiceImpl, CustomUserDetails user) {
+        AtomicInteger amountOfGameChanger = new AtomicInteger();
+        AtomicBoolean containsLandDenial = new AtomicBoolean(false);
+        AtomicBoolean containsTwoCardCombo = new AtomicBoolean(false);
+        AtomicBoolean containsExtraTurns = new AtomicBoolean(false);
+        Pattern KEYWORD_LAND = Pattern.compile("land|lands", Pattern.CASE_INSENSITIVE);
+        Pattern KEYWORD_DESTROY = Pattern.compile("destroy|exile", Pattern.CASE_INSENSITIVE);
+        Pattern KEYWORD_EXTRA_TURN = Pattern.compile("Extra|turn", Pattern.CASE_INSENSITIVE);
+        var cards = comboServiceImpl.getCombos(user);
+        var combos = cards.getCardCombinations();
+        combos.forEach(combo -> {
+            if (combo.size() == 2) {
+                containsTwoCardCombo.set(true);
+            }
+        });
+        List<Card> cardList = new ArrayList<>();
+        cardList.addAll(instants);
+        cardList.addAll(enchantments);
+        cardList.addAll(artifacts);
+        cardList.addAll(lands);
+        cardList.addAll(sorceries);
+        cardList.addAll(creatures);
+        cardList.forEach(card -> {
+            if (card.isGameChanger()) {
+                amountOfGameChanger.incrementAndGet();
+            }
+            String text = card.getOracleText();
+            if (text != null && KEYWORD_DESTROY.matcher(text).find() && KEYWORD_LAND.matcher(text).find()){
+                containsLandDenial.set(true);
+            }
+            if (text != null && KEYWORD_EXTRA_TURN.matcher(text).find()) {
+                containsExtraTurns.set(true);
+            }
+        });
+        if (amountOfGameChanger.get() == 0 && !containsLandDenial.get() && !containsTwoCardCombo.get() && !containsExtraTurns.get()) {
+            return 1;
+        }
+        else if (amountOfGameChanger.get() == 0 && !containsLandDenial.get() && !containsTwoCardCombo.get()) {
+            return 2;
+        }
+        else if (amountOfGameChanger.get() <= 3 && !containsLandDenial.get() && !containsTwoCardCombo.get()) {
+            return 3;
+        }
+        else if (amountOfGameChanger.get() >= 4 || !containsLandDenial.get() && !containsTwoCardCombo.get()) {
+            return 4;
+        }
+        return 1;
     }
 
     public static BuilderViewModel empty(String deckId) {

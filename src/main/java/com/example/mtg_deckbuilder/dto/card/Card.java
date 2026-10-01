@@ -33,6 +33,7 @@ public class Card {
     private Integer tcgplayerId;
     private Integer tcgplayerEtchedId;
     private Integer cardmarketId;
+    private boolean gameChanger;
 
     private String lang;
     private LocalDate releasedAt;
@@ -94,6 +95,7 @@ public class Card {
                 .prices(extractPrices(rs))
                 .cardFaces(extractCardFaces(rs))
                 .releasedAt(extractReleasedAt(rs))
+                .gameChanger(rs.getBoolean("game_changer"))
                 .build();
     }
 
