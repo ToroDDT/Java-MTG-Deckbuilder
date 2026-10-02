@@ -136,6 +136,24 @@ public class BuilderController {
         response.setHeader("HX-Trigger", "cardsUpdated");
     }
 
+    @GetMapping(value = "/builder/deck/{id}/role-stats", headers = "HX-Request=true")
+    public String deckRoleStats(
+            @AuthenticationPrincipal CustomUserDetails user,
+            Model model,
+            @PathVariable("id") String deckId) {
+        model.addAttribute("roleStats", builderService.getBuilderView(deckId, user).roleStats());
+        return "builder/role-stats :: roleStatsGrid";
+    }
+
+    @GetMapping(value = "/builder/deck/{id}/deck-stats", headers = "HX-Request=true")
+    public String deckStatsBar(
+            @AuthenticationPrincipal CustomUserDetails user,
+            Model model,
+            @PathVariable("id") String deckId) {
+        model.addAttribute("deckView", builderService.getBuilderView(deckId, user));
+        return "builder/deck-stats-bar :: stickyDeckStatsBar";
+    }
+
     @GetMapping("/builder/randomize-cards")
     public String getRandomizedCards(
             Model model,

@@ -33,4 +33,8 @@ public interface BuilderViewModel {
     List<String> colors();
 
     int bracketInfo();
+
+    DeckRoleStats roleStats();
+
+    int deckSize();
 }

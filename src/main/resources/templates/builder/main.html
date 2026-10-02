@@ -245,40 +245,19 @@
                     </div>
                 </div>
 
-                <!-- Type Distribution -->
+                <!-- Deck roles (oracle-based counts) -->
                 <div class="bg-white/[.92] backdrop-blur-md rounded-3xl p-6
                             border border-[rgba(194,198,214,.55)]
                             shadow-[0_20px_40px_rgba(25,27,35,.06)]">
-                    <h2 class="text-sm font-black text-on-background uppercase tracking-wider mb-6">Type Distribution</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 bg-slate-50 rounded-2xl">
-                            <span class="text-[10px] text-slate-600 uppercase font-black block mb-1">Ramp</span>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-2xl font-black text-on-background">12</span>
-                                <span class="text-[10px] font-bold text-green-600">+2 High</span>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-slate-50 rounded-2xl">
-                            <span class="text-[10px] text-slate-600 uppercase font-black block mb-1">Draw</span>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-2xl font-black text-on-background">9</span>
-                                <span class="text-[10px] font-bold text-blue-600">Optimal</span>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-slate-50 rounded-2xl">
-                            <span class="text-[10px] text-slate-600 uppercase font-black block mb-1">Removal</span>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-2xl font-black text-on-background">7</span>
-                                <span class="text-[10px] font-bold text-slate-600">Low</span>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-slate-50 rounded-2xl">
-                            <span class="text-[10px] text-slate-600 uppercase font-black block mb-1">Board Wipes</span>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-2xl font-black text-on-background">3</span>
-                                <span class="text-[10px] font-bold text-slate-600">Balanced</span>
-                            </div>
-                        </div>
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="material-symbols-outlined text-slate-400/70 text-lg font-light" aria-hidden="true">analytics</span>
+                        <h2 class="text-sm font-black text-on-background uppercase tracking-wider">Deck Roles</h2>
+                    </div>
+                    <div id="builder-role-stats-grid"
+                         th:attr="hx-get=@{/builder/deck/{id}/role-stats(id=${view.builderView().deckId()})}"
+                         hx-trigger="load, cardsUpdated from:body"
+                         hx-swap="innerHTML">
+                        <div th:replace="~{builder/role-stats :: roleStatsGrid}"></div>
                     </div>
                 </div>
 
@@ -289,8 +268,14 @@
 
 <th:block th:replace="~{builder/view-options-modal :: viewOptionsModal(${view.builderView().deckId})}"/>
 
-<!-- Mobile Nav Bar -->
-<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around items-center h-16 z-50">
+<div th:attr="hx-get=@{/builder/deck/{id}/deck-stats(id=${view.builderView().deckId()})}"
+     hx-trigger="load, cardsUpdated from:body"
+     hx-swap="outerHTML">
+    <div th:replace="~{builder/deck-stats-bar :: stickyDeckStatsBar}"></div>
+</div>
+
+<!-- Mobile Nav Bar (small screens only; desktop uses sticky deck stats above) -->
+<div class="md:hidden fixed bottom-16 left-0 right-0 bg-white border-t border-slate-100 flex justify-around items-center h-16 z-40">
     <button type="button" class="flex flex-col items-center gap-1 text-slate-600" aria-label="Home">
         <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
         <span class="text-[10px] font-bold">Home</span>

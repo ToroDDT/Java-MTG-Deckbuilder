@@ -4,6 +4,7 @@ import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
 import com.example.mtg_deckbuilder.model.ColorIdentity;
 import com.example.mtg_deckbuilder.views.api.BuilderViewModel;
+import com.example.mtg_deckbuilder.views.api.DeckRoleStats;
 import lombok.Builder;
 
 import java.util.*;
@@ -30,7 +31,9 @@ public record BuilderViewModelImpl(
         List<Card> sorceries,
         List<Long> colorProduction,
         String deckId,
-        List<String> colors
+        List<String> colors,
+        DeckRoleStats roleStats,
+        int deckSize
 ) implements BuilderViewModel {
 
     @Builder
@@ -152,6 +155,8 @@ public record BuilderViewModelImpl(
                 .totalValue(0.0)
                 .deckName("")
                 .bracketInfo(1)
+                .roleStats(DeckRoleStats.EMPTY)
+                .deckSize(0)
                 .build();
     }
 
@@ -183,6 +188,8 @@ public record BuilderViewModelImpl(
                 .sorceries(sorceries)
                 .deckId(deckId)
                 .bracketInfo(1)
+                .roleStats(DeckRoleStats.EMPTY)
+                .deckSize(0)
                 .build();
     }
 
@@ -220,6 +227,8 @@ public record BuilderViewModelImpl(
                 .colorProduction(colorProduction)
                 .colors(findColors(cards, findCardByName))
                 .bracketInfo(bracketInfo)
+                .roleStats(DeckRoleStatsCalculator.fromCards(cards))
+                .deckSize(cards.size())
                 .build();
     }
 
