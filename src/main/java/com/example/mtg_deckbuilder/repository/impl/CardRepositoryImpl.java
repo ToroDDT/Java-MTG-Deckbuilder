@@ -33,6 +33,7 @@ public class CardRepositoryImpl implements CardRepository {
             cards.color_identity,
             cards.image_uris,
             cards.card_faces,
+            cards.game_changer,\s
             cards.released_at,
             COALESCE(
                 cards.image_uris->>'border_crop',
@@ -43,7 +44,7 @@ public class CardRepositoryImpl implements CardRepository {
             cards.prices->>'eur_foil' AS eur_foil,
             cards.prices->>'tix' AS tix
         FROM cards
-        """;
+       \s""";
 
   private final JdbcClient jdbcClient;
   private final JdbcTemplate jdbcTemplate;

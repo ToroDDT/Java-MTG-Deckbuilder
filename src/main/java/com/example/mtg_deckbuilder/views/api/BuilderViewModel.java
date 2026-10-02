@@ -31,4 +31,6 @@ public interface BuilderViewModel {
     String deckId();
 
     List<String> colors();
+
+    int bracketInfo();
 }

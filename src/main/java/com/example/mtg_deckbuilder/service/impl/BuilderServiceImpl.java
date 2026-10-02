@@ -3,6 +3,7 @@ package com.example.mtg_deckbuilder.service.impl;
 import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.repository.api.BuilderRepository;
+import com.example.mtg_deckbuilder.repository.api.ComboRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.api.BuilderService;
 import com.example.mtg_deckbuilder.service.api.CardService;
@@ -33,20 +34,23 @@ public class BuilderServiceImpl implements BuilderService {
     private final DeckService deckService;
     private final CardService cardService;
     private final PersonalLibraryService personalLibraryService;
+    private final ComboRepository comboRepository;
 
     public BuilderServiceImpl(BuilderRepository builderRepository,
                               DeckService deckService,
                               CardService cardService,
-                              PersonalLibraryService personalLibraryService) {
+                              PersonalLibraryService personalLibraryService,
+                              ComboRepository comboRepository) {
         this.builderRepository = builderRepository;
         this.deckService = deckService;
         this.cardService = cardService;
         this.personalLibraryService = personalLibraryService;
+        this.comboRepository = comboRepository;
     }
 
     @Override
     public BuilderMainView getMainView(String deckId, CustomUserDetails user) {
-        return BuilderMainViewImpl.from(getBuilderView(deckId), user);
+        return BuilderMainViewImpl.from(getBuilderView(deckId, user), user);
     }
 
     @Override
@@ -122,8 +126,14 @@ public class BuilderServiceImpl implements BuilderService {
 
     @Override
     public BuilderViewModel getBuilderView(String deckId) {
+        return getBuilderView(deckId, null);
+    }
+
+    @Override
+    public BuilderViewModel getBuilderView(String deckId, CustomUserDetails user) {
         var cards = builderRepository.getAllCardsForUser(deckId);
-        return BuilderViewModelImpl.fromCards(deckId, cards, cardService::findByName);
+        var userCombos = user != null ? comboRepository.getCombos(user) : null;
+        return BuilderViewModelImpl.fromCards(deckId, cards, cardService::findByName, userCombos);
     }
 
     @Override

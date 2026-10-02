@@ -95,7 +95,7 @@ public class Card {
                 .prices(extractPrices(rs))
                 .cardFaces(extractCardFaces(rs))
                 .releasedAt(extractReleasedAt(rs))
-                .gameChanger(rs.getBoolean("game_changer"))
+                .gameChanger(extractGameChanger(rs))
                 .build();
     }
 
@@ -104,6 +104,13 @@ public class Card {
             return null;
         }
         return rs.getObject("released_at", LocalDate.class);
+    }
+
+    private static boolean extractGameChanger(ResultSet rs) throws SQLException {
+        if (!hasColumn(rs, "game_changer")) {
+            return false;
+        }
+        return rs.getBoolean("game_changer");
     }
 
     private static final long NEW_RELEASE_DAYS = 90;

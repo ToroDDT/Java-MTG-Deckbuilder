@@ -104,6 +104,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
 
             c.id AS card_id,
             c.name,
+            c.game_changer,
             c.type_line,
             c.toughness,
             c.power,
@@ -154,6 +155,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             c.name,
             c.type_line,
             c.toughness,
+            c.game_changer,
             c.power,
             c.artist,
             c.cmc,
@@ -269,6 +271,7 @@ public class PersonalLibraryRepositoryImpl implements PersonalLibraryRepository 
             cards.type_line,
             cards.toughness,
             cards.power,
+            cards.game_changer,
             cards.artist,
             cards.cmc,
             cards.scryfall_uri,

@@ -220,6 +220,8 @@ public class BuilderRepositoryImpl implements BuilderRepository {
         cards.card_faces,
         cards.prices,
         cards.produced_mana,
+        cards.game_changer,
+        cards.oracle_text,
 
         decks.name AS deck_name,
         decks.commander,
@@ -258,6 +260,8 @@ public class BuilderRepositoryImpl implements BuilderRepository {
                                 .imageUris(rs.getString("image_uris"))
                                 .cardFaces(Card.extractCardFaces(rs))
                                 .previewImageUrl(previewImageUrlFrom(rs.getString("image_uris"), rs.getString("card_faces")))
+                                .gameChanger(rs.getBoolean("game_changer"))
+                                .oracleText(rs.getString("oracle_text"))
                                 .build()
                 )
                 .list();

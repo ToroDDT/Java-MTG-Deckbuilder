@@ -3,9 +3,6 @@ package com.example.mtg_deckbuilder.views.impl;
 import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
 import com.example.mtg_deckbuilder.model.ColorIdentity;
-import com.example.mtg_deckbuilder.model.LibraryFilters;
-import com.example.mtg_deckbuilder.security.CustomUserDetails;
-import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
 import com.example.mtg_deckbuilder.views.api.BuilderViewModel;
 import lombok.Builder;
 
@@ -80,53 +77,63 @@ public record BuilderViewModelImpl(
         }
     }
 
-    public int getBracketInfo(ComboServiceImpl comboServiceImpl, CustomUserDetails user) {
+    private static final Pattern KEYWORD_EXTRA_TURN = Pattern.compile("(?=.*Extra)(?=.*turn)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern KEYWORD_DESTROY_LANDS = Pattern.compile(
+            "(?=.*(?:destroy|exile))(?=.*all)(?=.*lands?\\b)",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    public static int calculateBracketInfo(List<Card> deckCards, CardCombos userCombos, String deckName) {
         AtomicInteger amountOfGameChanger = new AtomicInteger();
         AtomicBoolean containsLandDenial = new AtomicBoolean(false);
         AtomicBoolean containsTwoCardCombo = new AtomicBoolean(false);
         AtomicBoolean containsExtraTurns = new AtomicBoolean(false);
-        Pattern KEYWORD_LAND = Pattern.compile("land|lands", Pattern.CASE_INSENSITIVE);
-        Pattern KEYWORD_DESTROY = Pattern.compile("destroy|exile", Pattern.CASE_INSENSITIVE);
-        Pattern KEYWORD_EXTRA_TURN = Pattern.compile("Extra|turn", Pattern.CASE_INSENSITIVE);
-        var cards = comboServiceImpl.getCombos(user);
-        var combos = cards.getCardCombinations();
-        combos.forEach(combo -> {
+
+        deckCombos(userCombos, deckName).forEach(combo -> {
             if (combo.size() == 2) {
                 containsTwoCardCombo.set(true);
             }
         });
-        List<Card> cardList = new ArrayList<>();
-        cardList.addAll(instants);
-        cardList.addAll(enchantments);
-        cardList.addAll(artifacts);
-        cardList.addAll(lands);
-        cardList.addAll(sorceries);
-        cardList.addAll(creatures);
-        cardList.forEach(card -> {
+
+        deckCards.forEach(card -> {
             if (card.isGameChanger()) {
                 amountOfGameChanger.incrementAndGet();
             }
             String text = card.getOracleText();
-            if (text != null && KEYWORD_DESTROY.matcher(text).find() && KEYWORD_LAND.matcher(text).find()){
+            if (text != null && KEYWORD_DESTROY_LANDS.matcher(text).find()) {
                 containsLandDenial.set(true);
             }
             if (text != null && KEYWORD_EXTRA_TURN.matcher(text).find()) {
                 containsExtraTurns.set(true);
             }
         });
+
         if (amountOfGameChanger.get() == 0 && !containsLandDenial.get() && !containsTwoCardCombo.get() && !containsExtraTurns.get()) {
             return 1;
-        }
-        else if (amountOfGameChanger.get() == 0 && !containsLandDenial.get() && !containsTwoCardCombo.get()) {
+        } else if (amountOfGameChanger.get() == 0 && !containsLandDenial.get() && !containsTwoCardCombo.get()) {
             return 2;
-        }
-        else if (amountOfGameChanger.get() <= 3 && !containsLandDenial.get() && !containsTwoCardCombo.get()) {
+        } else if (amountOfGameChanger.get() <= 3 && !containsLandDenial.get() && !containsTwoCardCombo.get()) {
             return 3;
-        }
-        else if (amountOfGameChanger.get() >= 4 || !containsLandDenial.get() && !containsTwoCardCombo.get()) {
+        } else if (amountOfGameChanger.get() >= 4 || !containsLandDenial.get() && !containsTwoCardCombo.get()) {
             return 4;
         }
-        return 1;
+        return 5;
+    }
+
+    private static List<List<String>> deckCombos(CardCombos userCombos, String deckName) {
+        if (userCombos == null || userCombos.getCardCombinations() == null || deckName == null || deckName.isBlank()) {
+            return List.of();
+        }
+        List<String> locations = userCombos.getLocations() == null ? List.of() : userCombos.getLocations();
+        List<List<String>> deckOnly = new ArrayList<>();
+        var combinations = userCombos.getCardCombinations();
+        for (int i = 0; i < combinations.size(); i++) {
+            String location = i < locations.size() ? locations.get(i) : userCombos.getLocation();
+            if (deckName.equals(location)) {
+                deckOnly.add(combinations.get(i));
+            }
+        }
+        return deckOnly;
     }
 
     public static BuilderViewModel empty(String deckId) {
@@ -144,6 +151,7 @@ public record BuilderViewModelImpl(
                 .sorceries(List.of())
                 .totalValue(0.0)
                 .deckName("")
+                .bracketInfo(1)
                 .build();
     }
 
@@ -174,12 +182,20 @@ public record BuilderViewModelImpl(
                 .colorProduction(colorProduction)
                 .sorceries(sorceries)
                 .deckId(deckId)
+                .bracketInfo(1)
                 .build();
     }
 
     public static BuilderViewModel fromCards(String deckId,
                                              List<Card> cards,
                                              Function<String, Optional<Card>> findCardByName) {
+        return fromCards(deckId, cards, findCardByName, null);
+    }
+
+    public static BuilderViewModel fromCards(String deckId,
+                                             List<Card> cards,
+                                             Function<String, Optional<Card>> findCardByName,
+                                             CardCombos userCombos) {
 
         if (cards.isEmpty()) {
             return BuilderViewModelImpl.empty(deckId);
@@ -188,6 +204,7 @@ public record BuilderViewModelImpl(
         var deckName = cards.getLast().getDeckName();
         var cardTypes = filterTypes(cards);
         var colorProduction = calculateColorProduction(cards);
+        int bracketInfo = calculateBracketInfo(cards, userCombos, deckName);
         return BuilderViewModelImpl.builder()
                 .deckId(deckId)
                 .deckName(deckName)
@@ -202,6 +219,7 @@ public record BuilderViewModelImpl(
                 .totalValue(calculateTotal(cards))
                 .colorProduction(colorProduction)
                 .colors(findColors(cards, findCardByName))
+                .bracketInfo(bracketInfo)
                 .build();
     }
 
