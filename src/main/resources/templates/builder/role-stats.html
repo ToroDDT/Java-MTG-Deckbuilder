@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="roleStatsGrid"
+     th:with="stats=${roleStats != null ? roleStats : view.builderView().roleStats()}"
+     class="grid grid-cols-2 gap-4">
+    <div class="p-4 bg-slate-50 rounded-2xl">
+        <div class="flex items-center gap-1.5 mb-2 text-slate-400/80">
+            <span class="material-symbols-outlined text-[17px] font-light" aria-hidden="true">trending_up</span>
+            <span class="sr-only">Ramp</span>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+            <span class="text-2xl font-black text-on-background tabular-nums" th:text="${stats.ramp()}">0</span>
+            <span class="text-[10px] font-bold"
+                  th:classappend="${stats.rampHint().tone() == 'balanced' ? ' text-green-600' : (stats.rampHint().tone() == 'high' ? ' text-amber-600' : ' text-slate-500')}"
+                  th:text="${stats.rampHint().label()}">Balanced</span>
+        </div>
+    </div>
+    <div class="p-4 bg-slate-50 rounded-2xl">
+        <div class="flex items-center gap-1.5 mb-2 text-slate-400/80">
+            <span class="material-symbols-outlined text-[17px] font-light" aria-hidden="true">menu_book</span>
+            <span class="sr-only">Card draw</span>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+            <span class="text-2xl font-black text-on-background tabular-nums" th:text="${stats.draw()}">0</span>
+            <span class="text-[10px] font-bold"
+                  th:classappend="${stats.drawHint().tone() == 'balanced' ? ' text-green-600' : (stats.drawHint().tone() == 'high' ? ' text-amber-600' : ' text-slate-500')}"
+                  th:text="${stats.drawHint().label()}">Balanced</span>
+        </div>
+    </div>
+    <div class="p-4 bg-slate-50 rounded-2xl">
+        <div class="flex items-center gap-1.5 mb-2 text-slate-400/80">
+            <span class="material-symbols-outlined text-[17px] font-light" aria-hidden="true">gps_fixed</span>
+            <span class="sr-only">Removal</span>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+            <span class="text-2xl font-black text-on-background tabular-nums" th:text="${stats.removal()}">0</span>
+            <span class="text-[10px] font-bold"
+                  th:classappend="${stats.removalHint().tone() == 'balanced' ? ' text-green-600' : (stats.removalHint().tone() == 'high' ? ' text-amber-600' : ' text-slate-500')}"
+                  th:text="${stats.removalHint().label()}">Balanced</span>
+        </div>
+    </div>
+    <div class="p-4 bg-slate-50 rounded-2xl">
+        <div class="flex items-center gap-1.5 mb-2 text-slate-400/80">
+            <span class="material-symbols-outlined text-[17px] font-light" aria-hidden="true">cyclone</span>
+            <span class="sr-only">Board wipes</span>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+            <span class="text-2xl font-black text-on-background tabular-nums" th:text="${stats.boardWipes()}">0</span>
+            <span class="text-[10px] font-bold"
+                  th:classappend="${stats.boardWipesHint().tone() == 'balanced' ? ' text-green-600' : (stats.boardWipesHint().tone() == 'high' ? ' text-amber-600' : ' text-slate-500')}"
+                  th:text="${stats.boardWipesHint().label()}">Balanced</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

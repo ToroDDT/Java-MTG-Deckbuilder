@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="stickyDeckStatsBar"
+     th:with="dv=${deckView != null ? deckView : view.builderView()}">
+    <div class="h-20" aria-hidden="true"></div>
+    <nav id="builderDeckStatsBar"
+         class="fixed bottom-0 left-0 right-0 z-[500] border-t border-[#e2e8f8]"
+         style="background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 -4px 28px rgba(37,99,235,0.10);"
+         aria-label="Deck statistics">
+        <div class="max-w-[1480px] mx-auto px-3 md:px-6 h-16 flex items-center gap-2 md:gap-3 overflow-x-auto">
+
+            <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 shrink-0" title="Main deck">
+                <span class="material-symbols-outlined text-[18px] text-slate-400/80 font-light" aria-hidden="true">layers</span>
+                <span class="text-[13px] font-bold text-slate-800 tabular-nums" th:text="${dv.deckSize()}">0</span>
+                <span class="sr-only">Main deck cards</span>
+            </div>
+
+            <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 shrink-0" title="Sideboard">
+                <span class="material-symbols-outlined text-[18px] text-slate-400/80 font-light" aria-hidden="true">inventory_2</span>
+                <span class="text-[13px] font-bold text-slate-800 tabular-nums">0</span>
+                <span class="sr-only">Sideboard cards</span>
+            </div>
+
+            <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 shrink-0" title="Deck value">
+                <span class="material-symbols-outlined text-[18px] text-slate-400/80 font-light" aria-hidden="true">payments</span>
+                <span class="text-[13px] font-bold text-blue-600 tabular-nums"
+                      th:text="${dv.totalValue() != null ? '$' + #numbers.formatDecimal(dv.totalValue(), 1, 2) : '$0.00'}">$0.00</span>
+                <span class="sr-only">Deck price</span>
+            </div>
+
+            <div class="hidden sm:block w-px h-8 bg-[#e2e8f8] shrink-0"></div>
+
+            <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
+                <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2 py-1.5" title="Artifacts">
+                    <span class="material-symbols-outlined text-[17px] text-slate-400/75 font-light" aria-hidden="true">diamond</span>
+                    <span class="text-[13px] font-bold text-slate-800 tabular-nums" th:text="${#lists.size(dv.artifacts())}">0</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2 py-1.5" title="Enchantments">
+                    <span class="material-symbols-outlined text-[17px] text-slate-400/75 font-light" aria-hidden="true">auto_awesome</span>
+                    <span class="text-[13px] font-bold text-slate-800 tabular-nums" th:text="${#lists.size(dv.enchantments())}">0</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2 py-1.5" title="Creatures">
+                    <span class="material-symbols-outlined text-[17px] text-slate-400/75 font-light" aria-hidden="true">cruelty_free</span>
+                    <span class="text-[13px] font-bold text-slate-800 tabular-nums" th:text="${#lists.size(dv.creatures())}">0</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2 py-1.5" title="Sorceries">
+                    <span class="material-symbols-outlined text-[17px] text-slate-400/75 font-light" aria-hidden="true">local_fire_department</span>
+                    <span class="text-[13px] font-bold text-slate-800 tabular-nums" th:text="${#lists.size(dv.sorceries())}">0</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2 py-1.5" title="Instants">
+                    <span class="material-symbols-outlined text-[17px] text-slate-400/75 font-light" aria-hidden="true">bolt</span>
+                    <span class="text-[13px] font-bold text-slate-800 tabular-nums" th:text="${#lists.size(dv.instants())}">0</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2 py-1.5" title="Lands">
+                    <span class="material-symbols-outlined text-[17px] text-slate-400/75 font-light" aria-hidden="true">landscape</span>
+                    <span class="text-[13px] font-bold text-slate-800 tabular-nums" th:text="${#lists.size(dv.lands())}">0</span>
+                </div>
+            </div>
+
+            <div class="flex-1 min-w-[8px]"></div>
+
+            <div class="flex items-center gap-1.5 bg-[#f8faff] rounded-[9px] px-2.5 py-1.5 shrink-0" title="Commander bracket">
+                <span class="material-symbols-outlined text-[18px] text-slate-400/80 font-light" aria-hidden="true">leaderboard</span>
+                <span class="text-[13px] font-bold text-blue-600 tabular-nums" th:text="${dv.bracketInfo()}">1</span>
+                <span class="sr-only">Bracket</span>
+            </div>
+        </div>
+    </nav>
+</div>
+</body>
+</html>
