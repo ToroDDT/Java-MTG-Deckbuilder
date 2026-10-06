@@ -21,4 +21,17 @@
       </ul>
     </nav>
   </div>
+  <script>
+    (function () {
+      var menu = document.getElementById('navMenu');
+      if (!menu || menu.dataset.navClickGuard === 'true') return;
+      menu.dataset.navClickGuard = 'true';
+      menu.addEventListener('click', function (event) {
+        var link = event.target.closest('a[href]');
+        if (link && event.detail > 1) {
+          event.preventDefault();
+        }
+      });
+    })();
+  </script>
 </header>
