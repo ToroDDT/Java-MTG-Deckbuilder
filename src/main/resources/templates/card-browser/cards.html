@@ -9,7 +9,7 @@
 
     <div id="display-area"></div>
     <div class="cb-results-header">
-        <p class="cb-count">Showing <span id="visibleCount">12</span> of <span id="totalCount">12</span> cards</p>
+        <p class="cb-count">Showing <span id="visibleCount" th:text="${catalogView != null ? #lists.size(catalogView.cards) : 0}">0</span> of <span id="totalCount" th:text="${catalogView != null ? catalogView.totalCards : 0}">0</span> cards</p>
     </div>
     <div class="cb-grid" id="cardGrid">
 

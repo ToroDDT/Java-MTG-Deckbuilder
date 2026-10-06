@@ -135,6 +135,13 @@ body {
     padding: 40px 24px 80px;
 }
 
+/* Embedded in combo browser — avoid extra padding / width jump vs HTMX updates */
+#combos-list .page-body {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
 /* ── Combo grid ── */
 .combo-grid {
     display: grid;

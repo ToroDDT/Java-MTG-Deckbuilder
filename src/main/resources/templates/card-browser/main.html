@@ -20,7 +20,6 @@
   <link rel="stylesheet" th:href="@{/css/library.min.css(v=20260929-4)}">
   <link rel="stylesheet" th:href="@{/css/card-face-flip.css(v=20260929-2)}">
   <script th:src="@{/js/builder-tailwind-config.min.js}"></script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 </head>
 <body>
 
@@ -129,11 +128,7 @@
   <p>Card images and data provided by <a href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>. Not affiliated with Scryfall or Wizards of the Coast.</p>
 </footer>
 <div class="h-20" aria-hidden="true"></div>
-<div hx-get="/card-browser/info"
-     hx-trigger="load, refreshLibrary from:body"
-     hx-include="#librarySearchForm"
-     hx-swap="outerHTML">
-</div>
+<div th:replace="~{card-browser/stats :: stickyStatsBar}"></div>
 <script th:src="@{/js/htmx.min.js}" defer></script>
 <script th:src="@{/js/library.min.js(v=20260929-2)}" defer></script>
 </body>

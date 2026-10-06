@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Card Browser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Combo Browser — MTG Deckbuilder</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://rsms.me/">
@@ -44,11 +45,8 @@
     </aside>
 
     <!-- Results (HTMX loads here) -->
-    <div id="combos-list"
-         class="cb-results-col rounded-2xl"
-         th:hx-get="@{/personal-library/combos-list}"
-         hx-trigger="load">
-        Loading combos...
+    <div id="combos-list" class="cb-results-col rounded-2xl">
+        <div th:replace="~{combos/combos :: combos-section}"></div>
     </div>
 
 </div>
