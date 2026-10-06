@@ -2,6 +2,7 @@ package com.example.mtg_deckbuilder.service.impl;
 
 import com.example.mtg_deckbuilder.dto.card.Card;
 import com.example.mtg_deckbuilder.dto.combo.*;
+import com.example.mtg_deckbuilder.model.ComboDetailsRequest;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.OwnedCard;
@@ -59,7 +60,6 @@ public class ComboServiceImpl implements ComboService {
 public void updateCombos(CustomUserDetails user) {
     var allCards = personalLibraryService.getCards(user.getId());
     List<Deck> decks= deckService.getDeckIds(user);
-    System.out.println("Amount of Decks " + decks.size());
 
     // 1. Create the Library Task
     CompletableFuture<Void> libraryTask = CompletableFuture.runAsync(() -> {
@@ -77,8 +77,6 @@ public void updateCombos(CustomUserDetails user) {
             try {
                 var cards = builderService.getCardsFromDeck(deck.id());
                 var combos = searchCombos(cards);
-                System.out.println("Deck name: " + deck.name());
-                System.out.println("Deck combos: " + combos.getResults().getIncluded());
                 var comboIncluded = buildIncludedCombos(combos, deck.name());
                 saveCombos(user, comboIncluded);
             } catch (Exception e) {
@@ -109,34 +107,20 @@ public void updateCombos(CustomUserDetails user) {
     public List<String> getLocations(CustomUserDetails user) {
         return comboRespository.getLocations(user);
     }
-
     @Override
-    public Optional<ComboDetailViewModel> getComboDetail(
-            CustomUserDetails user,
-            String location,
-            String cardsKey,
-            String description
-    ) throws Exception {
-        List<String> selectedCardNames = splitCardsKey(cardsKey);
-        if (selectedCardNames.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Optional<ComboDetailViewModel> storedDetail = findStoredComboDetail(
-                comboRespository.getCombos(user),
-                location,
-                selectedCardNames,
-                description);
+    public Optional<ComboDetailViewModel> getComboDetail(CustomUserDetails user, ComboDetailsRequest request) throws Exception {
+        var combos = comboRespository.getCombos(user);
+        var storedDetail = searchDatabase(combos, request);
         if (storedDetail.isPresent()) {
             return storedDetail;
         }
 
-        List<OwnedCard> sourceCards = getCardsForLocation(user, location);
-        if (sourceCards.isEmpty()) {
+        List<OwnedCard> listOfCards = getCardsBasedOnLocation(user, request.getLocation());
+        if (listOfCards.isEmpty()) {
             return Optional.empty();
         }
 
-        List<ComboVariant> variants = searchCombos(sourceCards)
+        List<ComboVariant> variants = searchCombos(listOfCards)
                 .getResults()
                 .getIncluded()
                 .stream()
@@ -149,9 +133,9 @@ public void updateCombos(CustomUserDetails user) {
                 .toList();
 
         return variants.stream()
-                .filter(variant -> matchesVariantSelection(variant, selectedCardNames, description))
+                .filter(variant -> matchesVariantSelection(variant, request.getSelectedCardNames(), request.getDescription()))
                 .findFirst()
-                .map(variant -> toDetailViewModel(variant, location));
+                .map(variant -> toDetailViewModel(variant, request.getLocation()));
     }
 
     @Override
@@ -225,12 +209,7 @@ public void updateCombos(CustomUserDetails user) {
                 .build();
     }
 
-    static Optional<ComboDetailViewModel> findStoredComboDetail(
-            CardCombos stored,
-            String location,
-            List<String> selectedCardNames,
-            String description
-    ) {
+    static Optional<ComboDetailViewModel> searchDatabase(CardCombos stored, ComboDetailsRequest request) {
         if (stored == null || stored.getCardCombinations() == null || stored.getVariants() == null) {
             return Optional.empty();
         }
@@ -248,20 +227,20 @@ public void updateCombos(CustomUserDetails user) {
             String comboDescription = i < descriptions.size() ? descriptions.get(i) : "";
             String comboLocation = i < locations.size() ? locations.get(i) : stored.getLocation();
 
-            if (!normalize(comboLocation).equals(normalize(location))) {
+            if (!normalize(comboLocation).equals(normalize(request.getLocation()))) {
                 continue;
             }
-            if (!normalize(comboDescription).equals(normalize(description))) {
+            if (!normalize(comboDescription).equals(normalize(request.getDescription()))) {
                 continue;
             }
 
             List<String> normalizedCardNames = cardNames.stream().map(ComboServiceImpl::normalize).toList();
-            List<String> normalizedSelectedNames = selectedCardNames.stream().map(ComboServiceImpl::normalize).toList();
+            List<String> normalizedSelectedNames = request.getSelectedCardNames().stream().map(ComboServiceImpl::normalize).toList();
             if (!normalizedCardNames.equals(normalizedSelectedNames)) {
                 continue;
             }
 
-            return Optional.of(toDetailViewModel(variants.get(i), location));
+            return Optional.of(toDetailViewModel(variants.get(i), request.getLocation()));
         }
 
         return Optional.empty();
@@ -459,7 +438,7 @@ public void updateCombos(CustomUserDetails user) {
         return card.getPrices().getUsd();
     }
 
-    private List<OwnedCard> getCardsForLocation(CustomUserDetails user, String location) {
+    private List<OwnedCard> getCardsBasedOnLocation(CustomUserDetails user, String location) {
         if (normalize(location).isEmpty() || "library".equals(normalize(location))) {
             return personalLibraryService.getCards(user.getId());
         }
@@ -469,18 +448,6 @@ public void updateCombos(CustomUserDetails user) {
                 .findFirst()
                 .map(deck -> builderService.getCardsFromDeck(deck.id()))
                 .orElse(List.of());
-    }
-
-    private static List<String> splitCardsKey(String cardsKey) {
-        String normalized = cardsKey == null ? "" : cardsKey.trim();
-        if (normalized.isEmpty()) {
-            return List.of();
-        }
-
-        return Arrays.stream(normalized.split("\\|\\|"))
-                .map(String::trim)
-                .filter(value -> !value.isEmpty())
-                .toList();
     }
 
     private static ComboDetailViewModel toDetailViewModel(ComboVariant variant, String location) {
@@ -830,6 +797,7 @@ public void updateCombos(CustomUserDetails user) {
     }
 
     static Combos getCombos(List<OwnedCard> cards) throws java.io.IOException, InterruptedException {
+
         List<Map<String, Object>> mainBoard = cards.stream()
                 .map(card -> {
                     Map<String, Object> entry = new HashMap<>();

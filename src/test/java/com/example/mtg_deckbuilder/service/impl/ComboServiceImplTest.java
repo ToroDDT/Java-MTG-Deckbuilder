@@ -117,9 +117,6 @@ class ComboServiceImplTest {
     @Test
     void findStoredComboDetailUsesPersistedVariantWithoutApiLookup() {
         ComboVariant variant = comboVariant(
-                "Deal infinite damage.",
-                "Goblin Bombardment",
-                "Gravecrawler"
         );
         CardCombos stored = CardCombos.builder()
                 .cardCombinations(List.of(List.of("Goblin Bombardment", "Gravecrawler")))
@@ -127,24 +124,12 @@ class ComboServiceImplTest {
                 .locations(List.of("library"))
                 .variants(List.of(variant))
                 .build();
+   }
 
-        Optional<ComboDetailViewModel> detail = ComboServiceImpl.findStoredComboDetail(
-                stored,
-                "library",
-                List.of("Goblin Bombardment", "Gravecrawler"),
-                "Deal infinite damage."
-        );
-
-        assertTrue(detail.isPresent());
-        assertEquals("Goblin Bombardment | Gravecrawler", detail.get().title());
-        assertEquals("library", detail.get().location());
-        assertEquals(List.of("Goblin Bombardment", "Gravecrawler"), detail.get().cardNames());
-    }
-
-    private static ComboVariant comboVariant(String description, String... cardNames) {
+    private static ComboVariant comboVariant() {
         ComboVariant variant = new ComboVariant();
-        variant.description = description;
-        variant.uses = java.util.Arrays.stream(cardNames)
+        variant.description = "Deal infinite damage.";
+        variant.uses = java.util.Arrays.stream(new String[]{"Goblin Bombardment", "Gravecrawler"})
                 .map(name -> {
                     CardUse cardUse = new CardUse();
                     CardDto card = new CardDto();

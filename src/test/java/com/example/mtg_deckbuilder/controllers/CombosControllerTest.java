@@ -2,6 +2,7 @@ package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.config.SecurityConfig;
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
+import com.example.mtg_deckbuilder.model.ComboDetailsRequest;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.example.mtg_deckbuilder.service.impl.ComboServiceImpl;
@@ -74,7 +75,7 @@ class CombosControllerTest {
 
     @Test
     void comboDetailReturnsDedicatedPage() throws Exception {
-        when(comboService.getComboDetail(any(CustomUserDetails.class), any(), any(), any()))
+        when(comboService.getComboDetail(any(CustomUserDetails.class), any(ComboDetailsRequest.class)))
                 .thenReturn(Optional.of(new ComboDetailViewModelImpl(
                         "Bruce Banner | Legolas's Quick Reflexes",
                         "library",

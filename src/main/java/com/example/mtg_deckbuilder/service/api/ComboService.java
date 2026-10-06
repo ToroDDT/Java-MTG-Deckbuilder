@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.service.api;
 
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
+import com.example.mtg_deckbuilder.model.ComboDetailsRequest;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,5 +17,5 @@ public interface ComboService {
     CardCombos getCombos(CustomUserDetails user);
     CardCombos getCombos(CustomUserDetails user, LibraryFilters filters);
     List<String> getLocations(CustomUserDetails user);
-    Optional<ComboDetailViewModel> getComboDetail(CustomUserDetails user, String location, String cardsKey, String description) throws Exception;
+    Optional<ComboDetailViewModel> getComboDetail(CustomUserDetails user, ComboDetailsRequest request) throws Exception;
 }

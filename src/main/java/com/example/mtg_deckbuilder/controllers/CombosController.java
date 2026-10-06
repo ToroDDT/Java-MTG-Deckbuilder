@@ -1,5 +1,6 @@
 package com.example.mtg_deckbuilder.controllers;
 
+import com.example.mtg_deckbuilder.model.ComboDetailsRequest;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.model.OwnedCard;
 import com.example.mtg_deckbuilder.advice.Sanitize;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class CombosController {
@@ -53,13 +53,11 @@ public class CombosController {
 
     @GetMapping("/personal-library/combos/detail")
     public String comboDetail(
-            @RequestParam String location,
-            @RequestParam String cards,
-            @RequestParam String description,
+            @ModelAttribute @Sanitize ComboDetailsRequest request,
             Model model,
             @AuthenticationPrincipal CustomUserDetails user
     ) throws Exception {
-        var detail = comboServiceImpl.getComboDetail(user, location, cards, description);
+        var detail = comboServiceImpl.getComboDetail(user, request);
         if (detail.isEmpty()) {
             return "redirect:/personal-library/combos";
         }
