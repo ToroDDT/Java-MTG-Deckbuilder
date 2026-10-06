@@ -5,6 +5,7 @@ import com.example.mtg_deckbuilder.exceptions.DeckDoesNotExistException;
 import com.example.mtg_deckbuilder.model.CardEntry;
 import com.example.mtg_deckbuilder.model.Deck;
 import com.example.mtg_deckbuilder.model.NewDeck;
+import com.example.mtg_deckbuilder.repository.api.ComboRepository;
 import com.example.mtg_deckbuilder.repository.api.DeckRepository;
 import com.example.mtg_deckbuilder.repository.api.PersonalLibraryRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -32,18 +33,21 @@ public class DeckServiceImpl implements DeckService {
     private final PersonalLibraryRepository personalLibraryRepository;
     private final ApplicationEventPublisher publisher;
     private final CardService cardService;
+    private final ComboRepository comboRepository;
 
 
     @Autowired
     public DeckServiceImpl(DeckRepository deckRepository, UserDecksCache userDecksCache,
                            PersonalLibraryRepository personalLibraryRepository,
                            ApplicationEventPublisher publisher,
-                           CardService cardService) {
+                           CardService cardService,
+                           ComboRepository comboRepository) {
         this.deckRepository = deckRepository;
         this.userDecksCache = userDecksCache;
         this.personalLibraryRepository = personalLibraryRepository;
         this.publisher = publisher;
         this.cardService = cardService;
+        this.comboRepository = comboRepository;
     }
 
 
@@ -144,12 +148,14 @@ public class DeckServiceImpl implements DeckService {
     }
 
     @Override
+    @Transactional
     public void updateDeck(CustomUserDetails user, UUID deckId, String name, String commander) {
         Deck existing = userDecksCache.getAllDecksForUser(user).stream()
                 .filter(deck -> deck.id().equals(deckId))
                 .findFirst()
                 .orElseThrow(() -> new DeckDoesNotExistException(deckId.toString()));
 
+        String previousName = existing.name();
         String commanderName = commander != null && !commander.isBlank() ? commander : existing.commander();
         String colorIdentity = existing.colors_identity();
         String image = existing.image();
@@ -169,6 +175,11 @@ public class DeckServiceImpl implements DeckService {
                 colorIdentity,
                 image,
                 LocalDate.now());
+
+        if (name != null && !name.isBlank() && !name.equals(previousName)) {
+            comboRepository.renameLocation(user, previousName, name);
+        }
+
         userDecksCache.evictForUser(user.getId());
     }
 

@@ -163,6 +163,32 @@ public class ComboRepositoryImpl implements ComboRepository{
     }
 
     @Override
+    public int renameLocation(CustomUserDetails owner, String oldLocation, String newLocation) {
+        if (owner == null || oldLocation == null || newLocation == null) {
+            return 0;
+        }
+        String oldTrimmed = oldLocation.trim();
+        String newTrimmed = newLocation.trim();
+        if (oldTrimmed.isEmpty() || newTrimmed.isEmpty() || oldTrimmed.equals(newTrimmed)) {
+            return 0;
+        }
+
+        String sql = """
+                UPDATE combos
+                SET location = ?
+                WHERE combo_owner = ?::uuid
+                  AND btrim(location) = ?
+                """;
+
+        return jdbcTemplate.update(
+                sql,
+                newTrimmed,
+                owner.getId().toString(),
+                oldTrimmed
+        );
+    }
+
+    @Override
     public List<String> getLocations(CustomUserDetails owner) {
         String sql = """
                 SELECT location
