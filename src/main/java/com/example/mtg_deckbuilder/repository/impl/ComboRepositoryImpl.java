@@ -1,6 +1,7 @@
 package com.example.mtg_deckbuilder.repository.impl;
 
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
+import com.example.mtg_deckbuilder.dto.combo.ComboItem;
 import com.example.mtg_deckbuilder.dto.combo.ComboVariant;
 import com.example.mtg_deckbuilder.repository.api.ComboRepository;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -63,54 +64,58 @@ public class ComboRepositoryImpl implements ComboRepository{
         );
     }
 
-    @Override
-    public CardCombos getCombos(CustomUserDetails owner) {
-        String sql = "SELECT * FROM combos WHERE combo_owner = ?::uuid";
+@Override
+public CardCombos getCombos(CustomUserDetails owner) {
+    String sql = "SELECT * FROM combos WHERE combo_owner = ?::uuid";
 
-        List<List<String>> allCards = new ArrayList<>();
-        List<String> allDesc = new ArrayList<>();
-        List<List<String>> allImages = new ArrayList<>();
-        List<String> allLocations = new ArrayList<>();
-        List<String> allResults = new ArrayList<>();
-        List<ComboVariant> allVariants = new ArrayList<>();
+    List<ComboItem> allItems = jdbcTemplate.query(
+            sql,
+            (rs, rowNum) -> mapRowToComboItems(rs),
+            owner.getId().toString()
+    ).stream()
+     .flatMap(List::stream) // Flatten list of lists produced per DB row
+     .toList();
 
-        RowCallbackHandler comboRowHandler = rs -> {
-            Array descArray = rs.getArray("description");
-            String[] descriptions = (String[]) descArray.getArray();
+    return CardCombos.builder()
+            .items(allItems)
+            .build();
+}
 
-            String cardJson = rs.getString("card_combinations");
-            String imageJson = rs.getString("images");
-            String location = rs.getString("location");
-            Array resultArray = rs.getArray("results");
-            String variantsJson = hasColumn(rs, "variants") ? rs.getString("variants") : null;
+private List<ComboItem> mapRowToComboItems(ResultSet rs) throws SQLException {
+    Array descArray = rs.getArray("description");
+    String[] descriptions = descArray != null ? (String[]) descArray.getArray() : new String[0];
 
-            List<List<String>> cards = readNestedStringList(cardJson);
-            List<List<String>> images = readNestedStringList(imageJson);
-            List<String> results = readResults(resultArray, cards.size());
-            List<ComboVariant> variants = readVariants(variantsJson, cards.size());
+    String cardJson = rs.getString("card_combinations");
+    String imageJson = rs.getString("images");
+    String location = rs.getString("location");
+    Array resultArray = rs.getArray("results");
+    String variantsJson = hasColumn(rs, "variants") ? rs.getString("variants") : null;
 
-            allDesc.addAll(Arrays.asList(descriptions));
-            allCards.addAll(cards);
-            allImages.addAll(images);
-            for (int i = 0; i < cards.size(); i++) {
-                allLocations.add(location);
-                allResults.add(i < results.size() ? results.get(i) : "");
-                allVariants.add(i < variants.size() ? variants.get(i) : null);
-            }
+    List<List<String>> cards = readNestedStringList(cardJson);
+    List<List<String>> images = readNestedStringList(imageJson);
+    List<String> results = readResults(resultArray, cards.size());
+    List<ComboVariant> variants = readVariants(variantsJson, cards.size());
 
-        };
+    List<ComboItem> rowItems = new ArrayList<>();
 
-        jdbcTemplate.query(sql, comboRowHandler, owner.getId().toString());
+    for (int i = 0; i < cards.size(); i++) {
+        String description = i < descriptions.length ? descriptions[i] : "";
+        List<String> comboImages = i < images.size() ? images.get(i) : List.of();
+        String result = i < results.size() ? results.get(i) : "";
+        ComboVariant variant = i < variants.size() ? variants.get(i) : null;
 
-        return CardCombos.builder()
-                .description(allDesc)
-                .cardCombinations(allCards)
-                .images(allImages)
-                .results(allResults)
-                .locations(allLocations)
-                .variants(allVariants)
-                .build();
+        rowItems.add(ComboItem.builder()
+                .cardCombination(cards.get(i))
+                .description(description)
+                .images(comboImages)
+                .location(location)
+                .result(result)
+                .variant(variant)
+                .build());
     }
+
+    return rowItems;
+}
 
     private List<ComboVariant> readVariants(String json, int comboCount) {
         if (json == null || json.isBlank()) {

@@ -10,12 +10,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class CardCombos {
-    private List<List<String>> cardCombinations;
-    private List<String> description;
-    private List<List<String>> images;
-    private List<String> locations;
-    private String location;
-    private List<String> results;
-    /** Full Commander Spellbook variant payloads, parallel to {@link #cardCombinations}. */
-    private List<ComboVariant> variants;
+    private String location; // Common location context if applicable
+    @Builder.Default
+    private List<ComboItem> items = List.of();
 }

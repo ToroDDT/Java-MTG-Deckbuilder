@@ -110,17 +110,13 @@ public void updateCombos(CustomUserDetails user) {
     @Override
     public Optional<ComboDetailViewModel> getComboDetail(CustomUserDetails user, ComboDetailsRequest request) throws Exception {
         var combos = comboRespository.getCombos(user);
-        var storedDetail = searchDatabase(combos, request);
-        if (storedDetail.isPresent()) {
-            return storedDetail;
-        }
 
-        List<OwnedCard> listOfCards = getCardsBasedOnLocation(user, request.getLocation());
-        if (listOfCards.isEmpty()) {
+        List<OwnedCard> cards = getCardsBasedOnLocation(user, request.getLocation());
+        if (cards.isEmpty()) {
             return Optional.empty();
         }
 
-        List<ComboVariant> variants = searchCombos(listOfCards)
+        List<ComboVariant> variants = searchCombos(cards)
                 .getResults()
                 .getIncluded()
                 .stream()
@@ -151,121 +147,42 @@ public void updateCombos(CustomUserDetails user) {
         if (!hasFilterCriteria && !hasSort) {
             return combos;
         }
+Map<String, Card> library = personalLibraryService
+        .getCards(user.getId())
+        .stream()
+        .filter(ownedCard -> ownedCard.getCard() != null && ownedCard.getCard().getName() != null)
+        .collect(Collectors.toMap(
+                OwnedCard::getName,
+                OwnedCard::getCard,
+                (first, ignored) -> first
+        ));
 
-        Map<String, Card> cardsByName = personalLibraryService
-                .getCards(user.getId())
-                .stream()
-                .filter(ownedCard -> ownedCard.getCard() != null && ownedCard.getCard().getName() != null)
-                .collect(Collectors.toMap(
-                        ownedCard -> normalize(ownedCard.getCard().getName()),
-                        OwnedCard::getCard,
-                        (first, ignored) -> first
-                ));
+List<List<String>> listOfCombos = combos.getItems().stream()
+        .filter(item -> {
+            List<String> cardNames = item.getCardCombination() == null ? List.of() : item.getCardCombination();
 
-        return filterCombos(combos, filters, cardsByName);
+            // Resolve the actual Card objects using your library map
+            List<Card> resolvedCards = cardNames.stream()
+                    .map(library::get)
+                    .filter(Objects::nonNull)
+                    .toList();
+
+            return matchesComboFilters(filters, item, resolvedCards);
+        })
+        .map(ComboItem::getCardCombination)
+        .toList();
     }
 
-    static CardCombos filterCombos(
-            CardCombos combos,
-            LibraryFilters filters,
-            Map<String, Card> cardsByName
-    ) {
-        if (combos == null || combos.getCardCombinations() == null) {
-            return emptyCombos();
-        }
-
-        List<FilteredCombo> filteredCombos = new ArrayList<>();
-
-        List<String> descriptions = combos.getDescription() == null ? List.of() : combos.getDescription();
-        List<List<String>> images = combos.getImages() == null ? List.of() : combos.getImages();
-        List<String> locations = combos.getLocations() == null ? List.of() : combos.getLocations();
-        List<String> results = combos.getResults() == null ? List.of() : combos.getResults();
-        List<ComboVariant> variants = combos.getVariants() == null ? List.of() : combos.getVariants();
-
-        for (int i = 0; i < combos.getCardCombinations().size(); i++) {
-            List<String> cardNames = combos.getCardCombinations().get(i);
-            String description = i < descriptions.size() ? descriptions.get(i) : "";
-            List<String> comboImages = i < images.size() ? images.get(i) : List.of();
-            String location = i < locations.size() ? locations.get(i) : combos.getLocation();
-            String result = i < results.size() ? results.get(i) : "";
-            ComboVariant variant = i < variants.size() ? variants.get(i) : null;
-            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards = comboCards(cardNames, cardsByName);
-
-            if (matchesComboFilters(cardNames, description, location, filters, comboCards)) {
-                filteredCombos.add(new FilteredCombo(cardNames, description, comboImages, location, result, comboCards, variant));
-            }
-        }
-
-        sortCombos(filteredCombos, filters.getSortBy());
-
-        return CardCombos.builder()
-                .cardCombinations(filteredCombos.stream().map(FilteredCombo::cardNames).toList())
-                .description(filteredCombos.stream().map(FilteredCombo::description).toList())
-                .images(filteredCombos.stream().map(FilteredCombo::images).toList())
-                .locations(filteredCombos.stream().map(FilteredCombo::location).toList())
-                .results(filteredCombos.stream().map(FilteredCombo::results).toList())
-                .variants(filteredCombos.stream().map(FilteredCombo::variant).toList())
-                .location(combos.getLocation())
-                .build();
-    }
-
-    static Optional<ComboDetailViewModel> searchDatabase(CardCombos stored, ComboDetailsRequest request) {
-        if (stored == null || stored.getCardCombinations() == null || stored.getVariants() == null) {
-            return Optional.empty();
-        }
-
-        List<String> descriptions = stored.getDescription() == null ? List.of() : stored.getDescription();
-        List<String> locations = stored.getLocations() == null ? List.of() : stored.getLocations();
-        List<ComboVariant> variants = stored.getVariants();
-
-        for (int i = 0; i < stored.getCardCombinations().size(); i++) {
-            if (i >= variants.size() || variants.get(i) == null) {
-                continue;
-            }
-
-            List<String> cardNames = stored.getCardCombinations().get(i);
-            String comboDescription = i < descriptions.size() ? descriptions.get(i) : "";
-            String comboLocation = i < locations.size() ? locations.get(i) : stored.getLocation();
-
-            if (!normalize(comboLocation).equals(normalize(request.getLocation()))) {
-                continue;
-            }
-            if (!normalize(comboDescription).equals(normalize(request.getDescription()))) {
-                continue;
-            }
-
-            List<String> normalizedCardNames = cardNames.stream().map(ComboServiceImpl::normalize).toList();
-            List<String> normalizedSelectedNames = request.getSelectedCardNames().stream().map(ComboServiceImpl::normalize).toList();
-            if (!normalizedCardNames.equals(normalizedSelectedNames)) {
-                continue;
-            }
-
-            return Optional.of(toDetailViewModel(variants.get(i), request.getLocation()));
-        }
-
-        return Optional.empty();
-    }
-
-    private static List<com.example.mtg_deckbuilder.dto.card.Card> comboCards(
-            List<String> cardNames,
-            Map<String, com.example.mtg_deckbuilder.dto.card.Card> cardsByName
-    ) {
-        List<String> safeCardNames = cardNames == null ? List.of() : cardNames;
-        return safeCardNames.stream()
-                .map(name -> cardsByName.get(normalize(name)))
-                .filter(Objects::nonNull)
-                .toList();
-    }
 
     private static boolean matchesComboFilters(
-            List<String> cardNames,
-            String description,
-            String location,
             LibraryFilters filters,
-            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards
+            ComboItem item,
+            List<Card> comboCards
     ) {
-        List<String> safeCardNames = cardNames == null ? List.of() : cardNames;
-        if (!matchesTextSearch(safeCardNames, description, filters)) {
+        List<String> names = item.getCardCombination() == null ? List.of() : item.getCardCombination();
+        String description = item.getDescription() == null ? "" : item.getDescription();
+        String location = item.getLocation() == null ? "" : item.getLocation();
+        if (!matchesTextSearch(names, description, filters)) {
             return false;
         }
 
@@ -350,7 +267,7 @@ public void updateCombos(CustomUserDetails user) {
     }
 
     private static boolean matchesCardType(
-            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards,
+            List<Card> comboCards,
             String cardType
     ) {
         if (cardType == null || cardType.isBlank() || "ALL".equalsIgnoreCase(cardType)) {
@@ -359,7 +276,7 @@ public void updateCombos(CustomUserDetails user) {
 
         String normalizedCardType = normalize(cardType);
         return comboCards.stream()
-                .map(com.example.mtg_deckbuilder.dto.card.Card::getTypeLine)
+                .map(Card::getTypeLine)
                 .filter(Objects::nonNull)
                 .map(ComboServiceImpl::normalize)
                 .anyMatch(typeLine -> typeLine.contains(normalizedCardType));
@@ -628,70 +545,6 @@ public void updateCombos(CustomUserDetails user) {
         );
     }
 
-    private static void sortCombos(List<FilteredCombo> filteredCombos, com.example.mtg_deckbuilder.model.SortOptions sortBy) {
-        if (sortBy == null || sortBy == com.example.mtg_deckbuilder.model.SortOptions.RECENT) {
-            return;
-        }
-
-        Comparator<FilteredCombo> comparator = switch (sortBy) {
-            case PRICE_ASC -> Comparator.comparingDouble(ComboServiceImpl::totalPrice);
-            case PRICE_DESC -> Comparator.comparingDouble(ComboServiceImpl::totalPrice).reversed();
-            case CMC_ASC -> Comparator.comparingInt(combo -> totalCmc(combo));
-            case CMC_DESC -> Comparator.comparingInt((FilteredCombo combo) -> totalCmc(combo)).reversed();
-            case NAME_ASC -> Comparator.comparing(combo -> normalize(combo.primaryName()));
-            case NAME_DESC -> Comparator.comparing((FilteredCombo combo) -> normalize(combo.primaryName())).reversed();
-            case RECENT -> null;
-        };
-
-        if (comparator != null) {
-            filteredCombos.sort(comparator);
-        }
-    }
-
-    private static double totalPrice(FilteredCombo combo) {
-        return combo.comboCards().stream()
-                .map(ComboServiceImpl::usdPrice)
-                .filter(Objects::nonNull)
-                .mapToDouble(Double::doubleValue)
-                .sum();
-    }
-
-    private static int totalCmc(FilteredCombo combo) {
-        return totalCmc(combo.comboCards());
-    }
-
-    private static int totalCmc(List<com.example.mtg_deckbuilder.dto.card.Card> comboCards) {
-        return comboCards.stream()
-                .map(com.example.mtg_deckbuilder.dto.card.Card::getCmc)
-                .filter(Objects::nonNull)
-                .mapToInt(Integer::intValue)
-                .sum();
-    }
-
-    private record FilteredCombo(
-            List<String> cardNames,
-            String description,
-            List<String> images,
-            String location,
-            String results,
-            List<com.example.mtg_deckbuilder.dto.card.Card> comboCards,
-            ComboVariant variant
-    ) {
-        private String primaryName() {
-            return cardNames.isEmpty() ? "" : cardNames.getFirst();
-        }
-    }
-
-    private static CardCombos emptyCombos() {
-        return CardCombos.builder()
-                .cardCombinations(List.of())
-                .description(List.of())
-                .images(List.of())
-                .results(List.of())
-                .variants(List.of())
-                .build();
-    }
-
     private static String normalize(String value) {
         return value == null ? "" : value.trim().toLowerCase(Locale.ROOT);
     }
@@ -775,21 +628,6 @@ public void updateCombos(CustomUserDetails user) {
                         .toList())
                 .variants(filteredVariants)
                 .build();
-    }
-
-
-    private CardCombos buildAlmostIncludedCombos(Combos searchedCombos) {
-        List<ComboVariant> variants = searchedCombos.getResults().getAlmostIncludedByAddingColors()
-                .stream()
-                .filter(comboVariant -> comboVariant
-                        .getUses()
-                        .stream()
-                        .filter(cardUse -> cardUse.getCard() != null)
-                        .noneMatch(cardUse -> EXCLUDED_CARD_NAMES.contains(cardUse.getCard().getName()))
-                )
-                .toList();
-
-        return getCardCombos(variants);
     }
 
     public static Combos searchCombos(List<OwnedCard> cards) throws Exception {
