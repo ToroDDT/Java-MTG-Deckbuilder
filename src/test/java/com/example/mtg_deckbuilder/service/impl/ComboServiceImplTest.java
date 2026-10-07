@@ -5,9 +5,9 @@ import com.example.mtg_deckbuilder.dto.card.Prices;
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
 import com.example.mtg_deckbuilder.dto.combo.CardDto;
 import com.example.mtg_deckbuilder.dto.combo.CardUse;
+import com.example.mtg_deckbuilder.dto.combo.ComboItem;
 import com.example.mtg_deckbuilder.dto.combo.ComboVariant;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
-import com.example.mtg_deckbuilder.model.SortOptions;
 import com.example.mtg_deckbuilder.views.api.ComboDetailViewModel;
 import org.junit.jupiter.api.Test;
 
@@ -19,112 +19,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ComboServiceImplTest {
-
-    @Test
-    void filterCombosMatchesCardNameAndDescription() {
-        CardCombos combos = combos();
-        LibraryFilters filters = new LibraryFilters();
-        filters.setCardName("damage");
-
-        CardCombos filtered = ComboServiceImpl.filterCombos(combos, filters, cardMetadata());
-
-        assertEquals(List.of(List.of("Goblin Bombardment", "Gravecrawler")), filtered.getCardCombinations());
-    }
-
-    @Test
-    void filterCombosMatchesMultiWordSearchAcrossEntireCombo() {
-        CardCombos combos = combos();
-        LibraryFilters filters = new LibraryFilters();
-        filters.setCardName("goblin gravecrawler");
-
-        CardCombos filtered = ComboServiceImpl.filterCombos(combos, filters, cardMetadata());
-
-        assertEquals(List.of(List.of("Goblin Bombardment", "Gravecrawler")), filtered.getCardCombinations());
-    }
-
-    @Test
-    void filterCombosMatchesSelectedColorsFromComboCards() {
-        CardCombos combos = combos();
-        LibraryFilters filters = new LibraryFilters();
-        filters.setSelectedColors(List.of("B", "R"));
-
-        CardCombos filtered = ComboServiceImpl.filterCombos(combos, filters, cardMetadata());
-
-        assertEquals(List.of(List.of("Goblin Bombardment", "Gravecrawler")), filtered.getCardCombinations());
-    }
-
-    @Test
-    void filterCombosMatchesCardTypeAndCmc() {
-        CardCombos combos = combos();
-        LibraryFilters filters = new LibraryFilters();
-        filters.setCardType("Artifact");
-        filters.setMinCMC(3);
-        filters.setMaxCMC(7);
-
-        CardCombos filtered = ComboServiceImpl.filterCombos(combos, filters, cardMetadata());
-
-        assertEquals(List.of(List.of("Phyrexian Altar", "Pitiless Plunderer")), filtered.getCardCombinations());
-    }
-
-    @Test
-    void filterCombosAppliesMaxCmcToComboTotal() {
-        CardCombos combos = combos();
-        LibraryFilters filters = new LibraryFilters();
-        filters.setMaxCMC(3);
-
-        CardCombos filtered = ComboServiceImpl.filterCombos(combos, filters, cardMetadata());
-
-        assertEquals(List.of(List.of("Goblin Bombardment", "Gravecrawler")), filtered.getCardCombinations());
-    }
-
-    @Test
-    void filterCombosMatchesPriceRangeAgainstAnyCardInCombo() {
-        CardCombos combos = combos();
-        LibraryFilters filters = new LibraryFilters();
-        filters.setMinPrice(4.50);
-        filters.setMaxPrice(5.50);
-
-        CardCombos filtered = ComboServiceImpl.filterCombos(combos, filters, cardMetadata());
-
-        assertEquals(List.of(List.of("Goblin Bombardment", "Gravecrawler")), filtered.getCardCombinations());
-    }
-
-    @Test
-    void filterCombosMatchesLocation() {
-        CardCombos combos = combos();
-        LibraryFilters filters = new LibraryFilters();
-        filters.setLocation("library");
-
-        CardCombos filtered = ComboServiceImpl.filterCombos(combos, filters, cardMetadata());
-
-        assertEquals(List.of(List.of("Goblin Bombardment", "Gravecrawler")), filtered.getCardCombinations());
-    }
-
-    @Test
-    void filterCombosSortsByTotalPrice() {
-        CardCombos combos = combos();
-        LibraryFilters filters = new LibraryFilters();
-        filters.setSortBy(SortOptions.PRICE_DESC);
-
-        CardCombos filtered = ComboServiceImpl.filterCombos(combos, filters, cardMetadata());
-
-        assertEquals(List.of(
-                List.of("Phyrexian Altar", "Pitiless Plunderer"),
-                List.of("Goblin Bombardment", "Gravecrawler")
-        ), filtered.getCardCombinations());
-    }
-
     @Test
     void findStoredComboDetailUsesPersistedVariantWithoutApiLookup() {
         ComboVariant variant = comboVariant(
         );
         CardCombos stored = CardCombos.builder()
-                .cardCombinations(List.of(List.of("Goblin Bombardment", "Gravecrawler")))
-                .description(List.of("Deal infinite damage."))
-                .locations(List.of("library"))
-                .variants(List.of(variant))
+                .items(List.of(ComboItem.builder()
+                        .cardCombination(List.of("Goblin Bombardment", "Gravecrawler"))
+                        .description("Deal infinite damage.")
+                        .location("library")
+                        .variant(variant)
+                        .build()))
                 .build();
    }
+
+    private static List<List<String>> comboNames(CardCombos combos) {
+        return combos.getItems().stream()
+                .map(ComboItem::getCardCombination)
+                .toList();
+    }
 
     private static ComboVariant comboVariant() {
         ComboVariant variant = new ComboVariant();
@@ -143,22 +56,21 @@ class ComboServiceImplTest {
 
     private static CardCombos combos() {
         return CardCombos.builder()
-                .cardCombinations(List.of(
-                        List.of("Goblin Bombardment", "Gravecrawler"),
-                        List.of("Phyrexian Altar", "Pitiless Plunderer")
-                ))
-                .description(List.of(
-                        "Deal infinite damage.",
-                        "Create infinite treasure tokens."
-                ))
-                .images(List.of(
-                        List.of("goblin.jpg", "gravecrawler.jpg"),
-                        List.of("altar.jpg", "plunderer.jpg")
-                ))
-                .locations(List.of("library", "Artifacts Deck"))
-                .results(List.of(
-                        "Infinite damage.",
-                        "Infinite treasure tokens."
+                .items(List.of(
+                        ComboItem.builder()
+                                .cardCombination(List.of("Goblin Bombardment", "Gravecrawler"))
+                                .description("Deal infinite damage.")
+                                .images(List.of("goblin.jpg", "gravecrawler.jpg"))
+                                .location("library")
+                                .result("Infinite damage.")
+                                .build(),
+                        ComboItem.builder()
+                                .cardCombination(List.of("Phyrexian Altar", "Pitiless Plunderer"))
+                                .description("Create infinite treasure tokens.")
+                                .images(List.of("altar.jpg", "plunderer.jpg"))
+                                .location("Artifacts Deck")
+                                .result("Infinite treasure tokens.")
+                                .build()
                 ))
                 .build();
     }

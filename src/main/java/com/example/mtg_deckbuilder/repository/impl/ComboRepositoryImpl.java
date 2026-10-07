@@ -46,12 +46,22 @@ public class ComboRepositoryImpl implements ComboRepository{
 
         String ownerUuid = owner.getId().toString();
         String deckLocation = cardCombos.getLocation();
-        String[] descArray = cardCombos.getDescription().toArray(new String[0]);
-        String cardJson = objectMapper.writeValueAsString(cardCombos.getCardCombinations());
-        String imageJson = objectMapper.writeValueAsString(cardCombos.getImages());
-        String[] resultArray = (cardCombos.getResults() == null ? List.<String>of() : cardCombos.getResults()).toArray(new String[0]);
-        String variantsJson = objectMapper.writeValueAsString(
-                cardCombos.getVariants() == null ? List.of() : cardCombos.getVariants());
+        List<ComboItem> items = cardCombos.getItems() == null ? List.of() : cardCombos.getItems();
+        String[] descArray = items.stream()
+                .map(ComboItem::getDescription)
+                .toArray(String[]::new);
+        String cardJson = objectMapper.writeValueAsString(items.stream()
+                .map(ComboItem::getCardCombination)
+                .toList());
+        String imageJson = objectMapper.writeValueAsString(items.stream()
+                .map(ComboItem::getImages)
+                .toList());
+        String[] resultArray = items.stream()
+                .map(ComboItem::getResult)
+                .toArray(String[]::new);
+        String variantsJson = objectMapper.writeValueAsString(items.stream()
+                .map(ComboItem::getVariant)
+                .toList());
 
         jdbcTemplate.update(sql,
                 ownerUuid,

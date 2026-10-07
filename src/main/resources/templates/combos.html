@@ -18,7 +18,7 @@
 <div class="page-body" id="personal-cards" th:fragment="combos-section">
 
     <div class="cb-empty-state"
-         th:if="${cardCombos == null || cardCombos.cardCombinations == null || #lists.isEmpty(cardCombos.cardCombinations)}">
+         th:if="${cardCombos == null || cardCombos.items == null || #lists.isEmpty(cardCombos.items)}">
         No combos match these filters.
     </div>
 
@@ -26,10 +26,10 @@
 
         <!-- Repeat for each combo -->
         <a class="combo-card combo-card-link"
-           th:each="cardList, comboStat : ${cardCombos.images}"
-           th:with="comboLocation=${cardCombos.locations != null and comboStat.index < #lists.size(cardCombos.locations) ? cardCombos.locations[comboStat.index] : 'library'},
-                    comboDescription=${cardCombos.description[comboStat.index]},
-                    comboCardsKey=${#strings.listJoin(cardCombos.cardCombinations[comboStat.index], '||')}"
+           th:each="combo : ${cardCombos.items}"
+           th:with="comboLocation=${combo.location != null ? combo.location : 'library'},
+                    comboDescription=${combo.description},
+                    comboCardsKey=${#strings.listJoin(combo.cardCombination, '||')}"
            th:href="@{/personal-library/combos/detail(location=${comboLocation}, cards=${comboCardsKey}, description=${comboDescription})}">
 
             <!-- Mana color identity row -->
@@ -51,8 +51,8 @@
             <div class="combo-card-body">
                 <div class="combo-card-names">
                     <span class="combo-card-name-group"
-                          th:each="cardName, nameStat : ${cardCombos.cardCombinations[comboStat.index]}"
-                          th:with="img=${nameStat.index < #lists.size(cardList) ? cardList[nameStat.index] : null}">
+                          th:each="cardName, nameStat : ${combo.cardCombination}"
+                          th:with="img=${combo.images != null and nameStat.index < #lists.size(combo.images) ? combo.images[nameStat.index] : null}">
                         <span class="combo-card-name"
                               th:text="${cardName}">
                             Card Name
@@ -75,7 +75,7 @@
                 <hr class="combo-divider"/>
 
                 <ul class="combo-effects"
-                    th:with="resultText=${cardCombos.results != null and comboStat.index < #lists.size(cardCombos.results) ? cardCombos.results[comboStat.index] : ''},
+                    th:with="resultText=${combo.result != null ? combo.result : ''},
                               steps=${#strings.arraySplit(resultText, '.')}">
                     <li th:each="step : ${steps}"
                         th:if="${!#strings.isEmpty(#strings.trim(step))}"

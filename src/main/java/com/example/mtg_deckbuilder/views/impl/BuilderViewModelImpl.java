@@ -124,16 +124,14 @@ public record BuilderViewModelImpl(
     }
 
     private static List<List<String>> deckCombos(CardCombos userCombos, String deckName) {
-        if (userCombos == null || userCombos.getCardCombinations() == null || deckName == null || deckName.isBlank()) {
+        if (userCombos == null || userCombos.getItems() == null || deckName == null || deckName.isBlank()) {
             return List.of();
         }
-        List<String> locations = userCombos.getLocations() == null ? List.of() : userCombos.getLocations();
         List<List<String>> deckOnly = new ArrayList<>();
-        var combinations = userCombos.getCardCombinations();
-        for (int i = 0; i < combinations.size(); i++) {
-            String location = i < locations.size() ? locations.get(i) : userCombos.getLocation();
+        for (var item : userCombos.getItems()) {
+            String location = item.getLocation() == null ? userCombos.getLocation() : item.getLocation();
             if (deckName.equals(location)) {
-                deckOnly.add(combinations.get(i));
+                deckOnly.add(item.getCardCombination());
             }
         }
         return deckOnly;

@@ -128,17 +128,6 @@
       </div>
     </div>
 
-    <!-- Sort -->
-    <div class="cb-filter-section">
-      <label for="sortBy" class="cb-filter-label">Sort By</label>
-      <select hx-trigger="change" th:field="*{sortBy}" class="cb-select" id="sortBy">
-        <option th:each="option : ${personalLibrary.sortOptions}"
-                th:value="${option}"
-                th:text="${option.getSortType()}">
-        </option>
-      </select>
-    </div>
-
     <div class="cb-btn-row">
       <button class="cb-btn-apply" id="clearBtn">Clear</button>
     </div>

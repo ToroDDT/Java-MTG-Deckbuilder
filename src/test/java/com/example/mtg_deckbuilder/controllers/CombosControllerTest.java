@@ -2,6 +2,7 @@ package com.example.mtg_deckbuilder.controllers;
 
 import com.example.mtg_deckbuilder.config.SecurityConfig;
 import com.example.mtg_deckbuilder.dto.combo.CardCombos;
+import com.example.mtg_deckbuilder.dto.combo.ComboItem;
 import com.example.mtg_deckbuilder.model.ComboDetailsRequest;
 import com.example.mtg_deckbuilder.model.LibraryFilters;
 import com.example.mtg_deckbuilder.security.CustomUserDetails;
@@ -14,6 +15,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -40,16 +42,16 @@ class CombosControllerTest {
     @MockitoBean
     private ComboServiceImpl comboService;
 
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+
     @Test
     void combosListBindsSearchFiltersAndReturnsFragment() throws Exception {
         when(comboService.getLocations(any(CustomUserDetails.class)))
                 .thenReturn(List.of("library", "Artifacts Deck"));
         when(comboService.getCombos(any(CustomUserDetails.class), any(LibraryFilters.class)))
                 .thenReturn(CardCombos.builder()
-                        .cardCombinations(List.of())
-                        .description(List.of())
-                        .images(List.of())
-                        .results(List.of())
+                        .items(List.<ComboItem>of())
                         .build());
 
         mockMvc.perform(get("/personal-library/combos-list")
